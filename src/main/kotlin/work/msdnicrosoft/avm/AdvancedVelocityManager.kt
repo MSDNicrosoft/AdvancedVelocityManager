@@ -1,4 +1,4 @@
-package work.msdnicrosoft.avw
+package work.msdnicrosoft.avm
 
 import com.velocitypowered.api.event.connection.PreLoginEvent
 import com.velocitypowered.api.event.player.ServerPreConnectEvent
@@ -10,18 +10,17 @@ import taboolib.common.platform.Plugin
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.info
-import taboolib.common.platform.function.unregisterListener
 import taboolib.common.util.unsafeLazy
 import taboolib.platform.VelocityPlugin
 
 @PlatformSide(Platform.VELOCITY)
-object AdvancedVelocityWhitelist : Plugin() {
+class AdvancedVelocityManager : Plugin() {
 
 
     val plugin by unsafeLazy { VelocityPlugin.getInstance() }
 
     override fun onEnable() {
-        info("Welcome to use AdvancedVelocityWhitelist")
+
     }
 
     @SubscribeEvent(postOrder = PostOrder.EARLY)
@@ -54,6 +53,10 @@ object AdvancedVelocityWhitelist : Plugin() {
         // if
         event.result = ServerPreConnectEvent.ServerResult.denied()
         player.sendMessage(Component.translatable("multiplayer.disconnect.not_whitelisted").color(NamedTextColor.RED))
+
+    }
+
+    private fun loadConfig() {
 
     }
 

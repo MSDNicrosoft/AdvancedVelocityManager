@@ -1,4 +1,4 @@
-package work.msdnicrosoft.avw.command
+package work.msdnicrosoft.avm.command
 
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
@@ -7,12 +7,12 @@ import taboolib.common.platform.command.*
 
 @PlatformSide(Platform.VELOCITY)
 @CommandHeader(
-    name = "avw",
-    permission = "avw.command"
+    name = "avmwl",
+    permission = "avm.command.whitelist"
 )
-object AVWCommand {
+object AVMWhitelistCommand {
 
-    @CommandBody(permission = "avw.command.list")
+    @CommandBody(permission = "avm.command.whitelist.list")
     val list = subCommand {
         int("page") {
 
@@ -23,7 +23,7 @@ object AVWCommand {
         }
     }
 
-    @CommandBody(permission = "avw.command.add")
+    @CommandBody(permission = "avm.command.whitelist.add")
     val add = subCommand {
         dynamic("player") {
             suggestion<ProxyCommandSender>(uncheck = true) { sender, context ->
@@ -46,7 +46,7 @@ object AVWCommand {
         }
     }
 
-    @CommandBody(permission = "avw.command.remove")
+    @CommandBody(permission = "avm.command.whitelist.remove")
     val remove = subCommand {
         dynamic("player") {
             suggestion<ProxyCommandSender>(uncheck = false) { sender, context ->
@@ -60,7 +60,7 @@ object AVWCommand {
         }
     }
 
-    @CommandBody(permission = "avw.command.clear")
+    @CommandBody(permission = "avm.command.whitelist.clear")
     val clear = subCommand {
         execute<ProxyCommandSender> { sender, _, _ ->
             // whitelist::clear
@@ -69,7 +69,7 @@ object AVWCommand {
         }
     }
 
-    @CommandBody(permission = "avw.command.find")
+    @CommandBody(permission = "avm.command.whitelist.find")
     val find = subCommand {
         dynamic("player") {
             suggestion<ProxyCommandSender>(uncheck = true) { sender, context ->
@@ -87,7 +87,7 @@ object AVWCommand {
         }
     }
 
-    @CommandBody(permission = "avw.command.on")
+    @CommandBody(permission = "avm.command.whitelist.on")
     val on = subCommand {
         execute<ProxyCommandSender> { sender, _, _ ->
             // whitelist::on
@@ -95,7 +95,7 @@ object AVWCommand {
         }
     }
 
-    @CommandBody(permission = "avw.command.off")
+    @CommandBody(permission = "avm.command.whitelist.off")
     val off = subCommand {
         // whitelist::off
         execute<ProxyCommandSender> { sender, _, _ ->
@@ -103,7 +103,7 @@ object AVWCommand {
         }
     }
 
-    @CommandBody(permission = "avw.command.reload")
+    @CommandBody(permission = "avm..whitelist.reload")
     val reload = subCommand {
         execute<ProxyCommandSender> { sender, _, _ ->
             // whitelist::reload
@@ -111,7 +111,7 @@ object AVWCommand {
         }
     }
 
-    @CommandBody(permission = "avw.command.status")
+    @CommandBody(permission = "avm.command.whitelist.status")
     val status = subCommand {
         execute<ProxyCommandSender> { sender, _, _ ->
             // whitelist::reload

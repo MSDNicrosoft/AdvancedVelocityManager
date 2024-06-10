@@ -1,2 +1,2 @@
-rootProject.name = "AdvancedVelocityWhitelist"
+rootProject.name = "AdvancedVelocityManager"
 

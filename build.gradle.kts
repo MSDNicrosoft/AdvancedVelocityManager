@@ -21,18 +21,13 @@ repositories {
         }
     }
     maven("https://repo.opencollab.dev/main/" )
-    maven("https://maven.tryformation.com/releases") {
-        // optional but it speeds up the gradle dependency resolution
-        content {
-            includeGroup("com.jillesvangurp")
-        }
-    }
+    maven("https://jitpack.io")
     mavenCentral()
 }
 
 taboolib {
     description {
-        name = "AdvancedVelocityWhitelist"
+        name = "AdvancedVelocityManager"
         contributors {
             name = "MSDNicrosoft"
         }
@@ -55,6 +50,9 @@ dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
 
-    val json_dsl_version: String by project
-    implementation("com.jillesvangurp:json-dsl:${json_dsl_version}")
+    val hoplite_version: String by project
+    implementation("com.sksamuel.hoplite:hoplite-core:${hoplite_version}")
+
+    val yamlkt_version: String by project
+    implementation("net.mamoe.yamlkt:yamlkt:${yamlkt_version}")
 }
