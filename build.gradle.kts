@@ -27,15 +27,15 @@ repositories {
 
 taboolib {
     description {
-        name = "AdvancedVelocityManager"
+        name("AdvancedVelocityManager")
         contributors {
-            name = "MSDNicrosoft"
+            name("MSDNicrosoft")
         }
     }
     env {
         install(UNIVERSAL, VELOCITY)
     }
-    version { taboolib = "6.1.1-beta26" }
+    version { taboolib = "6.1.2-beta6" }
 }
 
 dependencies {
