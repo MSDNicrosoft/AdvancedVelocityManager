@@ -62,8 +62,8 @@ object ChatBridge {
                 val playerMessage = event.message
                 val patterns = config.chatPassthrough.pattern
                 val matched = patterns.contains.any { it in playerMessage } ||
-                        patterns.startswith.any { playerMessage.startsWith(it) } ||
-                        patterns.endswith.any { playerMessage.endsWith(it) }
+                    patterns.startswith.any { playerMessage.startsWith(it) } ||
+                    patterns.endswith.any { playerMessage.endsWith(it) }
                 if (!matched) {
                     event.result = PlayerChatEvent.ChatResult.denied()
                     sendMessage(formattedMessage)

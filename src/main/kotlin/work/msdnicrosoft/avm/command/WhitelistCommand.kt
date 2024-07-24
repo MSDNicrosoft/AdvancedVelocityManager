@@ -243,7 +243,8 @@ object WhitelistCommand {
     }
 
     /**
-     * Sends a message to the sender with the header for the whitelist list, then sends a message for each player on the specified page.
+     * Sends a message to the sender with the header for the whitelist list,
+     * then sends a message for each player on the specified page.
      * Finally, sends a message with the footer for the whitelist list.
      *
      * @param sender The sender of the command.
@@ -264,7 +265,8 @@ object WhitelistCommand {
     }
 
     /**
-     * Sends a message to the sender with the header for the whitelist find, then sends a message for each player found on the specified page.
+     * Sends a message to the sender with the header for the whitelist find,
+     * then sends a message for each player found on the specified page.
      * Finally, sends a message with the footer for the whitelist find.
      *
      * @param sender The sender of the command.
@@ -296,7 +298,6 @@ object WhitelistCommand {
      *
      * @param sender The sender of the command.
      * @param page The page number to check.
-     * @param username The username to search for.
      * @return A pair containing a boolean indicating if the page is valid and a list of players found.
      */
     private fun isValidWhitelistPage(sender: ProxyCommandSender, page: Int): Boolean = when {
