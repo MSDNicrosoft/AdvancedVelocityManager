@@ -5,6 +5,10 @@ plugins {
     kotlin("jvm").version(kotlinVersion)
     kotlin("plugin.serialization").version(kotlinVersion)
 
+    val detektVersion = "1.23.6"
+    id("io.gitlab.arturbosch.detekt").version(detektVersion)
+//    id("io.github.detekt.gradle.compiler-plugin").version(detektVersion)
+
     val taboolibVersion = "2.0.12"
     id("io.izzel.taboolib").version(taboolibVersion)
 }
@@ -36,11 +40,14 @@ taboolib {
         install(UNIVERSAL, VELOCITY)
     }
     version { taboolib = "6.1.2-beta6" }
+//    relocate("okhttp3", "avm.okhttp3")
 }
 
 dependencies {
     val velocity_version: String by project
     compileOnly("com.velocitypowered:velocity-api:${velocity_version}")
+    val detektVersion = "1.23.6"
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:${detektVersion}")
 
 //    val floodgate_version: String by project
 //    compileOnly("org.geysermc.floodgate:api:${floodgate_version}")
@@ -55,4 +62,16 @@ dependencies {
 
     val yamlkt_version: String by project
     implementation("net.mamoe.yamlkt:yamlkt:${yamlkt_version}")
+}
+detekt {
+    parallel = true
+    config.setFrom(file("config/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
+    autoCorrect = true
+}
+
+tasks {
+    compileKotlin {
+        dependsOn("detekt")
+    }
 }
