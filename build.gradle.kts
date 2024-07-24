@@ -57,8 +57,12 @@ dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
 
-    val hoplite_version: String by project
-    implementation("com.sksamuel.hoplite:hoplite-core:${hoplite_version}")
+    val kamlVersion = "0.60.0"
+    taboo("com.charleskorn.kaml:kaml:$kamlVersion")
+
+    val kotlinxSerializationVersion = "1.7.1"
+    taboo("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
+
     val enhancedLegacyTextVersion = "1.0.0"
     taboo("dev.vankka:enhancedlegacytext:$enhancedLegacyTextVersion")
 
