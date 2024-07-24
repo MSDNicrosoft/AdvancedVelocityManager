@@ -59,10 +59,14 @@ dependencies {
 
     val hoplite_version: String by project
     implementation("com.sksamuel.hoplite:hoplite-core:${hoplite_version}")
+    val asmVersion = "9.7"
+    taboo("org.ow2.asm:asm:$asmVersion")
+    taboo("org.ow2.asm:asm-util:$asmVersion")
 
-    val yamlkt_version: String by project
-    implementation("net.mamoe.yamlkt:yamlkt:${yamlkt_version}")
+    val bytebuddyagentVersion = "1.14.18"
+    taboo("net.bytebuddy:byte-buddy-agent:$bytebuddyagentVersion")
 }
+
 detekt {
     parallel = true
     config.setFrom(file("config/detekt/detekt.yml"))
