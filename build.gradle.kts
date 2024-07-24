@@ -44,16 +44,18 @@ taboolib {
 }
 
 dependencies {
-    val velocity_version: String by project
-    compileOnly("com.velocitypowered:velocity-api:${velocity_version}")
     val detektVersion = "1.23.6"
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:${detektVersion}")
 
-//    val floodgate_version: String by project
-//    compileOnly("org.geysermc.floodgate:api:${floodgate_version}")
-//
-//    val netty_version: String by project
-//    compileOnly("io.netty:netty-all:${netty_version}")
+    val velocityVersion = "3.3.0-SNAPSHOT"
+    compileOnly("com.velocitypowered:velocity-api:$velocityVersion")
+
+    val floodgateVersion = "2.2.3-SNAPSHOT"
+    compileOnly("org.geysermc.floodgate:api:$floodgateVersion")
+
+    val nettyVersion = "4.1.112.Final"
+    compileOnly("io.netty:netty-all:$nettyVersion")
+
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
 
