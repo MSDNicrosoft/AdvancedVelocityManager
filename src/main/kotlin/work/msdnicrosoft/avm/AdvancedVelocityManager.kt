@@ -1,60 +1,37 @@
 package work.msdnicrosoft.avm
 
-import com.velocitypowered.api.event.connection.PreLoginEvent
-import com.velocitypowered.api.event.player.ServerPreConnectEvent
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.Plugin
-import taboolib.common.platform.event.PostOrder
-import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.info
 import taboolib.common.util.unsafeLazy
 import taboolib.platform.VelocityPlugin
 
 @PlatformSide(Platform.VELOCITY)
-class AdvancedVelocityManager : Plugin() {
-
+object AdvancedVelocityManager : Plugin() {
 
     val plugin by unsafeLazy { VelocityPlugin.getInstance() }
 
+    val configFile by unsafeLazy { getDataFolder().resolve("config.yml") }
+
+    val configLock = Object()
+
+    var hasFloodgate: Boolean = false
     override fun onEnable() {
+        hasFloodgate = plugin.server.pluginManager.getPlugin("floodgate") != null
+        plugin.logger.debug("Nya~!")
+        loadConfig()
 
     }
 
-    @SubscribeEvent(postOrder = PostOrder.EARLY)
-    fun onPreLogin(event: PreLoginEvent) {
-        // Blocked by other plugins
-        if (!event.result.isAllowed) return
 
-        // Whitelist is off
-        // if (!config.enabled) return
-
-        val username = event.username
-
-        // if
-        event.result = PreLoginEvent.PreLoginComponentResult
-            .denied(Component.translatable("multiplayer.disconnect.not_whitelisted").color(NamedTextColor.RED))
 
     }
 
-    @SubscribeEvent(postOrder = PostOrder.EARLY)
-    fun onServerPreConnect(event: ServerPreConnectEvent) {
-        // Blocked by other plugins
-        if (event.result.server.isEmpty) return
 
-        // Whitelist is off
-        // if (!config.enabled) return
 
-        val serverName = event.result.server.get().serverInfo.name
-        val player = event.player
 
-        // if
-        event.result = ServerPreConnectEvent.ServerResult.denied()
-        player.sendMessage(Component.translatable("multiplayer.disconnect.not_whitelisted").color(NamedTextColor.RED))
-
-    }
 
     private fun loadConfig() {
 
