@@ -39,7 +39,7 @@ taboolib {
     env {
         install(UNIVERSAL, VELOCITY)
     }
-    version { taboolib = "6.1.2-beta6" }
+    version { taboolib = "6.1.2-beta11" }
 //    relocate("okhttp3", "avm.okhttp3")
 }
 
