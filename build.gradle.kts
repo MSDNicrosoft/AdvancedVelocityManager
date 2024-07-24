@@ -59,6 +59,9 @@ dependencies {
 
     val hoplite_version: String by project
     implementation("com.sksamuel.hoplite:hoplite-core:${hoplite_version}")
+    val enhancedLegacyTextVersion = "1.0.0"
+    taboo("dev.vankka:enhancedlegacytext:$enhancedLegacyTextVersion")
+
     val asmVersion = "9.7"
     taboo("org.ow2.asm:asm:$asmVersion")
     taboo("org.ow2.asm:asm-util:$asmVersion")
