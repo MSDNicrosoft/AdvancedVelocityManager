@@ -43,6 +43,7 @@ object ChatBridge {
      */
     var mode: PassthroughMode = PassthroughMode.ALL
 
+    @Suppress("unused")
     @SubscribeEvent(postOrder = PostOrder.FIRST)
     fun onPlayerChatChat(event: PlayerChatEvent) {
         val config = AVM.config.chatBridge

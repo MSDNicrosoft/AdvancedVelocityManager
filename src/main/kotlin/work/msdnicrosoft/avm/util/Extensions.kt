@@ -77,5 +77,7 @@ object Extensions {
     inline fun <reified T> Yaml.encodeToString(value: T): String =
         encodeToString(serializersModule.serializer(), value)
 
-    fun Player.sendMessage(message: String) = sendMessage(ComponentUtil.serializer.parse(message))
+    fun String.formated() = ComponentUtil.serializer.parse(this)
+
+    fun Player.sendMessage(message: String) = sendMessage(message.formated())
 }

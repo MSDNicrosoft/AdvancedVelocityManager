@@ -3,6 +3,7 @@ package work.msdnicrosoft.avm.config
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Suppress("MaxLineLength")
 @Serializable
 data class AVMConfig(
     @SerialName("default-language")
@@ -39,19 +40,19 @@ data class AVMConfig(
         @Serializable
         data class Join(
             var enabled: Boolean = true,
-            val message: String = "&7[&a+&7]&r {player} &7joined server &r{server_nickname}"
+            val message: String = "&7[&a+&7]&r %player_name% &7joined server &r%server_nickname%"
         )
 
         @Serializable
         data class Leave(
             var enabled: Boolean = true,
-            val message: String = "&7[&c-&7]&r {player} &2left the server"
+            val message: String = "&7[&c-&7]&r %player_name% &2left the server"
         )
 
         @Serializable
         data class Switch(
             var enabled: Boolean = true,
-            val message: String = "&8[&b❖&8]&r {player} &7:&r {previous_server_nickname} &6➟&r {target_server_nickname}"
+            val message: String = "&8[&b❖&8]&r %player_name% &7:&r %previous_server_nickname% &6➟&r %target_server_nickname%"
         )
     }
 
@@ -145,6 +146,9 @@ data class AVMConfig(
             )
         ),
 
+//        @SerialName("functions")
+//        val functions: Functions = Functions(),
+
         @SerialName("chat-passthrough")
         val chatPassthrough: ChatPassthrough = ChatPassthrough()
     ) {
@@ -173,5 +177,84 @@ data class AVMConfig(
             val url: String? = null,
             val clipboard: String? = null
         )
+
+//        @Serializable
+//        data class Functions(
+//            val mention: Mention = Mention(),
+//
+//            @SerialName("process-url")
+//            val processUrl: ProcessUrl = ProcessUrl()
+//        ) {
+//            @Serializable
+//            data class Mention(
+//                val enabled: Boolean = true,
+//                val permission: String = "avm.chat.function.mention",
+//
+//                @SerialName("allow-self-mention")
+//                val allowSelfMention: Boolean = false,
+//
+//                @SerialName("cooldown-seconds")
+//                val cooldownSeconds: Long = 5L,
+//
+//                @SerialName("mention-all")
+//                val mentionAll: MentionAll = MentionAll()
+//            ) {
+//                @Serializable
+//                data class MentionAll(
+//                    val enabled: Boolean = true,
+//                    val permission: String = "avm.chat.function.mention.all"
+//                )
+//            }
+//
+//            @Serializable
+//            data class ProcessUrl(
+//                val enabled: Boolean = true,
+//                val pattern: String = "((https|http|ftp|rtsp|mms)?:\\/\\/)[^\\s]+",
+//                val format: Format = Format(
+//                    prefix = "&8[",
+//                    text = "&f&l网站",
+//                    suffix = "&8]",
+//                    hover = """
+//                    &r
+//                    &3网站: %matched_text%
+//                    &r
+//                    &7点击进入!
+//                    &r
+//                    &8[&c!&8] &7谨防任何诈骗
+//                    """.trimIndent(),
+//                    url = "%matched_text%"
+//                )
+//            )
+//
+//            @Serializable
+//            data class ProcessQQNumber(
+//                val enabled: Boolean = true,
+//                val pattern: String = "QQ( )?[1-9]([0-9]{5,11})",
+//
+//                @SerialName("matched-pattern")
+//                val matchedPattern: String = "[1-9]([0-9]{5,11})",
+//                val format: Format = Format(
+//                    prefix = "&8[",
+//                    text = "&3&lQQ: %matched_text%",
+//                    suffix = "&8]",
+//                    hover = """
+//
+//                    &3QQ: &b%matched_text%
+//
+//                    &7这是一个 QQ 账号,
+//                    &7你可以点击此项快速打开聊天
+//
+//                    &8[&c!&8] &7请勿进行任何金钱交易
+//                    &8[&c!&8] &7交友需谨慎
+//                    """.trimIndent(),
+//                    url = "https://wpa.qq.com/msgrd?v=3&uin=%matched_text%&site=qq&menu=yes"
+//                )
+//            )
+//
+//            @Serializable
+//            data class ProcessBilibiliBv(
+//
+//            )
+//        }
     }
 }

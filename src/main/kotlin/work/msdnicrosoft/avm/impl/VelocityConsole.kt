@@ -7,10 +7,10 @@
 
 package work.msdnicrosoft.avm.impl
 
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.ProxyCommandSender
+import work.msdnicrosoft.avm.util.Extensions.formated
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as VelocityPlugin
 
 @PlatformSide(Platform.VELOCITY)
@@ -36,5 +36,5 @@ object VelocityConsole : ProxyCommandSender {
         VelocityPlugin.server.commandManager.executeAsync(sender, command).get()
 
     override fun sendMessage(message: String) =
-        sender.sendMessage(LegacyComponentSerializer.legacySection().deserialize(message))
+        sender.sendMessage(message.replace("§", "&").formated())
 }

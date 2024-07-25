@@ -2,17 +2,17 @@ package work.msdnicrosoft.avm.module
 
 import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.ServerConnectedEvent
-import net.kyori.adventure.text.Component
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submitAsync
-import taboolib.module.chat.colored
 import work.msdnicrosoft.avm.util.ConfigUtil
+import work.msdnicrosoft.avm.util.Extensions.formated
 import work.msdnicrosoft.avm.util.Extensions.replace
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
+@Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
 object EventBroadcast {
     @SubscribeEvent(postOrder = PostOrder.FIRST)
@@ -21,7 +21,7 @@ object EventBroadcast {
         // plugin will send the leave message accidentally.
         // To avoid this, we check the login status.
         if (AVM.config.broadcast.leave.enabled && event.loginStatus == DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) {
-            sendProxyServerMessage(AVM.config.broadcast.leave.message.replace("{player}", event.player.username))
+            sendProxyServerMessage(AVM.config.broadcast.leave.message.replace("%player_name%", event.player.username))
         }
     }
 
@@ -38,11 +38,11 @@ object EventBroadcast {
                     val previousServerNickname = ConfigUtil.getServerNickname(previousServerName)
                     sendProxyServerMessage(
                         AVM.config.broadcast.switch.message.replace(
-                            "{player}" to player.username,
-                            "{previous_server_name}" to previousServerName,
-                            "{previous_server_nickname}" to previousServerNickname,
-                            "{target_server_nickname}" to targetServerNickname,
-                            "{target_server_name}" to targetServerName
+                            "%player_name%" to player.username,
+                            "%previous_server_name%" to previousServerName,
+                            "%previous_server_nickname%" to previousServerNickname,
+                            "%target_server_nickname%" to targetServerNickname,
+                            "%target_server_name%" to targetServerName
                         )
                     )
                 }
@@ -51,9 +51,9 @@ object EventBroadcast {
                 if (AVM.config.broadcast.join.enabled) {
                     sendProxyServerMessage(
                         AVM.config.broadcast.join.message.replace(
-                            "{player}" to player.username,
-                            "{server_name}" to targetServerName,
-                            "{server_nickname}" to targetServerNickname
+                            "%player_name%" to player.username,
+                            "%server_name%" to targetServerName,
+                            "%server_nickname%" to targetServerNickname
                         )
                     )
                 }
@@ -62,6 +62,6 @@ object EventBroadcast {
     }
 
     private fun sendProxyServerMessage(message: String) = submitAsync {
-        AVM.plugin.server.sendMessage(Component.text(message.colored()))
+        AVM.plugin.server.sendMessage(message.formated())
     }
 }

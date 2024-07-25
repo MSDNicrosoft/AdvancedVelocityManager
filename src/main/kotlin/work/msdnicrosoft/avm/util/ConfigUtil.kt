@@ -4,20 +4,18 @@ import com.charleskorn.kaml.AmbiguousQuoteStyle
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
 import kotlinx.serialization.json.Json
-import taboolib.module.chat.colored
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin
 
 object ConfigUtil {
     /**
      * Retrieves the server nickname from the serverMapping configuration.
      * If no mapping is found for the server, returns the original server name.
-     * Applies color formatting to the result.
      *
      * @param server The server name to retrieve the nickname for.
-     * @return The colored server nickname.
+     * @return The server nickname.
      */
     fun getServerNickname(server: String) =
-        (AdvancedVelocityManagerPlugin.config.serverMapping[server] ?: server).colored()
+        AdvancedVelocityManagerPlugin.config.serverMapping[server] ?: server
 
     val yaml = Yaml(
         configuration = YamlConfiguration(

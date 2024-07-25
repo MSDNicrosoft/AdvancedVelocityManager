@@ -2,6 +2,7 @@ package work.msdnicrosoft.avm.util
 
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.RegisteredServer
+import work.msdnicrosoft.avm.util.Extensions.formated
 
 object ProxyServerUtil {
     /**
@@ -19,7 +20,7 @@ object ProxyServerUtil {
      * @param players The players to kick.
      */
     fun kickPlayers(reason: String, players: Iterable<Player>) = players.forEach { player ->
-        player.disconnect(ComponentUtil.serializer.parse(reason))
+        player.disconnect(reason.formated())
     }
 
     /**

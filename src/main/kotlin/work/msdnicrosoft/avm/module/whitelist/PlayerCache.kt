@@ -24,6 +24,7 @@ object PlayerCache {
         players = LimitedMutableSet<WhitelistManager.Player>(config.whitelist.cachePlayers.maxSize)
     }
 
+    @Suppress("unused")
     @SubscribeEvent(postOrder = PostOrder.LAST)
     fun onPlayerPreLogin(event: PreLoginEvent) {
         if (!config.whitelist.cachePlayers.enabled) return

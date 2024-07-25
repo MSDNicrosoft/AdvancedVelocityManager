@@ -28,6 +28,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
  * This object is specific to the Velocity platform and listens for pre-login and server pre-connect events
  * to enforce whitelist restrictions.
  */
+@Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
 object WhitelistHandler {
 
@@ -40,7 +41,6 @@ object WhitelistHandler {
      * Initializes reflection fields used to access internal Velocity connection details.
      * This method is called at the CONST lifecycle phase of plugin loading.
      */
-    @Suppress("unused")
     @Awake(LifeCycle.CONST)
     private fun init() {
         runCatching {
@@ -62,7 +62,6 @@ object WhitelistHandler {
         }
     }
 
-    @Suppress("unused")
     @SubscribeEvent(postOrder = PostOrder.EARLY)
     fun onPreLogin(event: PreLoginEvent) {
         // Blocked by other plugins
@@ -74,7 +73,7 @@ object WhitelistHandler {
         val username = getUsername(event.username, event.connection)
         if (!WhitelistManager.isWhitelisted(username)) {
             event.result = PreLoginEvent.PreLoginComponentResult
-                .denied(Component.translatable("multiplayer.disconnect.not_whitelisted").color(NamedTextColor.RED))
+                .denied(VelocityConsole.asLangText("whitelist-not-whitelisted").formated())
         }
     }
 
@@ -91,10 +90,7 @@ object WhitelistHandler {
         val player = event.player
         if (!WhitelistManager.isWhitelisted(player.username)) {
             event.result = ServerPreConnectEvent.ServerResult.denied()
-            player.sendMessage(
-                Component.translatable("multiplayer.disconnect.not_whitelisted")
-                    .color(NamedTextColor.RED)
-            )
+            player.sendMessage(VelocityConsole.asLangText("whitelist-not-whitelisted"))
         }
     }
 
