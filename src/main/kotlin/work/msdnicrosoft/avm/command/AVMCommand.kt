@@ -10,6 +10,7 @@ import work.msdnicrosoft.avm.util.command.CommandUtil
 import kotlin.system.measureTimeMillis
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVMPlugin
 
+@Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
 @CommandHeader(name = "avm")
 object AVMCommand {

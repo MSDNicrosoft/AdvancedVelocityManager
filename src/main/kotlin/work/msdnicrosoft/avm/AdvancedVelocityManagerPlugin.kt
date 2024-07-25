@@ -35,6 +35,8 @@ object AdvancedVelocityManagerPlugin : Plugin() {
     var hasFloodgate: Boolean = false
 
     override fun onLoad() {
+        info("Detected dynamic java agent loading warnings.")
+        info("It is expected behavior and you can safely ignore the warnings.")
         val adapter = VelocityAdapter()
         val adapterKey = PlatformFactory.serviceMap.keys.first { it.contains("PlatformAdapter") }
         PlatformFactory.serviceMap[adapterKey] = adapter
