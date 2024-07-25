@@ -1,5 +1,6 @@
 package work.msdnicrosoft.avm
 
+import com.velocitypowered.api.plugin.PluginDescription
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.PlatformSide
@@ -25,6 +26,9 @@ import work.msdnicrosoft.avm.util.command.CommandSessionManager
 object AdvancedVelocityManagerPlugin : Plugin() {
 
     val plugin by unsafeLazy { VelocityPlugin.getInstance() }
+
+    val self: PluginDescription
+        get() = plugin.server.pluginManager.getPlugin("advancedvelocitymanager").get().description
 
     val configFile by unsafeLazy { getDataFolder().resolve("config.yml") }
 

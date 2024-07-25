@@ -8,6 +8,7 @@ import taboolib.common.platform.function.submitAsync
 import taboolib.common.util.presentRun
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.annotations.ShouldShow
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.Extensions.isUuid
@@ -15,6 +16,7 @@ import work.msdnicrosoft.avm.util.Extensions.toUndashedString
 import work.msdnicrosoft.avm.util.Extensions.toUuid
 import work.msdnicrosoft.avm.util.ProxyServerUtil
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
+import work.msdnicrosoft.avm.util.command.CommandUtil.createHelper
 import kotlin.math.max
 import kotlin.math.min
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVMPlugin
@@ -24,6 +26,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVMPlugin
 @CommandHeader(name = "avmwl")
 object WhitelistCommand {
 
+    @ShouldShow
     @CommandBody(permission = "avm.command.whitelist.list")
     val list = subCommand {
         int("page") {
@@ -45,6 +48,7 @@ object WhitelistCommand {
         }
     }
 
+    @ShouldShow
     @CommandBody(permission = "avm.command.whitelist.add")
     val add = subCommand {
         dynamic("player") {
@@ -91,6 +95,7 @@ object WhitelistCommand {
         }
     }
 
+    @ShouldShow
     @CommandBody(permission = "avm.command.whitelist.remove")
     val remove = subCommand {
         dynamic("player") {
@@ -134,6 +139,7 @@ object WhitelistCommand {
         }
     }
 
+    @ShouldShow
     @CommandBody(permission = "avm.command.whitelist.clear")
     val clear = subCommand {
         execute<ProxyCommandSender> { sender, context, argument ->
@@ -162,6 +168,7 @@ object WhitelistCommand {
         }
     }
 
+    @ShouldShow
     @CommandBody(permission = "avm.command.whitelist.find")
     val find = subCommand {
         dynamic("player") {
@@ -189,6 +196,7 @@ object WhitelistCommand {
         // 发作性嗜睡症
     }
 
+    @ShouldShow
     @CommandBody(permission = "avm.command.whitelist.on")
     val on = subCommand {
         execute<ProxyCommandSender> { sender, _, _ ->
@@ -215,6 +223,7 @@ object WhitelistCommand {
         }
     }
 
+    @ShouldShow
     @CommandBody(permission = "avm.command.whitelist.off")
     val off = subCommand {
         execute<ProxyCommandSender> { sender, _, _ ->
@@ -224,6 +233,7 @@ object WhitelistCommand {
         }
     }
 
+    @ShouldShow
     @CommandBody(permission = "avm.command.whitelist.status")
     val status = subCommand {
         execute<ProxyCommandSender> { sender, _, _ ->
@@ -240,6 +250,10 @@ object WhitelistCommand {
                 AVMPlugin.config.whitelist.cachePlayers.maxSize
             )
         }
+    }
+
+    val main = mainCommand {
+        createHelper(this@WhitelistCommand::class)
     }
 
     /**

@@ -5,8 +5,10 @@ import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.*
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.annotations.ShouldShow
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
 import work.msdnicrosoft.avm.util.command.CommandUtil
+import work.msdnicrosoft.avm.util.command.CommandUtil.createHelper
 import kotlin.system.measureTimeMillis
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVMPlugin
 
@@ -15,6 +17,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVMPlugin
 @CommandHeader(name = "avm")
 object AVMCommand {
 
+    @ShouldShow
     @CommandBody(permission = "avm.command.reload")
     val reload = subCommand {
         execute<ProxyCommandSender> { sender, _, _ ->
@@ -28,21 +31,22 @@ object AVMCommand {
         }
     }
 
+    @ShouldShow
     @CommandBody(permission = "avm.command.info")
     val info = subCommand {
         execute<ProxyCommandSender> { sender, _, _ ->
-            val self = AVMPlugin.plugin.server.pluginManager.getPlugin("advancedvelocitymanager").get().description
             val velocity = AVMPlugin.plugin.server.version
             // TODO Enabled & Disabled modules
             sender.sendLang(
                 "plugin-info",
-                self.name.get(),
-                self.version.get(),
+                AVMPlugin.self.name.get(),
+                AVMPlugin.self.version.get(),
                 "${velocity.name} ${velocity.version}"
             )
         }
     }
 
+    @ShouldShow
     @CommandBody(permission = "avm.command.confirm")
     val confirm = subCommand {
         dynamic("session") {
@@ -56,7 +60,7 @@ object AVMCommand {
             }
         }
     }
-
+//    @ShouldShow
 //    @CommandBody(permission = "avm.command.enable")
 //    val enable = subCommand {
 //        dynamic("feature") {
@@ -64,6 +68,7 @@ object AVMCommand {
 //        }
 //    }
 //
+//    @ShouldShow
 //    @CommandBody(permission = "avm.command.disable")
 //    val disable = subCommand {
 //        dynamic("feature") {
@@ -75,6 +80,7 @@ object AVMCommand {
 
     @CommandBody
     val main = mainCommand {
+        createHelper(this@AVMCommand::class)
         incorrectCommand(CommandUtil::incorrectCommandFeedback)
         incorrectSender(CommandUtil::incorrectSenderFeedback)
     }
