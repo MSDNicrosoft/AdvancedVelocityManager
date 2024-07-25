@@ -8,15 +8,15 @@ import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.mainCommand
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
-import kotlin.jvm.optionals.getOrElse
 import work.msdnicrosoft.avm.util.ConfigUtil
 import work.msdnicrosoft.avm.util.Extensions.sendMessage
 import work.msdnicrosoft.avm.util.ProxyServerUtil
+import kotlin.jvm.optionals.getOrElse
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVMPlugin
 
 @Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
-@CommandHeader(name = "send", permission = "avm.command.sendall")
+@CommandHeader(name = "sendall", permission = "avm.command.sendall")
 object SendAllCommand {
 
     @CommandBody

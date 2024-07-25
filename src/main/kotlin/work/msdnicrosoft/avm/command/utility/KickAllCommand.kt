@@ -15,7 +15,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVMPlugin
 
 @Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
-@CommandHeader(name = "send", permission = "avm.command.sendall")
+@CommandHeader(name = "kickall", permission = "avm.command.kickall")
 object KickAllCommand {
 
     @CommandBody
@@ -41,7 +41,6 @@ object KickAllCommand {
                 )
             }
         }
-        TODO()
     }
 
     /**
@@ -60,9 +59,7 @@ object KickAllCommand {
         val (bypassed, playerToKick) = server.playersConnected
             .partition { it.hasPermission("avm.kickall.bypass") }
 
-        submitAsync(now = true) {
-            ProxyServerUtil.kickPlayers(reason, playerToKick)
-        }
+        submitAsync(now = true) { ProxyServerUtil.kickPlayers(reason, playerToKick) }
 
         sender.sendLang("kickall-executor-feedback", playerToKick.size, bypassed.size)
     }

@@ -157,8 +157,7 @@ object WhitelistCommand {
                     }
                 }
             }
-
-            sender.sendLang("whitelist-clear-need-confirm", "/avmwl confirm $sessionId")
+            sender.sendLang("whitelist-clear-need-confirm", "/avm confirm $sessionId")
         }
     }
 

@@ -10,8 +10,6 @@ import com.velocitypowered.api.event.player.ServerPreConnectEvent
 import com.velocitypowered.api.proxy.InboundConnection
 import io.netty.channel.Channel
 import io.netty.util.AttributeKey
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import org.geysermc.floodgate.api.player.FloodgatePlayer
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
@@ -20,6 +18,10 @@ import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.warning
+import taboolib.module.lang.asLangText
+import work.msdnicrosoft.avm.impl.VelocityConsole
+import work.msdnicrosoft.avm.util.Extensions.formated
+import work.msdnicrosoft.avm.util.Extensions.sendMessage
 import java.lang.reflect.Field
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
@@ -77,7 +79,6 @@ object WhitelistHandler {
         }
     }
 
-    @Suppress("unused")
     @SubscribeEvent(postOrder = PostOrder.EARLY)
     fun onServerPreConnect(event: ServerPreConnectEvent) {
         // Blocked by other plugins
