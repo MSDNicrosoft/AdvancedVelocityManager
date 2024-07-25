@@ -1,6 +1,5 @@
 package work.msdnicrosoft.avm.command.utility
 
-import com.velocitypowered.api.proxy.Player
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.ProxyCommandSender

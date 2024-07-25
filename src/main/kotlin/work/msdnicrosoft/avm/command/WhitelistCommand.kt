@@ -19,6 +19,7 @@ import kotlin.math.max
 import kotlin.math.min
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVMPlugin
 
+@Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
 @CommandHeader(name = "avmwl")
 object WhitelistCommand {
@@ -52,8 +53,8 @@ object WhitelistCommand {
             }
             execute<ProxyCommandSender> { sender, context, _ ->
                 val player = context["player"]
-
                 val isUuid = player.isUuid()
+
                 val result = if (isUuid) {
                     WhitelistManager.add(player.toUuid())
                 } else {

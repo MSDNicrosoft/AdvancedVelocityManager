@@ -76,7 +76,7 @@ object SendAllCommand {
         }
         sender.sendLang(
             "sendall-executor-feedback",
-            playerToSend - failedPlayers.size,
+            playerToSend.size - failedPlayers.size,
             serverNickname,
             bypassed.size,
             failedPlayers.size
