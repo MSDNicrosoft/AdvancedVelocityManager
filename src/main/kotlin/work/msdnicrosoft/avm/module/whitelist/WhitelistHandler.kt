@@ -18,10 +18,7 @@ import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.warning
-import taboolib.module.lang.asLangText
-import work.msdnicrosoft.avm.impl.VelocityConsole
 import work.msdnicrosoft.avm.util.Extensions.formated
-import work.msdnicrosoft.avm.util.Extensions.sendMessage
 import java.lang.reflect.Field
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
@@ -75,7 +72,7 @@ object WhitelistHandler {
         val username = getUsername(event.username, event.connection)
         if (!WhitelistManager.isWhitelisted(username)) {
             event.result = PreLoginEvent.PreLoginComponentResult
-                .denied(VelocityConsole.asLangText("whitelist-not-whitelisted").formated())
+                .denied(AVM.config.whitelist.message.formated())
         }
     }
 
@@ -91,7 +88,7 @@ object WhitelistHandler {
         val player = event.player
         if (!WhitelistManager.isWhitelisted(player.username)) {
             event.result = ServerPreConnectEvent.ServerResult.denied()
-            player.sendMessage(VelocityConsole.asLangText("whitelist-not-whitelisted"))
+            player.sendMessage(AVM.config.whitelist.message.formated())
         }
     }
 

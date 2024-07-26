@@ -11,7 +11,7 @@ import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.util.ProxyServerUtil
 import kotlin.jvm.optionals.getOrElse
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVMPlugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVM
 
 @Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
@@ -27,17 +27,17 @@ object KickAllCommand {
                 }
             }
             suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                AVMPlugin.server.allServers.map { it.serverInfo.name }
+                AVM.server.allServers.map { it.serverInfo.name }
             }
             execute<ProxyCommandSender> { sender, context, _ ->
-                kickAllPlayers(sender, context["server"], sender.asLangText("kick-target-feedback", sender.name))
+                kickAllPlayers(sender, context["server"], sender.asLangText("kick-target", sender.name))
             }
         }
         execute<ProxyCommandSender> { sender, _, _ ->
             submitAsync(now = true) {
                 ProxyServerUtil.kickPlayers(
-                    sender.asLangText("kick-target-feedback", sender.name),
-                    AVMPlugin.server.allPlayers.filterNot { it.hasPermission("avm.kickall.bypass") }
+                    sender.asLangText("command-kick-target", sender.name),
+                    AVM.server.allPlayers.filterNot { it.hasPermission("avm.kickall.bypass") }
                 )
             }
         }
@@ -51,7 +51,7 @@ object KickAllCommand {
      * @param reason the reason for the kick
      */
     private fun kickAllPlayers(sender: ProxyCommandSender, server: String, reason: String) {
-        val server = AVMPlugin.server.getServer(server).getOrElse {
+        val server = AVM.server.getServer(server).getOrElse {
             sender.sendLang("server-not-found", server)
             return
         }
@@ -61,6 +61,6 @@ object KickAllCommand {
 
         submitAsync(now = true) { ProxyServerUtil.kickPlayers(reason, playerToKick) }
 
-        sender.sendLang("kickall-executor-feedback", playerToKick.size, bypassed.size)
+        sender.sendLang("command-kickall-executor", playerToKick.size, bypassed.size)
     }
 }

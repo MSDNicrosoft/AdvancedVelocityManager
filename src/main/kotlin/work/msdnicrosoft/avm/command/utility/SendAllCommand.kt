@@ -13,7 +13,7 @@ import work.msdnicrosoft.avm.util.Extensions.sendMessage
 import work.msdnicrosoft.avm.util.ProxyServerUtil
 import work.msdnicrosoft.avm.util.command.buildHelper
 import kotlin.jvm.optionals.getOrElse
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVMPlugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVM
 
 @Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
@@ -29,14 +29,14 @@ object SendAllCommand {
                 }
             }
             suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                AVMPlugin.server.allServers.map { it.serverInfo.name }
+                AVM.server.allServers.map { it.serverInfo.name }
             }
             execute<ProxyCommandSender> { sender, context, _ ->
                 sendAllPlayers(
                     sender,
                     context["server"],
                     sender.asLangText(
-                        "send-target-feedback",
+                        "command-send-target",
                         sender.name,
                         ConfigUtil.getServerNickname(context["server"])
                     )
@@ -56,13 +56,13 @@ object SendAllCommand {
      * @param reason the reason for the send
      */
     private fun sendAllPlayers(sender: ProxyCommandSender, serverName: String, reason: String) {
-        val server = AVMPlugin.server.getServer(serverName).getOrElse {
+        val server = AVM.server.getServer(serverName).getOrElse {
             sender.sendLang("server-not-found", serverName)
             return
         }
         val serverNickname = ConfigUtil.getServerNickname(serverName)
 
-        val (bypassed, playerToSend) = AVMPlugin.server.allPlayers
+        val (bypassed, playerToSend) = AVM.server.allPlayers
             .filterNot { it.currentServer.get().serverInfo.name == serverName }
             .partition { it.hasPermission("avm.sendall.bypass") }
 
@@ -78,11 +78,14 @@ object SendAllCommand {
             }
         }
         sender.sendLang(
-            "sendall-executor-feedback",
+            "command-sendall-executor",
             playerToSend.size - failedPlayers.size,
             serverNickname,
             bypassed.size,
             failedPlayers.size
         )
+        if (!failedPlayers.isEmpty()) {
+            sender.sendLang("command-sendall-executor-failed", failedPlayers.size, serverNickname)
+        }
     }
 }

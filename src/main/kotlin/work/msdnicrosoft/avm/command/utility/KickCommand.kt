@@ -12,7 +12,7 @@ import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.util.ProxyServerUtil
 import work.msdnicrosoft.avm.util.command.buildHelper
 import kotlin.jvm.optionals.getOrElse
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVMPlugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVM
 
 @Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
@@ -27,10 +27,10 @@ object KickCommand {
                 }
             }
             suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                AVMPlugin.server.allPlayers.map { it.username }
+                AVM.server.allPlayers.map { it.username }
             }
             execute<ProxyCommandSender> { sender, context, _ ->
-                kickPlayer(sender, context["player"], sender.asLangText("kick-target-feedback", sender.name))
+                kickPlayer(sender, context["player"], sender.asLangText("command-kick-target", sender.name))
             }
         }
         execute<ProxyCommandSender> { sender, context, argument ->
@@ -39,7 +39,7 @@ object KickCommand {
     }
 
     private fun kickPlayer(sender: ProxyCommandSender, player: String, reason: String) {
-        val playerToKick = AVMPlugin.server.getPlayer(player).getOrElse {
+        val playerToKick = AVM.server.getPlayer(player).getOrElse {
             sender.sendLang("player-not-found", player)
             return
         }

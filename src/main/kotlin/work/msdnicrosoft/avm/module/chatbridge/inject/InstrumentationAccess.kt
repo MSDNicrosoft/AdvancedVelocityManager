@@ -72,12 +72,14 @@ object InstrumentationAccess {
      */
     @Suppress("unused")
     @Awake(LifeCycle.CONST)
-    fun init() = runCatching {
+    fun init() = try {
         prepareOutputDirectory()
         instrumentation = ByteBuddyAgent.install()
         instrumentation.addTransformer(ClassTransformer, true)
         instrumentation.retransformClasses(KEYED_CHAT_HANDLER_CLASS)
-    }.onFailure { throw RuntimeException("Failed to initialize instrumentation", it) }
+    } catch (e: Exception) {
+        throw RuntimeException("Failed to initialize instrumentation", e)
+    }
 
     /**
      * Deletes the transformer output directory if it exists.

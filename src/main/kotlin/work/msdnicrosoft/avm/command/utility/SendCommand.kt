@@ -14,7 +14,7 @@ import work.msdnicrosoft.avm.util.ConfigUtil
 import work.msdnicrosoft.avm.util.ProxyServerUtil
 import work.msdnicrosoft.avm.util.command.buildHelper
 import kotlin.jvm.optionals.getOrElse
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVMPlugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVM
 
 @Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
@@ -25,7 +25,7 @@ object SendCommand {
     val main = mainCommand {
         player("player") {
             suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                AVMPlugin.server.allPlayers.map { it.username }
+                AVM.server.allPlayers.map { it.username }
             }
             dynamic("server") {
                 dynamic("reason") {
@@ -39,7 +39,7 @@ object SendCommand {
                     }
                 }
                 suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                    AVMPlugin.server.allServers.map { it.serverInfo.name }
+                    AVM.server.allServers.map { it.serverInfo.name }
                 }
                 execute<ProxyCommandSender> { sender, context, _ ->
                     val player = context.player("player")
@@ -50,7 +50,7 @@ object SendCommand {
                         player,
                         context["server"],
                         player.asLangText(
-                            "send-target-feedback",
+                            "command-send-target",
                             sender.name,
                             serverNickname
                         )
@@ -64,14 +64,14 @@ object SendCommand {
     }
 
     private fun sendPlayer(sender: ProxyCommandSender, proxyPlayer: ProxyPlayer, serverName: String, reason: String) {
-        val server = AVMPlugin.server.getServer(serverName).getOrElse {
+        val server = AVM.server.getServer(serverName).getOrElse {
             sender.sendLang("server-not-found", serverName)
             return
         }
         val serverNickname = ConfigUtil.getServerNickname(serverName)
 
         val playerName = proxyPlayer.name
-        val player = AVMPlugin.server.getPlayer(playerName).getOrElse {
+        val player = AVM.server.getPlayer(playerName).getOrElse {
             sender.sendLang("player-not-found", playerName)
             return
         }
@@ -79,13 +79,13 @@ object SendCommand {
         ProxyServerUtil.sendPlayer(server, player).thenAccept { success ->
             if (success) {
                 sender.sendLang(
-                    "send-executor-feedback",
+                    "send-executor",
                     playerName,
                     serverNickname
                 )
                 proxyPlayer.sendMessage(reason)
             } else {
-                sender.sendLang("send-executor-failed", playerName, serverNickname)
+                sender.sendLang("command-send-executor-failed", playerName, serverNickname)
             }
         }
     }

@@ -1,5 +1,6 @@
 package work.msdnicrosoft.avm.util.command
 
+import com.google.common.io.BaseEncoding
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.function.submitAsync
@@ -7,7 +8,6 @@ import taboolib.common.platform.function.warning
 import taboolib.common.platform.service.PlatformExecutor
 import java.security.MessageDigest
 import java.util.concurrent.ConcurrentHashMap
-import com.google.common.io.BaseEncoding
 
 typealias ExecuteBlock = () -> Any?
 typealias SessionId = String

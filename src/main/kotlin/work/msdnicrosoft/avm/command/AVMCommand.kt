@@ -10,7 +10,7 @@ import work.msdnicrosoft.avm.util.command.CommandSessionManager
 import work.msdnicrosoft.avm.util.command.CommandUtil
 import work.msdnicrosoft.avm.util.command.buildHelper
 import kotlin.system.measureTimeMillis
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVMPlugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
@@ -22,11 +22,11 @@ object AVMCommand {
     val reload = subCommand {
         execute<ProxyCommandSender> { sender, _, _ ->
             var success = false
-            val elapsed = measureTimeMillis { success = AVMPlugin.reload() }
+            val elapsed = measureTimeMillis { success = AVM.reload() }
             if (success) {
-                sender.sendLang("reload-success", elapsed)
+                sender.sendLang("command-avm-reload-success", elapsed)
             } else {
-                sender.sendLang("reload-failed")
+                sender.sendLang("command-avm-reload-failed")
             }
         }
     }
@@ -35,12 +35,12 @@ object AVMCommand {
     @CommandBody(permission = "avm.command.info")
     val info = subCommand {
         execute<ProxyCommandSender> { sender, _, _ ->
-            val velocity = AVMPlugin.plugin.server.version
+            val velocity = AVM.plugin.server.version
             // TODO Enabled & Disabled modules
             sender.sendLang(
-                "plugin-info",
-                AVMPlugin.self.name.get(),
-                AVMPlugin.self.version.get(),
+                "command-avm-info",
+                AVM.self.name.get(),
+                AVM.self.version.get(),
                 "${velocity.name} ${velocity.version}"
             )
         }
@@ -53,9 +53,9 @@ object AVMCommand {
             execute<ProxyCommandSender> { sender, context, _ ->
                 when (CommandSessionManager.executeAction(context["session"])) {
                     CommandSessionManager.ExecuteResult.SUCCESS -> {}
-                    CommandSessionManager.ExecuteResult.EXPIRED -> sender.sendLang("confirm-expired")
-                    CommandSessionManager.ExecuteResult.FAILED -> sender.sendLang("confirm-failed")
-                    CommandSessionManager.ExecuteResult.NOT_FOUND -> sender.sendLang("confirm-not-found")
+                    CommandSessionManager.ExecuteResult.EXPIRED -> sender.sendLang("command-avm-confirm-expired")
+                    CommandSessionManager.ExecuteResult.FAILED -> sender.sendLang("command-avm-confirm-failed")
+                    CommandSessionManager.ExecuteResult.NOT_FOUND -> sender.sendLang("command-avm-confirm-not-found")
                 }
             }
         }
