@@ -16,7 +16,7 @@ import work.msdnicrosoft.avm.util.Extensions.toUndashedString
 import work.msdnicrosoft.avm.util.Extensions.toUuid
 import work.msdnicrosoft.avm.util.ProxyServerUtil
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
-import work.msdnicrosoft.avm.util.command.CommandUtil.createHelper
+import work.msdnicrosoft.avm.util.command.buildHelper
 import kotlin.math.max
 import kotlin.math.min
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVMPlugin
@@ -35,7 +35,6 @@ object WhitelistCommand {
             }
             execute<ProxyCommandSender> { sender, context, _ ->
                 val page = context.int("page")
-
                 if (isValidWhitelistPage(sender, page)) {
                     listWhitelist(sender, page)
                 }
@@ -253,7 +252,7 @@ object WhitelistCommand {
     }
 
     val main = mainCommand {
-        createHelper(this@WhitelistCommand::class)
+        buildHelper(this@WhitelistCommand::class)
     }
 
     /**

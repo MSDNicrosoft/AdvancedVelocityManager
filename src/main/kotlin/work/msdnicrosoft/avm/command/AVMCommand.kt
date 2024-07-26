@@ -8,7 +8,7 @@ import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.annotations.ShouldShow
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
 import work.msdnicrosoft.avm.util.command.CommandUtil
-import work.msdnicrosoft.avm.util.command.CommandUtil.createHelper
+import work.msdnicrosoft.avm.util.command.buildHelper
 import kotlin.system.measureTimeMillis
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVMPlugin
 
@@ -80,7 +80,7 @@ object AVMCommand {
 
     @CommandBody
     val main = mainCommand {
-        createHelper(this@AVMCommand::class)
+        buildHelper(this@AVMCommand::class)
         incorrectCommand(CommandUtil::incorrectCommandFeedback)
         incorrectSender(CommandUtil::incorrectSenderFeedback)
     }
