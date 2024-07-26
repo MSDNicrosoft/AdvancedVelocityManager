@@ -251,6 +251,7 @@ object WhitelistCommand {
         }
     }
 
+    @CommandBody
     val main = mainCommand {
         buildHelper(this@WhitelistCommand::class)
     }
