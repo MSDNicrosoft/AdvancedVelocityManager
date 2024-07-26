@@ -40,7 +40,8 @@ taboolib {
         install(UNIVERSAL, VELOCITY)
     }
     version { taboolib = "6.1.2-beta11" }
-//    relocate("okhttp3", "avm.okhttp3")
+    relocate("kotlinx.serialization", "avm.kotlinx.serialization")
+    relocate("dev.vankka.enhancedlegacytext", "avm.dev.vankka.enhancedlegacytext")
 }
 
 dependencies {
