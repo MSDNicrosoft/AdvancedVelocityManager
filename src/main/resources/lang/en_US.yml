@@ -1,0 +1,135 @@
+general-on: "&aon"
+general-off: "&4off"
+general-username: "username"
+general-uuid: "UUID"
+general-help-header:
+  - ""
+  - type: JSON
+    text: "  [&bAdvanced&3Velocity&9Manager] &fv{0}"  # version
+    args:
+      - hover: "&7AdvancedVelocityManager is a modern and advanced Velocity plugin"
+        command: "/avm info"
+  - ""
+  - type: JSON
+    text: "  &7Type: [&f/{1} &8...]"  # rootCommand
+    args:
+      - hover: "&f/{1}"
+      - suggest: "/{1} "
+  - "  &7Subcommands:"
+
+general-help-each-command:
+  - type: JSON
+    text: "    &8- [&f{1}]"  # subcommand
+    args:
+      - hover: "&f{0} {1} &8- &7{2}"  # rootCommand subcommand description
+        suggest: "/{0} {1}"
+  - "      &7{2}"  # description
+
+whitelist-each-player:
+  - type: JSON
+    text: "[&7{0}]  &8[[&cx]&8]"
+    args:
+      - hover: |-
+          &7UUID: &a{1}
+          
+          &6▶ &eClick to copy
+        suggest: "{1}"
+      - hover: "&6▶ &eClick to remove this player from whitelist"
+        command: "/avmwl remove {0}"
+
+whitelist-page-must-larger-than-zero: "&cPage number must be larger than zero!"
+
+whitelist-save-failed: "&cFailed to save whitelist file, please check console log"
+
+command-avm-confirm-expired: "&dThis session command has expired"
+command-avm-confirm-failed: "&cFailed to execute this session command"
+command-avm-confirm-not-found: "&dUnknown session command"
+
+unknown-command: "&cUnknown or incomplete command, see below for error"
+unknown-argument: "&cIncorrect argument for command"
+unknown-sender: "Incorrect sender for command"
+unknown-here: "HERE"
+
+server-not-found: "&cServer &r{0} &cdoes not exist！"
+player-not-found: "&cPlayer &r{0} &cdoes not exist！"
+
+command-send-executor-success: "&2Player {0} has been sent to server {1}"
+command-send-executor-failed: "&cFailed to send player {0} to server {1}"
+command-send-target: "&7{0} sent you to server {1} "
+command-sendall-executor:
+  - type: JSON
+    text: "&2{0} player(s) have been sent to {1} and [{2} player(s) bypassed]"
+    args:
+      - hover: "&eReason: sendall.bypass-allow enabled & player(s) have permission &6avm.sendall.bypass"
+
+command-sendall-executor-failed: "&cFailed to send {0} player(s) to {1}"
+
+command-kick-target: "&7{0} kicked you from server"
+command-kickall-executor:
+  - type: JSON
+    text: "&2{0} player(s) have been kicked and [{1} player(s) bypassed]"
+    args:
+      - hover: "&eReason: kickall.bypass-allow enabled & player(s) have permission &6avm.kickall.bypass"
+
+command-avm-reload-success: "&aReloaded successfully! &8Took: {0} ms"
+command-avm-reload-failure: "&cReload failed, please check console log"
+
+command-avmwl-add-success: "&2Added {0} {1} to whitelist"
+command-avmwl-add-request-not-found: "&dThe player does not exist on minecraft.net"
+command-avmwl-add-request-failed: "&cAn error occurred while querying the player on minecraft.net"
+command-avmwl-add-already-exists: "&4The player has been already in whitelist"
+
+command-avmwl-remove-success: "&2Removed {0} {1} from whitelist"
+command-avmwl-remove-not-found: "&dThe player is not in whitelist"
+
+command-avmwl-clear-need-confirm:
+  - "&e&lWarning: This action will clear the whitelist!"
+  - type: JSON
+    text: "[&7Click this message or execute command &f{0} &7to confirm the action!]"
+    args:
+      - hover: "&7Confirm the action"
+        command: "{0}"
+command-avmwl-clear-success: "&2Whitelist cleared!"
+command-avmwl-clear-failed: "&cFailed to clear whitelist. See console log"
+
+command-avmwl-list-empty: "&7The whitelist is empty (in this page)"
+command-avmwl-list-header: "&7There are {0} player(s) in the whitelist"
+command-avmwl-list-footer:
+  - type: JSON
+    text: "&8[[&6<-]&8] &r&{0}&b/&b{1} &8[[&6->]&8]"  # prev total
+    args:
+      - hover: "&eClick turn to previous page"
+        command: "/avmwl list {2}"  # prev/min
+      - hover: "&eClick turn to next page"
+        command: "/avmwl list {3}"  # next/total
+
+command-avmwl-find-empty: "&dCould not find relevant player(s) in this page"
+command-avmwl-find-header: "&7Found relevant player(s):"
+command-avmwl-find-footer:
+  - type: JSON
+    text: "&8[[&6<-]&8] &r&b{0}&b/&b{1} &8[[&6->]&8]"  # prev total
+    args:
+      - hover: "&eClick to turn to previous page"
+        command: "/avmwl find {2} {3}"  # prev/min
+      - hover: "&eClick to turn to next page"
+        command: "/avmwl find {2} {4}"  # next/total
+
+command-avmwl-state: "&7Whitelist is {0}"
+command-avmwl-status-cache: "&7Current Completion Cache: &r{0}/{1}"
+
+command-avm-info: |-
+  &7Plugin Name: &b{0}
+  &7Plugin Version: &f{1}
+  &7Server: &3{2}
+
+command-avm-reload-description: "&7Reload config, language and whitelist from file"
+command-avm-info-description: "&7Show plugin info"
+command-avm-confirm-description: "&7Confirm an action"
+command-avmwl-list-description: "&7Show whitelist"
+command-avmwl-add-description: "&7Add a player to whitelist"
+command-avmwl-remove-description: "&7Remove a player from whitelist"
+command-avmwl-clear-description: "&7Clear the whitelist"
+command-avmwl-find-description: "&7Find player(s) in whitelist by keywords"
+command-avmwl-on-description: "&7Turn on the whitelist"
+command-avmwl-off-description: "&7Turn off the whitelist"
+command-avmwl-status-description: "&7Show whitelist status"
