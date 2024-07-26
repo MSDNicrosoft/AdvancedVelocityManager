@@ -7,6 +7,7 @@ import taboolib.common.platform.function.warning
 import taboolib.common.platform.service.PlatformExecutor
 import java.security.MessageDigest
 import java.util.concurrent.ConcurrentHashMap
+import com.google.common.io.BaseEncoding
 
 typealias ExecuteBlock = () -> Any?
 typealias SessionId = String
@@ -139,16 +140,9 @@ object CommandSessionManager {
      * @return The generated session ID.
      */
     fun generateSessionId(name: String, time: Long, command: String): String {
-        val hash = MessageDigest.getInstance("SHA-256")
-        hash.update("$name$time$command".toByteArray())
-        return buildString {
-            hash.digest().forEach { byte ->
-                val hex = Integer.toHexString(byte.toInt() and 0xFF)
-                if (hex.length == 1) {
-                    append('0')
-                }
-                append(hex)
-            }
-        }
+        val digest = MessageDigest.getInstance("SHA-256").apply {
+            update("$name$time$command".toByteArray())
+        }.digest()
+        return BaseEncoding.base32().omitPadding().encode(digest)
     }
 }
