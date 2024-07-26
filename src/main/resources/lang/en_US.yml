@@ -126,7 +126,7 @@ command-avm-reload-description: "&7Reload config, language and whitelist from fi
 command-avm-info-description: "&7Show plugin info"
 command-avm-confirm-description: "&7Confirm an action"
 command-avmwl-list-description: "&7Show whitelist"
-command-avmwl-add-description: "&7Add a player to whitelist"
+command-avmwl-add-description: "&7Add a player to whitelist by username or UUID"
 command-avmwl-remove-description: "&7Remove a player from whitelist"
 command-avmwl-clear-description: "&7Clear the whitelist"
 command-avmwl-find-description: "&7Find player(s) in whitelist by keywords"

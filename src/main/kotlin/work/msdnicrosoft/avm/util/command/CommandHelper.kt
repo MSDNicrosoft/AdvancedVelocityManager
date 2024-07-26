@@ -1,3 +1,10 @@
+/**
+ * Portions of this code are from TrMenu
+ *
+ * https://github.com/TrPlugins/TrMenu/blob/076bacb874cc1a2217ba8ccd4909405b28e7170d
+ * /plugin/src/main/kotlin/trplugins/menu/module/internal/command/CommandHandler.kt
+ */
+
 package work.msdnicrosoft.avm.util.command
 
 import taboolib.common.platform.ProxyCommandSender

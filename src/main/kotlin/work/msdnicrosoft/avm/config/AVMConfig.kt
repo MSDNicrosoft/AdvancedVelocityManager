@@ -1,14 +1,30 @@
 package work.msdnicrosoft.avm.config
 
+import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Suppress("MaxLineLength")
 @Serializable
 data class AVMConfig(
+    @YamlComment(
+        "The language for plugin to use",
+        "The language name must be the part file name of files in the `lang` folder",
+        "Example:",
+        "   zh_CN.yml -> zh_CN",
+        "   en_US.yml -> en_US"
+    )
     @SerialName("default-language")
     val defaultLang: String = "en_US",
 
+    @YamlComment(
+        "Mapping of the server names (configured in `velocity.toml`) and nicknames",
+        "",
+        "Format: server-name: serverNickname",
+        "Example:",
+        "   survival: \"&aSurvival\"",
+        "   minigames: \"&eMinigames\""
+    )
     @SerialName("server-mapping")
     val serverMapping: Map<String, String> = mapOf(
         "lobby" to "&fLobby",
@@ -17,61 +33,99 @@ data class AVMConfig(
         "creative" to "&6Creative",
     ),
 
+    @YamlComment("The event broadcast configuration")
     val broadcast: Broadcast = Broadcast(),
 
+    @YamlComment("The utility commands configuration")
     val utility: Utility = Utility(),
 
+    @YamlComment("The whitelist configuration")
     val whitelist: Whitelist = Whitelist(),
 
+    @YamlComment("The Chat Bridge configuration")
     @SerialName("chat-bridge")
     val chatBridge: ChatBridge = ChatBridge()
 ) {
     @Serializable
     data class Broadcast(
+        @YamlComment("When a player joins the server, plugin will send broadcast")
         @SerialName("join")
         var join: Join = Join(),
 
+        @YamlComment("When a player leaves the server, plugin will send broadcast")
         @SerialName("leave")
         var leave: Leave = Leave(),
 
+        @YamlComment("When a player switch from a server to another server, plugin will send broadcast")
         @SerialName("switch")
         var switch: Switch = Switch(),
     ) {
         @Serializable
         data class Join(
+            @YamlComment("Whether to enable join broadcast")
             var enabled: Boolean = true,
+            @YamlComment(
+                "The join broadcast message",
+                "",
+                "Available placeholders:",
+                "%player_name% - Username of a player who joined the server",
+                "%server_name% - Server name which the player joined in",
+                "%server_nickname% - Server nickname which the player joined in"
+            )
             val message: String = "&7[&a+&7]&r %player_name% &7joined server &r%server_nickname%"
         )
 
         @Serializable
         data class Leave(
+            @YamlComment("Whether to enable leave broadcast")
             var enabled: Boolean = true,
+            @YamlComment(
+                "The leave broadcast message",
+
+                "Available placeholders:",
+                "%player_name% - Username of a player who left the server"
+            )
             val message: String = "&7[&c-&7]&r %player_name% &2left the server"
         )
 
         @Serializable
         data class Switch(
+            @YamlComment("Whether to enable switch broadcast")
             var enabled: Boolean = true,
+            @YamlComment(
+                "The switch broadcast message",
+                "",
+                "Available placeholders:",
+                "%player_name% - Username of a player who joined the server",
+                "%previous_server_name% - Server name which the player switched from",
+                "%previous_server_nickname% - Server nickname which the player switched from",
+                "%target_server_nickname% - Server name which the player switched to",
+                "%target_server_name% - Server name which the player switched to"
+            )
             val message: String = "&8[&b❖&8]&r %player_name% &7:&r %previous_server_nickname% &6➟&r %target_server_nickname%"
         )
     }
 
     @Serializable
     data class Utility(
+        @YamlComment("The `sendall` command configuration")
         @SerialName("sendall")
         val sendAll: SendAll = SendAll(),
 
+        @YamlComment("The `kickall` command configuration")
         @SerialName("kickall")
         val kickAll: KickAll = KickAll()
     ) {
         @Serializable
         data class SendAll(
+            @YamlComment("Allow players to bypass the send")
             @SerialName("allow-bypass")
             val allowBypass: Boolean = true
         )
 
         @Serializable
         data class KickAll(
+            @YamlComment("Allow players to bypass the kick")
             @SerialName("allow-bypass")
             val allowBypass: Boolean = true
         )
@@ -79,44 +133,81 @@ data class AVMConfig(
 
     @Serializable
     data class Whitelist(
+        @YamlComment("Whether to enable whitelist")
         var enabled: Boolean = false,
 
+        @YamlComment("The message sent to a not whitelisted player")
         val message: String = "&cYou are not whitelisted on this server.",
 
+        @YamlComment(
+            "The API URLs to query for whitelist",
+            "",
+            "DO NOT MODIFY THIS PART OF CONFIGURATION",
+            "IF YOU DO NOT KNOW WHAT YOU ARE DOING!!!",
+        )
         @SerialName("query-api-url")
         val queryApi: QueryApi = QueryApi(),
 
+        @YamlComment(
+            "Cache not-whitelisted players who attempted to join server",
+            "This provides extra Username completion source for command `/avmwl add`"
+        )
         @SerialName("cache-players")
         val cachePlayers: CachePlayers = CachePlayers()
     ) {
         @Serializable
         data class QueryApi(
+            @YamlComment(
+                "The API URL to query UUID by username",
+                "Learn more: https://wiki.vg/Mojang_API#Username_to_UUID"
+            )
             val uuid: String = "https://api.mojang.com/users/profiles/minecraft/",
+
+            @YamlComment(
+                "The API URL to query username by UUID",
+                "Learn more: https://wiki.vg/Mojang_API#UUID_to_Profile_and_Skin.2FCape"
+            )
             val profile: String = "https://sessionserver.mojang.com/session/minecraft/profile/"
         )
 
         @Serializable
         data class CachePlayers(
+            @YamlComment("Whether to enable cache players")
             var enabled: Boolean = false,
 
-            @Serializable
-            val maxSize: Int = 20,
-
-            @SerialName("auto-purge")
-            val autoPurge: AutoPurge = AutoPurge()
-        ) {
-            @Serializable
-            data class AutoPurge(var enabled: Boolean = false)
-        }
+            @YamlComment("The max size of the cache")
+            @SerialName("max-size")
+            val maxSize: Int = 20
+        )
     }
 
     @Serializable
     data class ChatBridge(
+        @YamlComment("Whether to enable Chat Bridge")
         var enabled: Boolean = true,
 
+        @YamlComment(
+            "Whether to allow players to use format code in chat",
+            "Learn more: ",
+            "   Introduction & Basic Usage: https://minecraft.wiki/w/Formatting_codes",
+            "   Advanced Usage: https://github.com/Vankka/EnhancedLegacyText/wiki/Format"
+        )
         @SerialName("allow-format-code")
         val allowFormatCode: Boolean = true,
 
+        @YamlComment(
+            "The chat format",
+            "",
+            "Available placeholders:",
+            "%player_name% - The username of a player who sent a message",
+            "%player_uuid% - The UUID of a player who sent a message",
+            "%player_ping% - The ping of a player who sent a message",
+            "%player_message% - The message content of a player who sent a message",
+            "%server_name% - The name of the server where a player sent a message",
+            "%server_nickname% - The nickname of the server where a player sent a message",
+            "%server_online_players% - The online players of the server where a player sent a message",
+            "%server_version% - The version of the server where a player sent a message"
+        )
         @SerialName("chat-format")
         val chatFormat: List<Format> = listOf(
             Format(
@@ -150,21 +241,43 @@ data class AVMConfig(
 //        @SerialName("functions")
 //        val functions: Functions = Functions(),
 
+        @YamlComment("The behavior how plugin send chat messages to backend server")
         @SerialName("chat-passthrough")
         val chatPassthrough: ChatPassthrough = ChatPassthrough()
     ) {
         @Serializable
         data class ChatPassthrough(
+            @YamlComment(
+                "Available modes:",
+                "   ALL:",
+                "       All chat messages will be sent to backend server",
+                "       The custom chat format will not take effect",
+                "   PATTERN:",
+                "       If matching one of the configured pattern(s),",
+                "       the chat messages will be sent to backend server",
+                "       The matched chat messages will not use custom chat format",
+                "   NONE:",
+                "       No chat messages will be sent to backend server",
+                "       If using MCDReforged, Quickshop and etc., please do not use this mode"
+            )
             var mode: String = "ALL",
+
+            @YamlComment(
+                "This part of configuration is only available",
+                "in the `PATTERN` Chat-Passthrough mode"
+            )
             val pattern: Pattern = Pattern()
         ) {
 
             @Serializable
             data class Pattern(
+                @YamlComment("Contains any of the item in the following list")
                 val contains: List<String> = listOf("--==GLOBAL-CHAT==--"),
 
+                @YamlComment("Starts with any of the item in the following list")
                 val startswith: List<String> = listOf("!!", "!localchat"),
 
+                @YamlComment("Ends with any of the item in the following list")
                 val endswith: List<String> = listOf("--==GLOBAL-CHAT==--")
             )
         }

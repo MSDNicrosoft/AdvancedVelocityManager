@@ -126,7 +126,7 @@ command-avm-reload-description: "&7从文件中重载配置、语言和白名单
 command-avm-info-description: "&7查看插件信息"
 command-avm-confirm-description: "&7确认操作"
 command-avmwl-list-description: "&7查看白名单"
-command-avmwl-add-description: "&7将玩家添加到白名单"
+command-avmwl-add-description: "&7通过用户名或 UUID 将玩家添加到白名单"
 command-avmwl-remove-description: "&7从白名单中移除玩家"
 command-avmwl-clear-description: "&7清空白名单"
 command-avmwl-find-description: "&7通过关键词在白名单内查找玩家"
