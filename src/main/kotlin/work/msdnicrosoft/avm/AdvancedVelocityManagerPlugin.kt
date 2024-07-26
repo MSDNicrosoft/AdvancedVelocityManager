@@ -78,6 +78,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
                     config = AVMConfig()
                     configFile.writeText(yaml.encodeToString(config))
                 }
+                saveConfig()
             } catch (e: Exception) {
                 error("Failed to initialize config: ${e.message}")
             }
@@ -109,8 +110,10 @@ object AdvancedVelocityManagerPlugin : Plugin() {
 
         info("Reloading language files...")
         Language.reload()
+        Language.default = config.defaultLang
 
-        WhitelistManager.onEnable(reload = true)
+        CommandSessionManager.onEnable()
         PlayerCache.onEnable()
+        WhitelistManager.onEnable(reload = true)
     }.isSuccess
 }
