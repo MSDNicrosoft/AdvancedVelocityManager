@@ -81,6 +81,8 @@ data class AVMConfig(
     data class Whitelist(
         var enabled: Boolean = false,
 
+        val message: String = "&cYou are not whitelisted on this server.",
+
         @SerialName("query-api-url")
         val queryApi: QueryApi = QueryApi(),
 
@@ -120,29 +122,28 @@ data class AVMConfig(
             Format(
                 text = "&8[%server_nickname%&8]",
                 hover = """
-                &7服务器 %server_name%
+                &7Server %server_name%
                 &r
-                &7▪ 在线: &a%server_online_players%
-                &7▪ 版本：&6%server_version%
+                &7▪ Online: &a%server_online_players%
+                &7▪ Version：&6%server_version%
                 &r
-                &6▶ &e点击连接至此服务器
+                &6▶ &eClick to connect to this server
                 """.trimIndent(),
                 command = "/server %server_name%"
             ),
             Format(
                 text = "<&7%player_name%&r>",
                 hover = """
-                &8▪ &7延迟: &3%player_ping% ms
-                &8▪ &6UUID: &3%player_uuid%
-                &r
-                &6▶ &e点击向该玩家发送私信
-                &r
+                &7▪ Ping: &3%player_ping% ms
+                &7▪ UUID: &3%player_uuid%
                 """.trimIndent(),
-                suggest = "/msg %player_name% "
+//                &6▶ &e点击向该玩家发送私信
+//                &r
+//                suggest = "/msg %player_name% " TODO /msg
             ),
             Format(
                 text = " &r%player_message%",
-                hover = "&7发送时间 %player_message_sent_time%"
+                hover = "&7Sent time %player_message_sent_time%"
             )
         ),
 
@@ -160,11 +161,11 @@ data class AVMConfig(
 
             @Serializable
             data class Pattern(
-                val contains: List<String> = listOf("--GLOBAL-CHAT--"),
+                val contains: List<String> = listOf("--==GLOBAL-CHAT==--"),
 
-                val startswith: List<String> = listOf("!!", "!globalchat"),
+                val startswith: List<String> = listOf("!!", "!localchat"),
 
-                val endswith: List<String> = listOf("--GLOBAL-CHAT--")
+                val endswith: List<String> = listOf("--==GLOBAL-CHAT==--")
             )
         }
 
