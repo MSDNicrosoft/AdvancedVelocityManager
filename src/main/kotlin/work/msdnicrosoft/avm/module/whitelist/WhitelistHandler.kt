@@ -5,8 +5,8 @@
 
 package work.msdnicrosoft.avm.module.whitelist
 
+// import com.velocitypowered.api.event.player.ServerPreConnectEvent
 import com.velocitypowered.api.event.connection.PreLoginEvent
-import com.velocitypowered.api.event.player.ServerPreConnectEvent
 import com.velocitypowered.api.proxy.InboundConnection
 import io.netty.channel.Channel
 import io.netty.util.AttributeKey
@@ -76,21 +76,22 @@ object WhitelistHandler {
         }
     }
 
-    @SubscribeEvent(postOrder = PostOrder.EARLY)
-    fun onServerPreConnect(event: ServerPreConnectEvent) {
-        // Blocked by other plugins
-        if (event.result.server.isEmpty) return
-
-        // Whitelist is off
-        if (!AVM.config.whitelist.enabled) return
-
-        val serverName = event.result.server.get().serverInfo.name
-        val player = event.player
-        if (!WhitelistManager.isWhitelisted(player.username)) {
-            event.result = ServerPreConnectEvent.ServerResult.denied()
-            player.sendMessage(AVM.config.whitelist.message.formated())
-        }
-    }
+// TODO whitelist for each server
+//    @SubscribeEvent(postOrder = PostOrder.EARLY)
+//    fun onServerPreConnect(event: ServerPreConnectEvent) {
+//        // Blocked by other plugins
+//        if (event.result.server.isEmpty) return
+//
+//        // Whitelist is off
+//        if (!AVM.config.whitelist.enabled) return
+//
+//        val serverName = event.result.server.get().serverInfo.name
+//        val player = event.player
+//        if (!WhitelistManager.isWhitelisted(player.username)) {
+//            event.result = ServerPreConnectEvent.ServerResult.denied()
+//            player.sendMessage(AVM.config.whitelist.message.formated())
+//        }
+//    }
 
     /**
      * Retrieves the username for the player attempting to connect. This method supports Floodgate integration
