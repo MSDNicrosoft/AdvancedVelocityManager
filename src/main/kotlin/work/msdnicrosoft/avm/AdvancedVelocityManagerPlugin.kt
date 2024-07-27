@@ -108,7 +108,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
     fun reload() = runCatching {
         loadConfig(reload = true)
 
-        info("Reloading language files...")
+        info("Reloading language...")
         Language.reload()
         Language.default = config.defaultLang
 

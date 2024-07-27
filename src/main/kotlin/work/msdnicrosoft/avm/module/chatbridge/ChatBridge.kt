@@ -5,7 +5,6 @@ import net.kyori.adventure.text.Component
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
 import kotlin.collections.any
-import kotlin.collections.contains
 import kotlin.collections.forEach
 import kotlin.text.contains
 import kotlin.text.endsWith
@@ -73,13 +72,9 @@ object ChatBridge {
         }
     }
 
-    private fun sendMessage(message: Component, vararg ignoredServers: String) {
-        for (server in AVM.plugin.server.allServers) {
-            if (server.serverInfo.name in ignoredServers) continue
-
-            server.playersConnected.forEach { player ->
-                player.sendMessage(message)
-            }
+    private fun sendMessage(message: Component) = AVM.plugin.server.allServers.forEach { server ->
+        server.playersConnected.forEach { player ->
+            player.sendMessage(message)
         }
     }
 }
