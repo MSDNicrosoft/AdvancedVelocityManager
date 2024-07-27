@@ -44,7 +44,11 @@ data class AVMConfig(
 
     @YamlComment("The Chat Bridge configuration")
     @SerialName("chat-bridge")
-    val chatBridge: ChatBridge = ChatBridge()
+    val chatBridge: ChatBridge = ChatBridge(),
+
+//    @YamlComment("The TabList Synchronization configuration")
+//    @SerialName("tab-sync")
+//    val tabSync: TabSync = TabSync()
 ) {
     @Serializable
     data class Broadcast(
@@ -173,7 +177,7 @@ data class AVMConfig(
         @Serializable
         data class CachePlayers(
             @YamlComment("Whether to enable cache players")
-            var enabled: Boolean = false,
+            var enabled: Boolean = true,
 
             @YamlComment("The max size of the cache")
             @SerialName("max-size")
@@ -371,4 +375,13 @@ data class AVMConfig(
 //            )
 //        }
     }
+
+//    @Serializable
+//    data class TabSync(
+//        val enabled: Boolean = true,
+//        val format: String = "&8[%server_nickname%&8] %player_name%",
+//
+//        @SerialName("show-ping")
+//        val showPing: Boolean  = true
+//    )
 }
