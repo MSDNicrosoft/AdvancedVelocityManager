@@ -55,6 +55,8 @@ whitelist management which is compatible with the [Floodgate](https://geysermc.o
 - `avm.command.whitelist.on` - Turn on the whitelist
 - `avm.command.whitelist.off` - Turn off the whitelist
 - `avm.command.whitelist.status` - Show whitelist status
+- `avm.sendall.bypass` - Bypass `/sendall` command
+- `avm.kickall.bypass` - Bypass `/kickall` command
 
 ## Configuration File
 

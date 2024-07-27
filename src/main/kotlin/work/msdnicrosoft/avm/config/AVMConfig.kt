@@ -122,14 +122,14 @@ data class AVMConfig(
     ) {
         @Serializable
         data class SendAll(
-            @YamlComment("Allow players to bypass the send")
+            @YamlComment("Allow players who have permission avm.kickall.bypass to bypass the send")
             @SerialName("allow-bypass")
             val allowBypass: Boolean = true
         )
 
         @Serializable
         data class KickAll(
-            @YamlComment("Allow players to bypass the kick")
+            @YamlComment("Allow players who have permission avm.kickall.bypass to bypass the kick")
             @SerialName("allow-bypass")
             val allowBypass: Boolean = true
         )
