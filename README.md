@@ -17,8 +17,8 @@ whitelist management which is compatible with the [Floodgate](https://geysermc.o
 
 - **Server-to-Server Send (`/send`)**: Send individual players from one server to another.
 - **Bulk Server-to-Server Send (`/sendall`)**: Send all players from a specified server to another.
-- **Player Kick (`/kick`)**: Allows admins to kick specified players with an optional reason.
-- **Bulk Kick (`/kickall`)**: Allows admins to kick all players from a specified server with an optional reason.
+- **Player Kick (`/kick`)**: Kick specified players with an optional reason.
+- **Bulk Kick (`/kickall`)**: Kick all players from a specified server with an optional reason.
 - **Whitelist Management (`/avmwl`)**: Add players to the whitelist using UUIDs or usernames, and compatible with
   [Floodgate](https://geysermc.org/wiki/floodgate/)
 - **Custom Broadcasts**: Customize messages for player joins, leaves, and server switches.
@@ -37,6 +37,24 @@ whitelist management which is compatible with the [Floodgate](https://geysermc.o
 - **Bulk Send Between Servers**: Use the `/sendall <source server> <target server>` command.
 - **Player Kick**: Use the `/kick <player> [reason]` command.
 - **Bulk Kick**: Use the `/kickall <server> [reason]` command to kick all players from a specified server.
+
+### Permissions
+
+- `avm.command.info` - Show plugin info
+- `avm.command.reload` - Give up data in memory, and reload config, language and whitelist from file
+- `avm.command.confirm` - Confirm an action
+- `avm.command.kick` - Kick specified players
+- `avm.command.send` - Send individual players from one server to another
+- `avm.command.sendall` - Send all players from a specified server to another
+- `avm.command.kickall` - Kick all players from a specified server
+- `avm.command.whitelist.list` - Show whitelist
+- `avm.command.whitelist.add` - Add a player to whitelist by username or UUID
+- `avm.command.whitelist.remove` - Remove a player from whitelist
+- `avm.command.whitelist.clear` - Clear the whitelist
+- `avm.command.whitelist.find` - Find player(s) in whitelist by keywords
+- `avm.command.whitelist.on` - Turn on the whitelist
+- `avm.command.whitelist.off` - Turn off the whitelist
+- `avm.command.whitelist.status` - Show whitelist status
 
 ## Configuration File
 

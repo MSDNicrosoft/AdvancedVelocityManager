@@ -15,8 +15,8 @@ AdvancedVelocityManager 是一款为 Velocity 端设计的 Minecraft 服务器�
 
 - **跨服务器发送 (`/send`)**：将单个玩家从一个服务器发送到另一个服务器。
 - **批量跨服务器发送 (`/sendall`)**：将指定服务器的所有玩家发送到另一个服务器。
-- **玩家踢出 (`/kick`)**：允许管理员踢出指定玩家，并可选择提供理由。
-- **批量踢出 (`/kickall`)**：允许管理员从指定服务器踢出所有玩家，并可选择提供理由。
+- **玩家踢出 (`/kick`)**：踢出指定玩家，并可选择提供理由。
+- **批量踢出 (`/kickall`)**：从指定服务器踢出所有玩家，并可选择提供理由。
 - **白名单管理 (`/avmwl`)**：支持通过 UUID 和用户名添加玩家到白名单，并**与 [Floodgate](https://geysermc.org/wiki/floodgate/) 兼容**。
 - **自定义广播**：自定义玩家加入、离开和服务器切换的广播消息。
 
@@ -34,6 +34,24 @@ AdvancedVelocityManager 是一款为 Velocity 端设计的 Minecraft 服务器�
 - **批量跨服务器发送**：使用 `/sendall <源服务器> <目标服务器>` 命令。
 - **玩家踢出**：使用 `/kick <玩家名> [理由]` 命令。
 - **批量踢出**：使用 `/kickall <服务器> [理由]` 命令从指定服务器踢出所有玩家。
+- 
+### Permissions
+
+- `avm.command.info` - 查看插件信息
+- `avm.command.reload` - 放弃内存中的数据，并从文件中重载配置、语言和白名单
+- `avm.command.confirm` - 确认操作
+- `avm.command.kick` - 踢出指定玩家
+- `avm.command.send` - 将单个玩家从一个服务器发送到另一个服务器
+- `avm.command.sendall` - 将指定服务器的所有玩家发送到另一个服务器
+- `avm.command.kickall` - 从指定服务器踢出所有玩家
+- `avm.command.whitelist.list` - 查看白名单
+- `avm.command.whitelist.add` - 通过用户名或 UUID 将玩家添加到白名单
+- `avm.command.whitelist.remove` - 从白名单中移除玩家
+- `avm.command.whitelist.clear` - 清空白名单
+- `avm.command.whitelist.find` - 通过关键词在白名单内查找玩家
+- `avm.command.whitelist.on` - 开启白名单
+- `avm.command.whitelist.off` - 关闭白名单
+- `avm.command.whitelist.status` - 查看白名单状态
 
 ## 配置文件
 
