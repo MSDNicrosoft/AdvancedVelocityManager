@@ -78,6 +78,8 @@ We are grateful for the contributions of these projects to the open-source commu
 - [ ] `/tp` Teleport across servers
 - [ ] TabList Synchronization
 - [ ] More advanced chat interaction
+- [ ] Import data from lls-manager
+- [ ] Offline whitelist support
 
 ## License and Copyright
 

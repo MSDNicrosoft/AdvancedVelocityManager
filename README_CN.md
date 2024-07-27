@@ -34,7 +34,7 @@ AdvancedVelocityManager 是一款为 Velocity 端设计的 Minecraft 服务器�
 - **批量跨服务器发送**：使用 `/sendall <源服务器> <目标服务器>` 命令。
 - **玩家踢出**：使用 `/kick <玩家名> [理由]` 命令。
 - **批量踢出**：使用 `/kickall <服务器> [理由]` 命令从指定服务器踢出所有玩家。
-- 
+
 ### 权限
 
 - `avm.command.info` - 查看插件信息
@@ -73,6 +73,8 @@ AdvancedVelocityManager 的开发受到其他开源项目如 [cancellable-chat](
 - [ ] `/tp` 跨服传送
 - [ ] TabList 同步
 - [ ] 更高级的聊天交互
+- [ ] 从 lls-manager 导入数据
+- [ ] 离线模式白名单
 
 ## 许可与版权
 
