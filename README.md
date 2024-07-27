@@ -19,7 +19,7 @@ whitelist management which is compatible with the [Floodgate](https://geysermc.o
 - **Bulk Server-to-Server Send (`/sendall`)**: Send all players from a specified server to another.
 - **Player Kick (`/kick`)**: Kick specified players with an optional reason.
 - **Bulk Kick (`/kickall`)**: Kick all players from a specified server with an optional reason.
-- **Whitelist Management (`/avmwl`)**: Add players to the whitelist using UUIDs or usernames, and compatible with
+- **Whitelist Management (`/avmwl`)**: Add/Remove whitelist of players using UUIDs or usernames, and compatible with
   [Floodgate](https://geysermc.org/wiki/floodgate/)
 - **Custom Broadcasts**: Customize messages for player joins, leaves, and server switches.
 

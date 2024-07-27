@@ -17,7 +17,7 @@ AdvancedVelocityManager 是一款为 Velocity 端设计的 Minecraft 服务器�
 - **批量跨服务器发送 (`/sendall`)**：将指定服务器的所有玩家发送到另一个服务器。
 - **玩家踢出 (`/kick`)**：踢出指定玩家，并可选择提供理由。
 - **批量踢出 (`/kickall`)**：从指定服务器踢出所有玩家，并可选择提供理由。
-- **白名单管理 (`/avmwl`)**：支持通过 UUID 和用户名添加玩家到白名单，并**与 [Floodgate](https://geysermc.org/wiki/floodgate/) 兼容**。
+- **白名单管理 (`/avmwl`)**：支持通过 UUID 和用户名添加/移除玩家白名单，并**与 [Floodgate](https://geysermc.org/wiki/floodgate/) 兼容**。
 - **自定义广播**：自定义玩家加入、离开和服务器切换的广播消息。
 
 ## 安装指南
