@@ -1,7 +1,7 @@
 <div align="right">
   English
   |
-  <a title="简体中文" href="./README.md" >简体中文</a>
+  <a title="简体中文" href="./README_CN.md" >简体中文</a>
 </div>
 
 # AdvancedVelocityManager
