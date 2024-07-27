@@ -74,7 +74,7 @@ command-kickall-executor:
 command-avm-reload-success: "&a重载成功! &8耗费: {0} ms"
 command-avm-reload-failure: "&c重载失败! 请查看控制台日志"
 
-command-avmwl-add-success: "&2已将 {0} {1} 添加到白名单"
+command-avmwl-add-success: "&2已将{0} {1} 添加到白名单"
 command-avmwl-add-request-not-found: "&d此玩家在 minecraft.net 上不存在"
 command-avmwl-add-request-failed: "&c在 minecraft.net 上查询玩家时出错"
 command-avmwl-add-already-exists: "&4此玩家已经在白名单中"
@@ -96,7 +96,7 @@ command-avmwl-list-empty: "&7(在此页的)白名单为空"
 command-avmwl-list-header: "&7白名单中有 {0} 名玩家"
 command-avmwl-list-footer:
   - type: JSON
-    text: "&8[[&6<-]&8] &r&{0}&b/&b{1} &8[[&6->]&8]"  # prev total
+    text: "&8[[&6<-]&8] &b{0}&b/&b{1} &8[[&6->]&8]"  # prev total
     args:
       - hover: "&e点击转到上一页"
         command: "/avmwl list {2}"  # prev/min
@@ -107,22 +107,22 @@ command-avmwl-find-empty: "&d无法(在此页)找到相关玩家"
 command-avmwl-find-header: "&7已找到相关玩家:"
 command-avmwl-find-footer:
   - type: JSON
-    text: "&8[[&6<-]&8] &r&b{0}&b/&b{1} &8[[&6->]&8]"  # prev total
+    text: "&8[[&6<-]&8] &b{0}&b/&b{1} &8[[&6->]&8]"  # prev total
     args:
       - hover: "&e点击转到上一页"
         command: "/avmwl find {2} {3}"  # prev/min
       - hover: "&e点击转到下一页"
         command: "/avmwl find {2} {4}"  # next/total
 
-command-avmwl-state: "&7白名单已 {0}"
+command-avmwl-state: "&7白名单已{0}"
 command-avmwl-status-cache: "&7当前补全缓存: &r{0}/{1}"
 
-command-avm-info: |-
-  &7插件名: &b{0}
-  &7插件版本: &f{1}
-  &7服务端: &3{2}
+command-avm-info:
+  - "&7插件名: &b{0}"
+  - "&7插件版本: &f{1}"
+  - "&7服务端: &3{2}"
 
-command-avm-reload-description: "&7从文件中重载配置、语言和白名单"
+command-avm-reload-description: "&7放弃内存中的数据，并从文件中重载配置、语言和白名单"
 command-avm-info-description: "&7查看插件信息"
 command-avm-confirm-description: "&7确认操作"
 command-avmwl-list-description: "&7查看白名单"

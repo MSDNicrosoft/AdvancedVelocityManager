@@ -56,6 +56,11 @@ object KickAllCommand {
             return
         }
 
+        if (server.playersConnected.isEmpty()) {
+            sender.sendLang("general-empty-server")
+            return
+        }
+
         val (bypassed, playerToKick) = server.playersConnected
             .partition { it.hasPermission("avm.kickall.bypass") }
 

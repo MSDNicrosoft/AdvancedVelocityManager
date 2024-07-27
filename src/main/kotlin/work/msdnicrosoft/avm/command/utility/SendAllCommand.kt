@@ -62,6 +62,11 @@ object SendAllCommand {
         }
         val serverNickname = ConfigUtil.getServerNickname(serverName)
 
+        if (server.playersConnected.isEmpty()) {
+            sender.sendLang("general-empty-server")
+            return
+        }
+
         val (bypassed, playerToSend) = AVM.server.allPlayers
             .filterNot { it.currentServer.get().serverInfo.name == serverName }
             .partition { it.hasPermission("avm.sendall.bypass") }
