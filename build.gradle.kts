@@ -9,7 +9,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt").version(detektVersion)
 //    id("io.github.detekt.gradle.compiler-plugin").version(detektVersion)
 
-    val taboolibVersion = "2.0.12"
+    val taboolibVersion = "2.0.13"
     id("io.izzel.taboolib").version(taboolibVersion)
 }
 
@@ -24,24 +24,35 @@ repositories {
             includeGroup("com.velocitypowered")
         }
     }
-    maven("https://repo.opencollab.dev/main/" )
-    maven("https://jitpack.io")
+    maven {
+        url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+        content {
+            includeGroup("dev.vankka")
+        }
+    }
+    maven("https://repo.opencollab.dev/main/")
     mavenCentral()
 }
 
 taboolib {
     description {
         name("AdvancedVelocityManager")
+        desc("AdvancedVelocityManager is a modern and advanced Velocity plugin")
+        links {
+            name("homepage").url("https://github.com/MSDNicrosoft/AdvancedVelocityManager")
+        }
         contributors {
             name("MSDNicrosoft")
         }
     }
     env {
-        install(UNIVERSAL, VELOCITY)
+        install(CONFIGURATION, LANG, CHAT)
+        install(VELOCITY)
     }
     version { taboolib = "6.1.2-beta11" }
     relocate("kotlinx.serialization", "avm.kotlinx.serialization")
     relocate("dev.vankka.enhancedlegacytext", "avm.dev.vankka.enhancedlegacytext")
+    relocate("com.charleskorn.kaml", "avm.com.charleskorn.kaml")
 }
 
 dependencies {
@@ -64,10 +75,14 @@ dependencies {
     taboo("com.charleskorn.kaml:kaml:$kamlVersion")
 
     val kotlinxSerializationVersion = "1.7.1"
-    taboo("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
+    taboo("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion") {
+        isTransitive = false
+    }
 
-    val enhancedLegacyTextVersion = "1.0.0"
-    taboo("dev.vankka:enhancedlegacytext:$enhancedLegacyTextVersion")
+    val enhancedLegacyTextVersion = "2.0.0-SNAPSHOT"
+    taboo("dev.vankka:enhancedlegacytext:$enhancedLegacyTextVersion") {
+        isTransitive = false
+    }
 
     val asmVersion = "9.7"
     taboo("org.ow2.asm:asm:$asmVersion")
