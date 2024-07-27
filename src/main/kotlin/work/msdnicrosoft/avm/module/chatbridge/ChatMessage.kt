@@ -94,7 +94,7 @@ class ChatMessage(val event: PlayerChatEvent) {
      */
     private fun createHoverEvent(format: AVMConfig.ChatBridge.Format): HoverEvent<Component?>? =
         if (!format.hover.isNullOrEmpty()) {
-            HoverEvent.showText(format.hover.deserialize())
+            HoverEvent.showText(format.hover.joinToString("\n").deserialize())
         } else {
             null
         }

@@ -212,29 +212,29 @@ data class AVMConfig(
         val chatFormat: List<Format> = listOf(
             Format(
                 text = "&8[%server_nickname%&8]",
-                hover = """
-                &7Server %server_name%
-                &r
-                &7▪ Online: &a%server_online_players%
-                &7▪ Version：&6%server_version%
-                &r
-                &6▶ &eClick to connect to this server
-                """.trimIndent(),
+                hover = listOf(
+                    "&7Server %server_name%",
+                    "&r",
+                    "&7▪ Online: &a%server_online_players%",
+                    "&7▪ Version：&6%server_version%",
+                    "&r",
+                    "&6▶ &eClick to connect to this server"
+                ),
                 command = "/server %server_name%"
             ),
             Format(
                 text = "<&7%player_name%&r>",
-                hover = """
-                &7▪ Ping: &3%player_ping% ms
-                &7▪ UUID: &3%player_uuid%
-                """.trimIndent(),
-//                &6▶ &e点击向该玩家发送私信
-//                &r
+                hover = listOf(
+                    "&7▪ Ping: &3%player_ping% ms",
+                    "&7▪ UUID: &3%player_uuid%",
+//                    "&r",
+//                    "&6▶ &e点击向该玩家发送私信",
+                ),
 //                suggest = "/msg %player_name% " TODO /msg
             ),
             Format(
                 text = " &r%player_message%",
-                hover = "&7Sent time %player_message_sent_time%"
+                hover = listOf("&7Sent time %player_message_sent_time%")
             )
         ),
 
@@ -285,7 +285,7 @@ data class AVMConfig(
         @Serializable
         data class Format(
             val text: String,
-            val hover: String? = null,
+            val hover: List<String>? = null,
             val command: String? = null,
             val suggest: String? = null,
             val url: String? = null,
