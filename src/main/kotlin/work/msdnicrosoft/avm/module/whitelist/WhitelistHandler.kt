@@ -67,7 +67,7 @@ object WhitelistHandler {
         if (!event.result.isAllowed) return
 
         // Whitelist is off
-        if (!AVM.config.whitelist.enabled) return
+        if (WhitelistManager.state == WhitelistManager.WhitelistState.OFF) return
 
         val username = getUsername(event.username, event.connection)
         if (!WhitelistManager.isWhitelisted(username)) {

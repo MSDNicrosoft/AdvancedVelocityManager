@@ -4,6 +4,7 @@ import com.charleskorn.kaml.Yaml
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.util.UuidUtils
 import kotlinx.serialization.serializer
+import net.kyori.adventure.text.Component
 import java.util.UUID
 
 object Extensions {
@@ -77,7 +78,7 @@ object Extensions {
     inline fun <reified T> Yaml.encodeToString(value: T): String =
         encodeToString(serializersModule.serializer(), value)
 
-    fun String.formated() = ComponentUtil.serializer.parse(this)
+    fun String.formated(): Component = ComponentUtil.serializer.parse(this)!!
 
     fun Player.sendMessage(message: String) = sendMessage(message.formated())
 }

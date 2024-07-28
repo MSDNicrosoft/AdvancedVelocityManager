@@ -79,6 +79,7 @@ command-avmwl-add-success: "&2Added {0} {1} to whitelist"
 command-avmwl-add-request-not-found: "&dThe player does not exist on minecraft.net"
 command-avmwl-add-request-failed: "&cAn error occurred while querying the player on minecraft.net"
 command-avmwl-add-already-exists: "&4The player has been already in whitelist"
+command-avmwl-add-uuid-unsupported: "&dAdding a whitelist with UUID in offline mode is not supported"
 
 command-avmwl-remove-success: "&2Removed {0} {1} from whitelist"
 command-avmwl-remove-not-found: "&dThe player is not in whitelist"
@@ -121,7 +122,6 @@ command-avmwl-status-cache: "&7Current Completion Cache: &r{0}/{1}"
 command-avm-info:
   - "&7Plugin Name: &b{0}"
   - "&7Plugin Version: &f{1}"
-  - "&7Plugin Authors & Contributors"
   - "&7Server: &3{2}"
 
 command-avm-reload-description: "&7Give up data in memory, and reload config, language and whitelist from file"

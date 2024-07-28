@@ -58,6 +58,11 @@ object WhitelistCommand {
                 val player = context["player"]
                 val isUuid = player.isUuid()
 
+                if (isUuid && !WhitelistManager.serverIsOnlineMode) {
+                    sender.sendLang("command-avmwl-add-uuid-unsupported")
+                    return@execute
+                }
+
                 val result = if (isUuid) {
                     WhitelistManager.add(player.toUuid())
                 } else {

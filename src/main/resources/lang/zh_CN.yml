@@ -78,6 +78,7 @@ command-avmwl-add-success: "&2已将{0} {1} 添加到白名单"
 command-avmwl-add-request-not-found: "&d此玩家在 minecraft.net 上不存在"
 command-avmwl-add-request-failed: "&c在 minecraft.net 上查询玩家时出错"
 command-avmwl-add-already-exists: "&4此玩家已经在白名单中"
+command-avmwl-add-uuid-unsupported: "&d不支持在离线模式下通过 UUID 添加白名单"
 
 command-avmwl-remove-success: "&2已将 {0} {1} 从白名单中移除"
 command-avmwl-remove-not-found: "&d此玩家不在白名单中"

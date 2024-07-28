@@ -20,7 +20,7 @@ data class AVMConfig(
     @YamlComment(
         "Mapping of the server names (configured in `velocity.toml`) and nicknames",
         "",
-        "Format: server-name: serverNickname",
+        "Format: server-name: server-nickname",
         "Example:",
         "   survival: \"&aSurvival\"",
         "   minigames: \"&eMinigames\""

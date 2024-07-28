@@ -1,5 +1,6 @@
 package work.msdnicrosoft.avm.module.whitelist
 
+import com.velocitypowered.api.util.UuidUtils
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import taboolib.common.platform.function.*
@@ -99,7 +100,15 @@ object WhitelistManager {
     /**
      * The file where the whitelist is stored.
      */
-    private val file by lazy { getDataFolder().resolve("whitelist.json") }
+    private val file by lazy {
+        getDataFolder().resolve(
+            if (AVM.plugin.server.configuration.isOnlineMode) {
+                "whitelist.json"
+            } else {
+                "whitelist_offline.json"
+            }
+        )
+    }
 
     private lateinit var whitelist: MutableList<Player>
 
@@ -139,13 +148,16 @@ object WhitelistManager {
     val maxPage: Int
         get() = ceil(whitelistSize.toInt() / 10F).toInt()
 
+    val serverIsOnlineMode: Boolean
+        get() = AVM.plugin.server.configuration.isOnlineMode
+
     /**
      * Executes the given block of code while holding a lock on the `lock` object.
      *
      * @param block The block of code to execute.
      * @return The result of the block of code.
      */
-    fun <T> withLock(block: () -> T) = synchronized(lock) { block() }
+    private inline fun <T> withLock(block: () -> T) = synchronized(lock) { block() }
 
     /**
      * Called when the plugin is enabled.
@@ -218,7 +230,7 @@ object WhitelistManager {
     fun add(username: String) = when (val uuid = getUuid(username)) {
         null -> AddResult.API_LOOKUP_REQUEST_FAILED
         NOT_FOUND_RESULT -> AddResult.API_LOOKUP_NOT_FOUND
-        else -> add(Player(username, uuid.replace("-", "")))
+        else -> add(Player(username, uuid))
     }
 
     /**
@@ -322,6 +334,8 @@ object WhitelistManager {
      * @return The username associated with the UUID, or null if not found.
      */
     private fun getUsername(uuid: UUID): String? {
+        if (!serverIsOnlineMode) return null
+
         val request = HttpRequest.newBuilder().uri(
             URI.create("${AVM.config.whitelist.queryApi.profile.trimEnd('/')}/${uuid.toUndashedString()}")
         ).build()
@@ -351,6 +365,10 @@ object WhitelistManager {
      * @return The UUID associated with the username, or null if not found.
      */
     private fun getUuid(username: String): String? {
+        if (!serverIsOnlineMode) {
+            return UuidUtils.generateOfflinePlayerUuid(username).toUndashedString()
+        }
+
         val request = HttpRequest.newBuilder().uri(
             URI.create("${AVM.config.whitelist.queryApi.uuid.trimEnd('/')}/$username")
         ).build()
