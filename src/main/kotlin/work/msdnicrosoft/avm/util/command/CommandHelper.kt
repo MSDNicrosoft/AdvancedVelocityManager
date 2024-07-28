@@ -17,7 +17,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.self
 import work.msdnicrosoft.avm.annotations.ShouldShow
 import kotlin.reflect.KClass
 
-fun <T : Any> CommandComponent.buildHelper(commandRoot: KClass<T>, checkPermission: Boolean = true) {
+fun <T : Any> CommandComponent.buildHelper(commandRoot: KClass<T>, checkPermission: Boolean = false) {
     execute<ProxyCommandSender> { sender, _, _ ->
         val rootJavaClass = commandRoot.java
         val rootCommand = rootJavaClass.getAnnotation(CommandHeader::class.java)
