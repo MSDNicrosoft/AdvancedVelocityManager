@@ -147,7 +147,7 @@ class VelocityPlayer(val player: Player) : ProxyPlayer {
         set(_) = error("Unsupported")
 
     override val locale: String
-        get() = player.effectiveLocale?.displayName ?: Locale.US.displayName
+        get() = player.effectiveLocale?.toString() ?: Locale.ENGLISH.toString()
 
     override val location: Location
         get() = error("Unsupported")
