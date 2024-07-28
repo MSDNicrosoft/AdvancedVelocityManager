@@ -1,6 +1,7 @@
 package work.msdnicrosoft.avm.module.chatbridge
 
 import com.velocitypowered.api.event.player.PlayerChatEvent
+import com.velocitypowered.api.proxy.server.ServerPing
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.event.ClickEvent
@@ -15,6 +16,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 /**
  * Represents a chat message with various placeholders to be replaced.
@@ -23,7 +25,14 @@ import java.util.concurrent.TimeUnit
 class ChatMessage(val event: PlayerChatEvent) {
 
     private val server = event.player.currentServer.get()
-    private val serverPing = server.server.ping().get(20, TimeUnit.MILLISECONDS)
+    private val serverPing = try {
+        server.server.ping().get(20, TimeUnit.MILLISECONDS)
+    } catch (_: TimeoutException) {
+        ServerPing.builder()
+            .version(ServerPing.Version(-1, "Unknown"))
+            .description(Component.text("Unknown"))
+            .build()
+    }
     private val serverName = server.serverInfo.name
     private val serverNickname = ConfigUtil.getServerNickname(serverName)
     private val serverOnlinePlayers = server.server.playersConnected.size.toString()
