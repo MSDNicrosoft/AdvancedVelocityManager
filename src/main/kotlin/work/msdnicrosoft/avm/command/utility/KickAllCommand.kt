@@ -21,13 +21,13 @@ object KickAllCommand {
     @CommandBody
     val main = mainCommand {
         dynamic("server") {
+            suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
+                AVM.server.allServers.map { it.serverInfo.name }
+            }
             dynamic("reason") {
                 execute<ProxyCommandSender> { sender, context, _ ->
                     kickAllPlayers(sender, context["server"], context["reason"])
                 }
-            }
-            suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                AVM.server.allServers.map { it.serverInfo.name }
             }
             execute<ProxyCommandSender> { sender, context, _ ->
                 kickAllPlayers(sender, context["server"], sender.asLangText("kick-target", sender.name))
@@ -37,7 +37,7 @@ object KickAllCommand {
             submitAsync(now = true) {
                 ProxyServerUtil.kickPlayers(
                     sender.asLangText("command-kick-target", sender.name),
-                    AVM.server.allPlayers.filterNot { it.hasPermission("avm.kickall.bypass") }
+                    AVM.server.allPlayers.filter { !it.hasPermission("avm.kickall.bypass") }
                 )
             }
         }

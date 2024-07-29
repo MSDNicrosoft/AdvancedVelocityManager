@@ -28,6 +28,9 @@ object SendCommand {
                 AVM.server.allPlayers.map { it.username }
             }
             dynamic("server") {
+                suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
+                    AVM.server.allServers.map { it.serverInfo.name }
+                }
                 dynamic("reason") {
                     execute<ProxyCommandSender> { sender, context, _ ->
                         sendPlayer(
@@ -37,9 +40,6 @@ object SendCommand {
                             context["reason"]
                         )
                     }
-                }
-                suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                    AVM.server.allServers.map { it.serverInfo.name }
                 }
                 execute<ProxyCommandSender> { sender, context, _ ->
                     val player = context.player("player")

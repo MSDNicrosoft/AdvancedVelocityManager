@@ -23,13 +23,13 @@ object SendAllCommand {
     @CommandBody
     val main = mainCommand {
         dynamic("server") {
+            suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
+                AVM.server.allServers.map { it.serverInfo.name }
+            }
             dynamic("reason") {
                 execute<ProxyCommandSender> { sender, context, _ ->
                     sendAllPlayers(sender, context["server"], context["reason"])
                 }
-            }
-            suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                AVM.server.allServers.map { it.serverInfo.name }
             }
             execute<ProxyCommandSender> { sender, context, _ ->
                 sendAllPlayers(
@@ -68,7 +68,7 @@ object SendAllCommand {
         }
 
         val (bypassed, playerToSend) = AVM.server.allPlayers
-            .filterNot { it.currentServer.get().serverInfo.name == serverName }
+            .filter { it.currentServer.get().serverInfo.name != serverName }
             .partition { it.hasPermission("avm.sendall.bypass") }
 
         val failedPlayers = buildList {

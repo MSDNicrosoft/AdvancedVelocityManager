@@ -21,13 +21,13 @@ object KickCommand {
     @CommandBody
     val main = mainCommand {
         dynamic("player") {
+            suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
+                AVM.server.allPlayers.map { it.username }
+            }
             dynamic("reason") {
                 execute<ProxyCommandSender> { sender, context, _ ->
                     kickPlayer(sender, context["player"], context["reason"])
                 }
-            }
-            suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                AVM.server.allPlayers.map { it.username }
             }
             execute<ProxyCommandSender> { sender, context, _ ->
                 kickPlayer(sender, context["player"], sender.asLangText("command-kick-target", sender.name))
