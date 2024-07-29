@@ -71,7 +71,7 @@ dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
 
-    val kamlVersion = "0.60.0"
+    val kamlVersion = "0.61.0"
     taboo("com.charleskorn.kaml:kaml:$kamlVersion")
 
     val kotlinxSerializationVersion = "1.7.1"
