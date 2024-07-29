@@ -8,6 +8,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AVMConfig(
     @YamlComment(
+        "The version of configuration",
+        "",
+        "DO NOT CHANGE THIS, OTHERWISE IT MAY CAUSE CRITICAL PROBLEMS"
+    )
+    val version: Int = 1,
+
+    @YamlComment(
         "The language for plugin to use",
         "The language name must be the part file name of files in the `lang` folder",
         "Example:",
@@ -23,14 +30,14 @@ data class AVMConfig(
         "Format: server-name: server-nickname",
         "Example:",
         "   survival: \"&aSurvival\"",
+        "   factions: \"&aFactions\"",
         "   minigames: \"&eMinigames\""
     )
     @SerialName("server-mapping")
     val serverMapping: Map<String, String> = mapOf(
         "lobby" to "&fLobby",
-        "survival" to "&aSurvival",
-        "minigames" to "&eMinigames",
-        "creative" to "&6Creative",
+        "factions" to "&aFactions",
+        "minigames" to "&eMinigames"
     ),
 
     @YamlComment("The event broadcast configuration")

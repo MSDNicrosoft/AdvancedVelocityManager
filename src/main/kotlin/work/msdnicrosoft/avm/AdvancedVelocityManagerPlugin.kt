@@ -66,6 +66,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
             try {
                 info("${if (reload) "Reloading" else "Loading"} config...")
                 withLock { config = yaml.decodeFromString<AVMConfig>(configFile.readText()) }
+                // TODO Migrate config
                 checkConfig()
             } catch (e: Exception) {
                 error("Failed to load config: ${e.message}")
