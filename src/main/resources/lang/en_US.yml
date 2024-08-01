@@ -98,7 +98,7 @@ command-avmwl-list-empty: "&7The whitelist is empty (in this page)"
 command-avmwl-list-header: "&7There are {0} player(s) in the whitelist"
 command-avmwl-list-footer:
   - type: JSON
-    text: "&8[[&6<-]&8] &b&{0}&b/&b{1} &8[[&6->]&8]"  # prev total
+    text: "&8\\[[&6<-]&8\\] &b&{0}&b/&b{1} &8\\[[&6->]&8\\]"  # prev total
     args:
       - hover: "&eClick turn to previous page"
         command: "/avmwl list {2}"  # prev/min
@@ -109,7 +109,7 @@ command-avmwl-find-empty: "&dCould not find relevant player(s) in this page"
 command-avmwl-find-header: "&7Found relevant player(s):"
 command-avmwl-find-footer:
   - type: JSON
-    text: "&8[[&6<-]&8] &b&b{0}&b/&b{1} &8[[&6->]&8]"  # prev total
+    text: "&8\\[[&6<-]&8\\] &b&b{0}&b/&b{1} &8\\[[&6->]&8\\]"  # prev total
     args:
       - hover: "&eClick to turn to previous page"
         command: "/avmwl find {2} {3}"  # prev/min
@@ -124,7 +124,7 @@ command-avm-info:
   - "&7Plugin Version: &f{1}"
   - "&7Server: &3{2}"
 
-command-avm-reload-description: "&7Give up data in memory, and reload config, language and whitelist from file"
+command-avm-reload-description: "&7Give up data in memory, then reload config, language and whitelist from file"
 command-avm-info-description: "&7Show plugin info"
 command-avm-confirm-description: "&7Confirm an action"
 command-avmwl-list-description: "&7Show whitelist"

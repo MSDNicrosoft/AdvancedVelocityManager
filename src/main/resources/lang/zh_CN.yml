@@ -80,7 +80,7 @@ command-avmwl-add-request-failed: "&c在 minecraft.net 上查询玩家时出错"
 command-avmwl-add-already-exists: "&4此玩家已经在白名单中"
 command-avmwl-add-uuid-unsupported: "&d不支持在离线模式下通过 UUID 添加白名单"
 
-command-avmwl-remove-success: "&2已将 {0} {1} 从白名单中移除"
+command-avmwl-remove-success: "&2已将{0} {1} 从白名单中移除"
 command-avmwl-remove-not-found: "&d此玩家不在白名单中"
 
 command-avmwl-clear-need-confirm:
@@ -97,7 +97,7 @@ command-avmwl-list-empty: "&7(在此页的)白名单为空"
 command-avmwl-list-header: "&7白名单中有 {0} 名玩家"
 command-avmwl-list-footer:
   - type: JSON
-    text: "&8[[&6<-]&8] &b{0}&b/&b{1} &8[[&6->]&8]"  # prev total
+    text: "&8\\[[&6<-]&8\\] &b{0}&b/&b{1} &8\\[[&6->]&8\\]"  # prev total
     args:
       - hover: "&e点击转到上一页"
         command: "/avmwl list {2}"  # prev/min
@@ -108,7 +108,7 @@ command-avmwl-find-empty: "&d无法(在此页)找到相关玩家"
 command-avmwl-find-header: "&7已找到相关玩家:"
 command-avmwl-find-footer:
   - type: JSON
-    text: "&8[[&6<-]&8] &b{0}&b/&b{1} &8[[&6->]&8]"  # prev total
+    text: "&8\\[[&6<-]&8\\] &b{0}&b/&b{1} &8\\[[&6->]&8\\]"  # prev total
     args:
       - hover: "&e点击转到上一页"
         command: "/avmwl find {2} {3}"  # prev/min
@@ -123,7 +123,7 @@ command-avm-info:
   - "&7插件版本: &f{1}"
   - "&7服务端: &3{2}"
 
-command-avm-reload-description: "&7放弃内存中的数据，并从文件中重载配置、语言和白名单"
+command-avm-reload-description: "&7放弃内存中的数据，然后从文件中重载配置、语言和白名单"
 command-avm-info-description: "&7查看插件信息"
 command-avm-confirm-description: "&7确认操作"
 command-avmwl-list-description: "&7查看白名单"
