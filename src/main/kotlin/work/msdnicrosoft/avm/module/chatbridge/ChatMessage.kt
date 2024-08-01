@@ -4,11 +4,9 @@ import com.velocitypowered.api.event.player.PlayerChatEvent
 import com.velocitypowered.api.proxy.server.ServerPing
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
-import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
-import taboolib.common.platform.function.warning
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.config
-import work.msdnicrosoft.avm.config.AVMConfig
+import work.msdnicrosoft.avm.util.ComponentUtil.createClickEvent
+import work.msdnicrosoft.avm.util.ComponentUtil.createHoverEvent
 import work.msdnicrosoft.avm.util.ComponentUtil.serializer
 import work.msdnicrosoft.avm.util.ConfigUtil
 import work.msdnicrosoft.avm.util.Extensions.replace
@@ -81,71 +79,15 @@ class ChatMessage(val event: PlayerChatEvent) {
     )
 
     /**
-     * Create a [ClickEvent] based on the provided format.
-     * @param format The format to create the [ClickEvent] from.
-     * @return The [ClickEvent] created based on the format.
-     */
-    private fun createClickEvent(format: AVMConfig.ChatBridge.Format): ClickEvent? {
-        validateFormat(format)
-        return when {
-            !format.command.isNullOrEmpty() -> ClickEvent.runCommand(format.command.replacePlaceholders())
-            !format.suggest.isNullOrEmpty() -> ClickEvent.suggestCommand(format.suggest.replacePlaceholders())
-            !format.url.isNullOrEmpty() -> ClickEvent.openUrl(format.url.replacePlaceholders())
-            !format.clipboard.isNullOrEmpty() -> ClickEvent.copyToClipboard(format.clipboard.replacePlaceholders())
-            else -> null
-        }
-    }
-
-    /**
-     * Create a [HoverEvent] based on the provided format.
-     * @param format The format to create the [HoverEvent] from.
-     * @return The [HoverEvent] created based on the format.
-     */
-    private fun createHoverEvent(format: AVMConfig.ChatBridge.Format): HoverEvent<Component?>? =
-        if (!format.hover.isNullOrEmpty()) {
-            HoverEvent.showText(format.hover.joinToString("\n").deserialize())
-        } else {
-            null
-        }
-
-    /**
      * Build the final chat message with all specified formats and events.
      * @return The built chat message with all formats and events applied.
      */
     fun build() = Component.join(
         JoinConfiguration.noSeparators(),
-        buildList<Component> {
-            config.chatBridge.chatFormat.forEach { format ->
-                add(
-                    format.text.deserialize().let { baseComponent ->
-                        var component = baseComponent
-                        component = component.clickEvent(createClickEvent(format))
-
-                        if (!format.hover.isNullOrEmpty()) {
-                            component = component.hoverEvent(createHoverEvent(format))
-                        }
-                        component
-                    }
-                )
-            }
+        config.chatBridge.chatFormat.map { format ->
+            format.text.deserialize()
+                .clickEvent(createClickEvent(format) { replacePlaceholders() })
+                .hoverEvent(createHoverEvent(format) { deserialize() })
         }
     )
-
-    /**
-     * Validates a chat bridge format to ensure that exactly one of the provided options is provided and non-empty.
-     *
-     * @param format the format to validate
-     * @throws IllegalArgumentException if more than one option is provided or if an option is empty
-     */
-    private fun validateFormat(format: AVMConfig.ChatBridge.Format) {
-        val conflicted = listOf(
-            !format.command.isNullOrEmpty(),
-            !format.suggest.isNullOrEmpty(),
-            !format.url.isNullOrEmpty(),
-            !format.clipboard.isNullOrEmpty(),
-        ).count { it } > 1
-        if (conflicted) {
-            warning("Exactly one of 'command', 'suggest', 'url', or 'clipboard' should be provided and non-empty.")
-        }
-    }
 }

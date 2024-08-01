@@ -32,6 +32,7 @@ fun <T : Any> CommandComponent.buildHelper(commandRoot: KClass<T>, checkPermissi
         if (checkPermission && !sender.hasPermission(rootCommand.permission)) return@execute
 
         rootJavaClass.declaredFields.forEach { field ->
+            field.trySetAccessible()
             field.let {
                 val command = field.annotations.firstOrNull { it is CommandBody } as? CommandBody
 

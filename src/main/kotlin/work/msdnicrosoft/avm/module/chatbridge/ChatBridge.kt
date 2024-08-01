@@ -42,20 +42,19 @@ object ChatBridge {
      */
     var mode: PassthroughMode = PassthroughMode.ALL
 
+    val config
+        get() = AVM.config.chatBridge
+
     @Suppress("unused")
     @SubscribeEvent(postOrder = PostOrder.FIRST)
     fun onPlayerChatChat(event: PlayerChatEvent) {
-        val config = AVM.config.chatBridge
-
         if (!config.enabled) return
-
-        val formattedMessage = ChatMessage(event).build()
 
         when (mode) {
             PassthroughMode.ALL -> {}
             PassthroughMode.NONE -> {
                 event.result = PlayerChatEvent.ChatResult.denied()
-                sendMessage(formattedMessage)
+                sendMessage(ChatMessage(event).build())
             }
 
             PassthroughMode.PATTERN -> {
@@ -66,7 +65,7 @@ object ChatBridge {
                     patterns.endswith.any { playerMessage.endsWith(it) }
                 if (!matched) {
                     event.result = PlayerChatEvent.ChatResult.denied()
-                    sendMessage(formattedMessage)
+                    sendMessage(ChatMessage(event).build())
                 }
             }
         }
