@@ -5,8 +5,8 @@ import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 import work.msdnicrosoft.avm.util.collections.LimitedMutableSet
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 /**
  * Handles caching of players for whitelist functionality within the Advanced Velocity Manager.

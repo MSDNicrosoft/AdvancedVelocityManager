@@ -1,5 +1,6 @@
 package work.msdnicrosoft.avm.command.chatbridge
 
+import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import taboolib.common.platform.Platform
@@ -12,6 +13,7 @@ import taboolib.common.platform.command.mainCommand
 import taboolib.common.platform.command.player
 import taboolib.common.util.isConsole
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.config.AVMConfig.ChatBridge.Format
 import work.msdnicrosoft.avm.util.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.ComponentUtil.createHoverEvent
 import work.msdnicrosoft.avm.util.ComponentUtil.serializer
@@ -26,6 +28,9 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 @PlatformSide(Platform.VELOCITY)
 @CommandHeader(name = "msg", aliases = ["tell", "w"], permissionDefault = PermissionDefault.NOT_OP)
 object MsgCommand {
+
+    val config
+        get() = AVM.config.chatBridge
 
     @CommandBody
     val main = mainCommand {
@@ -46,37 +51,53 @@ object MsgCommand {
                         sender.sendLang("player-not-found", targets.name)
                         return@execute
                     }
-                    val message = Component.join(
-                        JoinConfiguration.noSeparators(),
-                        AVM.config.chatBridge.privateChatFormat.receiver.map { format ->
-                            format.text.deserialize(sender.name, player.username, context["message"])
-                                .hoverEvent(
-                                    createHoverEvent(format) {
-                                        deserialize(
-                                            sender.name,
-                                            player.username,
-                                            context["message"]
-                                        )
-                                    }
-                                )
-                                .clickEvent(
-                                    createClickEvent(format) {
-                                        replacePlaceHolders(
-                                            sender.name,
-                                            player.username
-                                        )
-                                    }
-                                )
-                        }
-                    )
                     if (!sender.isConsole()) {
-                        AVM.plugin.server.getPlayer(sender.name).get().sendMessage(message)
+                        AVM.plugin.server.getPlayer(sender.name).get().sendMessage(
+                            buildMessage(
+                                config.privateChatFormat.sender,
+                                sender,
+                                player,
+                                context["message"]
+                            )
+                        )
                     }
-                    player.sendMessage(message)
+                    player.sendMessage(
+                        buildMessage(
+                            config.privateChatFormat.receiver,
+                            sender,
+                            player,
+                            context["message"]
+                        )
+                    )
                 }
             }
         }
     }
+
+    private fun buildMessage(formats: List<Format>, sender: ProxyCommandSender, player: Player, message: String) =
+        Component.join(
+            JoinConfiguration.noSeparators(),
+            formats.map { format ->
+                format.text.deserialize(sender.name, player.username, message)
+                    .hoverEvent(
+                        createHoverEvent(format) {
+                            deserialize(
+                                sender.name,
+                                player.username,
+                                message
+                            )
+                        }
+                    )
+                    .clickEvent(
+                        createClickEvent(format) {
+                            replacePlaceHolders(
+                                sender.name,
+                                player.username
+                            )
+                        }
+                    )
+            }
+        )
 
     private fun String.deserialize(from: String, to: String, message: String) = serializer.buildComponent(this)
         .replace("%player_name_from%", from)
