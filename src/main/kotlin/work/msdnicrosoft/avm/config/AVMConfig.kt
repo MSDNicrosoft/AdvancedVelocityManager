@@ -53,9 +53,9 @@ data class AVMConfig(
     @SerialName("chat-bridge")
     val chatBridge: ChatBridge = ChatBridge(),
 
-//    @YamlComment("The TabList Synchronization configuration")
-//    @SerialName("tab-sync")
-//    val tabSync: TabSync = TabSync()
+    @YamlComment("The TabList Synchronization configuration")
+    @SerialName("tab-sync")
+    val tabSync: TabSync = TabSync()
 ) {
     @Serializable
     data class Broadcast(
@@ -324,11 +324,11 @@ data class AVMConfig(
         data class PrivateChatFormat(
             val sender: List<Format> = listOf(
                 Format(
-                    text = "&8[&7\uD83D\uDD12&8]",
+                    text = "&8[&7\uD83D\uDD12 &7➦ &7%player_name_to%&8]",
                     hover = listOf("This is a private chat message")
                 ),
                 Format(
-                    text = "<&7%player_name_from% ➦ &7%player_name_to%&r>",
+                    text = "<&7%player_name_from%&r>",
                     hover = listOf("&6▶ &eClick to reply privately"),
                     suggest = "/msg %player_name_to% "
                 ),
@@ -343,7 +343,7 @@ data class AVMConfig(
                     hover = listOf("This is a private chat message")
                 ),
                 Format(
-                    text = "<&7%player_name_from% ➥ &7%player_name_to%&r>",
+                    text = "<&7%player_name_from%&r>",
                     hover = listOf("&6▶ &eClick to reply privately"),
                     suggest = "/msg %player_name_from% "
                 ),
@@ -444,12 +444,15 @@ data class AVMConfig(
 //        }
     }
 
-//    @Serializable
-//    data class TabSync(
-//        val enabled: Boolean = true,
-//        val format: String = "&8[%server_nickname%&8] %player_name%",
-//
-//        @SerialName("show-ping")
-//        val showPing: Boolean  = true
-//    )
+    @Serializable
+    data class TabSync(
+        @YamlComment("Whether to enable tab synchronization")
+        val enabled: Boolean = true,
+
+        @YamlComment("The display format for each player in tab list")
+        val format: String = "&8[%server_nickname%&8] %player_name%",
+
+        @SerialName("show-ping")
+        val showPing: Boolean = true
+    )
 }
