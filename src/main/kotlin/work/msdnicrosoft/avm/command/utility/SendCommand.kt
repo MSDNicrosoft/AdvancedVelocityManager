@@ -79,7 +79,7 @@ object SendCommand {
         ProxyServerUtil.sendPlayer(server, player).thenAccept { success ->
             if (success) {
                 sender.sendLang(
-                    "send-executor",
+                    "send-executor-success",
                     playerName,
                     serverNickname
                 )
