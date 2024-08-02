@@ -147,6 +147,13 @@ data class AVMConfig(
         @YamlComment("Whether to enable whitelist")
         var enabled: Boolean = false,
 
+        @YamlComment("The server groups to add/remove whitelist bulky")
+        @SerialName("server-groups")
+        val serverGroups: Map<String, List<String>> = mapOf(
+            "Default" to listOf("lobby"),
+            "Games" to listOf("factions", "minigames")
+        ),
+
         @YamlComment("The message sent to a not whitelisted player")
         val message: String = "&cYou are not whitelisted on this server.",
 

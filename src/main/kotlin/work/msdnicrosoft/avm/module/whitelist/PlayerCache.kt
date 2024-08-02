@@ -6,7 +6,6 @@ import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.config
-import work.msdnicrosoft.avm.util.Extensions.toUndashedString
 import work.msdnicrosoft.avm.util.collections.LimitedMutableSet
 
 /**
@@ -18,10 +17,10 @@ import work.msdnicrosoft.avm.util.collections.LimitedMutableSet
 @PlatformSide(Platform.VELOCITY)
 object PlayerCache {
 
-    lateinit var players: LimitedMutableSet<WhitelistManager.Player>
+    lateinit var players: LimitedMutableSet<String>
 
     fun onEnable() {
-        players = LimitedMutableSet<WhitelistManager.Player>(config.whitelist.cachePlayers.maxSize)
+        players = LimitedMutableSet<String>(config.whitelist.cachePlayers.maxSize)
     }
 
     @Suppress("unused")
@@ -31,12 +30,12 @@ object PlayerCache {
 
         val hasUuid = event.uniqueId != null
         val isWhitelisted = if (hasUuid) {
-            WhitelistManager.isWhitelisted(WhitelistManager.Player(event.username, event.uniqueId!!.toUndashedString()))
+            WhitelistManager.isInWhitelist(event.uniqueId!!)
         } else {
-            WhitelistManager.isWhitelisted(event.username)
+            WhitelistManager.isInWhitelist(event.username)
         }
 
         if (isWhitelisted) return
-        players.add(WhitelistManager.Player(event.username, event.uniqueId?.toUndashedString() ?: ""))
+        players.add(event.username)
     }
 }

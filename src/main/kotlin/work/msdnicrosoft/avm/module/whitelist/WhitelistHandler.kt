@@ -5,8 +5,9 @@
 
 package work.msdnicrosoft.avm.module.whitelist
 
-// import com.velocitypowered.api.event.player.ServerPreConnectEvent
+import com.velocitypowered.api.event.connection.LoginEvent
 import com.velocitypowered.api.event.connection.PreLoginEvent
+import com.velocitypowered.api.event.player.ServerPreConnectEvent
 import com.velocitypowered.api.proxy.InboundConnection
 import io.netty.channel.Channel
 import io.netty.util.AttributeKey
@@ -70,32 +71,38 @@ object WhitelistHandler {
         if (WhitelistManager.state == WhitelistManager.WhitelistState.OFF) return
 
         val username = getUsername(event.username, event.connection)
-        if (!WhitelistManager.isWhitelisted(username)) {
+        if (!WhitelistManager.isInWhitelist(username)) {
             event.result = PreLoginEvent.PreLoginComponentResult
                 .denied(AVM.config.whitelist.message.formated())
         }
     }
 
-// TODO whitelist for each server
-//    @SubscribeEvent(postOrder = PostOrder.EARLY)
-//    fun onServerPreConnect(event: ServerPreConnectEvent) {
-//        // Blocked by other plugins
-//        if (event.result.server.isEmpty) return
-//
-//        // Whitelist is off
-//        if (!AVM.config.whitelist.enabled) return
-//
-//        val serverName = event.result.server.get().serverInfo.name
-//        val player = event.player
-//        if (!WhitelistManager.isWhitelisted(player.username)) {
-//            event.result = ServerPreConnectEvent.ServerResult.denied()
-//            player.sendMessage(AVM.config.whitelist.message.formated())
-//        }
-//    }
+    @SubscribeEvent
+    fun onPlayerLogin(event: LoginEvent) = WhitelistManager.updatePlayer(event.player.username, event.player.uniqueId)
+
+    @SubscribeEvent(postOrder = PostOrder.EARLY)
+    fun onServerPreConnect(event: ServerPreConnectEvent) {
+        // Blocked by other plugins
+        if (event.result.server.isEmpty) return
+
+        // Whitelist is off
+        if (WhitelistManager.state == WhitelistManager.WhitelistState.OFF) return
+
+        val serverName = event.originalServer.serverInfo.name
+        val player = event.player
+
+        if (!WhitelistManager.isInServerWhitelist(player.uniqueId, serverName)) {
+            event.result = ServerPreConnectEvent.ServerResult.denied()
+            player.sendMessage(AVM.config.whitelist.message.formated())
+            if (event.previousServer == null) {
+                player.disconnect(AVM.config.whitelist.message.formated())
+            }
+        }
+    }
 
     /**
-     * Retrieves the username for the player attempting to connect. This method supports Floodgate integration
-     * to obtain the correct username for linked accounts.
+     * Retrieves the username for the player attempting to connect.
+     * This method supports Floodgate integration to obtain the correct username for linked accounts.
      *
      * @param username The username of the player attempting to connect.
      * @param connection The InboundConnection associated with the player's connection.

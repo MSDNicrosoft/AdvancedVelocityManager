@@ -5,20 +5,22 @@ import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.*
 import taboolib.common.platform.function.submitAsync
+import taboolib.common.util.isConsole
 import taboolib.common.util.presentRun
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.annotations.ShouldShow
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
+import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroupName
 import work.msdnicrosoft.avm.util.Extensions.isUuid
-import work.msdnicrosoft.avm.util.Extensions.toUndashedString
 import work.msdnicrosoft.avm.util.Extensions.toUuid
 import work.msdnicrosoft.avm.util.ProxyServerUtil
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
-import kotlin.math.max
-import kotlin.math.min
 import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
+import work.msdnicrosoft.avm.util.command.PageTurner
+import work.msdnicrosoft.avm.util.whitelist.WhitelistPlayer
+import kotlin.jvm.optionals.getOrNull
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @Suppress("unused")
@@ -52,49 +54,78 @@ object WhitelistCommand {
     val add = subCommand {
         dynamic("player") {
             suggestion<ProxyCommandSender>(uncheck = true) { _, _ ->
-                PlayerCache.players.map { it.name }
+                buildSet {
+                    addAll(PlayerCache.players)
+                    addAll(AVM.plugin.server.allPlayers.map { it.username })
+                    addAll(WhitelistManager.getWhitelist().map { it.name })
+                }.toList()
             }
-            execute<ProxyCommandSender> { sender, context, _ ->
-                val player = context["player"]
-                val isUuid = player.isUuid()
-
-                if (isUuid && !WhitelistManager.serverIsOnlineMode) {
-                    sender.sendLang("command-avmwl-add-uuid-unsupported")
-                    return@execute
-                }
-
-                val result = if (isUuid) {
-                    WhitelistManager.add(player.toUuid())
-                } else {
-                    WhitelistManager.add(player)
-                }
-
-                val message = when (result) {
-                    WhitelistManager.AddResult.SUCCESS -> {
-                        sender.asLangText(
-                            "command-avmwl-add-success",
-                            sender.asLangText("general-${if (isUuid) "uuid" else "username"}"),
-                            player
+            dynamic("server") {
+                suggestion<ProxyCommandSender>(uncheck = true) { _, context ->
+                    val player = context["player"]
+                    val whitelistedServers = if (player.isUuid()) {
+                        WhitelistManager.getPlayer(player.toUuid())
+                    } else {
+                        WhitelistManager.getPlayer(player)
+                    }?.serverList
+                    buildList {
+                        addAll(
+                            AVM.config.whitelist.serverGroups.keys
+                                .filter { whitelistedServers?.contains(it) != true }
+                        )
+                        addAll(
+                            AVM.plugin.server.allServers.map { it.serverInfo.name }
+                                .filter { whitelistedServers?.contains(it) != true }
                         )
                     }
-
-                    WhitelistManager.AddResult.API_LOOKUP_NOT_FOUND -> {
-                        sender.asLangText("command-avmwl-add-request-not-found")
-                    }
-
-                    WhitelistManager.AddResult.API_LOOKUP_REQUEST_FAILED -> {
-                        sender.asLangText("command-avmwl-add-request-failed")
-                    }
-
-                    WhitelistManager.AddResult.ALREADY_EXISTS -> {
-                        sender.asLangText("command-avmwl-add-already-exists")
-                    }
-
-                    WhitelistManager.AddResult.SAVE_FILE_FAILED -> {
-                        sender.asLangText("command-avmwl-save-failed")
-                    }
                 }
-                sender.sendMessage(message)
+                execute<ProxyCommandSender> { sender, context, _ ->
+                    val serverName = context["server"]
+                    if (AVM.plugin.server.getServer(serverName).isEmpty && !isServerGroupName(serverName)) {
+                        sender.sendLang("server-not-found", serverName)
+                        return@execute
+                    }
+
+                    val player = context["player"]
+                    val isUuid = player.isUuid()
+                    if (isUuid && !WhitelistManager.serverIsOnlineMode) {
+                        sender.sendLang("command-avmwl-add-uuid-supported")
+                    }
+
+                    val result = if (isUuid) {
+                        WhitelistManager.add(player.toUuid(), serverName)
+                    } else {
+                        WhitelistManager.add(player, serverName)
+                    }
+
+                    val message = when (result) {
+                        WhitelistManager.AddResult.SUCCESS -> {
+                            sender.asLangText(
+                                "command-avmwl-add-success",
+                                serverName,
+                                sender.asLangText("general-${if (isUuid) "uuid" else "username"}"),
+                                player
+                            )
+                        }
+
+                        WhitelistManager.AddResult.API_LOOKUP_NOT_FOUND -> {
+                            sender.asLangText("command-avmwl-add-request-not-found")
+                        }
+
+                        WhitelistManager.AddResult.API_LOOKUP_REQUEST_FAILED -> {
+                            sender.asLangText("command-avmwl-add-request-failed")
+                        }
+
+                        WhitelistManager.AddResult.ALREADY_EXISTS -> {
+                            sender.asLangText("command-avmwl-add-already-exists")
+                        }
+
+                        WhitelistManager.AddResult.SAVE_FILE_FAILED -> {
+                            sender.asLangText("command-avmwl-save-failed")
+                        }
+                    }
+                    sender.sendMessage(message)
+                }
             }
         }
     }
@@ -106,39 +137,26 @@ object WhitelistCommand {
             suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
                 WhitelistManager.getWhitelist().map { it.name }
             }
+            dynamic("server") {
+                suggestion<ProxyCommandSender>(uncheck = true) { _, context ->
+                    val player = context["player"]
+                    if (player.isUuid()) {
+                        WhitelistManager.getPlayer(player.toUuid())
+                    } else {
+                        WhitelistManager.getPlayer(player)
+                    }?.serverList
+                }
+                execute<ProxyCommandSender> { sender, context, _ ->
+                    val serverName = context["server"]
+                    if (AVM.plugin.server.getServer(serverName).isEmpty && !isServerGroupName(serverName)) {
+                        sender.sendLang("server-not-found", serverName)
+                        return@execute
+                    }
+                    removePlayer(context["player"], context["server"], sender)
+                }
+            }
             execute<ProxyCommandSender> { sender, context, _ ->
-                val player = context["player"]
-                val isUuid = player.isUuid()
-
-                val result = if (isUuid) {
-                    WhitelistManager.remove(player.toUuid())
-                } else {
-                    WhitelistManager.remove(player)
-                }
-
-                val message = when (result) {
-                    WhitelistManager.RemoveResult.SUCCESS -> {
-                        sender.asLangText(
-                            "command-avmwl-remove-success",
-                            sender.asLangText("general-${if (isUuid) "uuid" else "username"}"),
-                            player
-                        )
-                    }
-
-                    WhitelistManager.RemoveResult.FAIL_NOT_FOUND -> sender.asLangText("command-avmwl-remove-not-found")
-                    WhitelistManager.RemoveResult.SAVE_FILE_FAILED -> sender.asLangText("command-avmwl-save-failed")
-                }
-                sender.sendMessage(message)
-
-                if (AVM.config.whitelist.enabled) {
-                    submitAsync(now = true) {
-                        with(AVM.plugin.server) {
-                            if (player.isUuid()) getPlayer(player.toUuid()) else getPlayer(player)
-                        }.presentRun {
-                            ProxyServerUtil.kickPlayers(AVM.config.whitelist.message, this)
-                        }
-                    }
-                }
+                removePlayer(context["player"], null, sender)
             }
         }
     }
@@ -179,7 +197,7 @@ object WhitelistCommand {
             suggestion<ProxyCommandSender>(uncheck = true) { _, _ ->
                 buildList {
                     addAll(WhitelistManager.getWhitelist().map { it.name })
-                    addAll(PlayerCache.players.map { it.name })
+                    addAll(PlayerCache.players)
                 }
             }
             int("page") {
@@ -217,7 +235,7 @@ object WhitelistCommand {
                         if (WhitelistManager.whitelistSize == 0) {
                             players
                         } else {
-                            players.filterNot { it.uniqueId.toUndashedString() in whitelistAsUuid }
+                            players.filter { it.uniqueId !in whitelistAsUuid }
                         }
                     }
                 )
@@ -257,6 +275,45 @@ object WhitelistCommand {
         buildHelper(this@WhitelistCommand::class)
     }
 
+    private fun removePlayer(player: String, serverName: String?, sender: ProxyCommandSender) {
+        val isUuid = player.isUuid()
+        val result = if (isUuid) {
+            WhitelistManager.remove(player.toUuid(), serverName)
+        } else {
+            WhitelistManager.remove(player, serverName)
+        }
+
+        val message = when (result) {
+            WhitelistManager.RemoveResult.SUCCESS -> {
+                if (serverName != null) {
+                    sender.asLangText("command-avmwl-remove-server-success", serverName, player)
+                } else {
+                    sender.asLangText(
+                        "command-avmwl-remove-full-success",
+                        sender.asLangText("general-${if (isUuid) "uuid" else "username"}"),
+                        player
+                    )
+                }
+            }
+
+            WhitelistManager.RemoveResult.FAIL_NOT_FOUND -> sender.asLangText("command-avmwl-remove-not-found")
+            WhitelistManager.RemoveResult.SAVE_FILE_FAILED -> sender.asLangText("command-avmwl-save-failed")
+        }
+        sender.sendMessage(message)
+
+        if (AVM.config.whitelist.enabled) {
+            submitAsync(now = true) {
+                with(AVM.plugin.server) {
+                    if (isUuid) getPlayer(player.toUuid()) else getPlayer(player)
+                }.presentRun {
+                    if (!WhitelistManager.isInServerWhitelist(uniqueId, currentServer.get().serverInfo.name)) {
+                        ProxyServerUtil.kickPlayers(AVM.config.whitelist.message, this)
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Sends a message to the sender with the header for the whitelist list,
      * then sends a message for each player on the specified page.
@@ -269,16 +326,18 @@ object WhitelistCommand {
         if (page == 1) {
             sender.sendLang("command-avmwl-list-header", WhitelistManager.whitelistSize)
         }
+        val senderAsPlayer = AVM.plugin.server.getPlayer(sender.name).getOrNull()
         WhitelistManager.getPagedWhitelist(page).forEach { player ->
-            sender.sendLang("whitelist-each-player", player.name, player.uuid)
+            if (sender.isConsole()) {
+                sender.sendMessage("&7${player.name} &8:&r ${player.serverList.joinToString()}")
+            } else {
+                senderAsPlayer?.sendMessage(WhitelistPlayer(player, sender).build())
+            }
         }
-        sender.sendLang(
-            "command-avmwl-list-footer",
-            page,
-            WhitelistManager.maxPage,
-            max(page - 1, 1),
-            min(page + 1, WhitelistManager.maxPage)
-        )
+
+        PageTurner(sender, "/avmwl list")
+            .build(page, WhitelistManager.maxPage)
+            .sendTo(sender)
     }
 
     /**
@@ -298,17 +357,17 @@ object WhitelistCommand {
             if (page == 1) {
                 sender.sendLang("command-avmwl-find-header")
             }
+            val senderAsPlayer = AVM.plugin.server.getPlayer(sender.name).getOrNull()
             result.forEach { player ->
-                sender.sendLang("command-avmwl-each-player", player.name, player.uuid)
+                if (sender.isConsole()) {
+                    sender.sendMessage("&7${player.name} &8:&r ${player.serverList.joinToString()}")
+                } else {
+                    senderAsPlayer?.sendMessage(WhitelistPlayer(player, sender).build())
+                }
             }
-            sender.sendLang(
-                "command-avmwl-find-footer",
-                page,
-                maxPage,
-                player,
-                max(page - 1, 1),
-                min(page + 1, maxPage)
-            )
+            PageTurner(sender, "/avmwl find $player")
+                .build(page, maxPage)
+                .sendTo(sender)
         }
     }
 

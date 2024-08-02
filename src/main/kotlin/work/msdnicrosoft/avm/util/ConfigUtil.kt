@@ -4,7 +4,7 @@ import com.charleskorn.kaml.AmbiguousQuoteStyle
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
 import kotlinx.serialization.json.Json
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 object ConfigUtil {
     /**
@@ -14,8 +14,11 @@ object ConfigUtil {
      * @param server The server name to retrieve the nickname for.
      * @return The server nickname.
      */
-    fun getServerNickname(server: String) =
-        AdvancedVelocityManagerPlugin.config.serverMapping[server] ?: server
+    fun getServerNickname(server: String) = AVM.config.serverMapping[server] ?: server
+
+    fun isServerGroupName(server: String) = server in AVM.config.whitelist.serverGroups.keys
+
+    fun getServersInGroup(group: String) = AVM.config.whitelist.serverGroups[group]
 
     val yaml = Yaml(
         configuration = YamlConfiguration(

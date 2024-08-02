@@ -6,6 +6,8 @@ import kotlinx.serialization.encodeToString
 import taboolib.common.platform.function.*
 import work.msdnicrosoft.avm.util.ConfigUtil.json
 import work.msdnicrosoft.avm.util.Extensions.toUndashedString
+import work.msdnicrosoft.avm.util.Extensions.toUuid
+import work.msdnicrosoft.avm.util.data.UUIDSerializer
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -14,6 +16,7 @@ import java.util.UUID
 import kotlin.math.ceil
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
+@Suppress("TooManyFunctions")
 object WhitelistManager {
 
     /**
@@ -26,9 +29,15 @@ object WhitelistManager {
      *
      * @property name The name of the player.
      * @property uuid The UUID of the player.
+     * @property serverList The list of servers the player is allowed to connect to.
      */
     @Serializable
-    data class Player(var name: String, var uuid: String)
+    data class Player(
+        var name: String,
+        @Serializable(with = UUIDSerializer::class)
+        val uuid: UUID,
+        var serverList: List<String>
+    )
 
     /**
      * Represents the response from the API lookup.
@@ -39,67 +48,20 @@ object WhitelistManager {
     @Serializable
     data class ApiResponse(val id: String, val name: String)
 
-    /**
-     * Represents the result of adding a player to the whitelist.
-     */
     enum class AddResult {
-        /**
-         * The player was successfully added to the whitelist.
-         */
         SUCCESS,
-
-        /**
-         * The player was not found in the API lookup.
-         */
         API_LOOKUP_NOT_FOUND,
-
-        /**
-         * The API lookup failed.
-         */
         API_LOOKUP_REQUEST_FAILED,
-
-        /**
-         * The player is already in the whitelist.
-         */
         ALREADY_EXISTS,
-
-        /**
-         * Failed to save the whitelist file.
-         */
         SAVE_FILE_FAILED,
     }
 
-    /**
-     * Represents the result of removing a player from the whitelist.
-     */
-    enum class RemoveResult {
+    enum class RemoveResult { SUCCESS, FAIL_NOT_FOUND, SAVE_FILE_FAILED }
 
-        /**
-         * The player was successfully removed from the whitelist.
-         */
-        SUCCESS,
-
-        /**
-         * The player was not found in the whitelist.
-         */
-        FAIL_NOT_FOUND,
-
-        /**
-         * Failed to save the whitelist file.
-         */
-        SAVE_FILE_FAILED
-    }
-
-    /**
-     * Represents the state of the whitelist.
-     */
     enum class WhitelistState { ON, OFF }
 
     private val lock = Object()
 
-    /**
-     * The file where the whitelist is stored.
-     */
     private val file by lazy {
         getDataFolder().resolve(
             if (AVM.plugin.server.configuration.isOnlineMode) {
@@ -112,9 +74,10 @@ object WhitelistManager {
 
     private lateinit var whitelist: MutableList<Player>
 
-    /**
-     * Gets and sets the state of the whitelist.
-     */
+    private lateinit var usernames: HashSet<String>
+
+    private lateinit var uuids: HashSet<UUID>
+
     var state: WhitelistState
         get() = AVM.withLock {
             when (AVM.config.whitelist.enabled) {
@@ -130,24 +93,20 @@ object WhitelistManager {
             AVM.saveConfig()
         }
 
-    /**
-     * @property whitelistSize size of the whitelist.
-     */
     val whitelistSize: Int
         get() = whitelist.size
 
-    /**
-     * @property whitelistIsEmpty Indicates whether the whitelist is empty or not.
-     */
     val whitelistIsEmpty: Boolean
         get() = whitelist.isEmpty()
 
-    /**
-     * @property maxPage maximum page of the whitelist.
-     */
     val maxPage: Int
         get() = ceil(whitelistSize.toInt() / 10F).toInt()
 
+    /**
+     * Represents whether the server is in online mode or not.
+     *
+     * This property is backed by the `isOnlineMode` property of the server's configuration.
+     */
     val serverIsOnlineMode: Boolean
         get() = AVM.plugin.server.configuration.isOnlineMode
 
@@ -166,11 +125,9 @@ object WhitelistManager {
      */
     fun onEnable(reload: Boolean = false) {
         loadWhitelist(reload)
+        updateCache()
     }
 
-    /**
-     * Called when the plugin is disabled.
-     */
     fun onDisable() {
         saveWhitelist()
     }
@@ -181,8 +138,9 @@ object WhitelistManager {
      * @return True if the save was successful, false otherwise.
      */
     private fun saveWhitelist() = withLock {
-        runCatching { file.writeText(json.encodeToString(whitelist)) }
-            .onFailure { error("Failed to save whitelist: ${it.message}") }
+        runCatching {
+            file.writeText(json.encodeToString(whitelist))
+        }.onFailure { error("Failed to save whitelist: ${it.message}") }
     }.isSuccess
 
     /**
@@ -210,91 +168,148 @@ object WhitelistManager {
     }
 
     /**
-     * Adds a player to the whitelist.
+     * Updates the cache of usernames and UUIDs based on the provided parameters.
      *
-     * @param uuid The UUID of the player to add.
-     * @return The result of the addition operation.
+     * @param username The username to add to the cache, or null to update the entire cache.
+     * @param uuid The UUID to add to the cache, or null to update the entire cache.
      */
-    fun add(uuid: UUID) = when (val name = getUsername(uuid)) {
-        null -> AddResult.API_LOOKUP_REQUEST_FAILED
-        NOT_FOUND_RESULT -> AddResult.API_LOOKUP_NOT_FOUND
-        else -> add(Player(name, uuid.toUndashedString()))
-    }
-
-    /**
-     * Adds a player to the whitelist.
-     *
-     * @param username The username of the player to add.
-     * @return The result of the addition operation.
-     */
-    fun add(username: String) = when (val uuid = getUuid(username)) {
-        null -> AddResult.API_LOOKUP_REQUEST_FAILED
-        NOT_FOUND_RESULT -> AddResult.API_LOOKUP_NOT_FOUND
-        else -> add(Player(username, uuid))
-    }
-
-    /**
-     * Adds a player to the whitelist.
-     *
-     * @param player The player to add.
-     * @return The result of the addition operation.
-     */
-    fun add(player: Player) = if (isWhitelisted(player)) {
-        AddResult.ALREADY_EXISTS
-    } else {
-        withLock { whitelist.add(player) }
-        if (saveWhitelist()) {
-            AddResult.SUCCESS
+    fun updateCache(username: String? = null, uuid: UUID? = null) = withLock {
+        if (username == null && uuid == null) {
+            uuids = whitelist.map { it.uuid }.toHashSet()
+            usernames = whitelist.map { it.name }.toHashSet()
         } else {
-            AddResult.SAVE_FILE_FAILED
+            if (uuid != null) uuids.add(uuid)
+            if (username != null) usernames.add(username)
         }
     }
 
     /**
-     * Removes a player from the whitelist by their username.
+     * Adds a player to the whitelist if they are not already in it.
+     * The player is identified either by their UUID or their username.
+     * If the player is not found in the API lookup, the function returns the corresponding result.
+     *
+     * @param uuid The UUID of the player.
+     * @param server The name of the server to which the player is being added.
+     * @return An [AddResult] indicating the outcome of the operation.
+     */
+    fun add(uuid: UUID, server: String): AddResult {
+        if (isInWhitelist(uuid)) {
+            return add(withLock { whitelist.find { it.uuid == uuid }!! }.name, uuid, server)
+        }
+        return when (val username = getUsername(uuid)) {
+            null -> AddResult.API_LOOKUP_REQUEST_FAILED
+            NOT_FOUND_RESULT -> AddResult.API_LOOKUP_NOT_FOUND
+            else -> add(username, uuid, server)
+        }
+    }
+
+    /**
+     * Adds a player to the whitelist if they are not already in it.
+     * The player is identified by their username.
+     * If the player is not found in the API lookup, the function returns the corresponding result.
+     *
+     * @param username The username of the player.
+     * @param server The name of the server to which the player is being added.
+     * @return An [AddResult] indicating the outcome of the operation.
+     */
+    fun add(username: String, server: String): AddResult {
+        if (isInWhitelist(username)) {
+            return add(username, withLock { whitelist.find { it.name == username }!! }.uuid, server)
+        }
+        return when (val uuid = getUuid(username)) {
+            null -> AddResult.API_LOOKUP_REQUEST_FAILED
+            NOT_FOUND_RESULT -> AddResult.API_LOOKUP_NOT_FOUND
+            else -> add(username, uuid.toUuid(), server)
+        }
+    }
+
+    /**
+     * Adds a player to the whitelist for a specific server.
+     *
+     * @param username The username of the player.
+     * @param uuid The UUID of the player.
+     * @param server The name of the server.
+     * @return The result of the add operation.
+     */
+    fun add(username: String, uuid: UUID, server: String): AddResult {
+        // Check if the player is already in the server whitelist
+        if (isInServerWhitelist(uuid, server)) return AddResult.ALREADY_EXISTS
+
+        // Check if the player is already in the global whitelist
+        if (!isInWhitelist(uuid)) {
+            // Add the player to the global whitelist with the specified server
+            withLock { whitelist.add(Player(username, uuid, listOf(server))) }
+        } else {
+            // Add the server to their server list
+            withLock { whitelist.find { it.uuid == uuid }!!.serverList += server }
+        }
+        updateCache(username = username, uuid = uuid)
+        return if (saveWhitelist()) AddResult.SUCCESS else AddResult.SAVE_FILE_FAILED
+    }
+
+    /**
+     * Removes a player from the whitelist for a specific server.
      *
      * @param username The username of the player to remove.
-     * @return The result of the removal operation.
+     * @param server The name of the server from which to remove the player.
+     * If null, the player will be removed from the global whitelist.
+     * @return The result of the remove operation.
      */
-    fun remove(username: String): RemoveResult {
-        val success = withLock { whitelist.removeIf { it.name == username } }
-        return if (success) {
-            if (saveWhitelist()) {
-                RemoveResult.SUCCESS
-            } else {
-                RemoveResult.SAVE_FILE_FAILED
-            }
-        } else {
-            RemoveResult.FAIL_NOT_FOUND
-        }
-    }
+    fun remove(username: String, server: String?): RemoveResult =
+        remove(withLock { whitelist.find { it.name == username }!! }, server)
 
     /**
-     * Removes a player from the whitelist by their UUID.
+     * Removes a player from the whitelist.
      *
      * @param uuid The UUID of the player to remove.
-     * @return The result of the removal operation.
+     * @param server The name of the server from which to remove the player.
+     * If null, the player will be removed from the global whitelist.
+     * @return The result of the remove operation.
      */
-    fun remove(uuid: UUID): RemoveResult {
-        val success = withLock { whitelist.removeIf { it.uuid == uuid.toUndashedString() } }
-        return if (success) {
-            if (saveWhitelist()) {
-                RemoveResult.SUCCESS
-            } else {
-                RemoveResult.SAVE_FILE_FAILED
+    fun remove(uuid: UUID, server: String?): RemoveResult =
+        remove(withLock { whitelist.find { it.uuid == uuid }!! }, server)
+
+    /**
+     * Removes a player from the whitelist for a specific server.
+     *
+     * @param player The player to remove from the whitelist.
+     * @param server The name of the server from which to remove the player.
+     * If null, the player will be removed from the global whitelist.
+     * @return The result of the remove operation.
+     */
+    fun remove(player: Player, server: String?): RemoveResult {
+        withLock {
+            // If a server is specified, check if it's in the player's server list
+            if (player !in whitelist) return RemoveResult.FAIL_NOT_FOUND
+            player.run {
+                if (server != null) {
+                    if (server !in serverList) return RemoveResult.FAIL_NOT_FOUND
+
+                    // Remove the server from the player's server list
+                    serverList -= server
+                } else {
+                    // Remove the player from the global whitelist
+                    whitelist.remove(this)
+                }
             }
-        } else {
-            RemoveResult.FAIL_NOT_FOUND
         }
+        updateCache()
+        return if (saveWhitelist()) RemoveResult.SUCCESS else RemoveResult.SAVE_FILE_FAILED
     }
 
     /**
      * Clears the whitelist by removing all players from it.
      *
-     * @return True if the whitelist was successfully cleared and saved, false otherwise.
+     * This function acquires a lock to ensure thread safety.
+     * It then clears the whitelist by removing all players from it.
+     * After that, it updates the cache to reflect the changes.
+     * Finally, it saves the whitelist to disk and returns the result.
+     *
+     * @return `true` if the whitelist was successfully cleared and saved, `false` otherwise.
      */
     fun clear(): Boolean {
         withLock { whitelist.clear() }
+        updateCache()
         return saveWhitelist()
     }
 
@@ -306,30 +321,43 @@ object WhitelistManager {
      * @return A list of players matching the search criteria.
      */
     fun find(username: String, page: Int): List<Player> {
-        val pages = withLock {
-            whitelist.filter { username in it.name }.chunked(10)
-        }
+        val pages = withLock { whitelist.filter { username in it.name }.chunked(10) }
         return if (page > pages.size) emptyList() else pages[page - 1]
     }
 
-    /**
-     * Checks if a player is whitelisted by their username.
-     *
-     * @param player The player to check.
-     * @return True if the player is whitelisted, false otherwise.
-     */
-    fun isWhitelisted(player: Player): Boolean = withLock { player in whitelist }
+    fun getPlayer(username: String) = withLock { whitelist.find { it.name == username } }
+
+    fun getPlayer(uuid: UUID) = withLock { whitelist.find { it.uuid == uuid } }
+
+    fun isInWhitelist(uuid: UUID): Boolean = withLock { uuid in uuids }
+
+    fun isInWhitelist(username: String): Boolean = withLock { username in usernames }
 
     /**
-     * Checks if a player is whitelisted by their username.
+     * Checks if a player with the given UUID is allowed to connect to a specific server.
      *
-     * @param username The username of the player to check.
-     * @return True if the player is whitelisted, false otherwise.
+     * This function first checks if the player is in the whitelist. If not, it immediately returns false.
+     * If the player is in the whitelist, it then checks if the server is in the list of allowed servers for the player.
      */
-    fun isWhitelisted(username: String): Boolean = withLock { whitelist.any { username == it.name } }
+    fun isInServerWhitelist(uuid: UUID, server: String): Boolean {
+        if (!isInWhitelist(uuid)) return false
+
+        val serverList = whitelist.find { it.uuid == uuid }?.serverList
+
+        if (serverList?.contains(server) == true) return true
+
+        serverList?.forEach {
+            if (AVM.config.whitelist.serverGroups[it]?.contains(server) == true) return true
+        }
+
+        return false
+    }
 
     /**
      * Retrieves the username associated with the given UUID.
+     * If the server is in offline mode, returns null.
+     * If the server is online, a query is made to the API to retrieve the username.
+     *
      * @param uuid The UUID of the player.
      * @return The username associated with the UUID, or null if not found.
      */
@@ -361,6 +389,8 @@ object WhitelistManager {
 
     /**
      * Retrieves the UUID associated with the given username.
+     * If the server is in offline mode, an offline UUID is generated.
+     * If the server is online, a query is made to the API to retrieve the UUID.
      * @param username The username of the player.
      * @return The UUID associated with the username, or null if not found.
      */
@@ -393,7 +423,17 @@ object WhitelistManager {
     }
 
     /**
-     * Retrieves the current whitelist.
+     * Updates a player in the whitelist.
+     *
+     * @param player The player to update.
+     */
+    fun updatePlayer(username: String, uuid: UUID) = submit(now = true) {
+        withLock { whitelist.find { it.uuid == uuid }?.name = username }
+        updateCache()
+        saveWhitelist()
+    }
+
+    /**
      * @return A copy of the current whitelist.
      */
     fun getWhitelist() = withLock { whitelist.toList() }
