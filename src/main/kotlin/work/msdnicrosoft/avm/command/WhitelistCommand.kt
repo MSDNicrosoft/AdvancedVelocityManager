@@ -209,13 +209,6 @@ object WhitelistCommand {
                 listFind(sender, 1, context["player"])
             }
         }
-        // 创伤后应激障碍
-        // 广泛性焦虑症
-        // 持续性抑郁症
-        // 解离
-        // 梦魇
-        // 注意缺陷多动障碍
-        // 发作性嗜睡症
     }
 
     @ShouldShow
