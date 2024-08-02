@@ -11,7 +11,7 @@ import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.util.ConfigUtil
 import work.msdnicrosoft.avm.util.Extensions.sendMessage
 import work.msdnicrosoft.avm.util.ProxyServerUtil
-import work.msdnicrosoft.avm.util.command.buildHelper
+import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
 import kotlin.jvm.optionals.getOrElse
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVM
 

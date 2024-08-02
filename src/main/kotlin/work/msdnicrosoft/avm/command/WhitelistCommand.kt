@@ -16,9 +16,9 @@ import work.msdnicrosoft.avm.util.Extensions.toUndashedString
 import work.msdnicrosoft.avm.util.Extensions.toUuid
 import work.msdnicrosoft.avm.util.ProxyServerUtil
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
-import work.msdnicrosoft.avm.util.command.buildHelper
 import kotlin.math.max
 import kotlin.math.min
+import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @Suppress("unused")

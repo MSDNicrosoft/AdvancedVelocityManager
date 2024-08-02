@@ -8,7 +8,7 @@ import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.annotations.ShouldShow
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
 import work.msdnicrosoft.avm.util.command.CommandUtil
-import work.msdnicrosoft.avm.util.command.buildHelper
+import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
 import kotlin.system.measureTimeMillis
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
