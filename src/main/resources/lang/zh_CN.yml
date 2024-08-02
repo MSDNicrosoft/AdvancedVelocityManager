@@ -51,7 +51,7 @@ player-not-found: "&c玩家 &r{0} &c不存在！"
 
 command-send-executor-success: "&2已将玩家 {0} 发送到服务器 {1}"
 command-send-executor-failed: "&c无法将玩家 {0} 发送到服务器 {1}"
-command-send-target: "&7{0} 将你发生到服务器 {1}"
+command-send-target: "&7{0} 将你发送到服务器 {1}"
 command-sendall-executor:
   - type: JSON
     text: "&2已将 {0} 名玩家发送到服务器 {1}，并且[有 {2} 名玩家跳过]"
