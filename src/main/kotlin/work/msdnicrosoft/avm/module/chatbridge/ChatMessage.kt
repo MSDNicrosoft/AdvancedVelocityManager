@@ -4,7 +4,7 @@ import com.velocitypowered.api.event.player.PlayerChatEvent
 import com.velocitypowered.api.proxy.server.ServerPing
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.config
+import work.msdnicrosoft.avm.config.AVMConfig
 import work.msdnicrosoft.avm.util.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.ComponentUtil.createHoverEvent
 import work.msdnicrosoft.avm.util.ComponentUtil.serializer
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeoutException
  * Represents a chat message with various placeholders to be replaced.
  * @property event The [PlayerChatEvent] associated with the message.
  */
-class ChatMessage(val event: PlayerChatEvent) {
+class ChatMessage(val event: PlayerChatEvent, private val config: AVMConfig.ChatBridge) {
 
     private val server = event.player.currentServer.get()
     private val serverPing = try {
@@ -51,7 +51,7 @@ class ChatMessage(val event: PlayerChatEvent) {
         .replace("%player_ping%", playerPing)
         .replace(
             "%player_message%",
-            event.message.let { if (config.chatBridge.allowFormatCode) serializer.parse(it) else it }
+            event.message.let { if (config.allowFormatCode) serializer.parse(it) else it }
         )
         .replace("%server_name%", serverName)
         .replace("%server_nickname%", serverNickname)
@@ -68,7 +68,7 @@ class ChatMessage(val event: PlayerChatEvent) {
      * @return The message with placeholders replaced.
      */
     private fun String.replacePlaceholders() = this.replace(
-        "%player_name%" to event.player.username,
+        "%player_name%" to playerUsername,
         "%player_uuid%" to playerUuid,
         "%player_ping%" to playerPing,
         "%player_message%" to event.message,
@@ -84,7 +84,7 @@ class ChatMessage(val event: PlayerChatEvent) {
      */
     fun build() = Component.join(
         JoinConfiguration.noSeparators(),
-        config.chatBridge.chatFormat.map { format ->
+        config.publicChatFormat.map { format ->
             format.text.deserialize()
                 .clickEvent(createClickEvent(format) { replacePlaceholders() })
                 .hoverEvent(createHoverEvent(format) { deserialize() })

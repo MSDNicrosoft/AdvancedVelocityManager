@@ -32,6 +32,9 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 @PlatformSide(Platform.VELOCITY)
 object WhitelistHandler {
 
+    val config
+        get() = AVM.config.whitelist
+
     // Reflection fields for accessing internal Velocity connection details
     private lateinit var INITIAL_MINECRAFT_CONNECTION: Field
     private lateinit var CHANNEL: Field
@@ -73,7 +76,7 @@ object WhitelistHandler {
         val username = getUsername(event.username, event.connection)
         if (!WhitelistManager.isInWhitelist(username)) {
             event.result = PreLoginEvent.PreLoginComponentResult
-                .denied(AVM.config.whitelist.message.formated())
+                .denied(config.message.formated())
         }
     }
 
@@ -93,9 +96,9 @@ object WhitelistHandler {
 
         if (!WhitelistManager.isInServerWhitelist(player.uniqueId, serverName)) {
             event.result = ServerPreConnectEvent.ServerResult.denied()
-            player.sendMessage(AVM.config.whitelist.message.formated())
+            player.sendMessage(config.message.formated())
             if (event.previousServer == null) {
-                player.disconnect(AVM.config.whitelist.message.formated())
+                player.disconnect(config.message.formated())
             }
         }
     }

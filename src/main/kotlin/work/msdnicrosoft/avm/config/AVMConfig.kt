@@ -113,7 +113,7 @@ data class AVMConfig(
                 "%target_server_nickname% - Server name which the player switched to",
                 "%target_server_name% - Server name which the player switched to"
             )
-            val message: String = "&8[&b❖&8]&r %player_name% &7:&r %previous_server_nickname% &6➟&r %target_server_nickname%"
+            val message: String = "&8[&b⇄&8]&r %player_name% &7:&r %previous_server_nickname% &6➟&r %target_server_nickname%"
         )
     }
 
@@ -214,22 +214,23 @@ data class AVMConfig(
         val allowFormatCode: Boolean = true,
 
         @YamlComment(
-            "The chat format",
+            "The public chat format",
             "",
             "Available placeholders:",
+            "%player_message% - The message content of a player who sent a message",
+            "%player_message_sent_time% - The message sent time",
             "%player_name% - The username of a player who sent a message",
             "%player_uuid% - The UUID of a player who sent a message",
             "%player_ping% - The ping of a player who sent a message",
-            "%player_message% - The message content of a player who sent a message",
             "%server_name% - The name of the server where a player sent a message",
             "%server_nickname% - The nickname of the server where a player sent a message",
             "%server_online_players% - The online players of the server where a player sent a message",
             "%server_version% - The version of the server where a player sent a message"
         )
-        @SerialName("chat-format")
-        val chatFormat: List<Format> = listOf(
+        @SerialName("public-chat-format")
+        val publicChatFormat: List<Format> = listOf(
             Format(
-                text = "&8[%server_nickname%&8]",
+                text = "&8[&r%server_nickname%&8]",
                 hover = listOf(
                     "&7Server %server_name%",
                     "&r",
@@ -245,16 +246,31 @@ data class AVMConfig(
                 hover = listOf(
                     "&7▪ Ping: &3%player_ping% ms",
                     "&7▪ UUID: &3%player_uuid%",
-//                    "&r",
-//                    "&6▶ &e点击向该玩家发送私信",
+                    "&r",
+                    "&6▶ &eClick to send private message to this player",
                 ),
-//                suggest = "/msg %player_name% " TODO /msg
+                suggest = "/msg %player_name% "
             ),
             Format(
                 text = " &r%player_message%",
-                hover = listOf("&7Sent time %player_message_sent_time%")
+                hover = listOf("&7Sent time: %player_message_sent_time%")
             )
         ),
+
+        @YamlComment(
+            "The private chat format",
+            "",
+            "Available placeholders:",
+            "%player_message_sent_time% - The message sent time",
+            "%player_message% - The message content of a player who sent a message",
+            "%player_name_from% - The username of a player who sent a message",
+            "%player_name_to% - The username of a player who receive a message",
+        )
+        @SerialName("private-chat-format")
+        val privateChatFormat: PrivateChatFormat = PrivateChatFormat(),
+
+        @SerialName("takeover-private-chat")
+        val takeOverPrivateChat: Boolean = true,
 
 //        @SerialName("functions")
 //        val functions: Functions = Functions(),
@@ -299,6 +315,40 @@ data class AVMConfig(
                 val endswith: List<String> = listOf("--==GLOBAL-CHAT==--")
             )
         }
+
+        @Serializable
+        data class PrivateChatFormat(
+            val sender: List<Format> = listOf(
+                Format(
+                    text = "&8[&7\uD83D\uDD12&8]",
+                    hover = listOf("This is a private chat message")
+                ),
+                Format(
+                    text = "<&7%player_name_from% ➦ &7%player_name_to%&r>",
+                    hover = listOf("&6▶ &eClick to reply privately"),
+                    suggest = "/msg %player_name_to% "
+                ),
+                Format(
+                    text = " &r%player_message%",
+                    hover = listOf("&7Sent time: %player_message_sent_time%")
+                )
+            ),
+            val receiver: List<Format> = listOf(
+                Format(
+                    text = "&8[&7\uD83D\uDD12&8]",
+                    hover = listOf("This is a private chat message")
+                ),
+                Format(
+                    text = "<&7%player_name_from% ➥ &7%player_name_to%&r>",
+                    hover = listOf("&6▶ &eClick to reply privately"),
+                    suggest = "/msg %player_name_from% "
+                ),
+                Format(
+                    text = " &r%player_message%",
+                    hover = listOf("&7Sent time: %player_message_sent_time%")
+                )
+            )
+        )
 
         @Serializable
         data class Format(

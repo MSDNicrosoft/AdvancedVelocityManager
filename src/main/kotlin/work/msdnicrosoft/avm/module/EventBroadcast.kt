@@ -15,13 +15,17 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 @Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
 object EventBroadcast {
+
+    val config
+        get() = AVM.config.broadcast
+
     @SubscribeEvent(postOrder = PostOrder.FIRST)
     fun onPlayerDisconnect(event: DisconnectEvent) {
         // If a player failed to join the server (due to incompatible server version, etc.),
         // plugin will send the leave message accidentally.
         // To avoid this, we check the login status.
-        if (AVM.config.broadcast.leave.enabled && event.loginStatus == DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) {
-            sendProxyServerMessage(AVM.config.broadcast.leave.message.replace("%player_name%", event.player.username))
+        if (config.leave.enabled && event.loginStatus == DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) {
+            sendProxyServerMessage(config.leave.message.replace("%player_name%", event.player.username))
         }
     }
 
@@ -33,11 +37,11 @@ object EventBroadcast {
 
         event.previousServer.ifPresentOrElse(
             { previousServer ->
-                if (AVM.config.broadcast.switch.enabled) {
+                if (config.switch.enabled) {
                     val previousServerName = previousServer.serverInfo.name
                     val previousServerNickname = ConfigUtil.getServerNickname(previousServerName)
                     sendProxyServerMessage(
-                        AVM.config.broadcast.switch.message.replace(
+                        config.switch.message.replace(
                             "%player_name%" to player.username,
                             "%previous_server_name%" to previousServerName,
                             "%previous_server_nickname%" to previousServerNickname,
@@ -48,9 +52,9 @@ object EventBroadcast {
                 }
             },
             {
-                if (AVM.config.broadcast.join.enabled) {
+                if (config.join.enabled) {
                     sendProxyServerMessage(
-                        AVM.config.broadcast.join.message.replace(
+                        config.join.message.replace(
                             "%player_name%" to player.username,
                             "%server_name%" to targetServerName,
                             "%server_nickname%" to targetServerNickname

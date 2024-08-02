@@ -1,9 +1,13 @@
 package work.msdnicrosoft.avm.module.chatbridge
 
+import com.velocitypowered.api.event.command.CommandExecuteEvent
 import com.velocitypowered.api.event.player.PlayerChatEvent
 import net.kyori.adventure.text.Component
+import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common5.util.startsWithAny
+import work.msdnicrosoft.avm.command.chatbridge.MsgCommand
 import kotlin.collections.any
 import kotlin.collections.forEach
 import kotlin.text.contains
@@ -54,7 +58,7 @@ object ChatBridge {
             PassthroughMode.ALL -> {}
             PassthroughMode.NONE -> {
                 event.result = PlayerChatEvent.ChatResult.denied()
-                sendMessage(ChatMessage(event).build())
+                sendMessage(ChatMessage(event, config).build())
             }
 
             PassthroughMode.PATTERN -> {
@@ -65,9 +69,30 @@ object ChatBridge {
                     patterns.endswith.any { playerMessage.endsWith(it) }
                 if (!matched) {
                     event.result = PlayerChatEvent.ChatResult.denied()
-                    sendMessage(ChatMessage(event).build())
+                    sendMessage(ChatMessage(event, config).build())
                 }
             }
+        }
+    }
+
+    /**
+     * This event listener is triggered when a command is executed.
+     * It checks if the command is related to private chat
+     * and if the configuration not allows for taking over private chat.
+     *
+     * If the conditions are met, the command is forwarded to the server.
+     */
+    @Suppress("unused")
+    @SubscribeEvent
+    fun onCommandExecute(event: CommandExecuteEvent) {
+        val isPrivateChat = MsgCommand.javaClass.getAnnotation(CommandHeader::class.java).aliases.any {
+            event.command.split(" ")[0].startsWithAny(event.command)
+        }
+
+        if (!isPrivateChat) return
+
+        if (!config.takeOverPrivateChat) {
+            event.result = CommandExecuteEvent.CommandResult.forwardToServer()
         }
     }
 

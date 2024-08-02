@@ -5,7 +5,7 @@ import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.config
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 import work.msdnicrosoft.avm.util.collections.LimitedMutableSet
 
 /**
@@ -17,16 +17,19 @@ import work.msdnicrosoft.avm.util.collections.LimitedMutableSet
 @PlatformSide(Platform.VELOCITY)
 object PlayerCache {
 
+    val config
+        get() = AVM.config.whitelist
+
     lateinit var players: LimitedMutableSet<String>
 
     fun onEnable() {
-        players = LimitedMutableSet<String>(config.whitelist.cachePlayers.maxSize)
+        players = LimitedMutableSet<String>(config.cachePlayers.maxSize)
     }
 
     @Suppress("unused")
     @SubscribeEvent(postOrder = PostOrder.LAST)
     fun onPlayerPreLogin(event: PreLoginEvent) {
-        if (!config.whitelist.cachePlayers.enabled) return
+        if (!config.cachePlayers.enabled) return
 
         val hasUuid = event.uniqueId != null
         val isWhitelisted = if (hasUuid) {
