@@ -269,6 +269,10 @@ data class AVMConfig(
         @SerialName("private-chat-format")
         val privateChatFormat: PrivateChatFormat = PrivateChatFormat(),
 
+        @YamlComment(
+            "Whether to take over private chat commands: /msg, /w and /tell",
+            "This will allow global private chat"
+        )
         @SerialName("takeover-private-chat")
         val takeOverPrivateChat: Boolean = true,
 

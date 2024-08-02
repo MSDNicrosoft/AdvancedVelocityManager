@@ -216,8 +216,7 @@ object WhitelistCommand {
     val on = subCommand {
         execute<ProxyCommandSender> { sender, _, _ ->
             WhitelistManager.state = WhitelistManager.WhitelistState.ON
-            val whitelist = WhitelistManager.getWhitelist()
-            val whitelistAsUuid = whitelist.map { it.uuid }
+            val whitelistAsUuid = WhitelistManager.getWhitelist().map { it.uuid }
 
             AVM.saveConfig()
 

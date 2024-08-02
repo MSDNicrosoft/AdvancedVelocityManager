@@ -192,11 +192,10 @@ object WhitelistManager {
      * @param server The name of the server to which the player is being added.
      * @return An [AddResult] indicating the outcome of the operation.
      */
-    fun add(uuid: UUID, server: String): AddResult {
-        if (isInWhitelist(uuid)) {
-            return add(withLock { whitelist.find { it.uuid == uuid }!! }.name, uuid, server)
-        }
-        return when (val username = getUsername(uuid)) {
+    fun add(uuid: UUID, server: String): AddResult = if (isInWhitelist(uuid)) {
+        add(withLock { whitelist.find { it.uuid == uuid }!! }.name, uuid, server)
+    } else {
+        when (val username = getUsername(uuid)) {
             null -> AddResult.API_LOOKUP_REQUEST_FAILED
             NOT_FOUND_RESULT -> AddResult.API_LOOKUP_NOT_FOUND
             else -> add(username, uuid, server)
@@ -212,11 +211,10 @@ object WhitelistManager {
      * @param server The name of the server to which the player is being added.
      * @return An [AddResult] indicating the outcome of the operation.
      */
-    fun add(username: String, server: String): AddResult {
-        if (isInWhitelist(username)) {
-            return add(username, withLock { whitelist.find { it.name == username }!! }.uuid, server)
-        }
-        return when (val uuid = getUuid(username)) {
+    fun add(username: String, server: String): AddResult = if (isInWhitelist(username)) {
+        add(username, withLock { whitelist.find { it.name == username }!! }.uuid, server)
+    } else {
+        when (val uuid = getUuid(username)) {
             null -> AddResult.API_LOOKUP_REQUEST_FAILED
             NOT_FOUND_RESULT -> AddResult.API_LOOKUP_NOT_FOUND
             else -> add(username, uuid.toUuid(), server)
@@ -339,18 +337,15 @@ object WhitelistManager {
      * This function first checks if the player is in the whitelist. If not, it immediately returns false.
      * If the player is in the whitelist, it then checks if the server is in the list of allowed servers for the player.
      */
-    fun isInServerWhitelist(uuid: UUID, server: String): Boolean {
+    fun isInServerWhitelist(uuid: UUID, server: String): Boolean = withLock {
         if (!isInWhitelist(uuid)) return false
 
-        val serverList = whitelist.find { it.uuid == uuid }?.serverList
+        val serverList = whitelist.find { it.uuid == uuid }!!.serverList
+        if (server in serverList) return true
 
-        if (serverList?.contains(server) == true) return true
-
-        serverList?.forEach {
-            if (AVM.config.whitelist.serverGroups[it]?.contains(server) == true) return true
+        return AVM.config.whitelist.serverGroups.any { (group, servers) ->
+            group in serverList && server in servers
         }
-
-        return false
     }
 
     /**
@@ -410,7 +405,7 @@ object WhitelistManager {
                         warning(
                             "An error occurred while querying username $username, status code: ${response.statusCode()}"
                         )
-                        return null
+                        null
                     }
 
                     else -> json.decodeFromString<ApiResponse>(response.body()).id
@@ -422,11 +417,6 @@ object WhitelistManager {
         }
     }
 
-    /**
-     * Updates a player in the whitelist.
-     *
-     * @param player The player to update.
-     */
     fun updatePlayer(username: String, uuid: UUID) = submit(now = true) {
         withLock { whitelist.find { it.uuid == uuid }?.name = username }
         updateCache()
