@@ -81,7 +81,7 @@ We are grateful for the contributions of these projects to the open-source commu
 - [ ] TabList Synchronization
 - [ ] More advanced chat interaction
 - [ ] Import data from lls-manager
-- [ ] Offline whitelist support
+- [x] Offline whitelist support
 
 ## License and Copyright
 

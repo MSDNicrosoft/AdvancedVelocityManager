@@ -74,7 +74,7 @@ AdvancedVelocityManager 的开发受到其他开源项目如 [cancellable-chat](
 - [ ] TabList 同步
 - [ ] 更高级的聊天交互
 - [ ] 从 lls-manager 导入数据
-- [ ] 离线模式白名单
+- [x] 离线模式白名单
 
 ## 许可与版权
 
