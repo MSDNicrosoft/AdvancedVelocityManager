@@ -61,15 +61,15 @@ data class AVMConfig(
     data class Broadcast(
         @YamlComment("When a player joins the server, plugin will send broadcast")
         @SerialName("join")
-        var join: Join = Join(),
+        val join: Join = Join(),
 
         @YamlComment("When a player leaves the server, plugin will send broadcast")
         @SerialName("leave")
-        var leave: Leave = Leave(),
+        val leave: Leave = Leave(),
 
         @YamlComment("When a player switch from a server to another server, plugin will send broadcast")
         @SerialName("switch")
-        var switch: Switch = Switch(),
+        val switch: Switch = Switch(),
     ) {
         @Serializable
         data class Join(
@@ -149,7 +149,7 @@ data class AVMConfig(
 
         @YamlComment("The server groups to add/remove whitelist bulky")
         @SerialName("server-groups")
-        val serverGroups: Map<String, List<String>> = mapOf(
+        var serverGroups: Map<String, List<String>> = mapOf(
             "Default" to listOf("lobby"),
             "Games" to listOf("factions", "minigames")
         ),
@@ -179,13 +179,13 @@ data class AVMConfig(
                 "The API URL to query UUID by username",
                 "Learn more: https://wiki.vg/Mojang_API#Username_to_UUID"
             )
-            val uuid: String = "https://api.mojang.com/users/profiles/minecraft/",
+            var uuid: String = "https://api.mojang.com/users/profiles/minecraft/",
 
             @YamlComment(
                 "The API URL to query username by UUID",
                 "Learn more: https://wiki.vg/Mojang_API#UUID_to_Profile_and_Skin.2FCape"
             )
-            val profile: String = "https://sessionserver.mojang.com/session/minecraft/profile/"
+            var profile: String = "https://sessionserver.mojang.com/session/minecraft/profile/"
         )
 
         @Serializable
@@ -447,10 +447,10 @@ data class AVMConfig(
     @Serializable
     data class TabSync(
         @YamlComment("Whether to enable tab synchronization")
-        val enabled: Boolean = true,
+        var enabled: Boolean = true,
 
         @YamlComment("The display format for each player in tab list")
-        val format: String = "&8[%server_nickname%&8] %player_name%",
+        val format: String = "&8[%server_nickname%&8] &r%player_name%",
 
         @SerialName("show-ping")
         val showPing: Boolean = true

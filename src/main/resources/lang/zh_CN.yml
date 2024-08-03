@@ -35,11 +35,21 @@ whitelist-each-player-uuid-hover: "&6▶ &e点击复制"
 
 whitelist-page-must-larger-than-zero: "&c页码必须大于零！"
 
-whitelist-save-failed: "&c无法保存白名单文件，请查看控制台日志"
+whitelist-save-failed: "&c无法保存白名单文件，请查看控制台日志！"
 
 command-avm-confirm-expired: "&d该会话命令已过期"
 command-avm-confirm-failed: "&c无法执行此会话命令"
 command-avm-confirm-not-found: "&d未知会话命令"
+
+command-avm-import-success: "&7从 {0} 导入数据成功！&8耗费: {1} ms"
+command-avm-import-failed: "&c从 {0} 导入数据失败，请查看控制台日志！"
+command-avm-import-need-confirm:
+  - "&e&l警告：此操作将覆盖现有配置和数据"
+  - type: JSON
+    text: "[&7点击此消息或执行命令 &f{0} &7以确认操作!]"
+    args:
+      - hover: "&7确认操作"
+        command: "{0}"
 
 unknown-command: "&c未知或不完整的命令，请查看错误信息"
 unknown-argument: "&c命令的参数不正确"
@@ -107,6 +117,7 @@ command-avm-info:
 command-avm-reload-description: "&7放弃内存中的数据，然后从文件中重载配置、语言和白名单"
 command-avm-info-description: "&7查看插件信息"
 command-avm-confirm-description: "&7确认操作"
+command-avm-import-description: "&7从其它插件中导入数据"
 command-avmwl-list-description: "&7查看白名单"
 command-avmwl-add-description: "&7通过用户名或 UUID 将玩家添加到白名单"
 command-avmwl-remove-description: "&7从白名单中移除玩家"

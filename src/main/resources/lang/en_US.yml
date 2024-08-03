@@ -41,6 +41,16 @@ command-avm-confirm-expired: "&dThis session command has expired"
 command-avm-confirm-failed: "&cFailed to execute this session command"
 command-avm-confirm-not-found: "&dUnknown session command"
 
+command-avm-import-success: "&7Imported data from {0} successfully! &8Took: {0} ms"
+command-avm-import-failed: "&cFailed to import data from {0}, please check console log"
+command-avm-import-need-confirm:
+  - "&e&lWarning: This action will override the existing configuration and data!"
+  - type: JSON
+    text: "[&7Click this message or execute command &f{0} &7to confirm the action!]"
+    args:
+      - hover: "&7Confirm the action"
+        command: "{0}"
+
 unknown-command: "&cUnknown or incomplete command, see below for error"
 unknown-argument: "&cIncorrect argument for command"
 unknown-sender: "Incorrect sender for command"
@@ -107,6 +117,7 @@ command-avm-info:
 command-avm-reload-description: "&7Give up data in memory, then reload config, language and whitelist from file"
 command-avm-info-description: "&7Show plugin info"
 command-avm-confirm-description: "&7Confirm an action"
+command-avm-import-description: "&7Import data from other plugins"
 command-avmwl-list-description: "&7Show whitelist"
 command-avmwl-add-description: "&7Add a player to whitelist by username or UUID"
 command-avmwl-remove-description: "&7Remove a player from whitelist"
