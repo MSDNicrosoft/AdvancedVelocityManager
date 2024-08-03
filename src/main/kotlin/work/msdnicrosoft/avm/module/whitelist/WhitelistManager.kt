@@ -36,6 +36,7 @@ object WhitelistManager {
         var name: String,
         @Serializable(with = UUIDSerializer::class)
         val uuid: UUID,
+        val onlineMode: Boolean,
         var serverList: List<String>
     )
 
@@ -62,15 +63,7 @@ object WhitelistManager {
 
     private val lock = Object()
 
-    private val file by lazy {
-        getDataFolder().resolve(
-            if (AVM.plugin.server.configuration.isOnlineMode) {
-                "whitelist.json"
-            } else {
-                "whitelist_offline.json"
-            }
-        )
-    }
+    private val file by lazy { getDataFolder().resolve("whitelist.json") }
 
     private lateinit var whitelist: MutableList<Player>
 
@@ -192,13 +185,13 @@ object WhitelistManager {
      * @param server The name of the server to which the player is being added.
      * @return An [AddResult] indicating the outcome of the operation.
      */
-    fun add(uuid: UUID, server: String): AddResult = if (isInWhitelist(uuid)) {
-        add(withLock { whitelist.find { it.uuid == uuid }!! }.name, uuid, server)
+    fun add(uuid: UUID, server: String, onlineMode: Boolean? = null): AddResult = if (isInWhitelist(uuid)) {
+        add(withLock { whitelist.find { it.uuid == uuid }!! }.name, uuid, server, onlineMode ?: serverIsOnlineMode)
     } else {
         when (val username = getUsername(uuid)) {
             null -> AddResult.API_LOOKUP_REQUEST_FAILED
             NOT_FOUND_RESULT -> AddResult.API_LOOKUP_NOT_FOUND
-            else -> add(username, uuid, server)
+            else -> add(username, uuid, server, onlineMode ?: serverIsOnlineMode)
         }
     }
 
@@ -211,13 +204,18 @@ object WhitelistManager {
      * @param server The name of the server to which the player is being added.
      * @return An [AddResult] indicating the outcome of the operation.
      */
-    fun add(username: String, server: String): AddResult = if (isInWhitelist(username)) {
-        add(username, withLock { whitelist.find { it.name == username }!! }.uuid, server)
+    fun add(username: String, server: String, onlineMode: Boolean? = null): AddResult = if (isInWhitelist(username)) {
+        add(
+            username,
+            withLock { whitelist.find { it.name == username }!! }.uuid,
+            server,
+            onlineMode ?: serverIsOnlineMode
+        )
     } else {
-        when (val uuid = getUuid(username)) {
+        when (val uuid = getUuid(username, onlineMode ?: serverIsOnlineMode)) {
             null -> AddResult.API_LOOKUP_REQUEST_FAILED
             NOT_FOUND_RESULT -> AddResult.API_LOOKUP_NOT_FOUND
-            else -> add(username, uuid.toUuid(), server)
+            else -> add(username, uuid.toUuid(), server, onlineMode ?: serverIsOnlineMode)
         }
     }
 
@@ -229,14 +227,14 @@ object WhitelistManager {
      * @param server The name of the server.
      * @return The result of the add operation.
      */
-    fun add(username: String, uuid: UUID, server: String): AddResult {
+    fun add(username: String, uuid: UUID, server: String, onlineMode: Boolean): AddResult {
         // Check if the player is already in the server whitelist
         if (isInServerWhitelist(uuid, server)) return AddResult.ALREADY_EXISTS
 
         // Check if the player is already in the global whitelist
         if (!isInWhitelist(uuid)) {
             // Add the player to the global whitelist with the specified server
-            withLock { whitelist.add(Player(username, uuid, listOf(server))) }
+            withLock { whitelist.add(Player(username, uuid, onlineMode, listOf(server))) }
         } else {
             // Add the server to their server list
             withLock { whitelist.find { it.uuid == uuid }!!.serverList += server }
@@ -389,8 +387,8 @@ object WhitelistManager {
      * @param username The username of the player.
      * @return The UUID associated with the username, or null if not found.
      */
-    private fun getUuid(username: String): String? {
-        if (!serverIsOnlineMode) {
+    private fun getUuid(username: String, onlineMode: Boolean): String? {
+        if (!serverIsOnlineMode || !onlineMode) {
             return UuidUtils.generateOfflinePlayerUuid(username).toUndashedString()
         }
 

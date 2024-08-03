@@ -77,6 +77,15 @@ object WhitelistHandler {
         if (!WhitelistManager.isInWhitelist(username)) {
             event.result = PreLoginEvent.PreLoginComponentResult
                 .denied(config.message.formated())
+            return
+        }
+
+        if (event.result == PreLoginEvent.PreLoginComponentResult.allowed()) {
+            event.result = if (WhitelistManager.getPlayer(event.username)?.onlineMode == true) {
+                PreLoginEvent.PreLoginComponentResult.forceOnlineMode()
+            } else {
+                PreLoginEvent.PreLoginComponentResult.forceOfflineMode()
+            }
         }
     }
 
