@@ -24,8 +24,8 @@ AdvancedVelocityManager 是一款为 Velocity 端设计的 Minecraft 服务器�
 
 1. 下载 AdvancedVelocityManager 插件的最新版本。
 2. 将插件文件放入 Velocity 服务器的 `plugins` 文件夹中。
-3. 根据需要编辑 `config.yml` 文件以调整插件设置。
-4. 重启 Velocity 服务器以加载插件。
+3. 重启 Velocity 服务器以加载插件。
+4. 根据需要编辑 `config.yml` 文件以调整插件设置，然后执行命令 `/avm reload` 以重载插件。
 
 ## 使用方法
 
@@ -40,6 +40,7 @@ AdvancedVelocityManager 是一款为 Velocity 端设计的 Minecraft 服务器�
 - `avm.command.info` - 查看插件信息
 - `avm.command.reload` - 放弃内存中的数据，并从文件中重载配置、语言和白名单
 - `avm.command.confirm` - 确认操作
+- `avm.command.import` - 从其它插件（[lls-manager](https://github.com/plusls/lls-manager) [VelocityWhitelist](https://gitee.com/virtual-qu-an/velocity-whitelist)）导入数据
 - `avm.command.kick` - 踢出指定玩家
 - `avm.command.send` - 将单个玩家从一个服务器发送到另一个服务器
 - `avm.command.sendall` - 将指定服务器的所有玩家发送到另一个服务器
@@ -53,7 +54,7 @@ AdvancedVelocityManager 是一款为 Velocity 端设计的 Minecraft 服务器�
 - `avm.command.whitelist.off` - 关闭白名单
 - `avm.command.whitelist.status` - 查看白名单状态
 
-## 配置文件
+### 配置文件
 
 配置文件 `config.yml` 允许您自定义插件的各个方面，包括服务器映射、广播消息、命令配置、白名单设置等。
 
@@ -73,7 +74,7 @@ AdvancedVelocityManager 的开发受到其他开源项目如 [cancellable-chat](
 - [ ] `/tp` 跨服传送
 - [x] TabList 同步
 - [ ] 更高级的聊天交互
-- [ ] 从 lls-manager 导入数据
+- [x] 从 lls-manager 导入数据
 - [x] 离线模式白名单
 
 ## 许可与版权

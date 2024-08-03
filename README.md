@@ -27,8 +27,8 @@ whitelist management which is compatible with the [Floodgate](https://geysermc.o
 
 1. Download the latest version of the AdvancedVelocityManager plugin.
 2. Place the plugin file in the `plugins` directory of your Velocity server.
-3. Edit the `config.yml` file to adjust the plugin settings as needed.
-4. Restart the Velocity server to load the plugin.
+3. Restart the Velocity server to load the plugin.
+4. Edit the `config.yml` file to adjust the plugin settings as needed, then execute command `/avm reload` to reload plugin.
 
 ## Usage
 
@@ -43,6 +43,7 @@ whitelist management which is compatible with the [Floodgate](https://geysermc.o
 - `avm.command.info` - Show plugin info
 - `avm.command.reload` - Give up data in memory, and reload config, language and whitelist from file
 - `avm.command.confirm` - Confirm an action
+- `avm.command.import` - Import data from other plugins ([lls-manager](https://github.com/plusls/lls-manager) [VelocityWhitelist](https://gitee.com/virtual-qu-an/velocity-whitelist))
 - `avm.command.kick` - Kick specified players
 - `avm.command.send` - Send individual players from one server to another
 - `avm.command.sendall` - Send all players from a specified server to another
@@ -58,7 +59,7 @@ whitelist management which is compatible with the [Floodgate](https://geysermc.o
 - `avm.sendall.bypass` - Bypass `/sendall` command
 - `avm.kickall.bypass` - Bypass `/kickall` command
 
-## Configuration File
+### Configuration File
 
 The `config.yml` file allows you to customize various aspects of the plugin, including server mapping, broadcast
 messages, command configurations, whitelist settings, etc.
@@ -80,7 +81,7 @@ We are grateful for the contributions of these projects to the open-source commu
 - [ ] `/tp` Teleport across servers
 - [x] TabList Synchronization
 - [ ] More advanced chat interaction
-- [ ] Import data from lls-manager
+- [x] Import data from lls-manager
 - [x] Offline whitelist support
 
 ## License and Copyright
