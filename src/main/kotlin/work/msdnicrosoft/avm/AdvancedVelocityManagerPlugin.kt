@@ -1,6 +1,7 @@
 package work.msdnicrosoft.avm
 
 import com.velocitypowered.api.plugin.PluginDescription
+import net.kyori.adventure.text.logger.slf4j.ComponentLogger
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.PlatformSide
@@ -26,6 +27,8 @@ import work.msdnicrosoft.avm.util.command.CommandSessionManager
 object AdvancedVelocityManagerPlugin : Plugin() {
 
     val plugin by unsafeLazy { VelocityPlugin.getInstance() }
+
+    val logger = ComponentLogger.logger("advancedvelocitymanager")
 
     val self: PluginDescription
         get() = plugin.server.pluginManager.getPlugin("advancedvelocitymanager").get().description

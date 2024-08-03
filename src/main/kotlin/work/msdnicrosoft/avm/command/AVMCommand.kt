@@ -63,14 +63,14 @@ object AVMCommand {
         }
     }
 
-    enum class PluginName { LLS_MANAGER, MAPLEDUST_VELOCITYWHITELIST }
+    enum class PluginName { LLS_MANAGER, QU_AN_VELOCITYWHITELIST }
 
     @ShouldShow
     @CommandBody(permission = "avm.command.import")
     val import = subCommand {
         dynamic("pluginName") {
             suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                listOf("lls-manager", "mapledust-velocitywhitelist")
+                listOf("lls-manager", "qu-an-velocitywhitelist")
             }
             dynamic("defaultServer") {
                 suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
@@ -98,7 +98,7 @@ object AVMCommand {
                         val elapsed = measureTimeMillis {
                             success = when (PluginName.valueOf(pluginName.replace("-", "_").uppercase())) {
                                 PluginName.LLS_MANAGER -> LlsManagerUtil.import(defaultServer)
-                                PluginName.MAPLEDUST_VELOCITYWHITELIST -> QuAnVelocityWhitelistUtil.import(
+                                PluginName.QU_AN_VELOCITYWHITELIST -> QuAnVelocityWhitelistUtil.import(
                                     defaultServer
                                 )
                             }
