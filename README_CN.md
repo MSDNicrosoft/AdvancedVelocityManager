@@ -71,7 +71,6 @@ AdvancedVelocityManager 的开发受到其他开源项目如 [cancellable-chat](
 
 - [ ] 发布到 [Modrinth](https://modrinth.com)
 - [x] `/msg` 跨服私聊
-- [ ] `/tp` 跨服传送
 - [x] TabList 同步
 - [ ] 更高级的聊天交互
 - [x] 从 lls-manager 导入数据

@@ -78,7 +78,6 @@ We are grateful for the contributions of these projects to the open-source commu
 
 - [ ] Publish to [Modrinth](https://modrinth.com) 
 - [x] `/msg` Private chat across servers
-- [ ] `/tp` Teleport across servers
 - [x] TabList Synchronization
 - [ ] More advanced chat interaction
 - [x] Import data from lls-manager
