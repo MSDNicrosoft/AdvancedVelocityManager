@@ -6,6 +6,7 @@ import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.*
 import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.annotations.ShouldShow
+import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroupName
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
 import work.msdnicrosoft.avm.util.command.CommandUtil
 import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
@@ -82,7 +83,7 @@ object AVMCommand {
                 execute<ProxyCommandSender> { sender, context, argument ->
                     val pluginName = context["pluginName"]
                     val defaultServer = context["defaultServer"]
-                    if (AVM.plugin.server.getServer(defaultServer).isEmpty) {
+                    if (AVM.plugin.server.getServer(defaultServer).isEmpty && !isServerGroupName(defaultServer)) {
                         sender.sendLang("server-not-found", defaultServer)
                         return@execute
                     }

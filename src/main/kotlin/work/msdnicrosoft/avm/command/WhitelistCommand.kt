@@ -103,7 +103,6 @@ object WhitelistCommand {
                             sender.asLangText(
                                 "command-avmwl-add-success",
                                 serverName,
-                                sender.asLangText("general-${if (isUuid) "uuid" else "username"}"),
                                 player
                             )
                         }
@@ -280,11 +279,7 @@ object WhitelistCommand {
                 if (serverName != null) {
                     sender.asLangText("command-avmwl-remove-server-success", serverName, player)
                 } else {
-                    sender.asLangText(
-                        "command-avmwl-remove-full-success",
-                        sender.asLangText("general-${if (isUuid) "uuid" else "username"}"),
-                        player
-                    )
+                    sender.asLangText("command-avmwl-remove-full-success", player)
                 }
             }
 
