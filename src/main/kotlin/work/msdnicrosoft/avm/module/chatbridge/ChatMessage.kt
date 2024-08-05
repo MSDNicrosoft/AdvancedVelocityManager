@@ -9,10 +9,8 @@ import work.msdnicrosoft.avm.util.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.ComponentUtil.createHoverEvent
 import work.msdnicrosoft.avm.util.ComponentUtil.serializer
 import work.msdnicrosoft.avm.util.ConfigUtil
+import work.msdnicrosoft.avm.util.DateTimeUtil
 import work.msdnicrosoft.avm.util.Extensions.replace
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
@@ -54,10 +52,7 @@ class ChatMessage(val event: PlayerChatEvent, private val config: AVMConfig.Chat
         .replace("%server_nickname%", serverNickname)
         .replace("%server_online_players%", serverOnlinePlayers)
         .replace("%server_version%", serverVersion)
-        .replace(
-            "%player_message_sent_time%",
-            LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        )
+        .replace("%player_message_sent_time%", DateTimeUtil.getDateTime())
         .build()
 
     /**

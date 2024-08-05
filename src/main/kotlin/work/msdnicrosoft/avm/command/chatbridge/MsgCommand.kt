@@ -17,9 +17,7 @@ import work.msdnicrosoft.avm.config.AVMConfig.ChatBridge.Format
 import work.msdnicrosoft.avm.util.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.ComponentUtil.createHoverEvent
 import work.msdnicrosoft.avm.util.ComponentUtil.serializer
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import work.msdnicrosoft.avm.util.DateTimeUtil
 import kotlin.jvm.optionals.getOrElse
 import kotlin.jvm.optionals.getOrNull
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
@@ -78,17 +76,11 @@ object MsgCommand {
         .replace("%player_name_from%", from)
         .replace("%player_name_to%", to)
         .replace("%player_message%", message.let { if (config.allowFormatCode) serializer.parse(it) else it })
-        .replace(
-            "%player_message_sent_time%",
-            LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        )
+        .replace("%player_message_sent_time%", DateTimeUtil.getDateTime())
         .build()
 
     private fun String.replacePlaceHolders(from: String, to: String) = this
         .replace("%player_name_from%", from)
         .replace("%player_name_to%", to)
-        .replace(
-            "%player_message_sent_time%",
-            LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        )
+        .replace("%player_message_sent_time%", DateTimeUtil.getDateTime())
 }
