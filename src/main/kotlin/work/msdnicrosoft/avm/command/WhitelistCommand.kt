@@ -22,6 +22,7 @@ import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
 import work.msdnicrosoft.avm.util.command.PageTurner
 import work.msdnicrosoft.avm.util.whitelist.WhitelistPlayer
 import kotlin.jvm.optionals.getOrNull
+import kotlin.math.ceil
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @Suppress("unused")
@@ -40,16 +41,11 @@ object WhitelistCommand {
                 (1..WhitelistManager.maxPage).map { it.toString() }
             }
             execute<ProxyCommandSender> { sender, context, _ ->
-                val page = context.int("page")
-                if (isValidWhitelistPage(sender, page)) {
-                    listWhitelist(sender, page)
-                }
+                listWhitelist(sender, context.int("page"))
             }
         }
         execute<ProxyCommandSender> { sender, _, _ ->
-            if (isValidWhitelistPage(sender, 1)) {
-                listWhitelist(sender, 1)
-            }
+            listWhitelist(sender, 1)
         }
     }
 
@@ -280,6 +276,15 @@ object WhitelistCommand {
      * @param page The page number to retrieve.
      */
     private fun listWhitelist(sender: ProxyCommandSender, page: Int) {
+        if (page < 1) {
+            sender.sendLang("whitelist-page-must-larger-than-zero")
+            return
+        }
+        if (WhitelistManager.whitelistIsEmpty || page > WhitelistManager.maxPage) {
+            sender.sendLang("command-avmwl-list-empty")
+            return
+        }
+
         if (page == 1) {
             sender.sendLang("command-avmwl-list-header", WhitelistManager.whitelistSize)
         }
@@ -307,10 +312,15 @@ object WhitelistCommand {
      * @param player The username to search for.
      */
     private fun listFind(sender: ProxyCommandSender, page: Int, player: String) {
-        val (isValidPage, result) = isValidFindPage(sender, page, player)
-        val maxPage = result.size
+        if (page < 1) {
+            sender.sendLang("whitelist-page-must-larger-than-zero")
+            return
+        }
 
-        if (isValidPage) {
+        val result = WhitelistManager.find(player, page)
+        val maxPage = ceil(result.size.toInt() / 10F).toInt()
+
+        if (result.isNotEmpty() || page <= maxPage) {
             if (page == 1) {
                 sender.sendLang("command-avmwl-find-header")
             }
@@ -325,53 +335,6 @@ object WhitelistCommand {
             PageTurner(sender, "/avmwl find $player")
                 .build(page, maxPage)
                 .sendTo(sender)
-        }
-    }
-
-    /**
-     * Checks if the page number is valid for the whitelist find.
-     *
-     * @param sender The sender of the command.
-     * @param page The page number to check.
-     * @return A pair containing a boolean indicating if the page is valid and a list of players found.
-     */
-    private fun isValidWhitelistPage(sender: ProxyCommandSender, page: Int): Boolean = when {
-        page < 1 -> {
-            sender.sendLang("whitelist-page-must-larger-than-zero")
-            false
-        }
-
-        WhitelistManager.whitelistIsEmpty || page > WhitelistManager.maxPage -> {
-            sender.sendLang("command-avmwl-list-empty")
-            false
-        }
-
-        else -> true
-    }
-
-    /**
-     * Checks if the page number is valid for the whitelist list.
-     *
-     * @param sender The sender of the command.
-     * @param page The page number to check.
-     * @return True if the page number is valid, false otherwise.
-     */
-    private fun isValidFindPage(
-        sender: ProxyCommandSender,
-        page: Int,
-        username: String
-    ): Pair<Boolean, List<WhitelistManager.Player>> {
-        if (page < 1) {
-            sender.sendLang("command-avmwl-find-empty")
-            return false to emptyList()
-        }
-
-        val result = WhitelistManager.find(username, page)
-
-        return if (result.isEmpty() || page > result.size) {
-            false to emptyList()
-        } else {
-            true to result
         }
     }
 }
