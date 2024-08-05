@@ -32,15 +32,12 @@ object SendAllCommand {
                 }
             }
             execute<ProxyCommandSender> { sender, context, _ ->
-                sendAllPlayers(
-                    sender,
-                    context["server"],
-                    sender.asLangText(
-                        "command-send-target",
-                        sender.name,
-                        ConfigUtil.getServerNickname(context["server"])
-                    )
+                val reason = sender.asLangText(
+                    "command-send-target",
+                    sender.name,
+                    ConfigUtil.getServerNickname(context["server"])
                 )
+                sendAllPlayers(sender, context["server"], reason)
             }
         }
         execute<ProxyCommandSender> { sender, context, _ ->

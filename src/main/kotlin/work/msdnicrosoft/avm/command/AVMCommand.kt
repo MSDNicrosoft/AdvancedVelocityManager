@@ -99,9 +99,7 @@ object AVMCommand {
                         val elapsed = measureTimeMillis {
                             success = when (PluginName.valueOf(pluginName.replace("-", "_").uppercase())) {
                                 PluginName.LLS_MANAGER -> LlsManagerUtil.import(defaultServer)
-                                PluginName.QU_AN_VELOCITYWHITELIST -> QuAnVelocityWhitelistUtil.import(
-                                    defaultServer
-                                )
+                                PluginName.QU_AN_VELOCITYWHITELIST -> QuAnVelocityWhitelistUtil.import(defaultServer)
                             }
                         }
                         if (success) {

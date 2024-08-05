@@ -61,8 +61,7 @@ object KickAllCommand {
             return
         }
 
-        val (bypassed, playerToKick) = server.playersConnected
-            .partition { it.hasPermission("avm.kickall.bypass") }
+        val (bypassed, playerToKick) = server.playersConnected.partition { it.hasPermission("avm.kickall.bypass") }
 
         submitAsync(now = true) { ProxyServerUtil.kickPlayers(reason, playerToKick) }
 

@@ -12,6 +12,7 @@ import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.annotations.ShouldShow
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
+import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.AddResult
 import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroupName
 import work.msdnicrosoft.avm.util.Extensions.isUuid
 import work.msdnicrosoft.avm.util.Extensions.toUuid
@@ -27,6 +28,9 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 @PlatformSide(Platform.VELOCITY)
 @CommandHeader(name = "avmwl")
 object WhitelistCommand {
+
+    val config
+        get() = AVM.config.whitelist
 
     @ShouldShow
     @CommandBody(permission = "avm.command.whitelist.list")
@@ -69,10 +73,7 @@ object WhitelistCommand {
                         WhitelistManager.getPlayer(player)
                     }?.serverList
                     buildList {
-                        addAll(
-                            AVM.config.whitelist.serverGroups.keys
-                                .filter { whitelistedServers?.contains(it) != true }
-                        )
+                        addAll(config.serverGroups.keys.filter { whitelistedServers?.contains(it) != true })
                         addAll(
                             AVM.plugin.server.allServers.map { it.serverInfo.name }
                                 .filter { whitelistedServers?.contains(it) != true }
@@ -98,32 +99,13 @@ object WhitelistCommand {
                         WhitelistManager.add(player, serverName)
                     }
 
-                    val message = when (result) {
-                        WhitelistManager.AddResult.SUCCESS -> {
-                            sender.asLangText(
-                                "command-avmwl-add-success",
-                                serverName,
-                                player
-                            )
-                        }
-
-                        WhitelistManager.AddResult.API_LOOKUP_NOT_FOUND -> {
-                            sender.asLangText("command-avmwl-add-request-not-found")
-                        }
-
-                        WhitelistManager.AddResult.API_LOOKUP_REQUEST_FAILED -> {
-                            sender.asLangText("command-avmwl-add-request-failed")
-                        }
-
-                        WhitelistManager.AddResult.ALREADY_EXISTS -> {
-                            sender.asLangText("command-avmwl-add-already-exists")
-                        }
-
-                        WhitelistManager.AddResult.SAVE_FILE_FAILED -> {
-                            sender.asLangText("command-avmwl-save-failed")
-                        }
+                    when (result) {
+                        AddResult.SUCCESS -> sender.sendLang("command-avmwl-add-success", serverName, player)
+                        AddResult.API_LOOKUP_NOT_FOUND -> sender.sendLang("command-avmwl-add-request-not-found")
+                        AddResult.API_LOOKUP_REQUEST_FAILED -> sender.sendLang("command-avmwl-add-request-failed")
+                        AddResult.ALREADY_EXISTS -> sender.sendLang("command-avmwl-add-already-exists")
+                        AddResult.SAVE_FILE_FAILED -> sender.sendLang("command-avmwl-save-failed")
                     }
-                    sender.sendMessage(message)
                 }
             }
         }
@@ -164,11 +146,7 @@ object WhitelistCommand {
     @CommandBody(permission = "avm.command.whitelist.clear")
     val clear = subCommand {
         execute<ProxyCommandSender> { sender, context, argument ->
-            val sessionId = CommandSessionManager.generateSessionId(
-                sender.name,
-                System.currentTimeMillis(),
-                argument
-            )
+            val sessionId = CommandSessionManager.generateSessionId(sender.name, System.currentTimeMillis(), argument)
 
             CommandSessionManager.add(sessionId) {
                 if (WhitelistManager.clear()) {
@@ -176,12 +154,9 @@ object WhitelistCommand {
                 } else {
                     sender.sendLang("command-avmwl-clear-failed")
                 }
-                if (AVM.config.whitelist.enabled) {
+                if (config.enabled) {
                     submitAsync(now = true) {
-                        ProxyServerUtil.kickPlayers(
-                            AVM.config.whitelist.message,
-                            AVM.plugin.server.allPlayers
-                        )
+                        ProxyServerUtil.kickPlayers(config.message, AVM.plugin.server.allPlayers)
                     }
                 }
             }
@@ -221,7 +196,7 @@ object WhitelistCommand {
 
             submitAsync(now = true) {
                 ProxyServerUtil.kickPlayers(
-                    AVM.config.whitelist.message,
+                    config.message,
                     AVM.plugin.server.allPlayers.let { players ->
                         if (WhitelistManager.whitelistSize == 0) {
                             players
@@ -253,11 +228,7 @@ object WhitelistCommand {
             val whitelistState = WhitelistManager.state.name.lowercase()
             sender.sendLang("command-avmwl-state", sender.asLangText("general-$whitelistState"))
             sender.sendLang("command-avmwl-list-header", WhitelistManager.whitelistSize)
-            sender.sendLang(
-                "command-avmwl-status-cache",
-                PlayerCache.players.size,
-                AVM.config.whitelist.cachePlayers.maxSize
-            )
+            sender.sendLang("command-avmwl-status-cache", PlayerCache.players.size, config.cachePlayers.maxSize)
         }
     }
 
@@ -274,27 +245,26 @@ object WhitelistCommand {
             WhitelistManager.remove(player, serverName)
         }
 
-        val message = when (result) {
+        when (result) {
             WhitelistManager.RemoveResult.SUCCESS -> {
                 if (serverName != null) {
-                    sender.asLangText("command-avmwl-remove-server-success", serverName, player)
+                    sender.sendLang("command-avmwl-remove-server-success", serverName, player)
                 } else {
-                    sender.asLangText("command-avmwl-remove-full-success", player)
+                    sender.sendLang("command-avmwl-remove-full-success", player)
                 }
             }
 
-            WhitelistManager.RemoveResult.FAIL_NOT_FOUND -> sender.asLangText("command-avmwl-remove-not-found")
-            WhitelistManager.RemoveResult.SAVE_FILE_FAILED -> sender.asLangText("command-avmwl-save-failed")
+            WhitelistManager.RemoveResult.FAIL_NOT_FOUND -> sender.sendLang("command-avmwl-remove-not-found")
+            WhitelistManager.RemoveResult.SAVE_FILE_FAILED -> sender.sendLang("command-avmwl-save-failed")
         }
-        sender.sendMessage(message)
 
-        if (AVM.config.whitelist.enabled) {
+        if (config.enabled) {
             submitAsync(now = true) {
                 with(AVM.plugin.server) {
                     if (isUuid) getPlayer(player.toUuid()) else getPlayer(player)
                 }.presentRun {
                     if (!WhitelistManager.isInServerWhitelist(uniqueId, currentServer.get().serverInfo.name)) {
-                        ProxyServerUtil.kickPlayers(AVM.config.whitelist.message, this)
+                        ProxyServerUtil.kickPlayers(config.message, this)
                     }
                 }
             }

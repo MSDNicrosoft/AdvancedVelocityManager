@@ -49,10 +49,7 @@ class ChatMessage(val event: PlayerChatEvent, private val config: AVMConfig.Chat
         .replace("%player_name%", playerUsername)
         .replace("%player_uuid%", playerUuid)
         .replace("%player_ping%", playerPing)
-        .replace(
-            "%player_message%",
-            event.message.let { if (config.allowFormatCode) serializer.parse(it) else it }
-        )
+        .replace("%player_message%", event.message.let { if (config.allowFormatCode) serializer.parse(it) else it })
         .replace("%server_name%", serverName)
         .replace("%server_nickname%", serverNickname)
         .replace("%server_online_players%", serverOnlinePlayers)

@@ -36,7 +36,7 @@ object CommandSessionManager {
         EXPIRED,
 
         /**
-         * An error occurred while executing the command session.
+         * Failed to execute the command session.
          */
         FAILED,
 
@@ -118,7 +118,7 @@ object CommandSessionManager {
                     ExecuteResult.SUCCESS
                 }
             } catch (e: Exception) {
-                warning("An error occurred when executing session command: ${e.message}")
+                warning("Failed to execute session command: ${e.message}")
                 ExecuteResult.FAILED
             }
         }

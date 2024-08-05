@@ -75,8 +75,7 @@ object Extensions {
      * @param value The object to encode.
      * @return The encoded string.
      */
-    inline fun <reified T> Yaml.encodeToString(value: T): String =
-        encodeToString(serializersModule.serializer(), value)
+    inline fun <reified T> Yaml.encodeToString(value: T): String = encodeToString(serializersModule.serializer(), value)
 
     fun String.formated(): Component = ComponentUtil.serializer.parse(this)!!
 

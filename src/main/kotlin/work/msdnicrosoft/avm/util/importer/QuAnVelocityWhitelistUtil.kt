@@ -37,13 +37,13 @@ object QuAnVelocityWhitelistUtil {
             AVM.saveConfig()
         } catch (e: Exception) {
             success = false
-            error("An error occurred while importing config from lls-manager: ${e.message}")
+            error("Failed to import config from lls-manager: ${e.message}")
         }
 
         val whitelist = try {
             ConfigUtil.json.decodeFromString<List<Player>>(WHITELIST_FILE_PATH.readText())
         } catch (e: Exception) {
-            error("An error occurred while importing players from lls-manager: ${e.message}")
+            error("Failed to import players from lls-manager: ${e.message}")
             return false
         }
 

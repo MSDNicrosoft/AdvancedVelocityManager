@@ -75,8 +75,7 @@ object WhitelistHandler {
 
         val username = getUsername(event.username, event.connection)
         if (!WhitelistManager.isInWhitelist(username)) {
-            event.result = PreLoginEvent.PreLoginComponentResult
-                .denied(config.message.formated())
+            event.result = PreLoginEvent.PreLoginComponentResult.denied(config.message.formated())
             return
         }
 
@@ -105,9 +104,10 @@ object WhitelistHandler {
 
         if (!WhitelistManager.isInServerWhitelist(player.uniqueId, serverName)) {
             event.result = ServerPreConnectEvent.ServerResult.denied()
-            player.sendMessage(config.message.formated())
+            val message = config.message.formated()
+            player.sendMessage(message)
             if (event.previousServer == null) {
-                player.disconnect(config.message.formated())
+                player.disconnect(message)
             }
         }
     }
@@ -132,7 +132,7 @@ object WhitelistHandler {
                     return player.linkedPlayer.javaUsername
                 }
             }.onFailure {
-                warning("An error occurred while processing floodgate player")
+                warning("Failed to process floodgate player")
                 it.printStackTrace()
             }
         }

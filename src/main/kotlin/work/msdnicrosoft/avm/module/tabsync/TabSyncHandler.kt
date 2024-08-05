@@ -18,22 +18,14 @@ object TabSyncHandler {
     @SubscribeEvent
     fun onPlayerDisconnect(event: DisconnectEvent) {
         if (config.enabled) {
-            submitAsync(delay = 20) {
-                AVM.plugin.server.allPlayers.forEach { player ->
-                    TabSyncManager.update(player)
-                }
-            }
+            submitAsync(delay = 20) { AVM.plugin.server.allPlayers.forEach { player -> TabSyncManager.update(player) } }
         }
     }
 
     @SubscribeEvent
     fun onPlayerConnected(event: ServerConnectedEvent) {
         if (config.enabled) {
-            submitAsync(delay = 20) {
-                AVM.plugin.server.allPlayers.forEach { player ->
-                    TabSyncManager.update(player)
-                }
-            }
+            submitAsync(delay = 20) { AVM.plugin.server.allPlayers.forEach { player -> TabSyncManager.update(player) } }
         }
     }
 }

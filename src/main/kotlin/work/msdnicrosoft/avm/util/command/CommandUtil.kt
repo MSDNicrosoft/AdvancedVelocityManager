@@ -34,11 +34,7 @@ object CommandUtil {
             val rootCommand = rootJavaClass.getAnnotation(CommandHeader::class.java)
             val rootName = rootCommand.name
 
-            sender.sendLang(
-                "general-help-header",
-                self.version.get(),
-                rootName
-            )
+            sender.sendLang("general-help-header", self.version.get(), rootName)
 
             if (checkPermission && !sender.hasPermission(rootCommand.permission)) return@execute
 
@@ -50,9 +46,7 @@ object CommandUtil {
                     val shouldShow = field.isAnnotationPresent(ShouldShow::class.java)
                     val noPermission = checkPermission && !sender.hasPermission(command?.permission ?: return@let)
 
-                    if (!shouldShow || noPermission || command?.hidden == true || command?.optional == true) {
-                        return@let
-                    }
+                    if (!shouldShow || noPermission || command?.hidden == true || command?.optional == true) return@let
 
                     sender.sendLang(
                         "general-help-each-command",
@@ -77,16 +71,13 @@ object CommandUtil {
         state: Int
     ) {
         val args = subList(context.getProperty<Array<String>>("realArgs")!!.toList(), 0, index)
-        var str = context.name
-        if (args.size > 1) {
-            str += " ${subList(args, 0, args.size - 1).joinToString(" ").trim()}"
+        val str = buildString {
+            append(context.name)
+            if (args.size > 1) append(" ${subList(args, 0, args.size - 1).joinToString(" ").trim()}")
+            if (length > 10) append("...${substring(length - 10, length)}")
+            if (args.isNotEmpty()) append(" &c&n${args.last()}")
         }
-        if (str.length > 10) {
-            str = "...${str.substring(str.length - 10, str.length)}"
-        }
-        if (args.isNotEmpty()) {
-            str += " &c&n${args.last()}"
-        }
+
         val command = PlatformFactory.getService<PlatformCommand>()
         if (command.isSupportedUnknownCommand()) {
             command.unknownCommand(sender, str, state)

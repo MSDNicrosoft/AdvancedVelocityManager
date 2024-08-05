@@ -36,7 +36,7 @@ object MsgCommand {
     val main = mainCommand {
         player("targets") {
             suggestion<ProxyCommandSender>(uncheck = false) { sender, _ ->
-                if (AVM.config.chatBridge.takeOverPrivateChat) {
+                if (config.takeOverPrivateChat) {
                     AVM.plugin.server.allPlayers.map { it.username }
                 } else {
                     AVM.plugin.server.getPlayer(sender.name).getOrNull()
@@ -53,21 +53,11 @@ object MsgCommand {
                     }
                     if (!sender.isConsole()) {
                         AVM.plugin.server.getPlayer(sender.name).get().sendMessage(
-                            buildMessage(
-                                config.privateChatFormat.sender,
-                                sender,
-                                player,
-                                context["message"]
-                            )
+                            buildMessage(config.privateChatFormat.sender, sender, player, context["message"])
                         )
                     }
                     player.sendMessage(
-                        buildMessage(
-                            config.privateChatFormat.receiver,
-                            sender,
-                            player,
-                            context["message"]
-                        )
+                        buildMessage(config.privateChatFormat.receiver, sender, player, context["message"])
                     )
                 }
             }
@@ -79,33 +69,15 @@ object MsgCommand {
             JoinConfiguration.noSeparators(),
             formats.map { format ->
                 format.text.deserialize(sender.name, player.username, message)
-                    .hoverEvent(
-                        createHoverEvent(format) {
-                            deserialize(
-                                sender.name,
-                                player.username,
-                                message
-                            )
-                        }
-                    )
-                    .clickEvent(
-                        createClickEvent(format) {
-                            replacePlaceHolders(
-                                sender.name,
-                                player.username
-                            )
-                        }
-                    )
+                    .hoverEvent(createHoverEvent(format) { deserialize(sender.name, player.username, message) })
+                    .clickEvent(createClickEvent(format) { replacePlaceHolders(sender.name, player.username) })
             }
         )
 
     private fun String.deserialize(from: String, to: String, message: String) = serializer.buildComponent(this)
         .replace("%player_name_from%", from)
         .replace("%player_name_to%", to)
-        .replace(
-            "%player_message%",
-            message.let { if (AVM.config.chatBridge.allowFormatCode) serializer.parse(it) else it }
-        )
+        .replace("%player_message%", message.let { if (config.allowFormatCode) serializer.parse(it) else it })
         .replace(
             "%player_message_sent_time%",
             LocalDateTime.now(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))

@@ -30,6 +30,5 @@ object ProxyServerUtil {
      * @param player The player to send.
      */
     fun sendPlayer(server: RegisteredServer, player: Player) =
-        player.createConnectionRequest(server)
-            .connectWithIndication()
+        player.createConnectionRequest(server).connectWithIndication()
 }

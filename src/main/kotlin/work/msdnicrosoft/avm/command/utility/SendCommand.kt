@@ -33,28 +33,19 @@ object SendCommand {
                 }
                 dynamic("reason") {
                     execute<ProxyCommandSender> { sender, context, _ ->
-                        sendPlayer(
-                            sender,
-                            context.player("player"),
-                            context["server"],
-                            context["reason"]
-                        )
+                        sendPlayer(sender, context.player("player"), context["server"], context["reason"])
                     }
                 }
                 execute<ProxyCommandSender> { sender, context, _ ->
                     val player = context.player("player")
                     val serverName = context["server"]
                     val serverNickname = ConfigUtil.getServerNickname(serverName)
-                    sendPlayer(
-                        sender,
-                        player,
-                        context["server"],
-                        player.asLangText(
-                            "command-send-target",
-                            sender.name,
-                            serverNickname
-                        )
+                    val reason = player.asLangText(
+                        "command-send-target",
+                        sender.name,
+                        serverNickname
                     )
+                    sendPlayer(sender, player, context["server"], reason)
                 }
             }
         }
@@ -78,11 +69,7 @@ object SendCommand {
 
         ProxyServerUtil.sendPlayer(server, player).thenAccept { success ->
             if (success) {
-                sender.sendLang(
-                    "send-executor-success",
-                    playerName,
-                    serverNickname
-                )
+                sender.sendLang("send-executor-success", playerName, serverNickname)
                 proxyPlayer.sendMessage(reason)
             } else {
                 sender.sendLang("command-send-executor-failed", playerName, serverNickname)

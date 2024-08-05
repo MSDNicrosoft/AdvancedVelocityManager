@@ -52,7 +52,7 @@ object LlsManagerUtil {
             }
             AVM.saveConfig()
         } catch (e: Exception) {
-            error("An error occurred while importing config from lls-manager: ${e.message}")
+            error("Failed to import config from lls-manager: ${e.message}")
             success = false
         }
 
@@ -62,7 +62,7 @@ object LlsManagerUtil {
                 val llsPlayer = try {
                     ConfigUtil.json.decodeFromString<PlayerData>(file.readText())
                 } catch (e: Exception) {
-                    error("An error occurred while importing player $username from lls-manager: ${e.message}")
+                    error("Failed to import player $username from lls-manager: ${e.message}")
                     success = false
                     return@let
                 }

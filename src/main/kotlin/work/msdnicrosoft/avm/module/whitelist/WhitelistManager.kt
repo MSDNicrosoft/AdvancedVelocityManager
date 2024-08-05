@@ -365,9 +365,7 @@ object WhitelistManager {
                 when (response.statusCode()) {
                     204 -> NOT_FOUND_RESULT
                     !in 200..299 -> {
-                        warning(
-                            "An error occurred while querying UUID $uuid, status code: ${response.statusCode()}"
-                        )
+                        warning("Failed to query UUID $uuid, status code: ${response.statusCode()}")
                         null
                     }
 
@@ -375,7 +373,7 @@ object WhitelistManager {
                 }
             }
         } catch (e: Exception) {
-            error("An error occurred while querying uuid: ${e.message}")
+            error("Failed to query uuid: ${e.message}")
             null
         }
     }
@@ -400,9 +398,7 @@ object WhitelistManager {
                 when (response.statusCode()) {
                     404 -> NOT_FOUND_RESULT
                     !in 200..299 -> {
-                        warning(
-                            "An error occurred while querying username $username, status code: ${response.statusCode()}"
-                        )
+                        warning("Failed to query username $username, status code: ${response.statusCode()}")
                         null
                     }
 
@@ -410,7 +406,7 @@ object WhitelistManager {
                 }
             }
         } catch (e: Exception) {
-            error("An error occurred while querying username $username: ${e.message}")
+            error("Failed to query username $username: ${e.message}")
             null
         }
     }
