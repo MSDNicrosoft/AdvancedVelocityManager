@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendError
-import taboolib.module.lang.sendWarn
+import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.interfaces.Importer
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.FileUtil.json
@@ -49,7 +49,7 @@ object LlsManagerUtil : Importer {
         var success = true
         try {
             if (!CONFIG_PATH.exists()) {
-                sendWarn("command-avm-import-config-does-not-exist", pluginName)
+                sendLang("command-avm-import-config-does-not-exist", pluginName)
             } else {
                 val config = json.decodeFromString<Config>(CONFIG_PATH.readTextWithBuffer())
 
@@ -69,7 +69,7 @@ object LlsManagerUtil : Importer {
         }
 
         if (!PLAYER_DATA_PATH.exists()) {
-            sendWarn("command-avm-import-player-does-not-exist", pluginName)
+            sendLang("command-avm-import-player-does-not-exist", pluginName)
         } else {
             val files = PLAYER_DATA_PATH.listDirectoryEntries().filter { it.extension.lowercase() == "json" }
             for (file in files) {

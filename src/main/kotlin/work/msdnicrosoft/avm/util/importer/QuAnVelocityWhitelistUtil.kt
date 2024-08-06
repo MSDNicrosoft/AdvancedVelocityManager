@@ -7,7 +7,7 @@ import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendError
-import taboolib.module.lang.sendWarn
+import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.interfaces.Importer
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.FileUtil.json
@@ -38,7 +38,7 @@ object QuAnVelocityWhitelistUtil : Importer {
         var success = true
         try {
             if (!CONFIG_PATH.exists()) {
-                sendWarn("command-avm-import-config-does-not-exist", pluginName)
+                sendLang("command-avm-import-config-does-not-exist", pluginName)
             } else {
                 val config = Toml().read(CONFIG_PATH.readTextWithBuffer())
 
@@ -55,7 +55,7 @@ object QuAnVelocityWhitelistUtil : Importer {
         }
 
         if (!WHITELIST_FILE_PATH.exists()) {
-            sendWarn("command-avm-import-whitelist-does-not-exist", pluginName)
+            sendLang("command-avm-import-whitelist-does-not-exist", pluginName)
         } else {
             val whitelist = try {
                 json.decodeFromString<List<Player>>(WHITELIST_FILE_PATH.readTextWithBuffer())

@@ -54,7 +54,7 @@ command-avm-import-config-does-not-exist: "&8{0} 的配置文件不存在，跳�
 command-avm-import-config-failed: "&c无法从 {0} 导入配置: {1}"
 command-avm-import-whitelist-does-not-exist: "&8{0} 的白名单玩家不存在，跳过..."
 command-avm-import-whitelist-failed: "&c无法从 {0} 导入白名单: {1}"
-command-avm-import-player-does-not-exist: "&c{0} 的玩家数据文件夹不存在，跳过..."
+command-avm-import-player-does-not-exist: "&8{0} 的玩家数据文件夹不存在，跳过..."
 command-avm-import-player-data-failed: "&c无法从 {1} 导入玩家 {0} : {2}"
 
 unknown-cause: "未知原因"
