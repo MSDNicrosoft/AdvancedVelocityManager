@@ -18,14 +18,25 @@ object TabSyncHandler {
     @SubscribeEvent
     fun onPlayerDisconnect(event: DisconnectEvent) {
         if (config.enabled) {
-            submitAsync(delay = 20) { AVM.plugin.server.allPlayers.forEach { player -> TabSyncManager.update(player) } }
+            submitAsync(delay = 20) {
+                AVM.plugin.server.allPlayers.forEach { player ->
+                    player.tabList.removeEntry(event.player.uniqueId)
+                }
+            }
         }
     }
 
     @SubscribeEvent
     fun onPlayerConnected(event: ServerConnectedEvent) {
         if (config.enabled) {
-            submitAsync(delay = 20) { AVM.plugin.server.allPlayers.forEach { player -> TabSyncManager.update(player) } }
+            submitAsync(delay = 20) {
+                AVM.plugin.server.allPlayers.forEach { entryPlayer ->
+                    if (entryPlayer != event.player) {
+                        TabSyncManager.update(event.player, entryPlayer)
+                    }
+                    TabSyncManager.update(entryPlayer, event.player)
+                }
+            }
         }
     }
 }

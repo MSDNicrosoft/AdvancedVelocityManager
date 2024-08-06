@@ -8,18 +8,22 @@ import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 object TabSyncManager {
-    fun update(target: Player) {
-        target.tabList.clearAll()
-        AVM.plugin.server.allPlayers.forEach { player ->
-            target.tabList.addEntry(
-                TabListEntry.builder()
-                    .tabList(target.tabList)
-                    .profile(player.gameProfile)
-                    .displayName(player.displayName)
-                    .latency(player.ping.toInt())
-                    .build()
-            )
-        }
+
+    fun update(target: Player, entry: Player) {
+        val displayName = entry.displayName
+        target.tabList.getEntry(entry.uniqueId).ifPresentOrElse(
+            { it.setDisplayName(displayName) },
+            {
+                target.tabList.addEntry(
+                    TabListEntry.builder()
+                        .tabList(target.tabList)
+                        .profile(entry.gameProfile)
+                        .displayName(displayName)
+                        .latency(entry.ping.toInt())
+                        .build()
+                )
+            }
+        )
     }
 
     private val Player.displayName: Component?
