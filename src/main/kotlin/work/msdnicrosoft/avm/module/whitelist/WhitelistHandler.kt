@@ -9,18 +9,19 @@ import com.velocitypowered.api.event.connection.LoginEvent
 import com.velocitypowered.api.event.connection.PreLoginEvent
 import com.velocitypowered.api.event.player.ServerPreConnectEvent
 import com.velocitypowered.api.proxy.InboundConnection
+import com.velocitypowered.proxy.connection.MinecraftConnection
+import com.velocitypowered.proxy.connection.client.InitialInboundConnection
+import com.velocitypowered.proxy.connection.client.LoginInboundConnection
 import io.netty.channel.Channel
 import io.netty.util.AttributeKey
 import org.geysermc.floodgate.api.player.FloodgatePlayer
-import taboolib.common.LifeCycle
-import taboolib.common.platform.Awake
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.warning
+import work.msdnicrosoft.avm.util.ReflectUtil
 import work.msdnicrosoft.avm.util.StringUtil.formated
-import java.lang.reflect.Field
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 /**
@@ -36,34 +37,9 @@ object WhitelistHandler {
         get() = AVM.config.whitelist
 
     // Reflection fields for accessing internal Velocity connection details
-    private lateinit var INITIAL_MINECRAFT_CONNECTION: Field
-    private lateinit var CHANNEL: Field
-    private lateinit var DELEGATE: Field
-
-    /**
-     * Initializes reflection fields used to access internal Velocity connection details.
-     * This method is called at the CONST lifecycle phase of plugin loading.
-     */
-    @Awake(LifeCycle.CONST)
-    private fun init() {
-        runCatching {
-            INITIAL_MINECRAFT_CONNECTION =
-                Class.forName("com.velocitypowered.proxy.connection.client.InitialInboundConnection")
-                    .getDeclaredField("connection")
-                    .apply { trySetAccessible() }
-
-            CHANNEL = Class.forName("com.velocitypowered.proxy.connection.MinecraftConnection")
-                .getDeclaredField("channel")
-                .apply { trySetAccessible() }
-
-            DELEGATE = Class.forName("com.velocitypowered.proxy.connection.client.LoginInboundConnection")
-                .getDeclaredField("delegate")
-                .apply { trySetAccessible() }
-        }.onFailure {
-            it.printStackTrace()
-            error("Failed to initialize Floodgate hook")
-        }
-    }
+    private val INITIAL_MINECRAFT_CONNECTION = ReflectUtil.getField(InitialInboundConnection::class.java, "connection")
+    private val CHANNEL = ReflectUtil.getField(MinecraftConnection::class.java, "channel")
+    private val DELEGATE = ReflectUtil.getField(LoginInboundConnection::class.java, "delegate")
 
     @SubscribeEvent(postOrder = PostOrder.EARLY)
     fun onPreLogin(event: PreLoginEvent) {

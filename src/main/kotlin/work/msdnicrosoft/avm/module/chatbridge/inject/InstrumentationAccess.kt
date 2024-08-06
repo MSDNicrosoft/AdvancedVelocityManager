@@ -29,6 +29,7 @@
 
 package work.msdnicrosoft.avm.module.chatbridge.inject
 
+import com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedChatHandler
 import net.bytebuddy.agent.ByteBuddyAgent
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
@@ -53,8 +54,7 @@ object InstrumentationAccess {
     /**
      * Class object for the Velocity KeyedChatHandler class.
      */
-    val KEYED_CHAT_HANDLER_CLASS =
-        Class.forName("com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedChatHandler")
+    val KEYED_CHAT_HANDLER_CLASS = KeyedChatHandler::class.java
 
     /**
      * Instrumentation object used for bytecode transformation.
