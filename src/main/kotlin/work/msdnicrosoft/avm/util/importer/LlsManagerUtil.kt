@@ -44,7 +44,7 @@ object LlsManagerUtil : Importer {
     val CONFIG_PATH = PATH.resolve("config.json")
     val PLAYER_DATA_PATH = PATH.resolve("player")
 
-    @Suppress("NestedBlockDepth")
+    @Suppress("LoopWithTooManyJumpStatements")
     override fun ProxyCommandSender.import(defaultServer: String): Boolean {
         var success = true
         try {
@@ -71,30 +71,29 @@ object LlsManagerUtil : Importer {
         if (!PLAYER_DATA_PATH.exists()) {
             sendWarn("command-avm-import-player-does-not-exist", pluginName)
         } else {
-            PLAYER_DATA_PATH.listDirectoryEntries().filter { it.extension.lowercase() == "json" }.forEach { file ->
-                file.let {
-                    val username = file.nameWithoutExtension
-                    val llsPlayer = try {
-                        json.decodeFromString<PlayerData>(file.readTextWithBuffer())
-                    } catch (e: Exception) {
-                        sendError(
-                            "command-avm-import-player-data-failed",
-                            username,
-                            pluginName,
-                            e.message ?: asLangText("unknown-cause")
-                        )
-                        success = false
-                        return@let
-                    }
+            val files = PLAYER_DATA_PATH.listDirectoryEntries().filter { it.extension.lowercase() == "json" }
+            for (file in files) {
+                val username = file.nameWithoutExtension
+                val llsPlayer = try {
+                    json.decodeFromString<PlayerData>(file.readTextWithBuffer())
+                } catch (e: Exception) {
+                    sendError(
+                        "command-avm-import-player-data-failed",
+                        username,
+                        pluginName,
+                        e.message ?: asLangText("unknown-cause")
+                    )
+                    success = false
+                    continue
+                }
 
-                    if (llsPlayer.serverList.isEmpty()) {
-                        WhitelistManager.add(username, defaultServer, llsPlayer.onlineMode)
-                        return@let
-                    }
+                if (llsPlayer.serverList.isEmpty()) {
+                    WhitelistManager.add(username, defaultServer, llsPlayer.onlineMode)
+                    continue
+                }
 
-                    llsPlayer.serverList.forEach { server ->
-                        WhitelistManager.add(username, server, llsPlayer.onlineMode)
-                    }
+                llsPlayer.serverList.forEach { server ->
+                    WhitelistManager.add(username, server, llsPlayer.onlineMode)
                 }
             }
         }
