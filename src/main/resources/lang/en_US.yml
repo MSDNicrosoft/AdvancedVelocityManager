@@ -22,11 +22,11 @@ general-help-header:
 
 general-help-each-command:
   - type: JSON
-    text: "    &8- [&f{1}]"  # subcommand
+    text: "    &8- [&f{1} {2}]"  # subcommand
     args:
-      - hover: "&f{0} {1} &8- &7{2}"  # rootCommand subcommand description
+      - hover: "&f{0} {1} &8- &7{3}"  # rootCommand subcommand description
         suggest: "/{0} {1}"
-  - "      &7{2}"  # description
+  - "      &7{3}"  # description
 
 whitelist-each-player-server-hover-1: "&3This is a server group, containing the following servers:"
 whitelist-each-player-server-hover-2: "&6▶ &eClick to remove %server_name% &efrom the whitelist server list of %player_name%"

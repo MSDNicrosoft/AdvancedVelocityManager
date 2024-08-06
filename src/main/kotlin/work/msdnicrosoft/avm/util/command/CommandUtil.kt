@@ -21,39 +21,54 @@ import kotlin.reflect.KClass
 import kotlin.text.trim
 
 object CommandUtil {
+
+    val shouldShowAnnotation = ShouldShow::class.java
+
+    val commandHeaderAnnotation = CommandHeader::class.java
+
     /**
      * Portions of this code are from TrMenu
      *
      * https://github.com/TrPlugins/TrMenu/blob/076bacb874cc1a2217ba8ccd4909405b28e7170d
      * /plugin/src/main/kotlin/trplugins/menu/module/internal/command/CommandHandler.kt
      */
+    @Suppress("LoopWithTooManyJumpStatements", "CyclomaticComplexMethod")
     fun <T : Any> CommandComponent.buildHelper(commandRoot: KClass<T>, checkPermission: Boolean = false) {
         execute<ProxyCommandSender> { sender, _, _ ->
             val rootJavaClass = commandRoot.java
-            val rootCommand = rootJavaClass.getAnnotation(CommandHeader::class.java)
+            val rootCommand = rootJavaClass.getAnnotation(commandHeaderAnnotation)
             val rootName = rootCommand.name
 
             sender.sendLang("general-help-header", self.version.get(), rootName)
 
             if (checkPermission && !sender.hasPermission(rootCommand.permission)) return@execute
 
-            rootJavaClass.declaredFields.forEach { field ->
+            for (field in rootJavaClass.declaredFields) {
                 field.trySetAccessible()
-                field.let {
-                    val command = field.annotations.firstOrNull { it is CommandBody } as? CommandBody
 
-                    val shouldShow = field.isAnnotationPresent(ShouldShow::class.java)
-                    val noPermission = checkPermission && !sender.hasPermission(command?.permission ?: return@let)
+                val command = field.annotations.firstOrNull { it is CommandBody } as? CommandBody
 
-                    if (!shouldShow || noPermission || command?.hidden == true || command?.optional == true) return@let
+                val shouldShow = field.isAnnotationPresent(shouldShowAnnotation)
+                val noPermission = checkPermission && !sender.hasPermission(command?.permission ?: continue)
 
-                    sender.sendLang(
-                        "general-help-each-command",
-                        rootName,
-                        field.name,
-                        sender.asLangText("command-$rootName-${field.name}-description")
-                    )
+                if (!shouldShow || noPermission || command?.hidden == true || command?.optional == true) continue
+
+                val arguments = field.getAnnotation(shouldShowAnnotation).arguments.joinToString(" ") {
+                    when {
+                        "{" in it -> "&c$it"
+                        "[" in it -> "&8$it"
+                        "<" in it -> "&7$it"
+                        else -> it
+                    }
                 }
+
+                sender.sendLang(
+                    "general-help-each-command",
+                    rootName,
+                    field.name,
+                    arguments,
+                    sender.asLangText("command-$rootName-${field.name}-description")
+                )
             }
         }
     }

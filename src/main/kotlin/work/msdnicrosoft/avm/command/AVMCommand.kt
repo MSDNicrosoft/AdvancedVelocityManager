@@ -49,7 +49,7 @@ object AVMCommand {
         }
     }
 
-    @ShouldShow
+    @ShouldShow("<session>")
     @CommandBody(permission = "avm.command.confirm")
     val confirm = subCommand {
         dynamic("session") {
@@ -66,7 +66,7 @@ object AVMCommand {
 
     enum class PluginName { LLS_MANAGER, QU_AN_VELOCITYWHITELIST }
 
-    @ShouldShow
+    @ShouldShow("<pluginName>", "<defaultServer>")
     @CommandBody(permission = "avm.command.import")
     val import = subCommand {
         dynamic("pluginName") {

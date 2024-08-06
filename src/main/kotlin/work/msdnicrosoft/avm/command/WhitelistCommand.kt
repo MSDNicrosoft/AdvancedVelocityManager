@@ -33,7 +33,7 @@ object WhitelistCommand {
     val config
         get() = AVM.config.whitelist
 
-    @ShouldShow
+    @ShouldShow("[page]")
     @CommandBody(permission = "avm.command.whitelist.list")
     val list = subCommand {
         int("page") {
@@ -49,7 +49,7 @@ object WhitelistCommand {
         }
     }
 
-    @ShouldShow
+    @ShouldShow("<player>", "<server>")
     @CommandBody(permission = "avm.command.whitelist.add")
     val add = subCommand {
         dynamic("player") {
@@ -107,7 +107,7 @@ object WhitelistCommand {
         }
     }
 
-    @ShouldShow
+    @ShouldShow("<player>", "[server]")
     @CommandBody(permission = "avm.command.whitelist.remove")
     val remove = subCommand {
         dynamic("player") {
@@ -160,7 +160,7 @@ object WhitelistCommand {
         }
     }
 
-    @ShouldShow
+    @ShouldShow("<keywords>", "[page]")
     @CommandBody(permission = "avm.command.whitelist.find")
     val find = subCommand {
         dynamic("player") {
