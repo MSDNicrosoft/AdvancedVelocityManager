@@ -7,9 +7,9 @@ import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submitAsync
-import work.msdnicrosoft.avm.util.ConfigUtil
-import work.msdnicrosoft.avm.util.Extensions.formated
-import work.msdnicrosoft.avm.util.Extensions.replace
+import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
+import work.msdnicrosoft.avm.util.StringUtil.formated
+import work.msdnicrosoft.avm.util.StringUtil.replace
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @Suppress("unused")
@@ -33,13 +33,13 @@ object EventBroadcast {
     fun onPlayerConnected(event: ServerConnectedEvent) {
         val player = event.player
         val targetServerName = event.server.serverInfo.name
-        val targetServerNickname = ConfigUtil.getServerNickname(targetServerName)
+        val targetServerNickname = getServerNickname(targetServerName)
 
         event.previousServer.ifPresentOrElse(
             { previousServer ->
                 if (config.switch.enabled) {
                     val previousServerName = previousServer.serverInfo.name
-                    val previousServerNickname = ConfigUtil.getServerNickname(previousServerName)
+                    val previousServerNickname = getServerNickname(previousServerName)
                     sendProxyServerMessage(
                         config.switch.message.replace(
                             "%player_name%" to player.username,

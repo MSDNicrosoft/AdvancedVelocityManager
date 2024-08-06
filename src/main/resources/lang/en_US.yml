@@ -51,6 +51,14 @@ command-avm-import-need-confirm:
       - hover: "&7Confirm the action"
         command: "{0}"
 
+command-avm-import-config-does-not-exist: "&8The configuration file of {0} does not exist, skipping..."
+command-avm-import-config-failed: "&cFailed to import configuration from {0}: {1}"
+command-avm-import-whitelist-does-not-exist: "&8The whitelist file of {0} does not exist, skipping..."
+command-avm-import-whitelist-failed: "&cFailed to import whitelist from {0}: {1}"
+command-avm-import-player-does-not-exist: "&8The player data folder of {0} does not exist, skipping..."
+command-avm-import-player-data-failed: "&cFailed to import player {0} from {1}: {2}"
+
+unknown-cause: "Unknown cause"
 unknown-command: "&cUnknown or incomplete command, see below for error"
 unknown-argument: "&cIncorrect argument for command"
 unknown-sender: "Incorrect sender for command"

@@ -18,9 +18,11 @@ import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge.PassthroughMode
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.ConfigUtil.yaml
-import work.msdnicrosoft.avm.util.Extensions.decodeFromString
-import work.msdnicrosoft.avm.util.Extensions.encodeToString
+import work.msdnicrosoft.avm.util.FileUtil.decodeFromString
+import work.msdnicrosoft.avm.util.FileUtil.encodeToString
+import work.msdnicrosoft.avm.util.FileUtil.readTextWithBuffer
+import work.msdnicrosoft.avm.util.FileUtil.writeTextWithBuffer
+import work.msdnicrosoft.avm.util.FileUtil.yaml
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
 
 @PlatformSide(Platform.VELOCITY)
@@ -51,7 +53,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
 
     override fun onEnable() {
         hasFloodgate = plugin.server.pluginManager.getPlugin("floodgate") != null
-        plugin.logger.debug("Nya~!")
+        logger.debug("Nya~!")
         loadConfig()
         Language.default = config.defaultLang
         CommandSessionManager.onEnable()
@@ -68,7 +70,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
         if (configFile.exists()) {
             try {
                 info("${if (reload) "Reloading" else "Loading"} config...")
-                withLock { config = yaml.decodeFromString<AVMConfig>(configFile.readText()) }
+                withLock { config = yaml.decodeFromString<AVMConfig>(configFile.readTextWithBuffer()) }
                 // TODO Migrate config
                 checkConfig()
             } catch (e: Exception) {
@@ -80,7 +82,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
                 configFile.parentFile.mkdirs()
                 withLock {
                     config = AVMConfig()
-                    configFile.writeText(yaml.encodeToString(config))
+                    configFile.writeTextWithBuffer(yaml.encodeToString(config))
                 }
                 saveConfig()
             } catch (e: Exception) {
@@ -91,7 +93,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
 
     fun saveConfig() = withLock {
         runCatching {
-            configFile.writeText(yaml.encodeToString(config))
+            configFile.writeTextWithBuffer(yaml.encodeToString(config))
         }.onFailure {
             error("Failed to save config: ${it.message}")
         }.isSuccess

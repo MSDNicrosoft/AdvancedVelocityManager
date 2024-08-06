@@ -2,7 +2,7 @@ package work.msdnicrosoft.avm.util
 
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.RegisteredServer
-import work.msdnicrosoft.avm.util.Extensions.formated
+import work.msdnicrosoft.avm.util.StringUtil.formated
 
 object ProxyServerUtil {
     /**
@@ -31,4 +31,6 @@ object ProxyServerUtil {
      */
     fun sendPlayer(server: RegisteredServer, player: Player) =
         player.createConnectionRequest(server).connectWithIndication()
+
+    fun Player.sendMessage(message: String) = sendMessage(message.formated())
 }

@@ -18,7 +18,6 @@ import kotlin.collections.joinToString
 import kotlin.collections.last
 import kotlin.collections.toList
 import kotlin.reflect.KClass
-import kotlin.text.substring
 import kotlin.text.trim
 
 object CommandUtil {

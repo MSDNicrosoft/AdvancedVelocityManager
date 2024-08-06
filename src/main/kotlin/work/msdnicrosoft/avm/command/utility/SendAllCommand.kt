@@ -8,9 +8,9 @@ import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.mainCommand
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
-import work.msdnicrosoft.avm.util.ConfigUtil
-import work.msdnicrosoft.avm.util.Extensions.sendMessage
-import work.msdnicrosoft.avm.util.ProxyServerUtil
+import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
+import work.msdnicrosoft.avm.util.ProxyServerUtil.sendMessage
+import work.msdnicrosoft.avm.util.ProxyServerUtil.sendPlayer
 import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
 import kotlin.jvm.optionals.getOrElse
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVM
@@ -35,7 +35,7 @@ object SendAllCommand {
                 val reason = sender.asLangText(
                     "command-send-target",
                     sender.name,
-                    ConfigUtil.getServerNickname(context["server"])
+                    getServerNickname(context["server"])
                 )
                 sendAllPlayers(sender, context["server"], reason)
             }
@@ -57,7 +57,7 @@ object SendAllCommand {
             sender.sendLang("server-not-found", serverName)
             return
         }
-        val serverNickname = ConfigUtil.getServerNickname(serverName)
+        val serverNickname = getServerNickname(serverName)
 
         if (server.playersConnected.isEmpty()) {
             sender.sendLang("general-empty-server")
@@ -70,7 +70,7 @@ object SendAllCommand {
 
         val failedPlayers = buildList {
             playerToSend.forEach { player ->
-                ProxyServerUtil.sendPlayer(server, player).thenAccept { success ->
+                sendPlayer(server, player).thenAccept { success ->
                     if (success) {
                         player.sendMessage(reason)
                     } else {

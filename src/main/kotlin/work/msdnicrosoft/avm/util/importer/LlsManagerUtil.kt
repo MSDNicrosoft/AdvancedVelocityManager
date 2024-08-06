@@ -2,15 +2,23 @@ package work.msdnicrosoft.avm.util.importer
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import taboolib.common.platform.ProxyCommandSender
+import taboolib.module.lang.asLangText
+import taboolib.module.lang.sendError
+import taboolib.module.lang.sendWarn
+import work.msdnicrosoft.avm.interfaces.Importer
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.ConfigUtil
+import work.msdnicrosoft.avm.util.FileUtil.json
+import work.msdnicrosoft.avm.util.FileUtil.readTextWithBuffer
+import kotlin.io.path.exists
 import kotlin.io.path.extension
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.nameWithoutExtension
-import kotlin.io.path.readText
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
-object LlsManagerUtil {
+object LlsManagerUtil : Importer {
+
+    override val pluginName = "lls-manager"
 
     @Serializable
     data class Config(
@@ -36,44 +44,57 @@ object LlsManagerUtil {
     val CONFIG_PATH = PATH.resolve("config.json")
     val PLAYER_DATA_PATH = PATH.resolve("player")
 
-    fun import(defaultServer: String): Boolean {
+    @Suppress("NestedBlockDepth")
+    override fun ProxyCommandSender.import(defaultServer: String): Boolean {
         var success = true
         try {
-            val config = ConfigUtil.json.decodeFromString<Config>(CONFIG_PATH.readText())
+            if (!CONFIG_PATH.exists()) {
+                sendWarn("command-avm-import-config-does-not-exist", pluginName)
+            } else {
+                val config = json.decodeFromString<Config>(CONFIG_PATH.readTextWithBuffer())
 
-            // Override AVM config
-            AVM.config.run {
-                tabSync.enabled = config.showAllPlayerInTabList
-                chatBridge.enabled = config.bridgeChatMessage
-                broadcast.join.enabled = config.bridgePlayerJoinMessage
-                broadcast.leave.enabled = config.bridgePlayerLeaveMessage
-                whitelist.enabled = config.whitelistEnabled
-                whitelist.serverGroups = config.serverGroup
+                AVM.config.run {
+                    tabSync.enabled = config.showAllPlayerInTabList
+                    chatBridge.enabled = config.bridgeChatMessage
+                    broadcast.join.enabled = config.bridgePlayerJoinMessage
+                    broadcast.leave.enabled = config.bridgePlayerLeaveMessage
+                    whitelist.enabled = config.whitelistEnabled
+                    whitelist.serverGroups = config.serverGroup
+                }
+                AVM.saveConfig()
             }
-            AVM.saveConfig()
         } catch (e: Exception) {
-            error("Failed to import config from lls-manager: ${e.message}")
+            sendError("command-avm-import-config-failed", pluginName, e.message ?: asLangText("unknown-cause"))
             success = false
         }
 
-        PLAYER_DATA_PATH.listDirectoryEntries().filter { it.extension.lowercase() == "json" }.forEach { file ->
-            file.let {
-                val username = file.nameWithoutExtension
-                val llsPlayer = try {
-                    ConfigUtil.json.decodeFromString<PlayerData>(file.readText())
-                } catch (e: Exception) {
-                    error("Failed to import player $username from lls-manager: ${e.message}")
-                    success = false
-                    return@let
-                }
+        if (!PLAYER_DATA_PATH.exists()) {
+            sendWarn("command-avm-import-player-does-not-exist", pluginName)
+        } else {
+            PLAYER_DATA_PATH.listDirectoryEntries().filter { it.extension.lowercase() == "json" }.forEach { file ->
+                file.let {
+                    val username = file.nameWithoutExtension
+                    val llsPlayer = try {
+                        json.decodeFromString<PlayerData>(file.readTextWithBuffer())
+                    } catch (e: Exception) {
+                        sendError(
+                            "command-avm-import-player-data-failed",
+                            username,
+                            pluginName,
+                            e.message ?: asLangText("unknown-cause")
+                        )
+                        success = false
+                        return@let
+                    }
 
-                if (llsPlayer.serverList.isEmpty()) {
-                    WhitelistManager.add(username, defaultServer, llsPlayer.onlineMode)
-                    return@let
-                }
+                    if (llsPlayer.serverList.isEmpty()) {
+                        WhitelistManager.add(username, defaultServer, llsPlayer.onlineMode)
+                        return@let
+                    }
 
-                llsPlayer.serverList.forEach { server ->
-                    WhitelistManager.add(username, server, llsPlayer.onlineMode)
+                    llsPlayer.serverList.forEach { server ->
+                        WhitelistManager.add(username, server, llsPlayer.onlineMode)
+                    }
                 }
             }
         }

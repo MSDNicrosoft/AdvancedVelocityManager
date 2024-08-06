@@ -2,14 +2,25 @@ package work.msdnicrosoft.avm.util.importer
 
 import com.moandjiezana.toml.Toml
 import kotlinx.serialization.Serializable
+import taboolib.common.platform.Platform
+import taboolib.common.platform.PlatformSide
+import taboolib.common.platform.ProxyCommandSender
+import taboolib.module.lang.asLangText
+import taboolib.module.lang.sendError
+import taboolib.module.lang.sendWarn
+import work.msdnicrosoft.avm.interfaces.Importer
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.ConfigUtil
+import work.msdnicrosoft.avm.util.FileUtil.json
+import work.msdnicrosoft.avm.util.FileUtil.readTextWithBuffer
 import work.msdnicrosoft.avm.util.data.UUIDSerializer
 import java.util.UUID
-import kotlin.io.path.readText
+import kotlin.io.path.exists
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
-object QuAnVelocityWhitelistUtil {
+@PlatformSide(Platform.VELOCITY)
+object QuAnVelocityWhitelistUtil : Importer {
+
+    override val pluginName = "(qu-an) VelocityWhitelist"
 
     @Serializable
     data class Player(
@@ -20,37 +31,44 @@ object QuAnVelocityWhitelistUtil {
 
     val PATH = AVM.plugin.configDirectory.parent.resolve("VelocityWhitelist")
     val CONFIG_PATH = PATH.resolve("config.toml")
-    val WHITELIST_FILE_PATH = PATH.resolve(
-        if (WhitelistManager.serverIsOnlineMode) "whitelist.json" else "whitelist_offline.json"
-    )
+    val WHITELIST_FILE_PATH =
+        PATH.resolve(if (WhitelistManager.serverIsOnlineMode) "whitelist.json" else "whitelist_offline.json")
 
-    fun import(defaultServer: String): Boolean {
+    override fun ProxyCommandSender.import(defaultServer: String): Boolean {
         var success = true
         try {
-            val config = Toml().read(CONFIG_PATH.readText())
+            if (!CONFIG_PATH.exists()) {
+                sendWarn("command-avm-import-config-does-not-exist", pluginName)
+            } else {
+                val config = Toml().read(CONFIG_PATH.readTextWithBuffer())
 
-            AVM.config.run {
-                whitelist.enabled = config.getBoolean("enable_whitelist")
-                whitelist.queryApi.uuid = config.getString("uuid_api")
-                whitelist.queryApi.profile = config.getString("profile_api")
+                AVM.config.run {
+                    whitelist.enabled = config.getBoolean("enable_whitelist")
+                    whitelist.queryApi.uuid = config.getString("uuid_api")
+                    whitelist.queryApi.profile = config.getString("profile_api")
+                }
+                AVM.saveConfig()
             }
-            AVM.saveConfig()
         } catch (e: Exception) {
             success = false
-            error("Failed to import config from lls-manager: ${e.message}")
+            sendError("command-avm-import-config-failed", pluginName, e.message ?: asLangText("unknown-cause"))
         }
 
-        val whitelist = try {
-            ConfigUtil.json.decodeFromString<List<Player>>(WHITELIST_FILE_PATH.readText())
-        } catch (e: Exception) {
-            error("Failed to import players from lls-manager: ${e.message}")
-            return false
-        }
+        if (!WHITELIST_FILE_PATH.exists()) {
+            sendWarn("command-avm-import-whitelist-does-not-exist", pluginName)
+        } else {
+            val whitelist = try {
+                json.decodeFromString<List<Player>>(WHITELIST_FILE_PATH.readTextWithBuffer())
+            } catch (e: Exception) {
+                sendError("command-avm-import-whitelist-failed", pluginName, e.message ?: asLangText("unknown-cause"))
+                return false
+            }
 
-        val onlineMode = WhitelistManager.serverIsOnlineMode
+            val onlineMode = WhitelistManager.serverIsOnlineMode
 
-        whitelist.forEach { player ->
-            WhitelistManager.add(player.name, player.uuid, defaultServer, onlineMode)
+            whitelist.forEach { player ->
+                WhitelistManager.add(player.name, player.uuid, defaultServer, onlineMode)
+            }
         }
         return success
     }

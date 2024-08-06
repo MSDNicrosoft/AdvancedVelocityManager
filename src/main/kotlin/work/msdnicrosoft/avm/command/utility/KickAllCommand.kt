@@ -9,7 +9,7 @@ import taboolib.common.platform.command.mainCommand
 import taboolib.common.platform.function.submitAsync
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
-import work.msdnicrosoft.avm.util.ProxyServerUtil
+import work.msdnicrosoft.avm.util.ProxyServerUtil.kickPlayers
 import kotlin.jvm.optionals.getOrElse
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVM
 
@@ -35,7 +35,7 @@ object KickAllCommand {
         }
         execute<ProxyCommandSender> { sender, _, _ ->
             submitAsync(now = true) {
-                ProxyServerUtil.kickPlayers(
+                kickPlayers(
                     sender.asLangText("command-kick-target", sender.name),
                     AVM.server.allPlayers.filter { !it.hasPermission("avm.kickall.bypass") }
                 )
@@ -63,7 +63,7 @@ object KickAllCommand {
 
         val (bypassed, playerToKick) = server.playersConnected.partition { it.hasPermission("avm.kickall.bypass") }
 
-        submitAsync(now = true) { ProxyServerUtil.kickPlayers(reason, playerToKick) }
+        submitAsync(now = true) { kickPlayers(reason, playerToKick) }
 
         sender.sendLang("command-kickall-executor", playerToKick.size, bypassed.size)
     }

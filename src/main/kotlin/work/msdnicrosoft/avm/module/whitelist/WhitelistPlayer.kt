@@ -1,4 +1,4 @@
-package work.msdnicrosoft.avm.util.whitelist
+package work.msdnicrosoft.avm.module.whitelist
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
@@ -9,8 +9,14 @@ import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.Player
 import work.msdnicrosoft.avm.util.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.ComponentUtil.createHoverEvent
 import work.msdnicrosoft.avm.util.ComponentUtil.serializer
-import work.msdnicrosoft.avm.util.ConfigUtil
-import work.msdnicrosoft.avm.util.Extensions.replace
+import work.msdnicrosoft.avm.util.ConfigUtil.getServersInGroup
+import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroupName
+import work.msdnicrosoft.avm.util.StringUtil.replace
+import kotlin.collections.joinToString
+import kotlin.collections.map
+import kotlin.collections.plus
+import kotlin.let
+import kotlin.to
 
 class WhitelistPlayer(val player: Player, val sender: ProxyCommandSender) {
 
@@ -61,13 +67,13 @@ class WhitelistPlayer(val player: Player, val sender: ProxyCommandSender) {
                 .hoverEvent(createHoverEvent(format) { deserialize() })
                 .clickEvent(createClickEvent(format) { replacePlaceholders() })
         } + player.serverList.map { server ->
-            val isServerGroup = ConfigUtil.isServerGroupName(server)
+            val isServerGroup = isServerGroupName(server)
             val serverFormat = Format(
                 text = "${if (isServerGroup) "&l" else ""}%server_name%",
                 hover = buildList {
                     if (isServerGroup) {
                         add(sender.asLangText("whitelist-each-player-server-hover-1"))
-                        add("&r${ConfigUtil.getServersInGroup(server)!!.joinToString(" ")}")
+                        add("&r${getServersInGroup(server)!!.joinToString(" ")}")
                         add(" ")
                     }
                     add(sender.asLangText("whitelist-each-player-server-hover-2"))

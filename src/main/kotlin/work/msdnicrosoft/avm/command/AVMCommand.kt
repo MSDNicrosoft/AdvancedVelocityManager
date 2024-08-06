@@ -10,10 +10,10 @@ import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroupName
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
 import work.msdnicrosoft.avm.util.command.CommandUtil
 import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
-import work.msdnicrosoft.avm.util.importer.LlsManagerUtil
-import work.msdnicrosoft.avm.util.importer.QuAnVelocityWhitelistUtil
 import kotlin.system.measureTimeMillis
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
+import work.msdnicrosoft.avm.util.importer.LlsManagerUtil.import as LlsManagerImport
+import work.msdnicrosoft.avm.util.importer.QuAnVelocityWhitelistUtil.import as QuAnVelocityWhitelistImport
 
 @Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
@@ -98,8 +98,8 @@ object AVMCommand {
                         var success = false
                         val elapsed = measureTimeMillis {
                             success = when (PluginName.valueOf(pluginName.replace("-", "_").uppercase())) {
-                                PluginName.LLS_MANAGER -> LlsManagerUtil.import(defaultServer)
-                                PluginName.QU_AN_VELOCITYWHITELIST -> QuAnVelocityWhitelistUtil.import(defaultServer)
+                                PluginName.LLS_MANAGER -> sender.LlsManagerImport(defaultServer)
+                                PluginName.QU_AN_VELOCITYWHITELIST -> sender.QuAnVelocityWhitelistImport(defaultServer)
                             }
                         }
                         if (success) {

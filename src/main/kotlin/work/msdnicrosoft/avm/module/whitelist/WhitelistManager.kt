@@ -4,9 +4,11 @@ import com.velocitypowered.api.util.UuidUtils
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import taboolib.common.platform.function.*
-import work.msdnicrosoft.avm.util.ConfigUtil.json
-import work.msdnicrosoft.avm.util.Extensions.toUndashedString
-import work.msdnicrosoft.avm.util.Extensions.toUuid
+import work.msdnicrosoft.avm.util.FileUtil.json
+import work.msdnicrosoft.avm.util.FileUtil.readTextWithBuffer
+import work.msdnicrosoft.avm.util.FileUtil.writeTextWithBuffer
+import work.msdnicrosoft.avm.util.StringUtil.toUuid
+import work.msdnicrosoft.avm.util.UUIDUtil.toUndashedString
 import work.msdnicrosoft.avm.util.data.UUIDSerializer
 import java.net.URI
 import java.net.http.HttpClient
@@ -132,7 +134,7 @@ object WhitelistManager {
      */
     private fun saveWhitelist() = withLock {
         runCatching {
-            file.writeText(json.encodeToString(whitelist))
+            file.writeTextWithBuffer(json.encodeToString(whitelist))
         }.onFailure { error("Failed to save whitelist: ${it.message}") }
     }.isSuccess
 
@@ -146,13 +148,13 @@ object WhitelistManager {
             runCatching {
                 info("Whitelist file does not exist, creating...")
                 file.parentFile.mkdirs()
-                file.writeText(json.encodeToString(listOf<Player>()))
+                file.writeTextWithBuffer(json.encodeToString(listOf<Player>()))
             }.onFailure { error("Failed to initialize whitelist: ${it.message}") }
         }
         info("${if (reload) "Reloading" else "Loading"} whitelist...")
         withLock {
             whitelist = runCatching {
-                json.decodeFromString<List<Player>>(file.readText())
+                json.decodeFromString<List<Player>>(file.readTextWithBuffer())
             }.getOrElse {
                 error("Failed to load whitelist: ${it.message}")
                 emptyList()

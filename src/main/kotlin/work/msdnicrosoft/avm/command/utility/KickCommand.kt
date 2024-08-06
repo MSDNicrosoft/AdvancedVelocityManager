@@ -9,7 +9,7 @@ import taboolib.common.platform.command.mainCommand
 import taboolib.common.platform.function.submitAsync
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
-import work.msdnicrosoft.avm.util.ProxyServerUtil
+import work.msdnicrosoft.avm.util.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
 import kotlin.jvm.optionals.getOrElse
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVM
@@ -43,6 +43,6 @@ object KickCommand {
             sender.sendLang("player-not-found", player)
             return
         }
-        submitAsync(now = true) { ProxyServerUtil.kickPlayers(reason, playerToKick) }
+        submitAsync(now = true) { kickPlayers(reason, playerToKick) }
     }
 }

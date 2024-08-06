@@ -19,7 +19,7 @@ import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.warning
-import work.msdnicrosoft.avm.util.Extensions.formated
+import work.msdnicrosoft.avm.util.StringUtil.formated
 import java.lang.reflect.Field
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 

@@ -10,8 +10,8 @@ import taboolib.common.platform.command.mainCommand
 import taboolib.common.platform.command.player
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
-import work.msdnicrosoft.avm.util.ConfigUtil
-import work.msdnicrosoft.avm.util.ProxyServerUtil
+import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
+import work.msdnicrosoft.avm.util.ProxyServerUtil.sendPlayer
 import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
 import kotlin.jvm.optionals.getOrElse
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVM
@@ -39,7 +39,7 @@ object SendCommand {
                 execute<ProxyCommandSender> { sender, context, _ ->
                     val player = context.player("player")
                     val serverName = context["server"]
-                    val serverNickname = ConfigUtil.getServerNickname(serverName)
+                    val serverNickname = getServerNickname(serverName)
                     val reason = player.asLangText(
                         "command-send-target",
                         sender.name,
@@ -59,7 +59,7 @@ object SendCommand {
             sender.sendLang("server-not-found", serverName)
             return
         }
-        val serverNickname = ConfigUtil.getServerNickname(serverName)
+        val serverNickname = getServerNickname(serverName)
 
         val playerName = proxyPlayer.name
         val player = AVM.server.getPlayer(playerName).getOrElse {
@@ -67,7 +67,7 @@ object SendCommand {
             return
         }
 
-        ProxyServerUtil.sendPlayer(server, player).thenAccept { success ->
+        sendPlayer(server, player).thenAccept { success ->
             if (success) {
                 sender.sendLang("send-executor-success", playerName, serverNickname)
                 proxyPlayer.sendMessage(reason)

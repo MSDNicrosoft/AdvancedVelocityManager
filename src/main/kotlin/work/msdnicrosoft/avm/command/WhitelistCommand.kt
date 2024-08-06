@@ -13,14 +13,14 @@ import work.msdnicrosoft.avm.annotations.ShouldShow
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.AddResult
+import work.msdnicrosoft.avm.module.whitelist.WhitelistPlayer
 import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroupName
-import work.msdnicrosoft.avm.util.Extensions.isUuid
-import work.msdnicrosoft.avm.util.Extensions.toUuid
-import work.msdnicrosoft.avm.util.ProxyServerUtil
+import work.msdnicrosoft.avm.util.ProxyServerUtil.kickPlayers
+import work.msdnicrosoft.avm.util.StringUtil.isUuid
+import work.msdnicrosoft.avm.util.StringUtil.toUuid
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
 import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
 import work.msdnicrosoft.avm.util.command.PageTurner
-import work.msdnicrosoft.avm.util.whitelist.WhitelistPlayer
 import kotlin.jvm.optionals.getOrNull
 import kotlin.math.ceil
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
@@ -152,7 +152,7 @@ object WhitelistCommand {
                 }
                 if (config.enabled) {
                     submitAsync(now = true) {
-                        ProxyServerUtil.kickPlayers(config.message, AVM.plugin.server.allPlayers)
+                        kickPlayers(config.message, AVM.plugin.server.allPlayers)
                     }
                 }
             }
@@ -191,7 +191,7 @@ object WhitelistCommand {
             AVM.saveConfig()
 
             submitAsync(now = true) {
-                ProxyServerUtil.kickPlayers(
+                kickPlayers(
                     config.message,
                     AVM.plugin.server.allPlayers.let { players ->
                         if (WhitelistManager.whitelistSize == 0) {
@@ -260,7 +260,7 @@ object WhitelistCommand {
                     if (isUuid) getPlayer(player.toUuid()) else getPlayer(player)
                 }.presentRun {
                     if (!WhitelistManager.isInServerWhitelist(uniqueId, currentServer.get().serverInfo.name)) {
-                        ProxyServerUtil.kickPlayers(config.message, this)
+                        kickPlayers(config.message, this)
                     }
                 }
             }

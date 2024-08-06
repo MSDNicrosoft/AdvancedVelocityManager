@@ -6,7 +6,7 @@ import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import work.msdnicrosoft.avm.util.Extensions.toUndashedString
+import work.msdnicrosoft.avm.util.UUIDUtil.toUndashedString
 import java.util.UUID
 
 object UUIDSerializer : KSerializer<UUID> {

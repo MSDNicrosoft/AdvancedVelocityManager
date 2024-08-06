@@ -8,9 +8,9 @@ import work.msdnicrosoft.avm.config.AVMConfig
 import work.msdnicrosoft.avm.util.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.ComponentUtil.createHoverEvent
 import work.msdnicrosoft.avm.util.ComponentUtil.serializer
-import work.msdnicrosoft.avm.util.ConfigUtil
-import work.msdnicrosoft.avm.util.DateTimeUtil
-import work.msdnicrosoft.avm.util.Extensions.replace
+import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
+import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
+import work.msdnicrosoft.avm.util.StringUtil.replace
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
@@ -30,7 +30,7 @@ class ChatMessage(val event: PlayerChatEvent, private val config: AVMConfig.Chat
             .build()
     }
     private val serverName = server.serverInfo.name
-    private val serverNickname = ConfigUtil.getServerNickname(serverName)
+    private val serverNickname = getServerNickname(serverName)
     private val serverOnlinePlayers = server.server.playersConnected.size.toString()
     private val serverVersion = serverPing.version.name
 
@@ -52,7 +52,7 @@ class ChatMessage(val event: PlayerChatEvent, private val config: AVMConfig.Chat
         .replace("%server_nickname%", serverNickname)
         .replace("%server_online_players%", serverOnlinePlayers)
         .replace("%server_version%", serverVersion)
-        .replace("%player_message_sent_time%", DateTimeUtil.getDateTime())
+        .replace("%player_message_sent_time%", getDateTime())
         .build()
 
     /**

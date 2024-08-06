@@ -10,7 +10,7 @@ package work.msdnicrosoft.avm.impl
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.ProxyCommandSender
-import work.msdnicrosoft.avm.util.Extensions.formated
+import work.msdnicrosoft.avm.util.StringUtil.formated
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as VelocityPlugin
 
 @PlatformSide(Platform.VELOCITY)
