@@ -1,16 +1,13 @@
 import io.izzel.taboolib.gradle.*
 
 plugins {
-    val kotlinVersion = "2.0.0"
-    kotlin("jvm").version(kotlinVersion)
-    kotlin("plugin.serialization").version(kotlinVersion)
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
 
-    val detektVersion = "1.23.6"
-    id("io.gitlab.arturbosch.detekt").version(detektVersion)
-//    id("io.github.detekt.gradle.compiler-plugin").version(detektVersion)
+    alias(libs.plugins.detekt)
+//    alias(libs.plugins.detekt.compiler)
 
-    val taboolibVersion = "2.0.13"
-    id("io.izzel.taboolib").version(taboolibVersion)
+    alias(libs.plugins.taboolib)
 }
 
 repositories {
@@ -31,6 +28,12 @@ repositories {
         }
     }
     maven("https://repo.opencollab.dev/main/")
+    maven {
+        url = uri("https://repo.william278.net/velocity/")
+        content {
+            includeGroup("com.velocitypowered")
+        }
+    }
     mavenCentral()
 }
 
@@ -56,40 +59,23 @@ taboolib {
 }
 
 dependencies {
-    val detektVersion = "1.23.6"
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:${detektVersion}")
+    detektPlugins(libs.detekt)
 
-    val velocityVersion = "3.3.0-SNAPSHOT"
-    compileOnly("com.velocitypowered:velocity-api:$velocityVersion")
-
-    val floodgateVersion = "2.2.3-SNAPSHOT"
-    compileOnly("org.geysermc.floodgate:api:$floodgateVersion")
-
-    val nettyVersion = "4.1.112.Final"
-    compileOnly("io.netty:netty-all:$nettyVersion")
+    compileOnly(libs.velocity.api)
+    compileOnly(libs.velocity.proxy)
+    compileOnly(libs.floodgate)
+    compileOnly(libs.netty)
 
     compileOnly(kotlin("stdlib"))
-    compileOnly(fileTree("libs"))
 
-    val kamlVersion = "0.61.0"
-    taboo("com.charleskorn.kaml:kaml:$kamlVersion")
+    taboo(libs.kaml)
 
-    val kotlinxSerializationVersion = "1.7.1"
-    taboo("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion") {
-        isTransitive = false
-    }
+    taboo(libs.kotlin.serialization.json) { isTransitive = false }
+    taboo(libs.enhanced.legacy.text) { isTransitive = false }
 
-    val enhancedLegacyTextVersion = "2.0.0-SNAPSHOT"
-    taboo("dev.vankka:enhancedlegacytext:$enhancedLegacyTextVersion") {
-        isTransitive = false
-    }
-
-    val asmVersion = "9.7"
-    taboo("org.ow2.asm:asm:$asmVersion")
-    taboo("org.ow2.asm:asm-util:$asmVersion")
-
-    val bytebuddyagentVersion = "1.14.18"
-    taboo("net.bytebuddy:byte-buddy-agent:$bytebuddyagentVersion")
+    taboo(libs.asm)
+    taboo(libs.asm.util)
+    taboo(libs.byte.buddy.agent)
 }
 
 detekt {
