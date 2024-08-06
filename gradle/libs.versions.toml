@@ -1,7 +1,7 @@
 [versions]
 
 # Gradle Plugins
-kotlin = "2.0.0"
+kotlin = "2.0.10"
 detekt = "1.23.6"
 taboolib = "2.0.13"
 
