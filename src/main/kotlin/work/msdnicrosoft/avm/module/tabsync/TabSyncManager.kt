@@ -3,8 +3,8 @@ package work.msdnicrosoft.avm.module.tabsync
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.player.TabListEntry
 import net.kyori.adventure.text.Component
-import work.msdnicrosoft.avm.util.ComponentUtil.serializer
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
+import work.msdnicrosoft.avm.util.component.ComponentUtil.serializer
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 object TabSyncManager {

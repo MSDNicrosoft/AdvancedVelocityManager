@@ -5,12 +5,12 @@ import com.velocitypowered.api.proxy.server.ServerPing
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import work.msdnicrosoft.avm.config.AVMConfig
-import work.msdnicrosoft.avm.util.ComponentUtil.createClickEvent
-import work.msdnicrosoft.avm.util.ComponentUtil.createHoverEvent
-import work.msdnicrosoft.avm.util.ComponentUtil.serializer
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
 import work.msdnicrosoft.avm.util.StringUtil.replace
+import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
+import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
+import work.msdnicrosoft.avm.util.component.ComponentUtil.serializer
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 

@@ -8,4 +8,6 @@ object ReflectUtil {
         error("Failed to get field $field of class ${clazz.name}")
         error(e)
     }
+
+    fun getField(className: String, field: String) = getField(Class.forName(className), field)
 }

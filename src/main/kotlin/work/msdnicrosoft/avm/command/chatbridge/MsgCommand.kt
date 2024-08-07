@@ -13,11 +13,11 @@ import taboolib.common.platform.command.mainCommand
 import taboolib.common.platform.command.player
 import taboolib.common.util.isConsole
 import taboolib.module.lang.sendLang
-import work.msdnicrosoft.avm.config.AVMConfig.ChatBridge.Format
-import work.msdnicrosoft.avm.util.ComponentUtil.createClickEvent
-import work.msdnicrosoft.avm.util.ComponentUtil.createHoverEvent
-import work.msdnicrosoft.avm.util.ComponentUtil.serializer
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
+import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
+import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
+import work.msdnicrosoft.avm.util.component.ComponentUtil.serializer
+import work.msdnicrosoft.avm.util.component.Format
 import kotlin.jvm.optionals.getOrElse
 import kotlin.jvm.optionals.getOrNull
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM

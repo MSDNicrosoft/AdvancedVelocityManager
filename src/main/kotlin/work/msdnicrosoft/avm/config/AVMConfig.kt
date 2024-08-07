@@ -3,8 +3,8 @@ package work.msdnicrosoft.avm.config
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import work.msdnicrosoft.avm.util.component.Format
 
-@Suppress("MaxLineLength")
 @Serializable
 data class AVMConfig(
     @YamlComment(
@@ -113,7 +113,8 @@ data class AVMConfig(
                 "%target_server_nickname% - Server name which the player switched to",
                 "%target_server_name% - Server name which the player switched to"
             )
-            val message: String = "&8[&b⇄&8]&r %player_name% &7:&r %previous_server_nickname% &6➟&r %target_server_nickname%"
+            val message: String =
+                "&8[&b⇄&8]&r %player_name% &7:&r %previous_server_nickname% &6➟&r %target_server_nickname%"
         )
     }
 
@@ -352,16 +353,6 @@ data class AVMConfig(
                     hover = listOf("&7Sent time: %player_message_sent_time%")
                 )
             )
-        )
-
-        @Serializable
-        data class Format(
-            val text: String,
-            val hover: List<String>? = null,
-            val command: String? = null,
-            val suggest: String? = null,
-            val url: String? = null,
-            val clipboard: String? = null
         )
 
 //        @Serializable

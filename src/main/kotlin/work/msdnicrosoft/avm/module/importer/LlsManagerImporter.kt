@@ -1,4 +1,4 @@
-package work.msdnicrosoft.avm.util.importer
+package work.msdnicrosoft.avm.module.importer
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -16,7 +16,7 @@ import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.nameWithoutExtension
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
-object LlsManagerUtil : Importer {
+object LlsManagerImporter : Importer {
 
     override val pluginName = "lls-manager"
 

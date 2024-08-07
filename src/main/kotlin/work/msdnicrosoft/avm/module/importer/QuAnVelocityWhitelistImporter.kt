@@ -1,4 +1,4 @@
-package work.msdnicrosoft.avm.util.importer
+package work.msdnicrosoft.avm.module.importer
 
 import com.moandjiezana.toml.Toml
 import kotlinx.serialization.Serializable
@@ -18,7 +18,7 @@ import kotlin.io.path.exists
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @PlatformSide(Platform.VELOCITY)
-object QuAnVelocityWhitelistUtil : Importer {
+object QuAnVelocityWhitelistImporter : Importer {
 
     override val pluginName = "(qu-an) VelocityWhitelist"
 

@@ -1,11 +1,10 @@
-package work.msdnicrosoft.avm.util
+package work.msdnicrosoft.avm.util.component
 
 import dev.vankka.enhancedlegacytext.EnhancedLegacyText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import taboolib.common.platform.function.warning
-import work.msdnicrosoft.avm.config.AVMConfig.ChatBridge.Format
 
 object ComponentUtil {
 

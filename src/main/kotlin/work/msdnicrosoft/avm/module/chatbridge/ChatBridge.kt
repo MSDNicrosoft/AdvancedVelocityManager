@@ -8,14 +8,8 @@ import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common5.util.startsWithAny
 import work.msdnicrosoft.avm.command.chatbridge.MsgCommand
-import kotlin.collections.any
-import kotlin.collections.forEach
-import kotlin.text.contains
-import kotlin.text.endsWith
-import kotlin.text.startsWith
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
-@Suppress("Indentation")
 object ChatBridge {
 
     /**

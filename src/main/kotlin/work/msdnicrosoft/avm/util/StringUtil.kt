@@ -2,6 +2,7 @@ package work.msdnicrosoft.avm.util
 
 import com.velocitypowered.api.util.UuidUtils
 import net.kyori.adventure.text.Component
+import work.msdnicrosoft.avm.util.component.ComponentUtil
 
 object StringUtil {
 

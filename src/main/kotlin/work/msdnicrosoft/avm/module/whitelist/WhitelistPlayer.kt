@@ -4,19 +4,14 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.module.lang.asLangText
-import work.msdnicrosoft.avm.config.AVMConfig.ChatBridge.Format
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.Player
-import work.msdnicrosoft.avm.util.ComponentUtil.createClickEvent
-import work.msdnicrosoft.avm.util.ComponentUtil.createHoverEvent
-import work.msdnicrosoft.avm.util.ComponentUtil.serializer
 import work.msdnicrosoft.avm.util.ConfigUtil.getServersInGroup
 import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroupName
 import work.msdnicrosoft.avm.util.StringUtil.replace
-import kotlin.collections.joinToString
-import kotlin.collections.map
-import kotlin.collections.plus
-import kotlin.let
-import kotlin.to
+import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
+import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
+import work.msdnicrosoft.avm.util.component.ComponentUtil.serializer
+import work.msdnicrosoft.avm.util.component.Format
 
 class WhitelistPlayer(val player: Player, val sender: ProxyCommandSender) {
 

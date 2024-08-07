@@ -13,12 +13,7 @@ import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.self
 import work.msdnicrosoft.avm.annotations.ShouldShow
-import kotlin.collections.isNotEmpty
-import kotlin.collections.joinToString
-import kotlin.collections.last
-import kotlin.collections.toList
 import kotlin.reflect.KClass
-import kotlin.text.trim
 
 object CommandUtil {
 
