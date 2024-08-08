@@ -15,10 +15,10 @@ whitelist management which is compatible with the [Floodgate](https://geysermc.o
 
 ## Key Features
 
-- **Server-to-Server Send (`/send`)**: Send individual players from one server to another.
-- **Bulk Server-to-Server Send (`/sendall`)**: Send all players from a specified server to another.
-- **Player Kick (`/kick`)**: Kick specified players with an optional reason.
-- **Bulk Kick (`/kickall`)**: Kick all players from a specified server with an optional reason.
+- **Server-to-Server Send (`/avm send`)**: Send individual players from one server to another.
+- **Bulk Server-to-Server Send (`/avm sendall`)**: Send all players from a specified server to another.
+- **Player Kick (`/avm kick`)**: Kick specified players with an optional reason.
+- **Bulk Kick (`/avm kickall`)**: Kick all players from a specified server with an optional reason.
 - **Whitelist Management (`/avmwl`)**: Add/Remove whitelist of players using UUIDs or usernames, and compatible with
   [Floodgate](https://geysermc.org/wiki/floodgate/)
 - **Custom Broadcasts**: Customize messages for player joins, leaves, and server switches.
@@ -33,10 +33,10 @@ whitelist management which is compatible with the [Floodgate](https://geysermc.o
 ## Usage
 
 - **Whitelist Management**: Use the `/avmwl ...` command.
-- **Individual Send Between Servers**: Use the `/send <player> <target server>` command.
-- **Bulk Send Between Servers**: Use the `/sendall <source server> <target server>` command.
-- **Player Kick**: Use the `/kick <player> [reason]` command.
-- **Bulk Kick**: Use the `/kickall <server> [reason]` command to kick all players from a specified server.
+- **Individual Send Between Servers**: Use the `/avm send <player> <target server>` command.
+- **Bulk Send Between Servers**: Use the `/avm sendall <source server> <target server>` command.
+- **Player Kick**: Use the `/avm kick <player> [reason]` command.
+- **Bulk Kick**: Use the `/avm kickall <server> [reason]` command to kick all players from a specified server.
 
 ### Permissions
 
