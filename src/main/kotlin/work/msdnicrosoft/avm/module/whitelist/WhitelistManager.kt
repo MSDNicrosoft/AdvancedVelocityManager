@@ -388,7 +388,7 @@ object WhitelistManager {
      * @return The UUID associated with the username, or null if not found.
      */
     private fun getUuid(username: String, onlineMode: Boolean): String? {
-        if (!serverIsOnlineMode || !onlineMode) {
+        if (!serverIsOnlineMode && !onlineMode) {
             return UuidUtils.generateOfflinePlayerUuid(username).toUndashedString()
         }
 
