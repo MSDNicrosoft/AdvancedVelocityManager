@@ -2,9 +2,17 @@ package work.msdnicrosoft.avm.util
 
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.RegisteredServer
+import com.velocitypowered.api.proxy.server.ServerPing
+import net.kyori.adventure.text.Component
 import work.msdnicrosoft.avm.util.StringUtil.formated
 
 object ProxyServerUtil {
+
+    val TIMEOUT_PING_RESULT = ServerPing.builder()
+        .version(ServerPing.Version(-1, "Unknown"))
+        .description(Component.text("Unknown"))
+        .build()
+
     /**
      * Kicks a list of players from the server.
      *

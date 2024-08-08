@@ -1,12 +1,12 @@
 package work.msdnicrosoft.avm.module.chatbridge
 
 import com.velocitypowered.api.event.player.PlayerChatEvent
-import com.velocitypowered.api.proxy.server.ServerPing
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import work.msdnicrosoft.avm.config.AVMConfig
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
+import work.msdnicrosoft.avm.util.ProxyServerUtil.TIMEOUT_PING_RESULT
 import work.msdnicrosoft.avm.util.StringUtil.replace
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
@@ -24,10 +24,7 @@ class ChatMessage(val event: PlayerChatEvent, private val config: AVMConfig.Chat
     private val serverPing = try {
         server.server.ping().get(20, TimeUnit.MILLISECONDS)
     } catch (_: TimeoutException) {
-        ServerPing.builder()
-            .version(ServerPing.Version(-1, "Unknown"))
-            .description(Component.text("Unknown"))
-            .build()
+        TIMEOUT_PING_RESULT
     }
     private val serverName = server.serverInfo.name
     private val serverNickname = getServerNickname(serverName)
