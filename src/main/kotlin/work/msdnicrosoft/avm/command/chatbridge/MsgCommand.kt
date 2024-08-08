@@ -51,21 +51,21 @@ object MsgCommand {
                     }
                     if (!sender.isConsole()) {
                         AVM.plugin.server.getPlayer(sender.name).get().sendMessage(
-                            buildMessage(config.privateChatFormat.sender, sender, player, context["message"])
+                            config.privateChatFormat.sender.buildMessage(sender, player, context["message"])
                         )
                     }
                     player.sendMessage(
-                        buildMessage(config.privateChatFormat.receiver, sender, player, context["message"])
+                        config.privateChatFormat.receiver.buildMessage(sender, player, context["message"])
                     )
                 }
             }
         }
     }
 
-    private fun buildMessage(formats: List<Format>, sender: ProxyCommandSender, player: Player, message: String) =
+    private fun List<Format>.buildMessage(sender: ProxyCommandSender, player: Player, message: String) =
         Component.join(
             JoinConfiguration.noSeparators(),
-            formats.map { format ->
+            this.map { format ->
                 format.text.deserialize(sender.name, player.username, message)
                     .hoverEvent(createHoverEvent(format) { deserialize(sender.name, player.username, message) })
                     .clickEvent(createClickEvent(format) { replacePlaceHolders(sender.name, player.username) })

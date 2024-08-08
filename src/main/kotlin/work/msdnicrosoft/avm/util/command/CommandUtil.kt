@@ -9,6 +9,7 @@ import taboolib.common.platform.command.component.CommandComponent
 import taboolib.common.platform.service.PlatformCommand
 import taboolib.common.util.subList
 import taboolib.library.reflex.Reflex.Companion.getProperty
+import taboolib.module.chat.colored
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.self
@@ -95,7 +96,7 @@ object CommandUtil {
                 1 -> sender.sendLang("unknown-command")
                 2 -> sender.sendLang("unknown-argument")
             }
-            sender.sendMessage("&7$str&r&c&o<--[${sender.asLangText("unknown-here")}]")
+            sender.sendMessage("&7$str&r&c&o<--[${sender.asLangText("unknown-here")}]".colored())
         }
     }
 
