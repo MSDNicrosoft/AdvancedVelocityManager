@@ -38,7 +38,7 @@ object WhitelistManager {
         var name: String,
         @Serializable(with = UUIDSerializer::class)
         val uuid: UUID,
-        val onlineMode: Boolean,
+        var onlineMode: Boolean,
         var serverList: List<String>
     )
 
@@ -239,7 +239,12 @@ object WhitelistManager {
             withLock { whitelist.add(Player(username, uuid, onlineMode, listOf(server))) }
         } else {
             // Add the server to their server list
-            withLock { whitelist.find { it.uuid == uuid }!!.serverList += server }
+            withLock {
+                whitelist.find { it.uuid == uuid }!!.apply {
+                    serverList += server
+                    this.onlineMode = onlineMode
+                }
+            }
         }
         updateCache(username = username, uuid = uuid)
         return if (saveWhitelist()) AddResult.SUCCESS else AddResult.SAVE_FILE_FAILED
