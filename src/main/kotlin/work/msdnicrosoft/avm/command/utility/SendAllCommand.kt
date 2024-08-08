@@ -3,32 +3,26 @@ package work.msdnicrosoft.avm.command.utility
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.command.CommandBody
-import taboolib.common.platform.command.CommandHeader
-import taboolib.common.platform.command.mainCommand
+import taboolib.common.platform.command.subCommand
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.ProxyServerUtil.sendMessage
 import work.msdnicrosoft.avm.util.ProxyServerUtil.sendPlayer
-import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
 import kotlin.jvm.optionals.getOrElse
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVM
 
-@Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
-@CommandHeader(name = "sendall", permission = "avm.command.sendall")
 object SendAllCommand {
 
-    @CommandBody
-    val main = mainCommand {
+    val command = subCommand {
         dynamic("server") {
             suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
                 AVM.server.allServers.map { it.serverInfo.name }
             }
             dynamic("reason") {
                 execute<ProxyCommandSender> { sender, context, _ ->
-                    sendAllPlayers(sender, context["server"], context["reason"])
+                    sender.sendAllPlayers(context["server"], context["reason"])
                 }
             }
             execute<ProxyCommandSender> { sender, context, _ ->
@@ -37,30 +31,26 @@ object SendAllCommand {
                     sender.name,
                     getServerNickname(context["server"])
                 )
-                sendAllPlayers(sender, context["server"], reason)
+                sender.sendAllPlayers(context["server"], reason)
             }
-        }
-        execute<ProxyCommandSender> { sender, context, _ ->
-            buildHelper(this@SendAllCommand::class)
         }
     }
 
     /**
      * Sends all players to a specific server.
      *
-     * @param sender the command sender
      * @param serverName the name of the server to send players to
      * @param reason the reason for the send
      */
-    private fun sendAllPlayers(sender: ProxyCommandSender, serverName: String, reason: String) {
+    private fun ProxyCommandSender.sendAllPlayers(serverName: String, reason: String) {
         val server = AVM.server.getServer(serverName).getOrElse {
-            sender.sendLang("server-not-found", serverName)
+            sendLang("server-not-found", serverName)
             return
         }
         val serverNickname = getServerNickname(serverName)
 
         if (server.playersConnected.isEmpty()) {
-            sender.sendLang("general-empty-server")
+            sendLang("general-empty-server")
             return
         }
 
@@ -79,7 +69,7 @@ object SendAllCommand {
                 }
             }
         }
-        sender.sendLang(
+        sendLang(
             "command-sendall-executor",
             playerToSend.size - failedPlayers.size,
             serverNickname,
@@ -87,7 +77,7 @@ object SendAllCommand {
             failedPlayers.size
         )
         if (!failedPlayers.isEmpty()) {
-            sender.sendLang("command-sendall-executor-failed", failedPlayers.size, serverNickname)
+            sendLang("command-sendall-executor-failed", failedPlayers.size, serverNickname)
         }
     }
 }

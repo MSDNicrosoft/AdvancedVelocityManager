@@ -3,41 +3,35 @@ package work.msdnicrosoft.avm.command.utility
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.command.CommandBody
-import taboolib.common.platform.command.CommandHeader
-import taboolib.common.platform.command.mainCommand
+import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.submitAsync
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.util.ProxyServerUtil.kickPlayers
 import kotlin.jvm.optionals.getOrElse
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVM
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
-@Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
-@CommandHeader(name = "kickall", permission = "avm.command.kickall")
 object KickAllCommand {
-
-    @CommandBody
-    val main = mainCommand {
+    val command = subCommand {
         dynamic("server") {
             suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                AVM.server.allServers.map { it.serverInfo.name }
+                AVM.plugin.server.allServers.map { it.serverInfo.name }
             }
             dynamic("reason") {
                 execute<ProxyCommandSender> { sender, context, _ ->
-                    kickAllPlayers(sender, context["server"], context["reason"])
+                    sender.kickAllPlayers(context["server"], context["reason"])
                 }
             }
             execute<ProxyCommandSender> { sender, context, _ ->
-                kickAllPlayers(sender, context["server"], sender.asLangText("kick-target", sender.name))
+                sender.kickAllPlayers(context["server"], sender.asLangText("command-kick-target", sender.name))
             }
         }
         execute<ProxyCommandSender> { sender, _, _ ->
             submitAsync(now = true) {
                 kickPlayers(
                     sender.asLangText("command-kick-target", sender.name),
-                    AVM.server.allPlayers.filter { !it.hasPermission("avm.kickall.bypass") }
+                    AVM.plugin.server.allPlayers.filter { !it.hasPermission("avm.kickall.bypass") }
                 )
             }
         }
@@ -46,18 +40,17 @@ object KickAllCommand {
     /**
      * Kicks all players from a specific server.
      *
-     * @param sender the command sender
      * @param server the name of the server to kick players from
      * @param reason the reason for the kick
      */
-    private fun kickAllPlayers(sender: ProxyCommandSender, server: String, reason: String) {
-        val server = AVM.server.getServer(server).getOrElse {
-            sender.sendLang("server-not-found", server)
+    private fun ProxyCommandSender.kickAllPlayers(server: String, reason: String) {
+        val server = AVM.plugin.server.getServer(server).getOrElse {
+            sendLang("server-not-found", server)
             return
         }
 
         if (server.playersConnected.isEmpty()) {
-            sender.sendLang("general-empty-server")
+            sendLang("general-empty-server")
             return
         }
 
@@ -65,6 +58,6 @@ object KickAllCommand {
 
         submitAsync(now = true) { kickPlayers(reason, playerToKick) }
 
-        sender.sendLang("command-kickall-executor", playerToKick.size, bypassed.size)
+        sendLang("command-kickall-executor", playerToKick.size, bypassed.size)
     }
 }

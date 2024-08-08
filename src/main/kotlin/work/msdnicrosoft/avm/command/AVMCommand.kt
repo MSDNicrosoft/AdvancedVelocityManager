@@ -6,6 +6,10 @@ import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.*
 import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.annotations.ShouldShow
+import work.msdnicrosoft.avm.command.utility.KickAllCommand
+import work.msdnicrosoft.avm.command.utility.KickCommand
+import work.msdnicrosoft.avm.command.utility.SendAllCommand
+import work.msdnicrosoft.avm.command.utility.SendCommand
 import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroupName
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
 import work.msdnicrosoft.avm.util.command.CommandUtil
@@ -113,6 +117,22 @@ object AVMCommand {
             }
         }
     }
+
+    @ShouldShow("<player>", "[reason]")
+    @CommandBody(permission = "avm.command.kick")
+    val kick = KickCommand.command
+
+    @ShouldShow("[server]", "[reason]")
+    @CommandBody(permission = "avm.command.kickall")
+    val kickall = KickAllCommand.command
+
+    @ShouldShow("<player>", "<server>", "[reason]")
+    @CommandBody(permission = "avm.command.send")
+    val send = SendCommand.command
+
+    @ShouldShow("<server>", "[reason]")
+    @CommandBody(permission = "avm.command.sendall")
+    val sendall = SendAllCommand.command
 
 //    @ShouldShow
 //    @CommandBody(permission = "avm.command.enable")
