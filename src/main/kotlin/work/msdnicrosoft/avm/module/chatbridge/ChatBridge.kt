@@ -48,11 +48,14 @@ object ChatBridge {
     fun onPlayerChatChat(event: PlayerChatEvent) {
         if (!config.enabled) return
 
+        val message = ChatMessage(event, config).build()
+        val currentServerName = event.player.currentServer.get().serverInfo.name
+
         when (mode) {
-            PassthroughMode.ALL -> {}
+            PassthroughMode.ALL -> sendMessage(message, currentServerName)
             PassthroughMode.NONE -> {
                 event.result = PlayerChatEvent.ChatResult.denied()
-                sendMessage(ChatMessage(event, config).build())
+                sendMessage(message)
             }
 
             PassthroughMode.PATTERN -> {
@@ -63,7 +66,9 @@ object ChatBridge {
                     patterns.endswith.any { playerMessage.endsWith(it) }
                 if (!matched) {
                     event.result = PlayerChatEvent.ChatResult.denied()
-                    sendMessage(ChatMessage(event, config).build())
+                    sendMessage(message)
+                } else {
+                    sendMessage(message, currentServerName)
                 }
             }
         }
@@ -90,9 +95,12 @@ object ChatBridge {
         }
     }
 
-    private fun sendMessage(message: Component) = AVM.plugin.server.allServers.forEach { server ->
-        server.playersConnected.forEach { player ->
-            player.sendMessage(message)
+    private fun sendMessage(message: Component, vararg ignoredServer: String) {
+        for (server in AVM.plugin.server.allServers) {
+            if (server.serverInfo.name in ignoredServer) continue
+            server.playersConnected.forEach { player ->
+                player.sendMessage(message)
+            }
         }
     }
 }

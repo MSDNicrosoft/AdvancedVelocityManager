@@ -290,11 +290,11 @@ data class AVMConfig(
                 "Available modes:",
                 "   ALL:",
                 "       All chat messages will be sent to backend server",
-                "       The custom chat format will not take effect",
+                "       The custom chat format will not take effect in the server which sender is in",
                 "   PATTERN:",
                 "       If matching one of the configured pattern(s),",
                 "       the chat messages will be sent to backend server",
-                "       The matched chat messages will not use custom chat format",
+                "       The matched chat messages will not use custom chat format in the server which sender is in",
                 "   NONE:",
                 "       No chat messages will be sent to backend server",
                 "       If using MCDReforged, Quickshop and etc., please do not use this mode"
