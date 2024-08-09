@@ -165,20 +165,18 @@ object WhitelistCommand {
             val whitelistAsUuid = WhitelistManager.getWhitelist().map { it.uuid }
 
             AVM.saveConfig()
+            sender.sendLang("command-avmwl-state", sender.asLangText("general-on"))
 
             submitAsync(now = true) {
                 kickPlayers(
                     config.message,
-                    AVM.plugin.server.allPlayers.let { players ->
-                        if (WhitelistManager.whitelistSize == 0) {
-                            players
-                        } else {
-                            players.filter { it.uniqueId !in whitelistAsUuid }
-                        }
+                    if (WhitelistManager.whitelistSize == 0) {
+                        AVM.plugin.server.allPlayers
+                    } else {
+                        AVM.plugin.server.allPlayers.filter { it.uniqueId !in whitelistAsUuid }
                     }
                 )
             }
-            sender.sendLang("command-avmwl-state", sender.asLangText("general-on"))
         }
     }
 

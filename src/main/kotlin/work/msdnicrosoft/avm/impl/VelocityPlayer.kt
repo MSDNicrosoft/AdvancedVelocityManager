@@ -24,7 +24,6 @@ import taboolib.common.util.Vector
 import java.net.InetSocketAddress
 import java.time.Duration
 import java.util.Locale
-import java.util.UUID
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as VelocityPlugin
 
 @PlatformSide(Platform.VELOCITY)
@@ -33,8 +32,7 @@ class VelocityPlayer(val player: Player) : ProxyPlayer {
         get() = error("Unsupported")
         set(_) = error("Unsupported")
 
-    override val address: InetSocketAddress?
-        get() = player.remoteAddress
+    override val address: InetSocketAddress? = player.remoteAddress
 
     override var allowFlight: Boolean
         get() = error("Unsupported")
@@ -100,7 +98,7 @@ class VelocityPlayer(val player: Player) : ProxyPlayer {
 
     override var isFlying: Boolean
         get() = error("Unsupported")
-        set(_) {}
+        set(_) = error("Unsupported")
 
     override var isGliding: Boolean
         get() = error("Unsupported")
@@ -127,7 +125,7 @@ class VelocityPlayer(val player: Player) : ProxyPlayer {
 
     override var isSleepingIgnored: Boolean
         get() = error("Unsupported")
-        set(_) {}
+        set(_) = error("Unsupported")
 
     override val isSneaking: Boolean
         get() = error("Unsupported")
@@ -137,7 +135,7 @@ class VelocityPlayer(val player: Player) : ProxyPlayer {
 
     override var isSwimming: Boolean
         get() = error("Unsupported")
-        set(_) {}
+        set(_) = error("Unsupported")
 
     override val lastPlayed: Long
         get() = error("Unsupported")
@@ -146,8 +144,7 @@ class VelocityPlayer(val player: Player) : ProxyPlayer {
         get() = error("Unsupported")
         set(_) = error("Unsupported")
 
-    override val locale: String
-        get() = player.effectiveLocale?.toString() ?: Locale.ENGLISH.toString()
+    override val locale = player.effectiveLocale?.toString() ?: Locale.ENGLISH.toString()
 
     override val location: Location
         get() = error("Unsupported")
@@ -163,8 +160,7 @@ class VelocityPlayer(val player: Player) : ProxyPlayer {
         get() = error("Unsupported")
         set(_) = error("Unsupported")
 
-    override val ping: Int
-        get() = player.ping.toInt()
+    override val ping = player.ping.toInt()
 
     override var playerListName: String?
         get() = error("Unsupported")
@@ -188,8 +184,7 @@ class VelocityPlayer(val player: Player) : ProxyPlayer {
     override val sleepTicks: Int
         get() = error("Unsupported")
 
-    override val uniqueId: UUID
-        get() = player.uniqueId
+    override val uniqueId = player.uniqueId
 
     override var walkSpeed: Float
         get() = error("Unsupported")
@@ -261,17 +256,15 @@ class VelocityPlayer(val player: Player) : ProxyPlayer {
         get() = error("Unsupported")
         set(_) = error("Unsupported")
 
-    override val name: String
-        get() = player.username
+    override val name = player.username
 
-    override val origin: Any
-        get() = player
+    override val origin: Any = player
 
-    override fun hasPermission(permission: String): Boolean = player.hasPermission(permission)
+    override fun hasPermission(permission: String) = player.hasPermission(permission)
 
-    override fun isOnline(): Boolean = onlinePlayers().any { it.name == name }
+    override fun isOnline() = onlinePlayers().any { it.name == name }
 
-    override fun performCommand(command: String): Boolean =
+    override fun performCommand(command: String) =
         VelocityPlugin.server.commandManager.executeAsync(player, command).get()
 
     override fun sendMessage(message: String) = player.sendMessage(Component.text(message))

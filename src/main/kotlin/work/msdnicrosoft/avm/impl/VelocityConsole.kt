@@ -22,17 +22,15 @@ object VelocityConsole : ProxyCommandSender {
         get() = error("Unsupported")
         set(_) = error("Unsupported")
 
-    override val name: String
-        get() = "Console"
+    override val name = "Console"
 
-    override val origin: Any
-        get() = sender
+    override val origin: Any = sender
 
-    override fun hasPermission(permission: String): Boolean = sender.hasPermission(permission)
+    override fun hasPermission(permission: String) = sender.hasPermission(permission)
 
-    override fun isOnline(): Boolean = true
+    override fun isOnline() = true
 
-    override fun performCommand(command: String): Boolean =
+    override fun performCommand(command: String) =
         VelocityPlugin.server.commandManager.executeAsync(sender, command).get()
 
     override fun sendMessage(message: String) =
