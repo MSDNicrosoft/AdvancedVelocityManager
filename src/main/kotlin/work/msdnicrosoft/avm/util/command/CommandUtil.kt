@@ -29,15 +29,17 @@ object CommandUtil {
      * /plugin/src/main/kotlin/trplugins/menu/module/internal/command/CommandHandler.kt
      */
     @Suppress("LoopWithTooManyJumpStatements", "CyclomaticComplexMethod")
-    fun <T : Any> CommandComponent.buildHelper(commandRoot: KClass<T>, checkPermission: Boolean = false) {
+    fun <T : Any> CommandComponent.buildHelper(commandRoot: KClass<T>, checkPermission: Boolean = true) {
         execute<ProxyCommandSender> { sender, _, _ ->
             val rootJavaClass = commandRoot.java
             val rootCommand = rootJavaClass.getAnnotation(commandHeaderAnnotation)
             val rootName = rootCommand.name
 
-            sender.sendLang("general-help-header", self.version.get(), rootName)
+            if (checkPermission && !sender.hasPermission(rootCommand.permission)) {
+                return@execute
+            }
 
-            if (checkPermission && !sender.hasPermission(rootCommand.permission)) return@execute
+            sender.sendLang("general-help-header", self.version.get(), rootName)
 
             for (field in rootJavaClass.declaredFields) {
                 field.trySetAccessible()
