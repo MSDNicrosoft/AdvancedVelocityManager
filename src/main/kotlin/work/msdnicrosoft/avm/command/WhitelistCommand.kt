@@ -37,8 +37,8 @@ object WhitelistCommand {
     @ShouldShow("[page]")
     @CommandBody(permission = "avm.command.whitelist.list")
     val list = subCommand {
-        int("page") {
-            suggestion<ProxyCommandSender>(uncheck = true) { _, _ ->
+        dynamic("page") {
+            suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
                 (1..WhitelistManager.maxPage).map { it.toString() }
             }
             execute<ProxyCommandSender> { sender, context, _ ->
