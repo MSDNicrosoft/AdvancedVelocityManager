@@ -441,9 +441,6 @@ data class AVMConfig(
         var enabled: Boolean = true,
 
         @YamlComment("The display format for each player in tab list")
-        val format: String = "&8[%server_nickname%&8] &r%player_name%",
-
-        @SerialName("show-ping")
-        val showPing: Boolean = true
+        val format: String = "&8[%server_nickname%&8] &r%player_name%"
     )
 }
