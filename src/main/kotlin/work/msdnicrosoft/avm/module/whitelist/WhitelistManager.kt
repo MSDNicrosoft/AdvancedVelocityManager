@@ -4,6 +4,7 @@ import com.velocitypowered.api.util.UuidUtils
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import taboolib.common.platform.function.*
+import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.FileUtil.json
 import work.msdnicrosoft.avm.util.FileUtil.readTextWithBuffer
 import work.msdnicrosoft.avm.util.FileUtil.writeTextWithBuffer
@@ -73,19 +74,20 @@ object WhitelistManager {
 
     private lateinit var uuids: HashSet<UUID>
 
+    private val config
+        get() = ConfigManager.config.whitelist
+
     var state: WhitelistState
-        get() = AVM.withLock {
-            when (AVM.config.whitelist.enabled) {
-                true -> WhitelistState.ON
-                false -> WhitelistState.OFF
-            }
+        get() = when (config.enabled) {
+            true -> WhitelistState.ON
+            false -> WhitelistState.OFF
         }
-        set(value) = AVM.withLock {
-            AVM.config.whitelist.enabled = when (value) {
+        set(value) {
+            config.enabled = when (value) {
                 WhitelistState.ON -> true
                 WhitelistState.OFF -> false
             }
-            AVM.saveConfig()
+            ConfigManager.save()
         }
 
     val whitelistSize: Int
@@ -348,7 +350,7 @@ object WhitelistManager {
         val serverList = whitelist.find { it.uuid == uuid }!!.serverList
         if (server in serverList) return true
 
-        return AVM.config.whitelist.serverGroups.any { (group, servers) ->
+        return config.serverGroups.any { (group, servers) ->
             group in serverList && server in servers
         }
     }
@@ -365,7 +367,7 @@ object WhitelistManager {
         if (!serverIsOnlineMode) return null
 
         val request = HttpRequest.newBuilder().uri(
-            URI.create("${AVM.config.whitelist.queryApi.profile.trimEnd('/')}/${uuid.toUndashedString()}")
+            URI.create("${config.queryApi.profile.trimEnd('/')}/${uuid.toUndashedString()}")
         ).build()
         return try {
             HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).let { response ->
@@ -380,7 +382,7 @@ object WhitelistManager {
                 }
             }
         } catch (e: Exception) {
-            error("Failed to query uuid: ${e.message}")
+            error("Failed to query UUID: ${e.message}")
             null
         }
     }
@@ -398,7 +400,7 @@ object WhitelistManager {
         }
 
         val request = HttpRequest.newBuilder().uri(
-            URI.create("${AVM.config.whitelist.queryApi.uuid.trimEnd('/')}/$username")
+            URI.create("${config.queryApi.uuid.trimEnd('/')}/$username")
         ).build()
         return try {
             HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString()).let { response ->

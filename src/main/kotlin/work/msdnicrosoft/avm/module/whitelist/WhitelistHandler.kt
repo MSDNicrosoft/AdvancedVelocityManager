@@ -20,6 +20,7 @@ import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.warning
+import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ReflectUtil
 import work.msdnicrosoft.avm.util.StringUtil.formated
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
@@ -33,8 +34,8 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 @PlatformSide(Platform.VELOCITY)
 object WhitelistHandler {
 
-    val config
-        get() = AVM.config.whitelist
+    private val config
+        get() = ConfigManager.config.whitelist
 
     // Reflection fields for accessing internal Velocity connection details
     private val INITIAL_MINECRAFT_CONNECTION = ReflectUtil.getField(InitialInboundConnection::class.java, "connection")

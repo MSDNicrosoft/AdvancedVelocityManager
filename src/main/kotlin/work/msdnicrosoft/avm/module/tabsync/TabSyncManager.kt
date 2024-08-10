@@ -3,9 +3,9 @@ package work.msdnicrosoft.avm.module.tabsync
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.player.TabListEntry
 import net.kyori.adventure.text.Component
+import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.component.ComponentUtil.serializer
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 object TabSyncManager {
 
@@ -27,7 +27,7 @@ object TabSyncManager {
     }
 
     private val Player.displayName: Component?
-        get() = serializer.buildComponent(AVM.config.tabSync.format)
+        get() = serializer.buildComponent(ConfigManager.config.tabSync.format)
             .replace("%server_name%", currentServer.get().serverInfo.name)
             .replace("%server_nickname%", getServerNickname(currentServer.get().serverInfo.name))
             .replace("%player_name%", username)

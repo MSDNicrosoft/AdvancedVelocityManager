@@ -7,6 +7,7 @@ import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submitAsync
+import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.StringUtil.formated
 import work.msdnicrosoft.avm.util.StringUtil.replace
@@ -16,8 +17,8 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 @PlatformSide(Platform.VELOCITY)
 object EventBroadcast {
 
-    val config
-        get() = AVM.config.broadcast
+    private val config
+        get() = ConfigManager.config.broadcast
 
     @SubscribeEvent(postOrder = PostOrder.FIRST)
     fun onPlayerDisconnect(event: DisconnectEvent) {

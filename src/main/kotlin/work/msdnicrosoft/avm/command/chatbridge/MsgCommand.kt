@@ -13,6 +13,7 @@ import taboolib.common.platform.command.mainCommand
 import taboolib.common.platform.command.player
 import taboolib.common.util.isConsole
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
@@ -27,8 +28,8 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 @CommandHeader(name = "msg", aliases = ["tell", "w"], permissionDefault = PermissionDefault.NOT_OP)
 object MsgCommand {
 
-    val config
-        get() = AVM.config.chatBridge
+    private val config
+        get() = ConfigManager.config.chatBridge
 
     @CommandBody
     val main = mainCommand {

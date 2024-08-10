@@ -5,8 +5,8 @@ import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
+import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.collections.LimitedMutableSet
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 /**
  * Handles caching of players for whitelist functionality within the Advanced Velocity Manager.
@@ -17,8 +17,8 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 @PlatformSide(Platform.VELOCITY)
 object PlayerCache {
 
-    val config
-        get() = AVM.config.whitelist
+    private val config
+        get() = ConfigManager.config.whitelist
 
     lateinit var players: LimitedMutableSet<String>
 

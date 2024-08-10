@@ -10,6 +10,7 @@ import work.msdnicrosoft.avm.command.utility.KickAllCommand
 import work.msdnicrosoft.avm.command.utility.KickCommand
 import work.msdnicrosoft.avm.command.utility.SendAllCommand
 import work.msdnicrosoft.avm.command.utility.SendCommand
+import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroupName
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
 import work.msdnicrosoft.avm.util.command.CommandUtil
@@ -80,7 +81,7 @@ object AVMCommand {
             dynamic("defaultServer") {
                 suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
                     buildSet {
-                        addAll(AVM.config.whitelist.serverGroups.keys)
+                        addAll(ConfigManager.config.whitelist.serverGroups.keys)
                         addAll(AVM.plugin.server.allServers.map { it.serverInfo.name })
                     }.toList()
                 }

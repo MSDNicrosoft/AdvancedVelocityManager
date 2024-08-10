@@ -8,6 +8,7 @@ import taboolib.common.platform.ProxyCommandSender
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendError
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.interfaces.Importer
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.FileUtil.json
@@ -42,12 +43,12 @@ object QuAnVelocityWhitelistImporter : Importer {
             } else {
                 val config = Toml().read(CONFIG_PATH.readTextWithBuffer())
 
-                AVM.config.run {
+                ConfigManager.config.run {
                     whitelist.enabled = config.getBoolean("enable_whitelist")
                     whitelist.queryApi.uuid = config.getString("uuid_api")
                     whitelist.queryApi.profile = config.getString("profile_api")
                 }
-                AVM.saveConfig()
+                ConfigManager.save()
             }
         } catch (e: Exception) {
             success = false

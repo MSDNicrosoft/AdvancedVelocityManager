@@ -6,14 +6,15 @@ import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submitAsync
+import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
 object TabSyncHandler {
 
-    val config
-        get() = AVM.config.tabSync
+    private val config
+        get() = ConfigManager.config.tabSync
 
     @SubscribeEvent
     fun onPlayerDisconnect(event: DisconnectEvent) {

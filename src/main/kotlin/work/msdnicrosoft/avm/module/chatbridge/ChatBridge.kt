@@ -8,6 +8,7 @@ import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common5.util.startsWithAny
 import work.msdnicrosoft.avm.command.chatbridge.MsgCommand
+import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 object ChatBridge {
@@ -40,8 +41,8 @@ object ChatBridge {
      */
     var mode: PassthroughMode = PassthroughMode.ALL
 
-    val config
-        get() = AVM.config.chatBridge
+    private val config
+        get() = ConfigManager.config.chatBridge
 
     @Suppress("unused")
     @SubscribeEvent(postOrder = PostOrder.FIRST)

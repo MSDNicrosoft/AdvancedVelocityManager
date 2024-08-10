@@ -10,6 +10,7 @@ import taboolib.common.util.presentRun
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.annotations.ShouldShow
+import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.AddResult
@@ -30,8 +31,8 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 @CommandHeader(name = "avmwl")
 object WhitelistCommand {
 
-    val config
-        get() = AVM.config.whitelist
+    private val config
+        get() = ConfigManager.config.whitelist
 
     @ShouldShow("[page]")
     @CommandBody(permission = "avm.command.whitelist.list")
@@ -164,7 +165,6 @@ object WhitelistCommand {
             WhitelistManager.state = WhitelistManager.WhitelistState.ON
             val whitelistAsUuid = WhitelistManager.getWhitelist().map { it.uuid }
 
-            AVM.saveConfig()
             sender.sendLang("command-avmwl-state", sender.asLangText("general-on"))
 
             submitAsync(now = true) {
@@ -185,7 +185,6 @@ object WhitelistCommand {
     val off = subCommand {
         execute<ProxyCommandSender> { sender, _, _ ->
             WhitelistManager.state = WhitelistManager.WhitelistState.OFF
-            AVM.saveConfig()
             sender.sendLang("command-avmwl-state", sender.asLangText("general-off"))
         }
     }

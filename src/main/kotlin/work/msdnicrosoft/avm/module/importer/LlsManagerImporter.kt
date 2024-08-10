@@ -6,6 +6,7 @@ import taboolib.common.platform.ProxyCommandSender
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendError
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.interfaces.Importer
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.FileUtil.json
@@ -53,7 +54,7 @@ object LlsManagerImporter : Importer {
             } else {
                 val config = json.decodeFromString<Config>(CONFIG_PATH.readTextWithBuffer())
 
-                AVM.config.run {
+                ConfigManager.config.run {
                     tabSync.enabled = config.showAllPlayerInTabList
                     chatBridge.enabled = config.bridgeChatMessage
                     broadcast.join.enabled = config.bridgePlayerJoinMessage
@@ -61,7 +62,7 @@ object LlsManagerImporter : Importer {
                     whitelist.enabled = config.whitelistEnabled
                     whitelist.serverGroups = config.serverGroup
                 }
-                AVM.saveConfig()
+                ConfigManager.save()
             }
         } catch (e: Exception) {
             sendError("command-avm-import-config-failed", pluginName, e.message ?: asLangText("unknown-cause"))
