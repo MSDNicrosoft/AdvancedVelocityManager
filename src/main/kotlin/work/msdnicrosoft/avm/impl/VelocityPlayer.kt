@@ -260,11 +260,8 @@ class VelocityPlayer(val player: Player) : ProxyPlayer {
 
     override val origin: Any = player
 
-    override fun hasPermission(permission: String) = if (permission.isNotEmpty()) {
-        player.hasPermission(permission)
-    } else {
-        true
-    }
+    override fun hasPermission(permission: String) =
+        if (permission.isNotEmpty()) player.hasPermission(permission) else true
 
     override fun isOnline() = onlinePlayers().any { it.name == name }
 
