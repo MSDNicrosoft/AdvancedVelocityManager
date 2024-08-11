@@ -19,7 +19,7 @@ import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.warning
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ReflectUtil
 import work.msdnicrosoft.avm.util.StringUtil.formated
@@ -100,11 +100,10 @@ object WhitelistHandler {
     private fun getUsername(username: String, connection: InboundConnection): String {
         // Compatible with Floodgate
         if (AVM.hasFloodgate) {
-                val minecraftConnection: Any = INITIAL_MINECRAFT_CONNECTION[DELEGATE[connection]]
-                val channel = CHANNEL[minecraftConnection] as Channel
             try {
+                val channel = CHANNEL[INITIAL_MINECRAFT_CONNECTION[DELEGATE[connection]]] as Channel?
 
-                val player = channel.attr(AttributeKey.valueOf<Any>("floodgate-player")).get() as FloodgatePlayer?
+                val player = channel?.attr(AttributeKey.valueOf<Any>("floodgate-player"))?.get() as FloodgatePlayer?
                 if (player?.isLinked == true) {
                     return player.linkedPlayer.javaUsername
                 }

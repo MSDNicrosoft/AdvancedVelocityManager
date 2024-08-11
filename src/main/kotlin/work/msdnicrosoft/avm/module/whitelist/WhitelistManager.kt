@@ -99,7 +99,7 @@ object WhitelistManager {
         get() = whitelist.isEmpty()
 
     val maxPage: Int
-        get() = ceil(whitelistSize.toInt() / 10F).toInt()
+        get() = ceil(whitelistSize.toFloat() / 10F).toInt()
 
     /**
      * Represents whether the server is in online mode or not.

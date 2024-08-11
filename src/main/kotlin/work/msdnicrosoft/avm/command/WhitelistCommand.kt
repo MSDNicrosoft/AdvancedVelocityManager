@@ -319,7 +319,7 @@ object WhitelistCommand {
         }
 
         val result = WhitelistManager.find(player, page)
-        val maxPage = ceil(result.size.toInt() / 10F).toInt()
+        val maxPage = ceil(result.size.toFloat() / 10F).toInt()
 
         if (result.isNotEmpty() || page <= maxPage) {
             if (page == 1) sendLang("command-avmwl-find-header")
