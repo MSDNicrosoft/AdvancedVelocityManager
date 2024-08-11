@@ -4,7 +4,7 @@ object ReflectUtil {
 
     fun getField(clazz: Class<*>, field: String) = try {
         clazz.getDeclaredField(field).apply { trySetAccessible() }
-    } catch (e: NoSuchFieldException) {
+    } catch (_: NoSuchFieldException) {
         error("Failed to get field $field of class ${clazz.name}")
     }
 
