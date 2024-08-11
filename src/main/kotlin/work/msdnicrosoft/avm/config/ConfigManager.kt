@@ -2,9 +2,8 @@ package work.msdnicrosoft.avm.config
 
 import kotlinx.serialization.SerializationException
 import taboolib.common.platform.function.getDataFolder
-import taboolib.common.platform.function.info
-import taboolib.common.platform.function.warning
 import taboolib.common.util.unsafeLazy
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
 import work.msdnicrosoft.avm.util.FileUtil.decodeFromString
 import work.msdnicrosoft.avm.util.FileUtil.encodeToString
@@ -22,24 +21,24 @@ object ConfigManager {
     fun load(reload: Boolean = false): Boolean {
         if (!file.exists()) return save(initialize = true)
 
-        info("${if (reload) "Reloading" else "Loading"} configuration...")
+        logger.info("${if (reload) "Reloading" else "Loading"} configuration...")
         return try {
             config = yaml.decodeFromString<AVMConfig>(file.readTextWithBuffer())
             // TODO Migrate config
             validate()
             true
         } catch (e: IOException) {
-            error("Failed to read configuration file")
-            error(e)
+            logger.error("Failed to read configuration file", e)
+            false
         } catch (e: SerializationException) {
-            error("Failed to decode configuration content from file")
-            error(e)
+            logger.error("Failed to decode configuration content from file", e)
+            false
         }
     }
 
     fun save(initialize: Boolean = false): Boolean {
         if (!file.exists()) {
-            info("Configuration file does not exist${if (initialize) ", generating default configuration..." else ""}")
+            logger.info("Configuration file does not exist${if (initialize) ", generating default configuration..." else ""}")
         }
 
         return try {
@@ -47,12 +46,10 @@ object ConfigManager {
             file.writeTextWithBuffer(yaml.encodeToString(if (!initialize) config else AVMConfig()))
             true
         } catch (e: IOException) {
-            error("Failed to save configuration to file")
-            error(e)
+            logger.error("Failed to save configuration to file", e)
             false
         } catch (e: SerializationException) {
-            error("Failed to encode configuration")
-            error(e)
+            logger.error("Failed to encode configuration", e)
             false
         }
     }
@@ -63,8 +60,8 @@ object ConfigManager {
         try {
             ChatBridge.mode = ChatBridge.PassthroughMode.valueOf(config.chatBridge.chatPassthrough.mode.uppercase())
         } catch (_: IllegalArgumentException) {
-            warning("Incorrect Chat-Passthrough mode name!")
-            warning("Plugin will fallback to `ALL` mode")
+            logger.warn("Incorrect Chat-Passthrough mode name!")
+            logger.warn("Plugin will fallback to `ALL` mode")
             ChatBridge.mode = ChatBridge.PassthroughMode.ALL
         }
     }

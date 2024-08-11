@@ -34,6 +34,7 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.InsnNode
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 import java.lang.instrument.ClassFileTransformer
 import java.nio.file.Files
 import java.security.ProtectionDomain
@@ -88,7 +89,7 @@ object ClassTransformer : ClassFileTransformer {
             Files.createDirectories(outputPath.parent)
             Files.write(outputPath, buffer)
         } catch (e: Exception) {
-            error("Failed to write transformed class $className to disk: ${e.message}")
+            logger.error("Failed to write transformed class $className to disk", e)
         }
     }
 }

@@ -100,17 +100,16 @@ object WhitelistHandler {
     private fun getUsername(username: String, connection: InboundConnection): String {
         // Compatible with Floodgate
         if (AVM.hasFloodgate) {
-            runCatching {
                 val minecraftConnection: Any = INITIAL_MINECRAFT_CONNECTION[DELEGATE[connection]]
                 val channel = CHANNEL[minecraftConnection] as Channel
+            try {
 
                 val player = channel.attr(AttributeKey.valueOf<Any>("floodgate-player")).get() as FloodgatePlayer?
                 if (player?.isLinked == true) {
                     return player.linkedPlayer.javaUsername
                 }
-            }.onFailure {
-                warning("Failed to process floodgate player")
-                it.printStackTrace()
+            } catch (e: Exception) {
+                logger.error("Failed to process Floodgate player", e)
             }
         }
         return username

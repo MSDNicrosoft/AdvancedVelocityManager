@@ -1,12 +1,10 @@
 package work.msdnicrosoft.avm
 
-import com.velocitypowered.api.plugin.PluginDescription
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.Plugin
-import taboolib.common.platform.function.info
 import taboolib.common.util.unsafeLazy
 import taboolib.module.lang.Language
 import taboolib.platform.VelocityPlugin
@@ -21,16 +19,15 @@ object AdvancedVelocityManagerPlugin : Plugin() {
 
     val plugin by unsafeLazy { VelocityPlugin.getInstance() }
 
-    val logger = ComponentLogger.logger("advancedvelocitymanager")
+    val logger = ComponentLogger.logger("AdvancedVelocityManager")
 
-    val self: PluginDescription
-        get() = plugin.server.pluginManager.getPlugin("advancedvelocitymanager").get().description
+    val self = plugin.server.pluginManager.getPlugin("advancedvelocitymanager").get().description
 
     var hasFloodgate: Boolean = false
 
     override fun onLoad() {
-        info("Detected dynamic java agent loading warnings.")
-        info("It is expected behavior and you can safely ignore the warnings.")
+        logger.info("Detected dynamic java agent loading warnings.")
+        logger.info("It is expected behavior and you can safely ignore the warnings.")
         val adapter = VelocityAdapter()
         val adapterKey = PlatformFactory.serviceMap.keys.first { "PlatformAdapter" in it }
         PlatformFactory.serviceMap[adapterKey] = adapter
@@ -54,7 +51,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
     fun reload() = runCatching {
         ConfigManager.reload()
 
-        info("Reloading language...")
+        logger.info("Reloading language...")
         Language.reload()
         Language.default = ConfigManager.config.defaultLang
 

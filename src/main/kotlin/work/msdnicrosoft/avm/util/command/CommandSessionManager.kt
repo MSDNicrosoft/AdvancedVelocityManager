@@ -4,8 +4,8 @@ import com.google.common.io.BaseEncoding
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.function.submitAsync
-import taboolib.common.platform.function.warning
 import taboolib.common.platform.service.PlatformExecutor
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 import java.security.MessageDigest
 import java.util.concurrent.ConcurrentHashMap
 
@@ -118,7 +118,7 @@ object CommandSessionManager {
                     ExecuteResult.SUCCESS
                 }
             } catch (e: Exception) {
-                warning("Failed to execute session command: ${e.message}")
+                logger.warn("Failed to execute session command: ${e.message}")
                 ExecuteResult.FAILED
             }
         }

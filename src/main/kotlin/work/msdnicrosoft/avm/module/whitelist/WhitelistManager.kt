@@ -3,7 +3,9 @@ package work.msdnicrosoft.avm.module.whitelist
 import com.velocitypowered.api.util.UuidUtils
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
-import taboolib.common.platform.function.*
+import taboolib.common.platform.function.getDataFolder
+import taboolib.common.platform.function.submit
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.FileUtil.json
 import work.msdnicrosoft.avm.util.FileUtil.readTextWithBuffer
@@ -137,7 +139,7 @@ object WhitelistManager {
     private fun saveWhitelist() = withLock {
         runCatching {
             file.writeTextWithBuffer(json.encodeToString(whitelist))
-        }.onFailure { error("Failed to save whitelist: ${it.message}") }
+        }.onFailure { logger.error("Failed to save whitelist: ${it.message}") }
     }.isSuccess
 
     /**
@@ -148,17 +150,17 @@ object WhitelistManager {
     private fun loadWhitelist(reload: Boolean = false) {
         if (!file.exists()) {
             runCatching {
-                info("Whitelist file does not exist, creating...")
+                logger.info("Whitelist file does not exist, creating...")
                 file.parentFile.mkdirs()
                 file.writeTextWithBuffer(json.encodeToString(listOf<Player>()))
-            }.onFailure { error("Failed to initialize whitelist: ${it.message}") }
+            }.onFailure { logger.error("Failed to initialize whitelist: ${it.message}") }
         }
-        info("${if (reload) "Reloading" else "Loading"} whitelist...")
+        logger.info("${if (reload) "Reloading" else "Loading"} whitelist...")
         withLock {
             whitelist = runCatching {
                 json.decodeFromString<List<Player>>(file.readTextWithBuffer())
             }.getOrElse {
-                error("Failed to load whitelist: ${it.message}")
+                logger.error("Failed to load whitelist: ${it.message}")
                 emptyList()
             }.toMutableList()
         }
@@ -374,7 +376,7 @@ object WhitelistManager {
                 when (response.statusCode()) {
                     204 -> NOT_FOUND_RESULT
                     !in 200..299 -> {
-                        warning("Failed to query UUID $uuid, status code: ${response.statusCode()}")
+                        logger.warn("Failed to query UUID $uuid, status code: ${response.statusCode()}")
                         null
                     }
 
@@ -382,7 +384,7 @@ object WhitelistManager {
                 }
             }
         } catch (e: Exception) {
-            error("Failed to query UUID: ${e.message}")
+            logger.error("Failed to query UUID: ${e.message}")
             null
         }
     }
@@ -407,7 +409,7 @@ object WhitelistManager {
                 when (response.statusCode()) {
                     404 -> NOT_FOUND_RESULT
                     !in 200..299 -> {
-                        warning("Failed to query username $username, status code: ${response.statusCode()}")
+                        logger.warn("Failed to query username $username, status code: ${response.statusCode()}")
                         null
                     }
 
@@ -415,7 +417,7 @@ object WhitelistManager {
                 }
             }
         } catch (e: Exception) {
-            error("Failed to query username $username: ${e.message}")
+            logger.error("Failed to query username $username: ${e.message}")
             null
         }
     }

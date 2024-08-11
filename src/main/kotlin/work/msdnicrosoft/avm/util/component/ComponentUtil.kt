@@ -4,7 +4,7 @@ import dev.vankka.enhancedlegacytext.EnhancedLegacyText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
-import taboolib.common.platform.function.warning
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 
 object ComponentUtil {
 
@@ -36,7 +36,7 @@ object ComponentUtil {
             !format.clipboard.isNullOrEmpty(),
         ).count { it } > 1
         if (conflicted) {
-            warning("Exactly one of 'command', 'suggest', 'url', or 'clipboard' should be provided and non-empty.")
+            logger.warn("Exactly one of 'command', 'suggest', 'url', or 'clipboard' should be provided and non-empty.")
         }
         return !conflicted
     }
