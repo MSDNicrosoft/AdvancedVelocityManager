@@ -52,7 +52,7 @@ taboolib {
         install(CONFIGURATION, LANG, CHAT)
         install(VELOCITY)
     }
-    version { taboolib = "6.1.2-beta11" }
+    version { taboolib = "6.1.2-beta12" }
     relocate("kotlinx.serialization", "avm.kotlinx.serialization")
     relocate("dev.vankka.enhancedlegacytext", "avm.dev.vankka.enhancedlegacytext")
     relocate("com.charleskorn.kaml", "avm.com.charleskorn.kaml")
