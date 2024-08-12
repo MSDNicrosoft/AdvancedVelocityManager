@@ -21,7 +21,8 @@ object AdvancedVelocityManagerPlugin : Plugin() {
 
     val logger = ComponentLogger.logger("AdvancedVelocityManager")
 
-    val self = plugin.server.pluginManager.getPlugin("advancedvelocitymanager").get().description
+    val self
+        get() = plugin.server.pluginManager.getPlugin("advancedvelocitymanager").get().description
 
     var hasFloodgate: Boolean = false
 
@@ -34,7 +35,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
     }
 
     override fun onEnable() {
-        hasFloodgate = plugin.server.pluginManager.getPlugin("floodgate") != null
+        hasFloodgate = plugin.server.pluginManager.getPlugin("floodgate").isPresent
         logger.debug("Nya~!")
         ConfigManager.load()
         Language.default = ConfigManager.config.defaultLang
