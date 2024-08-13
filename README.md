@@ -8,67 +8,63 @@
 
 ## Introduction
 
-AdvancedVelocityManager is a comprehensive management plugin designed for the Velocity proxy server in Minecraft,<br>
-offering a suite of powerful tools to make server administration more efficient and automated.<br>
-It supports features such as sending players between servers, custom player broadcasts and<br>
-whitelist management which is compatible with the [Floodgate](https://geysermc.org/wiki/floodgate/) plugin for a seamless cross-platform player experience.
+AdvancedVelocityManager is an advanced management plugin designed for the Minecraft Velocity proxy server.<br>
+It provides a comprehensive set of powerful tools to help server administrators manage players and automate server operations more efficiently.<br>
+This plugin supports fast transfer of players between different servers, custom broadcast messages, fine-grained whitelist management compatible with [Floodgate](https://geysermc.org/wiki/floodgate/), and enhanced cross-server chat experience.
 
-## Key Features
+## Features
 
-- **Server-to-Server Send (`/avm send`)**: Send individual players from one server to another.
-- **Bulk Server-to-Server Send (`/avm sendall`)**: Send all players from a specified server to another.
-- **Player Kick (`/avm kick`)**: Kick specified players with an optional reason.
-- **Bulk Kick (`/avm kickall`)**: Kick all players from a specified server with an optional reason.
-- **Whitelist Management (`/avmwl`)**: Add/Remove whitelist of players using UUIDs or usernames, and compatible with
-  [Floodgate](https://geysermc.org/wiki/floodgate/)
-- **Custom Broadcasts**: Customize messages for player joins, leaves, and server switches.
+- **Cross-Server Send (`/avm send` and `/avm sendall`)**: Send a single or batch of players from one server to another, with the option to provide a reason.
+- **Player Kick (`/avm kick` and `/avm kickall`)**: Kick a single player or all players from the server, with the option to provide a reason.
+- **[Floodgate](https://geysermc.org/wiki/floodgate/) Compatible Whitelist Management (`/avmwl`)**: Add/Remove players from the whitelist by UUID and username, and assign specific server or server group access rights to each player.
+- **Custom Broadcasts**: Customize broadcast messages for player joins, leaves, and server switches.
+- **Tab List Synchronization**: Achieve consistency in cross-server Tab list display, with support for custom display formats.
+- **Cross-Server Chat (Chat-Bridge)**: Allows players from different servers to chat, with support for custom chat formats.
 
 ## Installation Guide
 
 1. Download the latest version of the AdvancedVelocityManager plugin.
-2. Place the plugin file in the `plugins` directory of your Velocity server.
+2. Place the plugin file into the `plugins` directory of your Velocity server.
 3. Restart the Velocity server to load the plugin.
-4. Edit the `config.yml` file to adjust the plugin settings as needed, then execute command `/avm reload` to reload plugin.
+4. Edit the `config.yml` file to adjust plugin settings as needed, then execute the command `/avm reload` to reload the plugin.
 
 ## Usage
 
 - **Whitelist Management**: Use the `/avmwl ...` command.
-- **Individual Send Between Servers**: Use the `/avm send <player> <target server>` command.
-- **Bulk Send Between Servers**: Use the `/avm sendall <source server> <target server>` command.
-- **Player Kick**: Use the `/avm kick <player> [reason]` command.
-- **Bulk Kick**: Use the `/avm kickall <server> [reason]` command to kick all players from a specified server.
+- **Single Player Cross-Server Send**: Use the command `/avm send <playername> <targetserver>`.
+- **Batch Cross-Server Send**: Use the command `/avm sendall <sourceserver> <targetserver>`.
+- **Player Kick**: Use the command `/avm kick <playername> [reason]`.
+- **Batch Kick**: Use the command `/avm kickall <server> [reason]` to kick all players from a specified server.
 
 ### Permissions
 
-- `avm.command.info` - Show plugin info
-- `avm.command.reload` - Give up data in memory, and reload config, language and whitelist from file
-- `avm.command.confirm` - Confirm an action
+- `avm.command.info` - View plugin information
+- `avm.command.reload` - Discard data in memory, then reload configuration, language and whitelist from files
+- `avm.command.confirm` - Confirm actions
 - `avm.command.import` - Import data from other plugins ([lls-manager](https://github.com/plusls/lls-manager) [VelocityWhitelist](https://gitee.com/virtual-qu-an/velocity-whitelist))
-- `avm.command.kick` - Kick specified players
-- `avm.command.send` - Send individual players from one server to another
+- `avm.command.kick` - Kick a specified player
+- `avm.command.send` - Send a specified player from one server to another
 - `avm.command.sendall` - Send all players from a specified server to another
 - `avm.command.kickall` - Kick all players from a specified server
-- `avm.command.whitelist.list` - Show whitelist
-- `avm.command.whitelist.add` - Add a player to whitelist by username or UUID
-- `avm.command.whitelist.remove` - Remove a player from whitelist
+- `avm.command.whitelist.list` - View the whitelist
+- `avm.command.whitelist.add` - Add a player to the whitelist by username or UUID
+- `avm.command.whitelist.remove` - Remove a player from the whitelist
 - `avm.command.whitelist.clear` - Clear the whitelist
-- `avm.command.whitelist.find` - Find player(s) in whitelist by keywords
+- `avm.command.whitelist.find` - Find player(s) within the whitelist by keyword
 - `avm.command.whitelist.on` - Turn on the whitelist
 - `avm.command.whitelist.off` - Turn off the whitelist
-- `avm.command.whitelist.status` - Show whitelist status
+- `avm.command.whitelist.status` - View whitelist status
 - `avm.sendall.bypass` - Bypass `/sendall` command
 - `avm.kickall.bypass` - Bypass `/kickall` command
 
 ### Configuration File
 
-The `config.yml` file allows you to customize various aspects of the plugin, including server mapping, broadcast
-messages, command configurations, whitelist settings, etc.
+The `config.yml` configuration file allows you to customize various aspects of the plugin, including server mapping, broadcast messages, command configurations, whitelist settings and etc.
 
 ## Acknowledgements
 
-The development of AdvancedVelocityManager has been inspired by and has incorporated elements from other open-source
-projects such as [cancellable-chat](https://github.com/ZhuRuoLing/cancellable-chat), [lls-manager](https://github.com/plusls/lls-manager), [artifex](https://github.com/InsinuateProjects/artifex), and [TrMenu](https://github.com/TrPlugins/TrMenu) .<br>
-We are grateful for the contributions of these projects to the open-source community.
+The development of this plugin was inspired by other open-source projects, including but not limited to [cancellable-chat](https://github.com/ZhuRuoLing/cancellable-chat), [lls-manager](https://github.com/plusls/lls-manager), [artifex](https://github.com/InsinuateProjects/artifex), and [TrMenu](https://github.com/TrPlugins/TrMenu) .<br>
+We appreciate the contributions of these projects to the open-source community.
 
 ## Support and Community
 
