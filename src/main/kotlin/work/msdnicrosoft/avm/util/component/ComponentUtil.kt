@@ -18,7 +18,7 @@ object ComponentUtil {
         }
 
     fun createClickEvent(format: Format, replacer: String.() -> String): ClickEvent? {
-        validateFormat(format).let { if (!it) return null }
+        if (!validateFormat(format)) return null
         return when {
             !format.command.isNullOrEmpty() -> ClickEvent.runCommand(format.command.replacer())
             !format.suggest.isNullOrEmpty() -> ClickEvent.suggestCommand(format.suggest.replacer())
@@ -36,6 +36,7 @@ object ComponentUtil {
             !format.clipboard.isNullOrEmpty(),
         ).count { it } > 1
         if (conflicted) {
+            logger.warn("Format $format is incorrect!")
             logger.warn("Exactly one of 'command', 'suggest', 'url', or 'clipboard' should be provided and non-empty.")
         }
         return !conflicted
