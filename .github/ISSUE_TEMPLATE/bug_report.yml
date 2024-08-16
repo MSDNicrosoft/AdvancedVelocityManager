@@ -26,7 +26,7 @@ body:
     id: plugin_version
     attributes:
       label: Plugin version
-      description: The version of AdvancedVelocityManager you are using (If you did not know, please upload the plugin file).
+      description: The version of AdvancedVelocityManager you are using.
     validations:
       required: true
 
