@@ -78,6 +78,8 @@ data class AVMConfig(
             @YamlComment(
                 "The join broadcast message",
                 "",
+                "Default: &7[&a+&7]&r %player_name% &7joined server &r%server_nickname%",
+                "",
                 "Available placeholders:",
                 "%player_name% - Username of a player who joined the server",
                 "%server_name% - Server name which the player joined in",
@@ -92,7 +94,9 @@ data class AVMConfig(
             var enabled: Boolean = true,
             @YamlComment(
                 "The leave broadcast message",
-
+                "",
+                "Default: &7[&c-&7]&r %player_name% &2left the server",
+                "",
                 "Available placeholders:",
                 "%player_name% - Username of a player who left the server"
             )
@@ -105,6 +109,8 @@ data class AVMConfig(
             var enabled: Boolean = true,
             @YamlComment(
                 "The switch broadcast message",
+                "",
+                "Default: &8[&b⇄&8]&r %player_name% &7:&r %previous_server_nickname% &6➟&r %target_server_nickname%",
                 "",
                 "Available placeholders:",
                 "%player_name% - Username of a player who joined the server",
@@ -178,12 +184,18 @@ data class AVMConfig(
         data class QueryApi(
             @YamlComment(
                 "The API URL to query UUID by username",
+                "",
+                "Default: https://api.mojang.com/users/profiles/minecraft/",
+                "",
                 "Learn more: https://wiki.vg/Mojang_API#Username_to_UUID"
             )
             var uuid: String = "https://api.mojang.com/users/profiles/minecraft/",
 
             @YamlComment(
                 "The API URL to query username by UUID",
+                "",
+                "Default: https://sessionserver.mojang.com/session/minecraft/profile/",
+                "",
                 "Learn more: https://wiki.vg/Mojang_API#UUID_to_Profile_and_Skin.2FCape"
             )
             var profile: String = "https://sessionserver.mojang.com/session/minecraft/profile/"
@@ -194,7 +206,11 @@ data class AVMConfig(
             @YamlComment("Whether to enable cache players")
             var enabled: Boolean = true,
 
-            @YamlComment("The max size of the cache")
+            @YamlComment(
+                "The max size of the cache",
+                "",
+                "Default: 20"
+            )
             @SerialName("max-size")
             val maxSize: Int = 20
         )
@@ -287,6 +303,8 @@ data class AVMConfig(
         @Serializable
         data class ChatPassthrough(
             @YamlComment(
+                "Default: ALL",
+                "",
                 "Available modes:",
                 "   ALL:",
                 "       All chat messages will be sent to backend server",
@@ -311,13 +329,13 @@ data class AVMConfig(
             @Serializable
             data class Pattern(
                 @YamlComment("Contains any of the item in the following list")
-                val contains: List<String> = listOf("--==GLOBAL-CHAT==--"),
+                val contains: List<String> = listOf(),
 
                 @YamlComment("Starts with any of the item in the following list")
-                val startswith: List<String> = listOf("!!", "!localchat"),
+                val startswith: List<String> = listOf("!!", "==", "="),
 
                 @YamlComment("Ends with any of the item in the following list")
-                val endswith: List<String> = listOf("--==GLOBAL-CHAT==--")
+                val endswith: List<String> = listOf()
             )
         }
 
@@ -440,7 +458,16 @@ data class AVMConfig(
         @YamlComment("Whether to enable tab synchronization")
         var enabled: Boolean = true,
 
-        @YamlComment("The display format for each player in tab list")
+        @YamlComment(
+            "The display format for each player in tab list",
+            "",
+            "Default: &8[%server_nickname%&8] &r%player_name%",
+            "",
+            "Available placeholders:",
+            "%player_name% - The username of a player who sent a message",
+            "%server_name% - The name of the server where a player sent a message",
+            "%server_nickname% - The nickname of the server where a player sent a message",
+        )
         val format: String = "&8[%server_nickname%&8] &r%player_name%"
     )
 }

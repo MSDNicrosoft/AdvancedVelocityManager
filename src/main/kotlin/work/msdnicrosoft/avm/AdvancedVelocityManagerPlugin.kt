@@ -24,7 +24,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
     val self
         get() = plugin.server.pluginManager.getPlugin("advancedvelocitymanager").get().description
 
-    var hasFloodgate: Boolean = false
+    var hasFloodgate = false
 
     override fun onLoad() {
         logger.info("Detected dynamic java agent loading warnings.")
