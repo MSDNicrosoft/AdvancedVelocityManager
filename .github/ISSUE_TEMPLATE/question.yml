@@ -1,0 +1,31 @@
+name: Question
+description: Ask a question
+title: "[Question] "
+labels:
+  - "type: question"
+  - "resolution: unresolved"
+  - "status: pending"
+body:
+  - type: markdown
+    attributes:
+      value: "**Note: Please fill this question truthfully, otherwise your issue may be closed, locked or deleted directly.**"
+
+  - type: checkboxes
+    id: before_asking
+    attributes:
+      label: Before asking
+      options:
+        - label: I have known and agreed that I would fill this question truthfully, or my issue may be closed, locked or deleted unconditionally.
+          required: true
+        - label: I have searched for existing issues (including `Open` and `Closed`).
+          required: true
+        - label: I am using the latest CI build of AdvancedVelocityManager.
+          required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Tell us your question.
+    validations:
+      required: true

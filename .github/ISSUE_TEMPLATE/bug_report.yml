@@ -1,0 +1,99 @@
+name: Bug Report
+description: Create a report to help us improve.
+title: "[Bug] "
+labels:
+  - "type: bug"
+  - "resolution: unresolved"
+  - "status: pending"
+body:
+  - type: markdown
+    attributes:
+      value: "**Note: Please fill this report truthfully, otherwise your issue may be closed, locked or deleted directly.**"
+
+  - type: checkboxes
+    id: before_reporting
+    attributes:
+      label: Before reporting
+      options:
+        - label: I have known and agreed that I would fill this report truthfully, or my issue may be closed, locked or deleted unconditionally.
+          required: true
+        - label: I have searched for existing issues (including `Open` and `Closed`).
+          required: true
+        - label: I am using the latest CI build of AdvancedVelocityManager.
+          required: false
+
+  - type: input
+    id: plugin_version
+    attributes:
+      label: Plugin version
+      description: The version of AdvancedVelocityManager you are using (If you did not know, please upload the plugin file).
+    validations:
+      required: true
+
+  - type: input
+    id: velocity_version
+    attributes:
+      label: Velocity version
+      description: The version of Velocity you are using (execute command `/velocity info` to retrieve).
+      placeholder: Velocity 3.3.0-SNAPSHOT (git-00ed2284-b415)
+    validations:
+      required: true
+
+
+  - type: textarea
+    id: other_plugins
+    attributes:
+      label: Other installed plugins and its versions (Optional)
+      description: The plugins installed on your Velocity server
+      placeholder: |
+        Floodgate 2.2.3-SNAPSHOT (b107-c4a4487)
+        ViaVersion 5.0.1
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what should happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: Actual behavior
+      description: A clear and concise description of what happens actually.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. Got error
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Paste or upload logs here if possible.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional_information
+    attributes:
+      label: Additional information (Optional)
+      description: |
+        Add any other information about the problem here.
+        Example: Plugin configuration, Affected Minecraft version(s), Operating System (and its version) and etc.
+    validations:
+      required: false
