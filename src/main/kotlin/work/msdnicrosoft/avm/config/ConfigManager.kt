@@ -1,5 +1,6 @@
 package work.msdnicrosoft.avm.config
 
+import com.charleskorn.kaml.YamlException
 import kotlinx.serialization.SerializationException
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common.util.unsafeLazy
@@ -30,8 +31,10 @@ object ConfigManager {
         } catch (e: IOException) {
             logger.error("Failed to read configuration file", e)
             false
-        } catch (e: SerializationException) {
-            logger.error("Failed to decode configuration content from file", e)
+        } catch (e: YamlException) {
+            logger.error("Failed to decode configuration content from file")
+            logger.error("${e.path.toHumanReadableString()} (line ${e.line}, column ${e.column}) of file is incorrect")
+            logger.error(e.message)
             false
         }
     }
