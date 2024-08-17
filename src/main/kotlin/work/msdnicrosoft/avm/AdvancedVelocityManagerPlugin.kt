@@ -47,6 +47,13 @@ object AdvancedVelocityManagerPlugin : Plugin() {
     override fun onDisable() {
         WhitelistManager.onDisable()
         CommandSessionManager.onDisable()
+
+        plugin.server.commandManager.run {
+            unregister("avm")
+            unregister("avmwl")
+            unregister("msg")
+        }
+        plugin.server.eventManager.unregisterListeners(plugin)
     }
 
     fun reload() = runCatching {
