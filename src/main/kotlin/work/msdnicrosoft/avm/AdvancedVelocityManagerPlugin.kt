@@ -56,15 +56,23 @@ object AdvancedVelocityManagerPlugin : Plugin() {
         plugin.server.eventManager.unregisterListeners(plugin)
     }
 
-    fun reload() = runCatching {
-        ConfigManager.reload()
+    fun reload(): Boolean {
+        try {
+            if (!ConfigManager.reload()) {
+                return false
+            }
 
-        logger.info("Reloading language...")
-        Language.reload()
-        Language.default = ConfigManager.config.defaultLang
+            logger.info("Reloading language...")
+            Language.reload()
+            Language.default = ConfigManager.config.defaultLang
 
-        CommandSessionManager.onEnable()
-        PlayerCache.onEnable()
-        WhitelistManager.onEnable(reload = true)
-    }.isSuccess
+            CommandSessionManager.onEnable()
+            PlayerCache.onEnable()
+            WhitelistManager.onEnable(reload = true)
+            return true
+        } catch (e: Exception) {
+            logger.error("Failed to reload plugin", e)
+            return false
+        }
+    }
 }
