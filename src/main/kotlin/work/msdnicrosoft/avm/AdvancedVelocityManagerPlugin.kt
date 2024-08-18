@@ -24,8 +24,6 @@ object AdvancedVelocityManagerPlugin : Plugin() {
     val self
         get() = plugin.server.pluginManager.getPlugin("advancedvelocitymanager").get().description
 
-    var hasFloodgate = false
-
     override fun onLoad() {
         logger.info("Detected dynamic java agent loading warnings.")
         logger.info("It is expected behavior and you can safely ignore the warnings.")
@@ -35,7 +33,6 @@ object AdvancedVelocityManagerPlugin : Plugin() {
     }
 
     override fun onEnable() {
-        hasFloodgate = plugin.server.pluginManager.getPlugin("floodgate").isPresent
         logger.debug("Nya~!")
         ConfigManager.load()
         Language.default = ConfigManager.config.defaultLang

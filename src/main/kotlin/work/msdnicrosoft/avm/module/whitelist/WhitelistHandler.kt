@@ -37,6 +37,8 @@ object WhitelistHandler {
     private val config
         get() = ConfigManager.config.whitelist
 
+    private val hasFloodgate = AVM.plugin.server.pluginManager.getPlugin("floodgate").isPresent
+
     // Reflection fields for accessing internal Velocity connection details
     private val INITIAL_MINECRAFT_CONNECTION = ReflectUtil.getField(InitialInboundConnection::class.java, "connection")
     private val CHANNEL = ReflectUtil.getField(MinecraftConnection::class.java, "channel")
@@ -57,7 +59,7 @@ object WhitelistHandler {
         }
 
         if (event.result == PreLoginEvent.PreLoginComponentResult.allowed()) {
-            event.result = if (WhitelistManager.getPlayer(event.username)?.onlineMode == true) {
+            event.result = if (WhitelistManager.getPlayer(username)?.onlineMode == true) {
                 PreLoginEvent.PreLoginComponentResult.forceOnlineMode()
             } else {
                 PreLoginEvent.PreLoginComponentResult.forceOfflineMode()
@@ -66,7 +68,9 @@ object WhitelistHandler {
     }
 
     @SubscribeEvent
-    fun onPlayerLogin(event: LoginEvent) = WhitelistManager.updatePlayer(event.player.username, event.player.uniqueId)
+    fun onPlayerLogin(event: LoginEvent) {
+        WhitelistManager.updatePlayer(event.player.username, event.player.uniqueId)
+    }
 
     @SubscribeEvent(postOrder = PostOrder.EARLY)
     fun onServerPreConnect(event: ServerPreConnectEvent) {
@@ -99,7 +103,7 @@ object WhitelistHandler {
      */
     private fun getUsername(username: String, connection: InboundConnection): String {
         // Compatible with Floodgate
-        if (AVM.hasFloodgate) {
+        if (hasFloodgate) {
             try {
                 val channel = CHANNEL[INITIAL_MINECRAFT_CONNECTION[DELEGATE[connection]]] as Channel?
 
