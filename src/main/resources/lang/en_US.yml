@@ -86,7 +86,7 @@ command-kickall-executor:
       - hover: "&eReason: kickall.bypass-allow enabled & player(s) have permission &6avm.kickall.bypass"
 
 command-avm-reload-success: "&aReloaded successfully! &8Took: {0} ms"
-command-avm-reload-failure: "&cReload failed, please check console log"
+command-avm-reload-failed: "&cReload failed, please check console log"
 
 command-avmwl-add-success: "&2Added {0} to the whitelist server list of {1}"
 command-avmwl-add-request-not-found: "&dThe player does not exist on minecraft.net"

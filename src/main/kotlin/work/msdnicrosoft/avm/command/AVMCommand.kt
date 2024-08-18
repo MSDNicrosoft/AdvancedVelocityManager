@@ -34,7 +34,7 @@ object AVMCommand {
             if (success) {
                 sender.sendLang("command-avm-reload-success", elapsed)
             } else {
-                sender.sendLang("command-avm-reload-failure")
+                sender.sendLang("command-avm-reload-failed")
             }
         }
     }
