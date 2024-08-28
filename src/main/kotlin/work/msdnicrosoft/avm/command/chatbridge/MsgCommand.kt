@@ -50,6 +50,7 @@ object MsgCommand {
                         sender.sendLang("player-not-found", targets.name)
                         return@execute
                     }
+
                     if (!sender.isConsole()) {
                         AVM.plugin.server.getPlayer(sender.name).get().sendMessage(
                             config.privateChatFormat.sender.buildMessage(sender, player, context["message"])

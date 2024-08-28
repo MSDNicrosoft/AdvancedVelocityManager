@@ -11,7 +11,7 @@ import work.msdnicrosoft.avm.command.utility.KickCommand
 import work.msdnicrosoft.avm.command.utility.SendAllCommand
 import work.msdnicrosoft.avm.command.utility.SendCommand
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroupName
+import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
 import work.msdnicrosoft.avm.util.command.CommandUtil
 import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
@@ -88,7 +88,7 @@ object AVMCommand {
                 execute<ProxyCommandSender> { sender, context, argument ->
                     val pluginName = context["pluginName"]
                     val defaultServer = context["defaultServer"]
-                    if (AVM.plugin.server.getServer(defaultServer).isEmpty && !isServerGroupName(defaultServer)) {
+                    if (!isValidServer(defaultServer)) {
                         sender.sendLang("server-not-found", defaultServer)
                         return@execute
                     }

@@ -6,7 +6,7 @@ import taboolib.common.platform.ProxyCommandSender
 import taboolib.module.lang.asLangText
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.Player
 import work.msdnicrosoft.avm.util.ConfigUtil.getServersInGroup
-import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroupName
+import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroup
 import work.msdnicrosoft.avm.util.StringUtil.replace
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
@@ -62,7 +62,7 @@ class WhitelistPlayer(val player: Player, val sender: ProxyCommandSender) {
                 .hoverEvent(createHoverEvent(format) { deserialize() })
                 .clickEvent(createClickEvent(format) { replacePlaceholders() })
         } + player.serverList.map { server ->
-            val isServerGroup = isServerGroupName(server)
+            val isServerGroup = isServerGroup(server)
             val serverFormat = Format(
                 text = "${if (isServerGroup) "&l" else ""}%server_name%",
                 hover = buildList {

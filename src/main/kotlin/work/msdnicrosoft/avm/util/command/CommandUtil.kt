@@ -18,9 +18,9 @@ import kotlin.reflect.KClass
 
 object CommandUtil {
 
-    val shouldShowAnnotation = ShouldShow::class.java
+    private val shouldShowAnnotation = ShouldShow::class.java
 
-    val commandHeaderAnnotation = CommandHeader::class.java
+    private val commandHeaderAnnotation = CommandHeader::class.java
 
     /**
      * Portions of this code are from TrMenu

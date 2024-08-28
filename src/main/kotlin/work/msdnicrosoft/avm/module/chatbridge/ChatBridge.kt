@@ -13,6 +13,9 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 object ChatBridge {
 
+    private val config
+        get() = ConfigManager.config.chatBridge
+
     /**
      * Represents the different modes of passthrough for chat messages.
      */
@@ -40,9 +43,6 @@ object ChatBridge {
      * @property mode The current passthrough mode. Defaults to [PassthroughMode.ALL].
      */
     var mode: PassthroughMode = PassthroughMode.ALL
-
-    private val config
-        get() = ConfigManager.config.chatBridge
 
     @Suppress("unused")
     @SubscribeEvent(postOrder = PostOrder.FIRST)

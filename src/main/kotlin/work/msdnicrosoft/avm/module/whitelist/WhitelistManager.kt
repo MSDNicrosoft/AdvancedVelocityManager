@@ -24,10 +24,29 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 @Suppress("TooManyFunctions")
 object WhitelistManager {
 
+    private val config
+        get() = ConfigManager.config.whitelist
+
     /**
      * This constant is used to indicate that a player was not found.
      */
     private const val NOT_FOUND_RESULT = "--NOT_FOUND--"
+
+    private val lock = Object()
+
+    private val file by lazy { getDataFolder().resolve("whitelist.json") }
+
+    enum class AddResult {
+        SUCCESS,
+        API_LOOKUP_NOT_FOUND,
+        API_LOOKUP_REQUEST_FAILED,
+        ALREADY_EXISTS,
+        SAVE_FILE_FAILED,
+    }
+
+    enum class RemoveResult { SUCCESS, FAIL_NOT_FOUND, SAVE_FILE_FAILED }
+
+    enum class WhitelistState { ON, OFF }
 
     /**
      * Represents a player in the whitelist.
@@ -54,30 +73,11 @@ object WhitelistManager {
     @Serializable
     data class ApiResponse(val id: String, val name: String)
 
-    enum class AddResult {
-        SUCCESS,
-        API_LOOKUP_NOT_FOUND,
-        API_LOOKUP_REQUEST_FAILED,
-        ALREADY_EXISTS,
-        SAVE_FILE_FAILED,
-    }
-
-    enum class RemoveResult { SUCCESS, FAIL_NOT_FOUND, SAVE_FILE_FAILED }
-
-    enum class WhitelistState { ON, OFF }
-
-    private val lock = Object()
-
-    private val file by lazy { getDataFolder().resolve("whitelist.json") }
-
     private lateinit var whitelist: MutableList<Player>
 
     private lateinit var usernames: HashSet<String>
 
     private lateinit var uuids: HashSet<UUID>
-
-    private val config
-        get() = ConfigManager.config.whitelist
 
     var state: WhitelistState
         get() = when (config.enabled) {
@@ -92,14 +92,17 @@ object WhitelistManager {
             ConfigManager.save()
         }
 
-    val whitelistSize: Int
+    val readOnlyWhitelist
+        get() = withLock { whitelist.toList() }
+
+    val size: Int
         get() = whitelist.size
 
-    val whitelistIsEmpty: Boolean
+    val isEmpty: Boolean
         get() = whitelist.isEmpty()
 
     val maxPage: Int
-        get() = ceil(whitelistSize.toFloat() / 10F).toInt()
+        get() = ceil(size.toFloat() / 10F).toInt()
 
     /**
      * Represents whether the server is in online mode or not.
@@ -123,12 +126,12 @@ object WhitelistManager {
      * @param reload If true, the whitelist will be reloaded from disk.
      */
     fun onEnable(reload: Boolean = false) {
-        loadWhitelist(reload)
+        load(reload)
         updateCache()
     }
 
     fun onDisable() {
-        saveWhitelist()
+        save()
     }
 
     /**
@@ -136,7 +139,7 @@ object WhitelistManager {
      *
      * @return True if the save was successful, false otherwise.
      */
-    private fun saveWhitelist() = withLock {
+    private fun save() = withLock {
         runCatching {
             file.writeTextWithBuffer(json.encodeToString(whitelist))
         }.onFailure { logger.error("Failed to save whitelist: ${it.message}") }
@@ -147,7 +150,7 @@ object WhitelistManager {
      *
      * @param reload If true, the whitelist will be reloaded from disk.
      */
-    private fun loadWhitelist(reload: Boolean = false) {
+    private fun load(reload: Boolean = false) {
         if (!file.exists()) {
             runCatching {
                 logger.info("Whitelist file does not exist, creating...")
@@ -251,7 +254,7 @@ object WhitelistManager {
             }
         }
         updateCache(username = username, uuid = uuid)
-        return if (saveWhitelist()) AddResult.SUCCESS else AddResult.SAVE_FILE_FAILED
+        return if (save()) AddResult.SUCCESS else AddResult.SAVE_FILE_FAILED
     }
 
     /**
@@ -301,7 +304,7 @@ object WhitelistManager {
             }
         }
         updateCache()
-        return if (saveWhitelist()) RemoveResult.SUCCESS else RemoveResult.SAVE_FILE_FAILED
+        return if (save()) RemoveResult.SUCCESS else RemoveResult.SAVE_FILE_FAILED
     }
 
     /**
@@ -317,7 +320,7 @@ object WhitelistManager {
     fun clear(): Boolean {
         withLock { whitelist.clear() }
         updateCache()
-        return saveWhitelist()
+        return save()
     }
 
     /**
@@ -425,13 +428,8 @@ object WhitelistManager {
     fun updatePlayer(username: String, uuid: UUID) = submit(now = true) {
         withLock { whitelist.find { it.uuid == uuid }?.name = username }
         updateCache()
-        saveWhitelist()
+        save()
     }
-
-    /**
-     * @return A copy of the current whitelist.
-     */
-    fun getWhitelist() = withLock { whitelist.toList() }
 
     /**
      * Retrieves a paged version of the whitelist.
@@ -439,7 +437,7 @@ object WhitelistManager {
      * @return A list of players on the specified page.
      */
     fun getPagedWhitelist(page: Int): List<Player> {
-        val pages = withLock { getWhitelist().chunked(10) }
+        val pages = withLock { readOnlyWhitelist.chunked(10) }
         return pages[page - 1]
     }
 }

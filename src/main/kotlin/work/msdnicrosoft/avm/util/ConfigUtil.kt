@@ -1,6 +1,7 @@
 package work.msdnicrosoft.avm.util
 
 import work.msdnicrosoft.avm.config.ConfigManager
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 object ConfigUtil {
     /**
@@ -12,7 +13,9 @@ object ConfigUtil {
      */
     fun getServerNickname(server: String) = ConfigManager.config.serverMapping[server] ?: server
 
-    fun isServerGroupName(server: String) = server in ConfigManager.config.whitelist.serverGroups.keys
+    fun isValidServer(name: String) = AVM.plugin.server.getServer(name).isPresent || isServerGroup(name)
+
+    fun isServerGroup(name: String) = name in ConfigManager.config.whitelist.serverGroups.keys
 
     fun getServersInGroup(group: String) = ConfigManager.config.whitelist.serverGroups[group]
 }
