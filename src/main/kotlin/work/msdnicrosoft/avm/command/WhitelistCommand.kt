@@ -213,7 +213,7 @@ object WhitelistCommand {
 
         val isUuid = player.isUuid()
         if (isUuid && !WhitelistManager.serverIsOnlineMode) {
-            sendLang("command-avmwl-add-uuid-supported")
+            sendLang("command-avmwl-add-uuid-unsupported")
             return
         }
 
