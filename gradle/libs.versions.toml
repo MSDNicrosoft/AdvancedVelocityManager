@@ -8,7 +8,7 @@ taboolib = "2.0.13"
 # CompileOnly Dependencies
 velocity = "3.3.0-SNAPSHOT"
 floodgate = "2.2.3-SNAPSHOT"
-netty = "4.1.112.Final"
+netty = "4.1.113.Final"
 
 # Shade Dependencies
 kaml = "0.61.0"
