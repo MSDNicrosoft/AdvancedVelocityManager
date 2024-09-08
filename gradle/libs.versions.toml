@@ -2,7 +2,7 @@
 
 # Gradle Plugins
 kotlin = "2.0.20"
-detekt = "1.23.6"
+detekt = "1.23.7"
 taboolib = "2.0.13"
 
 # CompileOnly Dependencies
