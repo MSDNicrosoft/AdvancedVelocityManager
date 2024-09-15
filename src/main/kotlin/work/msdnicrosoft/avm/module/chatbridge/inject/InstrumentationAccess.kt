@@ -37,6 +37,7 @@ import java.io.IOException
 import java.lang.instrument.Instrumentation
 import java.nio.file.Files
 import kotlin.io.path.Path
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 /**
  * Object that provides access to the instrumentation used for bytecode transformation.
@@ -72,13 +73,17 @@ object InstrumentationAccess {
      */
     @Suppress("unused")
     @Awake(LifeCycle.CONST)
-    fun init() = try {
-        prepareOutputDirectory()
-        instrumentation = ByteBuddyAgent.install()
-        instrumentation.addTransformer(ClassTransformer, true)
-        instrumentation.retransformClasses(KEYED_CHAT_HANDLER_CLASS)
-    } catch (e: Exception) {
-        throw RuntimeException("Failed to initialize instrumentation", e)
+    fun init() {
+        try {
+            if (isSignedVelocityInstalled()) return
+
+            prepareOutputDirectory()
+            instrumentation = ByteBuddyAgent.install()
+            instrumentation.addTransformer(ClassTransformer, true)
+            instrumentation.retransformClasses(KEYED_CHAT_HANDLER_CLASS)
+        } catch (e: Exception) {
+            throw RuntimeException("Failed to initialize instrumentation", e)
+        }
     }
 
     /**
@@ -116,4 +121,7 @@ object InstrumentationAccess {
             throw RuntimeException("Failed to prepare output directory", e)
         }
     }
+
+    private fun isSignedVelocityInstalled() =
+        AVM.plugin.server.pluginManager.getPlugin("signedvelocity").isPresent
 }
