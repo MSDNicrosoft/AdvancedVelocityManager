@@ -1,5 +1,5 @@
 /**
- * Portions of this code are from TabooLib
+ * Portions of this code are modified from TabooLib
  *
  * https://github.com/TabooLib/taboolib/blob/8a998b946c4d4a3a93168cb84a40e31391967713
  * /platform/platform-velocity-impl/src/main/kotlin/taboolib/platform/type/VelocityPlayer.kt
@@ -24,6 +24,7 @@ import taboolib.common.util.Vector
 import java.net.InetSocketAddress
 import java.time.Duration
 import java.util.Locale
+import java.util.UUID
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as VelocityPlugin
 
 @PlatformSide(Platform.VELOCITY)
@@ -184,7 +185,7 @@ class VelocityPlayer(val player: Player) : ProxyPlayer {
     override val sleepTicks: Int
         get() = error("Unsupported")
 
-    override val uniqueId = player.uniqueId
+    override val uniqueId: UUID = player.uniqueId
 
     override var walkSpeed: Float
         get() = error("Unsupported")
@@ -197,7 +198,7 @@ class VelocityPlayer(val player: Player) : ProxyPlayer {
 
     override fun giveExp(exp: Int) = error("Unsupported")
 
-    override fun kick(message: String?) = player.disconnect(Component.text(message ?: ""))
+    override fun kick(message: String?) = player.disconnect(Component.text(message.orEmpty()))
 
     override fun playSound(
         location: Location,
@@ -232,6 +233,7 @@ class VelocityPlayer(val player: Player) : ProxyPlayer {
     override fun sendRawMessage(message: String) =
         player.sendMessage(GsonComponentSerializer.gson().deserialize(message))
 
+    @Suppress("MagicNumber")
     override fun sendTitle(
         title: String?,
         subtitle: String?,
@@ -240,8 +242,8 @@ class VelocityPlayer(val player: Player) : ProxyPlayer {
         fadeout: Int
     ) = player.showTitle(
         Title.title(
-            Component.text(title ?: ""),
-            Component.text(subtitle ?: ""),
+            Component.text(title.orEmpty()),
+            Component.text(subtitle.orEmpty()),
             Title.Times.times(
                 Duration.ofMillis(fadein * 50L),
                 Duration.ofMillis(stay * 50L),
@@ -256,16 +258,16 @@ class VelocityPlayer(val player: Player) : ProxyPlayer {
         get() = error("Unsupported")
         set(_) = error("Unsupported")
 
-    override val name = player.username
+    override val name: String = player.username
 
     override val origin: Any = player
 
-    override fun hasPermission(permission: String) =
+    override fun hasPermission(permission: String): Boolean =
         if (permission.isNotEmpty()) player.hasPermission(permission) else true
 
-    override fun isOnline() = onlinePlayers().any { it.name == name }
+    override fun isOnline(): Boolean = onlinePlayers().any { it.name == name }
 
-    override fun performCommand(command: String) =
+    override fun performCommand(command: String): Boolean =
         VelocityPlugin.server.commandManager.executeAsync(player, command).get()
 
     override fun sendMessage(message: String) = player.sendMessage(Component.text(message))

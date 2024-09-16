@@ -1,5 +1,5 @@
 /**
- * Portions of this code are from artifex
+ * Portions of this code are modified from artifex
  *
  * https://github.com/InsinuateProjects/artifex/blob/4a30f82e3244ae56bec633e6dd4df9c40b72d300
  * /project/bootstrap-velocity/src/main/kotlin/ink/ptms/artifex/velocityside/ArtifexVelocityAdapter.kt

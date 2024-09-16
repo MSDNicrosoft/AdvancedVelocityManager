@@ -1,5 +1,5 @@
 /**
- * Portions of this code are from artifex
+ * Portions of this code are modified from artifex
  *
  * https://github.com/InsinuateProjects/artifex/blob/4a30f82e3244ae56bec633e6dd4df9c40b72d300
  * /project/bootstrap-velocity/src/main/kotlin/ink/ptms/artifex/velocityside/ArtifexVelocityConsole.kt
@@ -22,15 +22,15 @@ object VelocityConsole : ProxyCommandSender {
         get() = error("Unsupported")
         set(_) = error("Unsupported")
 
-    override val name = "Console"
+    override val name: String = "Console"
 
     override val origin: Any = sender
 
-    override fun hasPermission(permission: String) = sender.hasPermission(permission)
+    override fun hasPermission(permission: String): Boolean = sender.hasPermission(permission)
 
-    override fun isOnline() = true
+    override fun isOnline(): Boolean = true
 
-    override fun performCommand(command: String) =
+    override fun performCommand(command: String): Boolean =
         VelocityPlugin.server.commandManager.executeAsync(sender, command).get()
 
     override fun sendMessage(message: String) =
