@@ -50,6 +50,7 @@ command-avm-import-need-confirm:
     args:
       - hover: "&7确认操作"
         command: "{0}"
+
 command-avm-import-config-does-not-exist: "&8{0} 的配置文件不存在，跳过..."
 command-avm-import-config-failed: "&c无法从 {0} 导入配置: {1}"
 command-avm-import-whitelist-does-not-exist: "&8{0} 的白名单文件不存在，跳过..."
@@ -73,7 +74,7 @@ command-sendall-executor:
   - type: JSON
     text: "&2已将 {0} 名玩家发送到服务器 {1}，并且[有 {2} 名玩家跳过]"
     args:
-      - hover: "&e原因：sendall.bypass-allow 已启用，并且玩家拥有权限 &6avm.sendall.bypass"
+      - hover: "&e原因：sendall.allow-bypass 已启用，并且玩家拥有权限 &6avm.sendall.bypass"
 
 command-sendall-executor-failed: "&c无法将 {0} 名玩家发送到 {1}"
 
@@ -82,7 +83,7 @@ command-kickall-executor:
   - type: JSON
     text: "&2{0} 名玩家已被踢出服务器，并且[有 {1} 名玩家跳过]"
     args:
-      - hover: "&e原因：kickall.bypass-allow 已启用，并且玩家拥有权限 &6avm.kickall.bypass"
+      - hover: "&e原因：kickall.allow-bypass 已启用，并且玩家拥有权限 &6avm.kickall.bypass"
 
 command-avm-reload-success: "&a重载成功! &8耗费: {0} ms"
 command-avm-reload-failed: "&c重载失败! 请查看控制台日志"

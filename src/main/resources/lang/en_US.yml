@@ -74,7 +74,7 @@ command-sendall-executor:
   - type: JSON
     text: "&2{0} player(s) have been sent to {1} and [{2} player(s) bypassed]"
     args:
-      - hover: "&eReason: sendall.bypass-allow enabled & player(s) have permission &6avm.sendall.bypass"
+      - hover: "&eReason: sendall.allow-bypass enabled & player(s) have permission &6avm.sendall.bypass"
 
 command-sendall-executor-failed: "&cFailed to send {0} player(s) to {1}"
 
@@ -83,7 +83,7 @@ command-kickall-executor:
   - type: JSON
     text: "&2{0} player(s) have been kicked and [{1} player(s) bypassed]"
     args:
-      - hover: "&eReason: kickall.bypass-allow enabled & player(s) have permission &6avm.kickall.bypass"
+      - hover: "&eReason: kickall.allow-bypass enabled & player(s) have permission &6avm.kickall.bypass"
 
 command-avm-reload-success: "&aReloaded successfully! &8Took: {0} ms"
 command-avm-reload-failed: "&cReload failed, please check console log"
