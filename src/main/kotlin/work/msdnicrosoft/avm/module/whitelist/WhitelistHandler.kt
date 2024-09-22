@@ -105,13 +105,12 @@ object WhitelistHandler {
         // Compatible with Floodgate
         if (hasFloodgate) {
             try {
-                val channel = CHANNEL[INITIAL_MINECRAFT_CONNECTION[DELEGATE[connection]]] as Channel?
-
-                val player = channel?.attr(AttributeKey.valueOf<Any>("floodgate-player"))?.get() as FloodgatePlayer?
+                val channel = CHANNEL[INITIAL_MINECRAFT_CONNECTION[DELEGATE[connection]]] as? Channel
+                val player = channel?.attr(AttributeKey.valueOf<Any>("floodgate-player"))?.get() as? FloodgatePlayer
                 if (player?.isLinked == true) {
                     return player.linkedPlayer.javaUsername
                 }
-            } catch (e: Exception) {
+            } catch (e: IllegalAccessException) {
                 logger.error("Failed to process Floodgate player", e)
             }
         }
