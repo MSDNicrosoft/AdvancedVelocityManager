@@ -16,6 +16,8 @@ object ChatBridge {
     private val config
         get() = ConfigManager.config.chatBridge
 
+    private val PRIVATE_CHAT_COMMANDS by lazy { MsgCommand.javaClass.getAnnotation(CommandHeader::class.java).aliases }
+
     /**
      * Represents the different modes of passthrough for chat messages.
      */
@@ -85,9 +87,7 @@ object ChatBridge {
     @Suppress("unused")
     @SubscribeEvent
     fun onCommandExecute(event: CommandExecuteEvent) {
-        val isPrivateChat = MsgCommand.javaClass.getAnnotation(CommandHeader::class.java).aliases.any {
-            event.command.split(" ")[0].startsWithAny(event.command)
-        }
+        val isPrivateChat = PRIVATE_CHAT_COMMANDS.any { event.command.split(" ")[0].startsWithAny(event.command) }
 
         if (!isPrivateChat) return
 
