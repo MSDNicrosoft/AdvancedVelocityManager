@@ -15,7 +15,7 @@ kaml = "0.61.0"
 kotlin-serialization = "1.7.3"
 enhanced-legacy-text = "2.0.0-SNAPSHOT"
 asm = "9.7"
-byte-buddy-agent = "1.15.1"
+byte-buddy-agent = "1.15.3"
 
 [libraries]
 
