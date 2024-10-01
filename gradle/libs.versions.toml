@@ -9,7 +9,7 @@ grgit = "5.2.2"
 # CompileOnly Dependencies
 velocity = "3.3.0-SNAPSHOT"
 floodgate = "2.2.3-SNAPSHOT"
-netty = "4.1.113.Final"
+netty = "4.1.114.Final"
 
 # Shade Dependencies
 kaml = "0.61.0"
