@@ -1,5 +1,6 @@
 package work.msdnicrosoft.avm
 
+import com.velocitypowered.api.plugin.PluginDescription
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformFactory
@@ -21,8 +22,9 @@ object AdvancedVelocityManagerPlugin : Plugin() {
 
     val logger = ComponentLogger.logger("AdvancedVelocityManager")
 
-    val self
-        get() = plugin.server.pluginManager.getPlugin("advancedvelocitymanager").get().description
+    val self: PluginDescription by lazy {
+        plugin.server.pluginManager.getPlugin("advancedvelocitymanager").get().description
+    }
 
     override fun onLoad() {
         logger.info("Detected dynamic java agent loading warnings.")
@@ -51,6 +53,15 @@ object AdvancedVelocityManagerPlugin : Plugin() {
             unregister("msg")
         }
         plugin.server.eventManager.unregisterListeners(plugin)
+    }
+
+    override fun onActive() {
+        if (self.version.get().contains("DEV")) {
+            logger.warn("You are using the development version of this plugin.")
+        }
+        if (self.version.get().contains("SNAPSHOT")) {
+            logger.warn("You are using the snapshot version of this plugin.")
+        }
     }
 
     fun reload(): Boolean {
