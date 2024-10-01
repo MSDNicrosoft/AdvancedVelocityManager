@@ -7,7 +7,7 @@ import taboolib.common.platform.command.CommandContext
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.component.CommandComponent
 import taboolib.common.platform.service.PlatformCommand
-import taboolib.common.util.subList
+import taboolib.common.reflect.getAnnotationIfPresent
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.module.chat.colored
 import taboolib.module.lang.asLangText
@@ -18,21 +18,20 @@ import kotlin.reflect.KClass
 
 object CommandUtil {
 
-    private val shouldShowAnnotation = ShouldShow::class.java
-
-    private val commandHeaderAnnotation = CommandHeader::class.java
+    private val SHOULD_SHOW_ANNOTATION = ShouldShow::class.java
+    private val COMMAND_HEADER_ANNOTATION = CommandHeader::class.java
+    private val COMMAND_BODY_ANNOTATION = CommandBody::class.java
 
     /**
-     * Portions of this code are from TrMenu
+     * Portions of this code are modified from TrMenu
      *
      * https://github.com/TrPlugins/TrMenu/blob/076bacb874cc1a2217ba8ccd4909405b28e7170d
      * /plugin/src/main/kotlin/trplugins/menu/module/internal/command/CommandHandler.kt
      */
-    @Suppress("LoopWithTooManyJumpStatements", "CyclomaticComplexMethod")
     fun <T : Any> CommandComponent.buildHelper(commandRoot: KClass<T>, checkPermission: Boolean = true) {
         execute<ProxyCommandSender> { sender, _, _ ->
             val rootJavaClass = commandRoot.java
-            val rootCommand = rootJavaClass.getAnnotation(commandHeaderAnnotation)
+            val rootCommand = rootJavaClass.getAnnotationIfPresent(COMMAND_HEADER_ANNOTATION) ?: return@execute
             val rootName = rootCommand.name
 
             if (checkPermission && !sender.hasPermission(rootCommand.permission)) {
@@ -41,51 +40,57 @@ object CommandUtil {
 
             sender.sendLang("general-help-header", self.version.get(), rootName)
 
-            for (field in rootJavaClass.declaredFields) {
-                field.trySetAccessible()
+            rootJavaClass.declaredFields
+                .filter { field ->
+                    // Disable access check
+                    field.trySetAccessible()
 
-                val command = field.annotations.firstOrNull { it is CommandBody } as? CommandBody
+                    // Field is a command
+                    val command = field.getAnnotationIfPresent(COMMAND_BODY_ANNOTATION) ?: return@filter false
 
-                val shouldShow = field.isAnnotationPresent(shouldShowAnnotation)
-                val noPermission = checkPermission && !sender.hasPermission(command?.permission ?: continue)
+                    val hasPermission = !checkPermission || sender.hasPermission(command.permission)
 
-                if (!shouldShow || noPermission || command?.hidden == true || command?.optional == true) continue
+                    !command.hidden && !command.optional && hasPermission
+                }.forEach { field ->
+                    val rawArguments = field.getAnnotationIfPresent(SHOULD_SHOW_ANNOTATION)?.arguments ?: return@forEach
 
-                val arguments = field.getAnnotation(shouldShowAnnotation).arguments.joinToString(" ") {
-                    when {
-                        "{" in it -> "&c$it"
-                        "[" in it -> "&8$it"
-                        "<" in it -> "&7$it"
-                        else -> it
+                    // Colorize arguments
+                    val arguments = rawArguments.joinToString(" ") { arg ->
+                        when {
+                            arg.startsWith("{") -> "&c$arg"
+                            arg.startsWith("[") -> "&8$arg"
+                            arg.startsWith("<") -> "&7$arg"
+                            else -> arg
+                        }
                     }
-                }
 
-                sender.sendLang(
-                    "general-help-each-command",
-                    rootName,
-                    field.name,
-                    arguments,
-                    sender.asLangText("command-$rootName-${field.name}-description")
-                )
-            }
+                    sender.sendLang(
+                        "general-help-each-command",
+                        rootName,
+                        field.name,
+                        arguments,
+                        sender.asLangText("command-$rootName-${field.name}-description")
+                    )
+                }
         }
     }
 
     /**
-     * Portions of this code are from TabooLib
+     * Portions of this code are modified from TabooLib
      * https://github.com/TabooLib/taboolib/blob/8a998b946c4d4a3a93168cb84a40e31391967713
      * /common-platform-api/src/main/kotlin/taboolib/common/platform/command/component/CommandBase.kt
      */
+    @Suppress("MagicNumber")
     fun incorrectCommandFeedback(
         sender: ProxyCommandSender,
         context: CommandContext<ProxyCommandSender>,
         index: Int,
         state: Int
     ) {
-        val args = subList(context.getProperty<Array<String>>("realArgs")!!.toList(), 0, index)
+        val args = context.getProperty<Array<String>>("realArgs")?.toList()?.subList(0, index).orEmpty()
         val str = buildString {
             append(context.name)
-            if (args.size > 1) append(" ${subList(args, 0, args.size - 1).joinToString(" ").trim()}")
+            if (args.size > 1) append(" ${args.subList(0, args.size - 1).joinToString(" ").trim()}")
             if (length > 10) append("...${substring(length - 10, length)}")
             if (args.isNotEmpty()) append(" &c&n${args.last()}")
         }
