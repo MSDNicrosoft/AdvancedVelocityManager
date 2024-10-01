@@ -4,6 +4,7 @@
 kotlin = "2.0.20"
 detekt = "1.23.7"
 taboolib = "2.0.13"
+grgit = "5.2.2"
 
 # CompileOnly Dependencies
 velocity = "3.3.0-SNAPSHOT"
@@ -20,26 +21,27 @@ byte-buddy-agent = "1.15.3"
 [libraries]
 
 # Gradle Plugins
-detekt = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
 # CompileOnly Dependencies
-velocity-api = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
-velocity-proxy = { group = "com.velocitypowered", name = "velocity-proxy", version.ref = "velocity" }
-floodgate = { group = "org.geysermc.floodgate", name = "api", version.ref = "floodgate" }
-netty = { group = "io.netty", name = "netty-all", version.ref = "netty" }
+velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
+velocity-proxy = { module = "com.velocitypowered:velocity-proxy", version.ref = "velocity" }
+floodgate = { module = "org.geysermc.floodgate:api", version.ref = "floodgate" }
+netty = { module = "io.netty:netty-all", version.ref = "netty" }
 
 # Shade Dependencies
-kaml = { group = "com.charleskorn.kaml", name = "kaml", version.ref = "kaml" }
-kotlin-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlin-serialization" }
-enhanced-legacy-text = { group = "dev.vankka", name = "enhancedlegacytext", version.ref = "enhanced-legacy-text" }
-asm = { group = "org.ow2.asm", name = "asm", version.ref = "asm" }
-asm-util = { group = "org.ow2.asm", name = "asm-util", version.ref = "asm" }
-byte-buddy-agent = { group = "net.bytebuddy", name = "byte-buddy-agent", version.ref = "byte-buddy-agent" }
+kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
+kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
+enhanced-legacy-text = { module = "dev.vankka:enhancedlegacytext", version.ref = "enhanced-legacy-text" }
+asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
+asm-util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
+byte-buddy-agent = { module = "net.bytebuddy:byte-buddy-agent", version.ref = "byte-buddy-agent" }
 
 [plugins]
 
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-detekt-compiler = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+detekt-compiler = { id = "io.github.detekt.gradle.compiler-plugin", version.ref = "detekt" }
 taboolib = { id = "io.izzel.taboolib", version.ref = "taboolib" }
+grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }

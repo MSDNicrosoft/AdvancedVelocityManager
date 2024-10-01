@@ -8,28 +8,49 @@ plugins {
 //    alias(libs.plugins.detekt.compiler)
 
     alias(libs.plugins.taboolib)
+
+    alias(libs.plugins.grgit)
+}
+
+base {
+    val commitHash = { grgit.head().id.substring(0, 7) }
+    val versionType = {
+        buildList {
+            if (grgit.branch.current().name != "master") {
+                add("SNAPSHOT")
+            }
+
+            if (!grgit.status().isClean()) {
+                add("DEV")
+            } else {
+                add(commitHash())
+            }
+        }.joinToString("-")
+    }
+    version = "$version-${versionType()}"
 }
 
 repositories {
     if (System.getenv("CI")?.toBoolean() != true) {
         maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库
     }
-    maven {
+    maven("https://repo.papermc.io/repository/maven-public/") {
         name = "PaperMC"
-        url = uri("https://repo.papermc.io/repository/maven-public/")
         content {
             includeGroup("com.velocitypowered")
         }
     }
-    maven {
-        url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
         content {
             includeGroup("dev.vankka")
         }
     }
-    maven("https://repo.opencollab.dev/main/")
-    maven {
-        url = uri("https://repo.william278.net/velocity/")
+    maven("https://repo.opencollab.dev/main/") {
+        content {
+            includeGroupByRegex("org.geysermc.*")
+        }
+    }
+    maven("https://repo.william278.net/velocity/") {
         content {
             includeGroup("com.velocitypowered")
         }
@@ -52,14 +73,17 @@ taboolib {
         install(CONFIGURATION, LANG, CHAT)
         install(VELOCITY)
     }
-    version { taboolib = "6.1.2-beta12" }
+    version {
+        taboolib = "6.1.2-beta12"
+        coroutines = null
+    }
     relocate("kotlinx.serialization", "avm.kotlinx.serialization")
     relocate("dev.vankka.enhancedlegacytext", "avm.dev.vankka.enhancedlegacytext")
     relocate("com.charleskorn.kaml", "avm.com.charleskorn.kaml")
 }
 
 dependencies {
-    detektPlugins(libs.detekt)
+    detektPlugins(libs.detekt.formatting)
 
     compileOnly(libs.velocity.api)
     compileOnly(libs.velocity.proxy)
