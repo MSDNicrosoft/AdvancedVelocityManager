@@ -1,5 +1,5 @@
 /**
- * Portions of this code are from cancellable-chat and are licensed under the MIT License (MIT).
+ * Portions of this code are modified from cancellable-chat and are licensed under the MIT License (MIT).
  *
  * https://github.com/ZhuRuoLing/cancellable-chat/blob/977f1dfef71d783b0a824e80ab36ce25d30f2e65
  * /src/main/java/icu/takeneko/cancellablechat/ClassTransformerImpl.java
@@ -36,8 +36,9 @@ import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.InsnNode
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 import java.lang.instrument.ClassFileTransformer
-import java.nio.file.Files
 import java.security.ProtectionDomain
+import kotlin.io.path.createDirectories
+import kotlin.io.path.writeBytes
 
 object ClassTransformer : ClassFileTransformer {
 
@@ -48,10 +49,10 @@ object ClassTransformer : ClassFileTransformer {
 
     override fun transform(
         loader: ClassLoader?,
-        className: String?,
+        className: String,
         classBeingRedefined: Class<*>?,
-        protectionDomain: ProtectionDomain?,
-        classfileBuffer: ByteArray?
+        protectionDomain: ProtectionDomain,
+        classfileBuffer: ByteArray
     ): ByteArray? {
         if (className != TARGET_CLASS_NAME) return null
 
@@ -83,11 +84,11 @@ object ClassTransformer : ClassFileTransformer {
      * @param className the name of the class
      * @param buffer the byte array representing the transformed class
      */
-    private fun writeClassToFile(className: String?, buffer: ByteArray) {
+    private fun writeClassToFile(className: String, buffer: ByteArray) {
         val outputPath = InstrumentationAccess.TRANSFORMER_OUTPUT_PATH.resolve("$className.class")
         try {
-            Files.createDirectories(outputPath.parent)
-            Files.write(outputPath, buffer)
+            outputPath.parent.createDirectories()
+            outputPath.writeBytes(buffer)
         } catch (e: Exception) {
             logger.error("Failed to write transformed class $className to disk", e)
         }

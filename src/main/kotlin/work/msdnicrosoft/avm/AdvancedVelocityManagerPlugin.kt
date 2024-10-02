@@ -11,6 +11,7 @@ import taboolib.module.lang.Language
 import taboolib.platform.VelocityPlugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.impl.VelocityAdapter
+import work.msdnicrosoft.avm.module.chatbridge.inject.InstrumentationAccess
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
@@ -27,8 +28,8 @@ object AdvancedVelocityManagerPlugin : Plugin() {
     }
 
     override fun onLoad() {
-        logger.info("Detected dynamic java agent loading warnings.")
-        logger.info("It is expected behavior and you can safely ignore the warnings.")
+        InstrumentationAccess.init()
+
         val adapter = VelocityAdapter()
         val adapterKey = PlatformFactory.serviceMap.keys.first { "PlatformAdapter" in it }
         PlatformFactory.serviceMap[adapterKey] = adapter
