@@ -54,12 +54,7 @@ object CommandSessionManager {
      * @property expirationTime The time at which the action expires.
      */
     data class Action(var executed: Boolean = false, val block: ExecuteBlock, val expirationTime: Long) {
-
-        /**
-         * @property isExpired True if the action has expired, false otherwise.
-         */
-        val isExpired: Boolean
-            get() = System.currentTimeMillis() > expirationTime
+        fun isExpired(): Boolean = System.currentTimeMillis() > expirationTime
     }
 
     private val sessions = ConcurrentHashMap<SessionId, Action>()
@@ -77,7 +72,7 @@ object CommandSessionManager {
     fun onEnable() {
         removalTask = submitAsync(period = 20 * 60L) {
             sessions.forEach { (sessionId, action) ->
-                if (action.isExpired) remove(sessionId)
+                if (action.isExpired()) remove(sessionId)
             }
         }
     }
@@ -111,14 +106,14 @@ object CommandSessionManager {
         val session = sessions.remove(sessionId) ?: return ExecuteResult.NOT_FOUND
         return session.run {
             try {
-                if (isExpired) {
+                if (isExpired()) {
                     ExecuteResult.EXPIRED
                 } else {
                     block.invoke()
                     ExecuteResult.SUCCESS
                 }
             } catch (e: Exception) {
-                logger.warn("Failed to execute session command: ${e.message}")
+                logger.warn("Failed to execute session command", e)
                 ExecuteResult.FAILED
             }
         }
