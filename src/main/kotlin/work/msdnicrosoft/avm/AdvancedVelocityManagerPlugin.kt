@@ -3,14 +3,12 @@ package work.msdnicrosoft.avm
 import com.velocitypowered.api.plugin.PluginDescription
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger
 import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.Plugin
 import taboolib.common.util.unsafeLazy
 import taboolib.module.lang.Language
 import taboolib.platform.VelocityPlugin
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.impl.VelocityAdapter
 import work.msdnicrosoft.avm.module.chatbridge.inject.InstrumentationAccess
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
@@ -29,10 +27,6 @@ object AdvancedVelocityManagerPlugin : Plugin() {
 
     override fun onLoad() {
         InstrumentationAccess.init()
-
-        val adapter = VelocityAdapter()
-        val adapterKey = PlatformFactory.serviceMap.keys.first { "PlatformAdapter" in it }
-        PlatformFactory.serviceMap[adapterKey] = adapter
     }
 
     override fun onEnable() {

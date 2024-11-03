@@ -70,11 +70,11 @@ taboolib {
         }
     }
     env {
-        install(CONFIGURATION, LANG, CHAT)
-        install(VELOCITY)
+        install(CommandHelper, I18n)
+        install(Velocity)
     }
     version {
-        taboolib = "6.1.2-beta12"
+        taboolib = "6.2.0-beta33"
         coroutines = null
     }
     relocate("kotlinx.serialization", "avm.kotlinx.serialization")
