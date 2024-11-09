@@ -1,5 +1,5 @@
 /**
- * Portions of this code are from lls-manager
+ * Portions of this code are modified from lls-manager
  * https://github.com/plusls/lls-manager/blob/master/src/main/java/com/plusls/llsmanager/whitelist/WhitelistHandler.java
  */
 
@@ -11,7 +11,6 @@ import com.velocitypowered.api.event.player.ServerPreConnectEvent
 import com.velocitypowered.api.proxy.InboundConnection
 import com.velocitypowered.proxy.connection.MinecraftConnection
 import com.velocitypowered.proxy.connection.client.InitialInboundConnection
-import com.velocitypowered.proxy.connection.client.LoginInboundConnection
 import io.netty.channel.Channel
 import io.netty.util.AttributeKey
 import org.geysermc.floodgate.api.player.FloodgatePlayer
@@ -19,9 +18,9 @@ import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.event.PostOrder
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.library.reflex.Reflex.Companion.getProperty
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.ReflectUtil
 import work.msdnicrosoft.avm.util.StringUtil.formated
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
@@ -38,11 +37,6 @@ object WhitelistHandler {
         get() = ConfigManager.config.whitelist
 
     private val hasFloodgate = AVM.plugin.server.pluginManager.getPlugin("floodgate").isPresent
-
-    // Reflection fields for accessing internal Velocity connection details
-    private val INITIAL_MINECRAFT_CONNECTION = ReflectUtil.getField(InitialInboundConnection::class.java, "connection")
-    private val CHANNEL = ReflectUtil.getField(MinecraftConnection::class.java, "channel")
-    private val DELEGATE = ReflectUtil.getField(LoginInboundConnection::class.java, "delegate")
 
     @SubscribeEvent(postOrder = PostOrder.EARLY)
     fun onPreLogin(event: PreLoginEvent) {
@@ -105,8 +99,10 @@ object WhitelistHandler {
         // Compatible with Floodgate
         if (hasFloodgate) {
             try {
-                val channel = CHANNEL[INITIAL_MINECRAFT_CONNECTION[DELEGATE[connection]]] as? Channel
-                val player = channel?.attr(AttributeKey.valueOf<Any>("floodgate-player"))?.get() as? FloodgatePlayer
+                val channel = connection.getProperty<InitialInboundConnection>("delegate")
+                    ?.getProperty<MinecraftConnection>("connection")
+                    ?.getProperty<Channel>("channel")
+                val player = channel?.attr(AttributeKey.valueOf<FloodgatePlayer>("floodgate-player"))?.get()
                 if (player?.isLinked == true) {
                     return player.linkedPlayer.javaUsername
                 }
