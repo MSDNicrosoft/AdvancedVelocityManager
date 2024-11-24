@@ -46,7 +46,7 @@ object ChatBridge {
      */
     var mode: PassthroughMode = PassthroughMode.ALL
 
-    @Suppress("unused")
+    @Suppress("unused", "Deprecation")
     @SubscribeEvent(postOrder = PostOrder.FIRST)
     fun onPlayerChatChat(event: PlayerChatEvent) {
         if (!config.enabled) return
