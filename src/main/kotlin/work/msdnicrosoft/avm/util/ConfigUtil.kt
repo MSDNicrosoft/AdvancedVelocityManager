@@ -11,11 +11,25 @@ object ConfigUtil {
      * @param server The server name to retrieve the nickname for.
      * @return The server nickname.
      */
-    fun getServerNickname(server: String) = ConfigManager.config.serverMapping[server] ?: server
+    fun getServerNickname(server: String): String =
+        ConfigManager.config.serverMapping[server] ?: server
 
     fun isValidServer(name: String) = AVM.plugin.server.getServer(name).isPresent || isServerGroup(name)
 
-    fun isServerGroup(name: String) = name in ConfigManager.config.whitelist.serverGroups.keys
+    /**
+     * Checks if a server with the given name belongs to a server group.
+     *
+     * @param name The name of the server to check.
+     * @return True if the server belongs to a server group, false otherwise.
+     */
+    fun isServerGroup(name: String): Boolean =
+        name in ConfigManager.config.whitelist.serverGroups.keys
 
-    fun getServersInGroup(group: String) = ConfigManager.config.whitelist.serverGroups[group]
+    /**
+     * Retrieves a list of servers that belong to the specified group.
+     *
+     * @param group The name of the server group to retrieve servers for.
+     */
+    fun getServersInGroup(group: String): List<String> =
+        ConfigManager.config.whitelist.serverGroups[group].orEmpty()
 }
