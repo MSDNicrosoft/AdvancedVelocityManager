@@ -31,11 +31,12 @@ object TabSyncHandler {
     fun onPlayerConnected(event: ServerConnectedEvent) {
         if (config.enabled) {
             submitAsync(delay = 20) {
+                val player = event.player
                 AVM.plugin.server.allPlayers.forEach { entryPlayer ->
-                    if (entryPlayer != event.player) {
-                        TabSyncManager.update(event.player, entryPlayer)
+                    if (entryPlayer != player) {
+                        TabSyncManager.update(player, entryPlayer)
                     }
-                    TabSyncManager.update(entryPlayer, event.player)
+                    TabSyncManager.update(entryPlayer, player)
                 }
             }
         }

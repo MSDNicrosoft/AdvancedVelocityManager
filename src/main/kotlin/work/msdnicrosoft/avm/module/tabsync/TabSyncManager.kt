@@ -9,6 +9,12 @@ import work.msdnicrosoft.avm.util.component.ComponentUtil.serializer
 
 object TabSyncManager {
 
+    /**
+     * Updates the tab list entry of the target player with the display name of the entry player.
+     *
+     * @param target The player whose tab list is being updated.
+     * @param entry The player whose display name is being used for the update.
+     */
     fun update(target: Player, entry: Player) {
         val displayName = entry.displayName
         target.tabList.getEntry(entry.uniqueId).ifPresentOrElse(

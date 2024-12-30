@@ -65,17 +65,20 @@ object AdvancedVelocityManagerPlugin : Plugin() {
                 return false
             }
 
-            logger.info("Reloading language...")
-            Language.reload()
-            Language.default = ConfigManager.config.defaultLang
-
             CommandSessionManager.onEnable()
             PlayerCache.onEnable()
             WhitelistManager.onEnable(reload = true)
+            reloadLanguage()
             return true
         } catch (e: Exception) {
             logger.error("Failed to reload plugin", e)
             return false
         }
+    }
+
+    private fun reloadLanguage() {
+        logger.info("Reloading language...")
+        Language.reload()
+        Language.default = ConfigManager.config.defaultLang
     }
 }

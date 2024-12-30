@@ -5,13 +5,14 @@ import java.util.function.Predicate
 /**
  * A custom implementation of MutableSet that limits the maximum size of the set.
  *
+ * @param T The type of elements.
  * @param maxSize The maximum size of the set.
  */
 class LimitedMutableSet<T>(private val maxSize: Int) : MutableSet<T> {
     /**
      * The delegate set that holds the actual elements.
      */
-    internal val delegate = LinkedHashSet<T>()
+    private val delegate = LinkedHashSet<T>()
 
     /**
      * Adds the specified element to the set.

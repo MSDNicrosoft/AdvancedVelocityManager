@@ -8,8 +8,16 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 
 object ComponentUtil {
 
-    val serializer = EnhancedLegacyText.get()
+    val serializer: EnhancedLegacyText = EnhancedLegacyText.get()
 
+    /**
+     * Creates a HoverEvent based on the provided format and deserialization function.
+     *
+     * @param format The format to extract hover text from.
+     * @param deserialize A function to deserialize the hover text into a Component.
+     *
+     * @return A HoverEvent showing the deserialized hover text, or null if the format has no hover text.
+     */
     fun createHoverEvent(format: Format, deserialize: String.() -> Component): HoverEvent<Component?>? =
         if (!format.hover.isNullOrEmpty()) {
             HoverEvent.showText(format.hover.joinToString("\n").deserialize())
@@ -17,6 +25,14 @@ object ComponentUtil {
             null
         }
 
+    /**
+     * Creates a ClickEvent based on the provided format and replacer function.
+     *
+     * @param format The format to extract click event data from.
+     * @param replacer A function to replace placeholders in the click event data.
+     *
+     * @return A ClickEvent representing the action to be performed when clicked, or null if the format is invalid.
+     */
     fun createClickEvent(format: Format, replacer: String.() -> String): ClickEvent? {
         if (!validateFormat(format)) return null
         return when {

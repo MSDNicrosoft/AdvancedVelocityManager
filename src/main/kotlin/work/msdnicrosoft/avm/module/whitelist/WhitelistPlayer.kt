@@ -30,17 +30,17 @@ class WhitelistPlayer(val player: Player, val sender: ProxyCommandSender) {
             hover = listOf(sender.asLangText("whitelist-each-player-username-hover")),
             command = "/avmwl remove %player_name%"
         ),
-        Format("&8:"),
+        Format(text = "&8:"),
     )
 
-    val playerUsername = player.name
-    val playerUuid = player.uuid.toString()
+    private val playerUsername = player.name
+    private val playerUuid = player.uuid.toString()
 
     /**
      * Deserialize the message by replacing placeholders with actual values.
      * @return The deserialized message with placeholders replaced.
      */
-    private fun String.deserialize(serverName: String? = null) = serializer.buildComponent(this)
+    private fun String.deserialize(serverName: String? = null): Component = serializer.buildComponent(this)
         .replace("%player_name%", playerUsername)
         .replace("%player_uuid%", playerUuid)
         .let { if (serverName != null) it.replace("%server_name%", serverName) else it }
@@ -50,12 +50,12 @@ class WhitelistPlayer(val player: Player, val sender: ProxyCommandSender) {
      * Replace placeholders in the message with actual player and server information.
      * @return The message with placeholders replaced.
      */
-    private fun String.replacePlaceholders(serverName: String? = null) = this.replace(
+    private fun String.replacePlaceholders(serverName: String? = null): String = this.replace(
         "%player_name%" to playerUsername,
         "%player_uuid%" to playerUuid
     ).let { if (serverName != null) it.replace("%server_name%" to serverName) else it }
 
-    fun build() = Component.join(
+    fun build(): Component = Component.join(
         JoinConfiguration.spaces(),
         formats.map { format ->
             format.text.deserialize()
@@ -68,8 +68,8 @@ class WhitelistPlayer(val player: Player, val sender: ProxyCommandSender) {
                 hover = buildList {
                     if (isServerGroup) {
                         add(sender.asLangText("whitelist-each-player-server-hover-1"))
-                        add("&r${getServersInGroup(server)!!.joinToString(" ")}")
-                        add(" ")
+                        add("&r${getServersInGroup(server).joinToString(" ")}")
+                        add("")
                     }
                     add(sender.asLangText("whitelist-each-player-server-hover-2"))
                 },

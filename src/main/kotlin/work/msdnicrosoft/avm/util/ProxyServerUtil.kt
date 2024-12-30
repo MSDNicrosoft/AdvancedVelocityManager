@@ -8,7 +8,10 @@ import work.msdnicrosoft.avm.util.StringUtil.formated
 
 object ProxyServerUtil {
 
-    val TIMEOUT_PING_RESULT = ServerPing.builder()
+    /**
+     * A server ping result with unknown version and description.
+     */
+    val TIMEOUT_PING_RESULT: ServerPing = ServerPing.builder()
         .version(ServerPing.Version(-1, "Unknown"))
         .description(Component.text("Unknown"))
         .build()

@@ -15,8 +15,12 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 /**
- * Represents a chat message with various placeholders to be replaced.
- * @property event The [PlayerChatEvent] associated with the message.
+ * Represents a chat message sent by a player. This class is used to format
+ * the message based on the configuration specified in the `chat-bridge` section
+ * of the main configuration file.
+ *
+ * @param event The event that triggered the formatting of the message.
+ * @param config The configuration that specifies the formats and events for the message.
  */
 class ChatMessage(val event: PlayerChatEvent, private val config: AVMConfig.ChatBridge) {
 

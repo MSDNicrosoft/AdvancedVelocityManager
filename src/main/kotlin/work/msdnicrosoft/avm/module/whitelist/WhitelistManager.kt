@@ -53,6 +53,7 @@ object WhitelistManager {
      *
      * @property name The name of the player.
      * @property uuid The UUID of the player.
+     * @property onlineMode Whether the player is online mode
      * @property serverList The list of servers the player is allowed to connect to.
      */
     @Serializable

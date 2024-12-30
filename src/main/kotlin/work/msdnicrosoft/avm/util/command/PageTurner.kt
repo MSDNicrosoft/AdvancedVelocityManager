@@ -5,8 +5,21 @@ import taboolib.module.chat.ComponentText
 import taboolib.module.chat.Components
 import taboolib.module.lang.asLangText
 
+/**
+ * Pagination helper for commands that need to display a list of items spread across multiple pages.
+ *
+ * @param sender The command sender.
+ * @param command The command name for the pagination component.
+ */
 class PageTurner(val sender: ProxyCommandSender, val command: String) {
 
+    /**
+     * Builds a pagination component with navigation buttons and a page indicator.
+     *
+     * @param currentPage The current page number.
+     * @param maxPage The total number of pages.
+     * @return A ComponentText representing the pagination component.
+     */
     fun build(currentPage: Int, maxPage: Int): ComponentText {
         val previous = if (currentPage == 1) {
             Components.text("§8[§7<-§8]")

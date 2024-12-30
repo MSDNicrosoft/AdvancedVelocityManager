@@ -124,7 +124,7 @@ object CommandSessionManager {
      *
      * @param sessionId The ID of the command session.
      */
-    fun remove(sessionId: SessionId) = sessions.remove(sessionId)
+    private fun remove(sessionId: SessionId) = sessions.remove(sessionId)
 
     /**
      * Generates a session ID based on the given parameters.

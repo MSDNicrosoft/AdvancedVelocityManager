@@ -3,7 +3,6 @@ package work.msdnicrosoft.avm.config
 import com.charleskorn.kaml.YamlException
 import kotlinx.serialization.SerializationException
 import taboolib.common.platform.function.getDataFolder
-import taboolib.common.util.unsafeLazy
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
 import work.msdnicrosoft.avm.util.FileUtil.decodeFromString
@@ -15,12 +14,20 @@ import java.io.IOException
 
 object ConfigManager {
 
-    val file by unsafeLazy { getDataFolder().resolve("config.yml") }
+    private val file by lazy { getDataFolder().resolve("config.yml") }
+
+    val DEFAULT_CONFIG by lazy { AVMConfig() }
 
     var config = AVMConfig()
 
+    /**
+     * Loads the configuration from the file.
+     *
+     * @param reload Whether to reload the configuration. Default is false.
+     * @return True if the configuration is loaded successfully, false otherwise.
+     */
     fun load(reload: Boolean = false): Boolean {
-        if (!file.exists()) return save(initialize = true)
+        if (!file.exists() && !save(initialize = true)) return false
 
         logger.info("${if (reload) "Reloading" else "Loading"} configuration...")
         return try {
@@ -39,6 +46,12 @@ object ConfigManager {
         }
     }
 
+    /**
+     * Saves the configuration to the file.
+     *
+     * @param initialize Whether to generate a default configuration if the file does not exist. Default is false.
+     * @return True if the configuration is saved successfully, false otherwise.
+     */
     fun save(initialize: Boolean = false): Boolean {
         if (!file.exists()) {
             logger.info(
@@ -48,7 +61,7 @@ object ConfigManager {
 
         return try {
             file.parentFile.mkdirs()
-            file.writeTextWithBuffer(yaml.encodeToString(if (!initialize) config else AVMConfig()))
+            file.writeTextWithBuffer(yaml.encodeToString(if (!initialize) config else DEFAULT_CONFIG))
             true
         } catch (e: IOException) {
             logger.error("Failed to save configuration to file", e)
@@ -59,7 +72,7 @@ object ConfigManager {
         }
     }
 
-    fun reload() = load(reload = true)
+    fun reload(): Boolean = load(reload = true)
 
     fun validate() {
         try {

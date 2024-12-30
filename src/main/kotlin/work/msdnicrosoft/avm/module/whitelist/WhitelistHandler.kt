@@ -36,7 +36,7 @@ object WhitelistHandler {
     private val config
         get() = ConfigManager.config.whitelist
 
-    private val hasFloodgate = AVM.plugin.server.pluginManager.getPlugin("floodgate").isPresent
+    private val hasFloodgate by lazy { AVM.plugin.server.pluginManager.getPlugin("floodgate").isPresent }
 
     @SubscribeEvent(postOrder = PostOrder.EARLY)
     fun onPreLogin(event: PreLoginEvent) {
