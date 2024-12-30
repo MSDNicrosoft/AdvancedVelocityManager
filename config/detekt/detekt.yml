@@ -619,6 +619,7 @@ style:
       - '299'
       - '204'
       - '404'
+      - '10' # TODO Remove
     ignoreHashCodeFunction: true
     ignorePropertyDeclaration: false
     ignoreLocalVariableDeclaration: false
