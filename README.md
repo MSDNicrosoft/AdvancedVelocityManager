@@ -79,6 +79,7 @@ We appreciate the contributions of these projects to the open-source community.
 - [x] Import data from lls-manager
 - [x] Offline whitelist support
 - [ ] Web Interface Request Management (HTTP / gRPC / WebSocket)  **[May be deprecated]**
+- [ ] Chat Message logging
 
 ## License and Copyright
 
