@@ -52,11 +52,11 @@ object WhitelistHandler {
             return
         }
 
-        if (event.result == PreLoginEvent.PreLoginComponentResult.allowed()) {
-            event.result = if (WhitelistManager.getPlayer(username)?.onlineMode == true) {
-                PreLoginEvent.PreLoginComponentResult.forceOnlineMode()
-            } else {
-                PreLoginEvent.PreLoginComponentResult.forceOfflineMode()
+        if (event.result.isAllowed) {
+            when (WhitelistManager.getPlayer(username)?.onlineMode) {
+                true -> event.result = PreLoginEvent.PreLoginComponentResult.forceOnlineMode()
+                false -> event.result = PreLoginEvent.PreLoginComponentResult.forceOfflineMode()
+                null -> {}
             }
         }
     }
