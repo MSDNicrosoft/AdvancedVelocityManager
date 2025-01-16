@@ -176,27 +176,15 @@ object WhitelistManager {
     }
 
     /**
-     * Updates the cache of usernames and UUIDs based on the provided parameters.
-     *
-     * @param username The username to add to the cache, or null to update the entire cache.
-     * @param uuid The UUID to add to the cache, or null to update the entire cache.
+     * Updates the cache of usernames and UUIDs.
      */
-    private fun updateCache(username: String? = null, uuid: UUID? = null) {
+    private fun updateCache() {
         withLock {
-            if (username == null && uuid == null) {
-                uuids.clear()
-                uuids.addAll(whitelist.map { it.uuid })
+            uuids.clear()
+            uuids.addAll(whitelist.map { it.uuid })
 
-                usernames.clear()
-                usernames.addAll(whitelist.map { it.name })
-            } else {
-                if (uuid != null) {
-                    uuids.add(uuid)
-                }
-                if (username != null) {
-                    usernames.add(username)
-                }
-            }
+            usernames.clear()
+            usernames.addAll(whitelist.map { it.name })
         }
     }
 
@@ -275,7 +263,10 @@ object WhitelistManager {
                 }
             }
         }
-        updateCache(username = username, uuid = uuid)
+        withLock {
+            uuids.add(uuid)
+            usernames.add(username)
+        }
         return if (save()) AddResult.SUCCESS else AddResult.SAVE_FILE_FAILED
     }
 
