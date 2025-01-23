@@ -1,4 +1,6 @@
 # AdvancedVelocityManager
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMSDNicrosoft%2FAdvancedVelocityManager.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FMSDNicrosoft%2FAdvancedVelocityManager?ref=badge_shield)
+
 
 <div align="right">
   English
@@ -85,6 +87,9 @@ We appreciate the contributions of these projects to the open-source community.
 
 AdvancedVelocityManager is released under the MIT License. You are free to use, modify, and distribute this plugin,
 provided you retain the original author's copyright notice.
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMSDNicrosoft%2FAdvancedVelocityManager.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FMSDNicrosoft%2FAdvancedVelocityManager?ref=badge_large)
 
 ## Contribution
 
