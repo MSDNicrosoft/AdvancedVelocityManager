@@ -407,19 +407,19 @@ object WhitelistManager {
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
             .handleAsync { response, throwable ->
                 if (throwable != null) {
-                    logger.warn("Failed to query UUID $uuid", throwable)
+                    logger.warn("Failed to query UUID {}: {}", uuid, throwable.message)
                     null
                 } else {
                     when (val statusCode = response.statusCode()) {
                         200 -> json.decodeFromString<ApiResponse>(response.body()).name
                         204 -> NOT_FOUND_RESULT
-                        429 -> {
-                            logger.warn("Exceeded to the rate limit of Profile API, please retry")
-                            null
-                        }
 
                         else -> {
-                            logger.warn("Failed to query UUID $uuid, status code: $statusCode")
+                            if (statusCode == 429) {
+                                logger.warn("Exceeded to the rate limit of Profile API, please retry UUID {}", uuid)
+                            } else {
+                                logger.warn("Failed to query UUID {}, status code: {}", uuid, statusCode)
+                            }
                             null
                         }
                     }
@@ -453,14 +453,18 @@ object WhitelistManager {
                 } else {
                     when (val statusCode = response.statusCode()) {
                         200 -> json.decodeFromString<ApiResponse>(response.body()).id
-                        204 -> NOT_FOUND_RESULT
-                        429 -> {
-                            logger.warn("Exceeded to the rate limit of UUID API, please retry")
-                            null
-                        }
+                        404 -> NOT_FOUND_RESULT
 
                         else -> {
-                            logger.warn("Failed to query username $username, status code: $statusCode")
+                            if (statusCode == 429) {
+                                logger.warn(
+                                    "Exceeded to the rate limit of UUID API, please retry username {}",
+                                    username
+                                )
+                            } else {
+                                logger.warn("Failed to query username {}, status code: {}", username, statusCode)
+                            }
+
                             null
                         }
                     }
