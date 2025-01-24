@@ -448,7 +448,7 @@ object WhitelistManager {
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
             .handleAsync { response, throwable ->
                 if (throwable != null) {
-                    logger.warn("Failed to query username $username", throwable)
+                    logger.warn("Failed to query username {}: {}", username, throwable.message)
                     null
                 } else {
                     when (val statusCode = response.statusCode()) {

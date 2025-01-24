@@ -40,7 +40,12 @@ object ConfigManager {
             false
         } catch (e: YamlException) {
             logger.error("Failed to decode configuration content from file")
-            logger.error("${e.path.toHumanReadableString()} (line ${e.line}, column ${e.column}) of file is incorrect")
+            logger.error(
+                "{} (line {}, column {}) of file is incorrect",
+                e.path.toHumanReadableString(),
+                e.line,
+                e.column
+            )
             logger.error(e.message)
             false
         }

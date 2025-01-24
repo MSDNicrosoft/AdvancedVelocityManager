@@ -44,7 +44,20 @@ object ComponentUtil {
         }
     }
 
-    fun validateFormat(format: Format): Boolean {
+    /**
+     * Validates a given format.
+     *
+     * @param format The format to be validated.
+     *
+     * @return True if the format is valid, false otherwise.
+     */
+    private fun validateFormat(format: Format): Boolean {
+        if (format.text.isEmpty()) {
+            logger.warn("Invalid format: {}", format)
+            logger.warn("Text cannot be empty or blank.")
+            return false
+        }
+
         val conflicted = listOf(
             !format.command.isNullOrEmpty(),
             !format.suggest.isNullOrEmpty(),
@@ -52,9 +65,10 @@ object ComponentUtil {
             !format.clipboard.isNullOrEmpty(),
         ).count { it } > 1
         if (conflicted) {
-            logger.warn("Format $format is incorrect!")
+            logger.warn("Invalid format: {}", format)
             logger.warn("Exactly one of 'command', 'suggest', 'url', or 'clipboard' should be provided and non-empty.")
+            return false
         }
-        return !conflicted
+        return true
     }
 }
