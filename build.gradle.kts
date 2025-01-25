@@ -85,8 +85,7 @@ taboolib {
 dependencies {
     detektPlugins(libs.detekt.formatting)
 
-    compileOnly(libs.velocity.api)
-    compileOnly(libs.velocity.proxy)
+    compileOnly(libs.bundles.velocity)
     compileOnly(libs.floodgate)
     compileOnly(libs.netty)
 
@@ -97,8 +96,7 @@ dependencies {
     taboo(libs.kotlin.serialization.json) { isTransitive = false }
     taboo(libs.enhanced.legacy.text) { isTransitive = false }
 
-    taboo(libs.asm)
-    taboo(libs.asm.util)
+    taboo(libs.bundles.asm)
     taboo(libs.byte.buddy.agent)
 }
 

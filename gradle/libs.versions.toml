@@ -18,9 +18,18 @@ enhanced-legacy-text = "2.0.0-SNAPSHOT"
 asm = "9.7.1"
 byte-buddy-agent = "1.16.1"
 
+[plugins]
+
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+detekt-compiler = { id = "io.github.detekt.gradle.compiler-plugin", version.ref = "detekt" }
+taboolib = { id = "io.izzel.taboolib", version.ref = "taboolib" }
+grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
+
 [libraries]
 
-# Gradle Plugins
+# Detekt Plugins
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
 # CompileOnly Dependencies
@@ -37,11 +46,6 @@ asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
 asm-util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
 byte-buddy-agent = { module = "net.bytebuddy:byte-buddy-agent", version.ref = "byte-buddy-agent" }
 
-[plugins]
-
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-detekt-compiler = { id = "io.github.detekt.gradle.compiler-plugin", version.ref = "detekt" }
-taboolib = { id = "io.izzel.taboolib", version.ref = "taboolib" }
-grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
+[bundles]
+asm = ["asm", "asm-util"]
+velocity = ["velocity-api", "velocity-proxy"]
