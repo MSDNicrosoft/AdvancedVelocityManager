@@ -136,7 +136,7 @@ object WhitelistManager {
      */
     private fun save(initialize: Boolean = false): Boolean {
         if (!file.exists()) {
-            logger.info("Whitelist file does not exist${if (initialize) ", creating..." else ""}")
+            logger.info("Whitelist file does not exist{}", if (initialize) ", creating..." else "")
         }
 
         return try {
@@ -159,7 +159,8 @@ object WhitelistManager {
     private fun load(reload: Boolean = false): Boolean {
         if (!file.exists()) return save(initialize = true)
 
-        logger.info("${if (reload) "Reloading" else "Loading"} whitelist...")
+        logger.info("{} whitelist...", if (reload) "Reloading" else "Loading")
+
         return try {
             withLock {
                 whitelist.clear()

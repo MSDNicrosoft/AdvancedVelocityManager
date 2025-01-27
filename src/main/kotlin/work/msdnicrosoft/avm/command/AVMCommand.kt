@@ -20,7 +20,6 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 import work.msdnicrosoft.avm.module.importer.LlsManagerImporter.import as LlsManagerImport
 import work.msdnicrosoft.avm.module.importer.QuAnVelocityWhitelistImporter.import as QuAnVelocityWhitelistImport
 
-@Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
 @CommandHeader(name = "avm")
 object AVMCommand {

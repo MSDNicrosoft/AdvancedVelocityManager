@@ -29,7 +29,8 @@ object ConfigManager {
     fun load(reload: Boolean = false): Boolean {
         if (!file.exists() && !save(initialize = true)) return false
 
-        logger.info("${if (reload) "Reloading" else "Loading"} configuration...")
+        logger.info("{} configuration...", if (reload) "Reloading" else "Loading")
+
         return try {
             config = yaml.decodeFromString<AVMConfig>(file.readTextWithBuffer())
             // TODO Migrate config

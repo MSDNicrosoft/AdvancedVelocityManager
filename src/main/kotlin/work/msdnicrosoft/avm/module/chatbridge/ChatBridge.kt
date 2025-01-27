@@ -46,7 +46,7 @@ object ChatBridge {
      */
     var mode: PassthroughMode = PassthroughMode.ALL
 
-    @Suppress("unused", "Deprecation")
+    @Suppress("Deprecation")
     @SubscribeEvent(postOrder = PostOrder.FIRST)
     fun onPlayerChatChat(event: PlayerChatEvent) {
         if (!config.enabled) return
@@ -84,7 +84,6 @@ object ChatBridge {
      *
      * If the conditions are met, the command is forwarded to the server.
      */
-    @Suppress("unused")
     @SubscribeEvent
     fun onCommandExecute(event: CommandExecuteEvent) {
         val isPrivateChat = PRIVATE_CHAT_COMMANDS.any { event.command.split(" ")[0].startsWithAny(event.command) }
