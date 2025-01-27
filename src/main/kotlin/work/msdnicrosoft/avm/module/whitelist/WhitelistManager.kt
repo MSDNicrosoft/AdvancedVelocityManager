@@ -401,7 +401,7 @@ object WhitelistManager {
 
         val request = HttpRequest.newBuilder()
             .setHeader("User-Agent", HttpUtil.USER_AGENT)
-            .uri(URI.create("${config.queryApi.profile.trimEnd('/')}/${uuid.toUndashedString()}"))
+            .uri(URI.create("${config.queryApi.profile.trimEnd('/')}/${UuidUtils.toUndashed(uuid)}"))
             .build()
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
