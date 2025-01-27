@@ -9,7 +9,6 @@ import taboolib.common.platform.function.submitAsync
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
-@Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
 object TabSyncHandler {
 
@@ -18,26 +17,26 @@ object TabSyncHandler {
 
     @SubscribeEvent
     fun onPlayerDisconnect(event: DisconnectEvent) {
-        if (config.enabled) {
-            submitAsync(delay = 20) {
-                AVM.plugin.server.allPlayers.forEach { player ->
-                    player.tabList.removeEntry(event.player.uniqueId)
-                }
+        if (!config.enabled) return
+
+        submitAsync(delay = 20) {
+            AVM.plugin.server.allPlayers.forEach { player ->
+                player.tabList.removeEntry(event.player.uniqueId)
             }
         }
     }
 
     @SubscribeEvent
     fun onPlayerConnected(event: ServerConnectedEvent) {
-        if (config.enabled) {
-            submitAsync(delay = 20) {
-                val player = event.player
-                AVM.plugin.server.allPlayers.forEach { entryPlayer ->
-                    if (entryPlayer != player) {
-                        TabSyncManager.update(player, entryPlayer)
-                    }
-                    TabSyncManager.update(entryPlayer, player)
+        if (!config.enabled) return
+
+        submitAsync(delay = 20) {
+            val player = event.player
+            AVM.plugin.server.allPlayers.forEach { entryPlayer ->
+                if (entryPlayer != player) {
+                    TabSyncManager.update(player, entryPlayer)
                 }
+                TabSyncManager.update(entryPlayer, player)
             }
         }
     }

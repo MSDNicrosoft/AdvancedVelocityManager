@@ -437,7 +437,7 @@ object WhitelistManager {
     @Suppress("MagicNumber")
     private fun getUuid(username: String, onlineMode: Boolean? = null): String? {
         if (onlineMode == false && !serverIsOnlineMode) {
-            return UuidUtils.generateOfflinePlayerUuid(username).toUndashedString()
+            return UuidUtils.toUndashed(UuidUtils.generateOfflinePlayerUuid(username))
         }
 
         val request = HttpRequest.newBuilder()

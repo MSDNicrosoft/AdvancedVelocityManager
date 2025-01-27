@@ -29,7 +29,6 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
  * This object is specific to the Velocity platform and listens for pre-login and server pre-connect events
  * to enforce whitelist restrictions.
  */
-@Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
 object WhitelistHandler {
 

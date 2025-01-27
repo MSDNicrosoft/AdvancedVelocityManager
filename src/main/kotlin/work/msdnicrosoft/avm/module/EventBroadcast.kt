@@ -13,7 +13,6 @@ import work.msdnicrosoft.avm.util.StringUtil.formated
 import work.msdnicrosoft.avm.util.StringUtil.replace
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
-@Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
 object EventBroadcast {
 
@@ -22,12 +21,14 @@ object EventBroadcast {
 
     @SubscribeEvent(postOrder = PostOrder.FIRST)
     fun onPlayerDisconnect(event: DisconnectEvent) {
+        if (!config.leave.enabled) return
+
         // If a player failed to join the server (due to incompatible server version, etc.),
         // plugin will send the leave message accidentally.
         // To avoid this, we check the login status.
-        if (config.leave.enabled && event.loginStatus == DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) {
-            sendProxyServerMessage(config.leave.message.replace("%player_name%", event.player.username))
-        }
+        if (event.loginStatus != DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) return
+
+        sendProxyServerMessage(config.leave.message.replace("%player_name%", event.player.username))
     }
 
     @SubscribeEvent(postOrder = PostOrder.FIRST)
@@ -38,30 +39,30 @@ object EventBroadcast {
 
         event.previousServer.ifPresentOrElse(
             { previousServer ->
-                if (config.switch.enabled) {
-                    val previousServerName = previousServer.serverInfo.name
-                    val previousServerNickname = getServerNickname(previousServerName)
-                    sendProxyServerMessage(
-                        config.switch.message.replace(
-                            "%player_name%" to player.username,
-                            "%previous_server_name%" to previousServerName,
-                            "%previous_server_nickname%" to previousServerNickname,
-                            "%target_server_nickname%" to targetServerNickname,
-                            "%target_server_name%" to targetServerName
-                        )
+                if (!config.switch.enabled) return@ifPresentOrElse
+
+                val previousServerName = previousServer.serverInfo.name
+                val previousServerNickname = getServerNickname(previousServerName)
+                sendProxyServerMessage(
+                    config.switch.message.replace(
+                        "%player_name%" to player.username,
+                        "%previous_server_name%" to previousServerName,
+                        "%previous_server_nickname%" to previousServerNickname,
+                        "%target_server_nickname%" to targetServerNickname,
+                        "%target_server_name%" to targetServerName
                     )
-                }
+                )
             },
             {
-                if (config.join.enabled) {
-                    sendProxyServerMessage(
-                        config.join.message.replace(
-                            "%player_name%" to player.username,
-                            "%server_name%" to targetServerName,
-                            "%server_nickname%" to targetServerNickname
-                        )
+                if (!config.join.enabled) return@ifPresentOrElse
+
+                sendProxyServerMessage(
+                    config.join.message.replace(
+                        "%player_name%" to player.username,
+                        "%server_name%" to targetServerName,
+                        "%server_nickname%" to targetServerNickname
                     )
-                }
+                )
             }
         )
     }
