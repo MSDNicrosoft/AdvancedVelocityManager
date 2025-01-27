@@ -3,7 +3,6 @@ package work.msdnicrosoft.avm.module.whitelist
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import work.msdnicrosoft.avm.config.ConfigManager
-import java.util.LinkedHashSet
 
 /**
  * Handles caching of players for whitelist functionality within the Advanced Velocity Manager.
