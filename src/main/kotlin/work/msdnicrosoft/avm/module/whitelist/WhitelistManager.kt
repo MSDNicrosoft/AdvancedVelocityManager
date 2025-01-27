@@ -13,7 +13,6 @@ import work.msdnicrosoft.avm.util.FileUtil.readTextWithBuffer
 import work.msdnicrosoft.avm.util.FileUtil.writeTextWithBuffer
 import work.msdnicrosoft.avm.util.HttpUtil
 import work.msdnicrosoft.avm.util.StringUtil.toUuid
-import work.msdnicrosoft.avm.util.UUIDUtil.toUndashedString
 import work.msdnicrosoft.avm.util.data.UUIDSerializer
 import java.io.IOException
 import java.net.URI

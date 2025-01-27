@@ -17,10 +17,7 @@ object PlayerCache {
     private val config
         get() = ConfigManager.config.whitelist.cachePlayers
 
-    private val players = LinkedHashSet<String>()
-
-    val size
-        get() = players.size
+    private val players = mutableSetOf<String>()
 
     val readOnly
         get() = players.toList()
@@ -34,8 +31,8 @@ object PlayerCache {
     fun add(player: String) {
         if (!config.enabled) return
 
-        if (size >= config.maxSize) {
-            players.removeLast()
+        if (players.size >= config.maxSize) {
+            players.remove(players.last())
         }
         players.add(player)
     }
