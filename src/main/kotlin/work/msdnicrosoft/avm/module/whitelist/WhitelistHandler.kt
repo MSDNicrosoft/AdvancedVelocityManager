@@ -48,6 +48,7 @@ object WhitelistHandler {
         val username = getUsername(event.username, event.connection)
         if (!WhitelistManager.isInWhitelist(username)) {
             event.result = PreLoginEvent.PreLoginComponentResult.denied(config.message.formated())
+            PlayerCache.add(username)
             return
         }
 

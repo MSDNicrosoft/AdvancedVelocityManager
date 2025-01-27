@@ -56,7 +56,7 @@ object WhitelistCommand {
         dynamic("player") {
             suggestion<ProxyCommandSender>(uncheck = true) { _, _ ->
                 buildSet {
-                    addAll(PlayerCache.players)
+                    addAll(PlayerCache.readOnly)
                     addAll(AVM.plugin.server.allPlayers.map { it.username })
                     addAll(WhitelistManager.readOnlyWhitelist.map { it.name })
                 }.toList()
@@ -144,7 +144,7 @@ object WhitelistCommand {
             suggestion<ProxyCommandSender>(uncheck = true) { _, _ ->
                 buildList {
                     addAll(WhitelistManager.readOnlyWhitelist.map { it.name })
-                    addAll(PlayerCache.players)
+                    addAll(PlayerCache.readOnly)
                 }
             }
             int("page") {
@@ -196,7 +196,7 @@ object WhitelistCommand {
             val whitelistState = WhitelistManager.state.name.lowercase()
             sender.sendLang("command-avmwl-state", sender.asLangText("general-$whitelistState"))
             sender.sendLang("command-avmwl-list-header", WhitelistManager.size)
-            sender.sendLang("command-avmwl-status-cache", PlayerCache.players.size, config.cachePlayers.maxSize)
+            sender.sendLang("command-avmwl-status-cache", PlayerCache.readOnly.size, config.cachePlayers.maxSize)
         }
     }
 

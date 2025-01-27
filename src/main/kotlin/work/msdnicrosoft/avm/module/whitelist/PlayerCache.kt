@@ -1,12 +1,9 @@
 package work.msdnicrosoft.avm.module.whitelist
 
-import com.velocitypowered.api.event.connection.PreLoginEvent
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
-import taboolib.common.platform.event.PostOrder
-import taboolib.common.platform.event.SubscribeEvent
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.collections.LimitedMutableSet
+import java.util.LinkedHashSet
 
 /**
  * Handles caching of players for whitelist functionality within the Advanced Velocity Manager.
@@ -18,27 +15,28 @@ import work.msdnicrosoft.avm.util.collections.LimitedMutableSet
 object PlayerCache {
 
     private val config
-        get() = ConfigManager.config.whitelist
+        get() = ConfigManager.config.whitelist.cachePlayers
 
-    lateinit var players: LimitedMutableSet<String>
+    private val players = LinkedHashSet<String>()
 
-    fun onEnable() {
-        players = LimitedMutableSet<String>(config.cachePlayers.maxSize)
+    val size
+        get() = players.size
+
+    val readOnly
+        get() = players.toList()
+
+    fun reload() {
+        if (!config.enabled) return
+
+        players.clear()
     }
 
-    @Suppress("unused")
-    @SubscribeEvent(postOrder = PostOrder.LAST)
-    fun onPlayerPreLogin(event: PreLoginEvent) {
-        if (!config.cachePlayers.enabled) return
+    fun add(player: String) {
+        if (!config.enabled) return
 
-        val hasUuid = event.uniqueId != null
-        val isWhitelisted = if (hasUuid) {
-            WhitelistManager.isInWhitelist(event.uniqueId!!)
-        } else {
-            WhitelistManager.isInWhitelist(event.username)
+        if (size >= config.maxSize) {
+            players.removeLast()
         }
-
-        if (isWhitelisted) return
-        players.add(event.username)
+        players.add(player)
     }
 }

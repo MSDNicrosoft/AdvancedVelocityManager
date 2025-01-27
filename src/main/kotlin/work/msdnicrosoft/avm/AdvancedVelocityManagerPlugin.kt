@@ -66,7 +66,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
             }
 
             CommandSessionManager.onEnable()
-            PlayerCache.onEnable()
+            PlayerCache.reload()
             WhitelistManager.onEnable(reload = true)
             reloadLanguage()
             return true
