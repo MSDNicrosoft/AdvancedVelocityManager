@@ -412,7 +412,7 @@ object WhitelistManager {
                 } else {
                     when (val statusCode = response.statusCode()) {
                         200 -> json.decodeFromString<ApiResponse>(response.body()).name
-                        204 -> NOT_FOUND_RESULT
+                        404, 204 -> NOT_FOUND_RESULT
 
                         else -> {
                             if (statusCode == 429) {
