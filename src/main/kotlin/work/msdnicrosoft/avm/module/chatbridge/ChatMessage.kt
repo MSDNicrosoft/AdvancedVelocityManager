@@ -22,7 +22,7 @@ import java.util.concurrent.TimeoutException
  * @param event The event that triggered the formatting of the message.
  * @param config The configuration that specifies the formats and events for the message.
  */
-class ChatMessage(val event: PlayerChatEvent, private val config: AVMConfig.ChatBridge) {
+class ChatMessage(private val event: PlayerChatEvent, private val config: ChatBridge) {
 
     private val server = event.player.currentServer.get()
     private val serverPing = try {
