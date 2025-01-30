@@ -3,7 +3,7 @@ package work.msdnicrosoft.avm.module.chatbridge
 import com.velocitypowered.api.event.player.PlayerChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
-import work.msdnicrosoft.avm.config.AVMConfig
+import work.msdnicrosoft.avm.config.data.ChatBridge
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
 import work.msdnicrosoft.avm.util.ProxyServerUtil.TIMEOUT_PING_RESULT
