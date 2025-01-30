@@ -1,4 +1,6 @@
 import io.izzel.taboolib.gradle.*
+import org.ajoberstar.grgit.Commit
+import org.ajoberstar.grgit.Grgit
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
