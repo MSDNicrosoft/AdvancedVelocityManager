@@ -13,21 +13,43 @@ plugins {
 }
 
 base {
-    val commitHash = { grgit.head().id.substring(0, 7) }
-    val versionType = {
-        buildList {
-            if (grgit.branch.current().name != "master") {
-                add("SNAPSHOT")
-            }
-
-            if (!grgit.status().isClean()) {
-                add("DEV")
-            } else {
-                add(commitHash())
-            }
-        }.joinToString("-")
+    val grgit: Grgit? by lazy(LazyThreadSafetyMode.NONE) {
+		runCatching {
+			grgitService.service.get().grgit
+		}.getOrNull()
     }
-    version = "$version-${versionType()}"
+
+    fun getLatestCommit(): Commit? = grgit?.head()
+
+    fun getLatestTagCommit(): Commit = grgit!!.tag.list().last().commit
+
+    fun getUnreleasedCommits(): Int = grgit!!.log {
+        range(getLatestTagCommit(), getLatestCommit())
+    }.size
+
+    fun getVersion(): String = buildString {
+        if (grgit == null || getLatestCommit() == null) {
+            append("-nogit")
+            return@buildString
+        }
+
+        if (!grgit!!.status().isClean()) {
+            append("-DEV")
+            return@buildString
+        }
+
+        val unreleasedCommits = getUnreleasedCommits()
+        if (grgit!!.branch.current().name != "master" || unreleasedCommits > 0) {
+            append("-SNAPSHOT")
+
+            if (unreleasedCommits > 0) {
+                append("+$unreleasedCommits")
+            }
+        }
+
+        append("-${getLatestCommit()!!.abbreviatedId}")
+    }
+    version = "$version${getVersion()}"
 }
 
 repositories {
