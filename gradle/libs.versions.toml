@@ -12,7 +12,7 @@ floodgate = "2.2.3-SNAPSHOT"
 netty = "4.1.117.Final"
 
 # Shade Dependencies
-kaml = "0.67.0"
+kaml = "0.67.1"
 kotlin-serialization = "1.8.0"
 enhanced-legacy-text = "2.0.0-SNAPSHOT"
 asm = "9.7.1"
