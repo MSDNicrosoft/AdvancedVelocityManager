@@ -26,12 +26,13 @@ object SendAllCommand {
                 }
             }
             execute<ProxyCommandSender> { sender, context, _ ->
+                val serverName = context["server"]
                 val reason = sender.asLangText(
                     "command-send-target",
                     sender.name,
-                    getServerNickname(context["server"])
+                    getServerNickname(serverName)
                 )
-                sender.sendAllPlayers(context["server"], reason)
+                sender.sendAllPlayers(serverName, reason)
             }
         }
     }

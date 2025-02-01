@@ -32,7 +32,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 @PlatformSide(Platform.VELOCITY)
 object WhitelistHandler {
 
-    private val config
+    private inline val config
         get() = ConfigManager.config.whitelist
 
     private val hasFloodgate by lazy { AVM.plugin.server.pluginManager.getPlugin("floodgate").isPresent }
@@ -95,14 +95,15 @@ object WhitelistHandler {
      * @param connection The InboundConnection associated with the player's connection.
      * @return The username or linked username if available.
      */
+    @Suppress("UnsafeCallOnNullableType")
     private fun getUsername(username: String, connection: InboundConnection): String {
         // Compatible with Floodgate
         if (hasFloodgate) {
             try {
-                val channel = connection.getProperty<InitialInboundConnection>("delegate")
-                    ?.getProperty<MinecraftConnection>("connection")
-                    ?.getProperty<Channel>("channel")
-                val player = channel?.attr(AttributeKey.valueOf<FloodgatePlayer>("floodgate-player"))?.get()
+                val channel = connection.getProperty<InitialInboundConnection>("delegate")!!.connection.channel
+                val player: FloodgatePlayer? = channel
+                    .attr(AttributeKey.valueOf<FloodgatePlayer>("floodgate-player"))
+                    .get()
                 if (player?.isLinked == true) {
                     return player.linkedPlayer.javaUsername
                 }

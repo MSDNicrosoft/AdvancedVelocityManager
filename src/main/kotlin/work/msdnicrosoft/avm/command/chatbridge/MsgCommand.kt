@@ -23,12 +23,11 @@ import kotlin.jvm.optionals.getOrElse
 import kotlin.jvm.optionals.getOrNull
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
-@Suppress("unused")
 @PlatformSide(Platform.VELOCITY)
 @CommandHeader(name = "msg", aliases = ["tell", "w"], permissionDefault = PermissionDefault.NOT_OP)
 object MsgCommand {
 
-    private val config
+    private inline val config
         get() = ConfigManager.config.chatBridge
 
     @CommandBody

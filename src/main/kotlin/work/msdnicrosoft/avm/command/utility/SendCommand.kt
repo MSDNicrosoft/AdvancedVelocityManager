@@ -9,6 +9,8 @@ import taboolib.common.platform.command.subCommand
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
+import work.msdnicrosoft.avm.util.ProxyServerUtil.getPlayer
+import work.msdnicrosoft.avm.util.ProxyServerUtil.getRegisteredServer
 import work.msdnicrosoft.avm.util.ProxyServerUtil.sendPlayer
 import kotlin.jvm.optionals.getOrElse
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVM
@@ -39,21 +41,21 @@ object SendCommand {
                         sender.name,
                         serverNickname
                     )
-                    sender.sendPlayer(player, context["server"], reason)
+                    sender.sendPlayer(player, serverName, reason)
                 }
             }
         }
     }
 
     private fun ProxyCommandSender.sendPlayer(proxyPlayer: ProxyPlayer, serverName: String, reason: String) {
-        val server = AVM.server.getServer(serverName).getOrElse {
+        val server = getRegisteredServer(serverName).getOrElse {
             sendLang("server-not-found", serverName)
             return
         }
         val serverNickname = getServerNickname(serverName)
 
         val playerName = proxyPlayer.name
-        val player = AVM.server.getPlayer(playerName).getOrElse {
+        val player = getPlayer(playerName).getOrElse {
             sendLang("player-not-found", playerName)
             return
         }

@@ -1,7 +1,6 @@
 package work.msdnicrosoft.avm.util
 
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 object ConfigUtil {
     /**
@@ -14,7 +13,16 @@ object ConfigUtil {
     fun getServerNickname(server: String): String =
         ConfigManager.config.serverMapping[server] ?: server
 
-    fun isValidServer(name: String) = AVM.plugin.server.getServer(name).isPresent || isServerGroup(name)
+    /**
+     * Checks if a server with the given name is valid.
+     *
+     * A server is considered valid if it is registered or if it belongs to a server group.
+     *
+     * @param name The name of the server to check.
+     * @return True if the server is valid, false otherwise.
+     */
+    fun isValidServer(name: String): Boolean =
+        ProxyServerUtil.isValidRegisteredServer(name) || isServerGroup(name)
 
     /**
      * Checks if a server with the given name belongs to a server group.

@@ -32,8 +32,8 @@ object TabSyncManager {
         )
     }
 
-    private val Player.displayName: Component?
         get() = serializer.buildComponent(ConfigManager.config.tabSync.format)
+    private inline val Player.displayName: Component?
             .replace("%server_name%", currentServer.get().serverInfo.name)
             .replace("%server_nickname%", getServerNickname(currentServer.get().serverInfo.name))
             .replace("%player_name%", username)

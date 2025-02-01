@@ -13,7 +13,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 object ChatBridge {
 
-    private val config
+    private inline val config
         get() = ConfigManager.config.chatBridge
 
     private val PRIVATE_CHAT_COMMANDS by lazy { MsgCommand.javaClass.getAnnotation(CommandHeader::class.java).aliases }
@@ -52,10 +52,10 @@ object ChatBridge {
         if (!config.enabled) return
 
         val message = ChatMessage(event, config).build()
-        val currentServerName = event.player.currentServer.get().serverInfo.name
+        val serverName = event.player.currentServer.get().serverInfo.name
 
         when (mode) {
-            PassthroughMode.ALL -> sendMessage(message, currentServerName)
+            PassthroughMode.ALL -> sendMessage(message, serverName)
             PassthroughMode.NONE -> {
                 event.result = PlayerChatEvent.ChatResult.denied()
                 sendMessage(message)
@@ -71,7 +71,7 @@ object ChatBridge {
                     event.result = PlayerChatEvent.ChatResult.denied()
                     sendMessage(message)
                 } else {
-                    sendMessage(message, currentServerName)
+                    sendMessage(message, serverName)
                 }
             }
         }

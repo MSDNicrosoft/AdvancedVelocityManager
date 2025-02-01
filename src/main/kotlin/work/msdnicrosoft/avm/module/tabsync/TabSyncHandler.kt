@@ -12,7 +12,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 @PlatformSide(Platform.VELOCITY)
 object TabSyncHandler {
 
-    private val config
+    private inline val config
         get() = ConfigManager.config.tabSync
 
     @SubscribeEvent

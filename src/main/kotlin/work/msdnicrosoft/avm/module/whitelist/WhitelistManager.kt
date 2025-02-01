@@ -26,7 +26,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 @Suppress("TooManyFunctions")
 object WhitelistManager {
 
-    private val config
+    private inline val config
         get() = ConfigManager.config.whitelist
 
     /**
@@ -109,7 +109,7 @@ object WhitelistManager {
     val maxPage: Int
         get() = ceil(size.toFloat() / 10F).toInt()
 
-    val serverIsOnlineMode: Boolean
+    inline val serverIsOnlineMode: Boolean
         get() = AVM.plugin.server.configuration.isOnlineMode
 
     private inline fun <T> withLock(block: () -> T): T = synchronized(lock) { block() }
@@ -413,13 +413,13 @@ object WhitelistManager {
                     when (val statusCode = response.statusCode()) {
                         200 -> json.decodeFromString<ApiResponse>(response.body()).name
                         404, 204 -> NOT_FOUND_RESULT
+                        429 -> {
+                            logger.warn("Exceeded to the rate limit of Profile API, please retry UUID {}", uuid)
+                            null
+                        }
 
                         else -> {
-                            if (statusCode == 429) {
-                                logger.warn("Exceeded to the rate limit of Profile API, please retry UUID {}", uuid)
-                            } else {
-                                logger.warn("Failed to query UUID {}, status code: {}", uuid, statusCode)
-                            }
+                            logger.warn("Failed to query UUID {}, status code: {}", uuid, statusCode)
                             null
                         }
                     }
@@ -454,17 +454,13 @@ object WhitelistManager {
                     when (val statusCode = response.statusCode()) {
                         200 -> json.decodeFromString<ApiResponse>(response.body()).id
                         404 -> NOT_FOUND_RESULT
+                        429 -> {
+                            logger.warn("Exceeded to the rate limit of UUID API, please retry username {}", username)
+                            null
+                        }
 
                         else -> {
-                            if (statusCode == 429) {
-                                logger.warn(
-                                    "Exceeded to the rate limit of UUID API, please retry username {}",
-                                    username
-                                )
-                            } else {
-                                logger.warn("Failed to query username {}, status code: {}", username, statusCode)
-                            }
-
+                            logger.warn("Failed to query username {}, status code: {}", username, statusCode)
                             null
                         }
                     }
@@ -473,9 +469,13 @@ object WhitelistManager {
     }
 
     fun updatePlayer(username: String, uuid: UUID) = submit(now = true) {
-        withLock { whitelist.find { it.uuid == uuid }?.name = username }
-        updateCache()
+        withLock {
+            val player = whitelist.find { it.uuid == uuid }
+            if (player == null) return@submit
+            player.name = username
+        }
         save()
+        updateCache()
     }
 
     /**

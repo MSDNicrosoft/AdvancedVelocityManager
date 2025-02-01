@@ -13,7 +13,7 @@ import work.msdnicrosoft.avm.config.ConfigManager
 @PlatformSide(Platform.VELOCITY)
 object PlayerCache {
 
-    private val config
+    private inline val config
         get() = ConfigManager.config.whitelist.cachePlayers
 
     private val players = mutableSetOf<String>()

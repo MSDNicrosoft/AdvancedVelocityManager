@@ -36,8 +36,7 @@ class PageTurner(val sender: ProxyCommandSender, val command: String) {
                 .hoverText(sender.asLangText("general-turn-to-next-page"))
                 .clickRunCommand("$command ${currentPage + 1}")
         }
-        return Components.empty()
-            .append(previous)
+        return previous
             .append(" ")
             .append(pageOf)
             .append(" ")

@@ -16,7 +16,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 @PlatformSide(Platform.VELOCITY)
 object EventBroadcast {
 
-    private val config
+    private inline val config
         get() = ConfigManager.config.broadcast
 
     @SubscribeEvent(postOrder = PostOrder.FIRST)
@@ -33,7 +33,7 @@ object EventBroadcast {
 
     @SubscribeEvent(postOrder = PostOrder.FIRST)
     fun onPlayerConnected(event: ServerConnectedEvent) {
-        val player = event.player
+        val username = event.player.username
         val targetServerName = event.server.serverInfo.name
         val targetServerNickname = getServerNickname(targetServerName)
 
@@ -43,9 +43,10 @@ object EventBroadcast {
 
                 val previousServerName = previousServer.serverInfo.name
                 val previousServerNickname = getServerNickname(previousServerName)
+
                 sendProxyServerMessage(
                     config.switch.message.replace(
-                        "%player_name%" to player.username,
+                        "%player_name%" to username,
                         "%previous_server_name%" to previousServerName,
                         "%previous_server_nickname%" to previousServerNickname,
                         "%target_server_nickname%" to targetServerNickname,
@@ -58,7 +59,7 @@ object EventBroadcast {
 
                 sendProxyServerMessage(
                     config.join.message.replace(
-                        "%player_name%" to player.username,
+                        "%player_name%" to username,
                         "%server_name%" to targetServerName,
                         "%server_nickname%" to targetServerNickname
                     )
@@ -68,6 +69,8 @@ object EventBroadcast {
     }
 
     private fun sendProxyServerMessage(message: String) = submitAsync {
-        AVM.plugin.server.sendMessage(message.formated())
+        AVM.plugin.server.allPlayers.forEach { player ->
+            player.sendMessage(message.formated())
+        }
     }
 }
