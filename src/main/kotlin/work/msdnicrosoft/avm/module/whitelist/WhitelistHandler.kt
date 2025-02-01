@@ -9,9 +9,7 @@ import com.velocitypowered.api.event.connection.LoginEvent
 import com.velocitypowered.api.event.connection.PreLoginEvent
 import com.velocitypowered.api.event.player.ServerPreConnectEvent
 import com.velocitypowered.api.proxy.InboundConnection
-import com.velocitypowered.proxy.connection.MinecraftConnection
 import com.velocitypowered.proxy.connection.client.InitialInboundConnection
-import io.netty.channel.Channel
 import io.netty.util.AttributeKey
 import org.geysermc.floodgate.api.player.FloodgatePlayer
 import taboolib.common.platform.Platform
