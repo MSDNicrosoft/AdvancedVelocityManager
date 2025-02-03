@@ -7,6 +7,7 @@ import taboolib.common.platform.command.subCommand
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
+import work.msdnicrosoft.avm.util.ProxyServerUtil.getRegisteredServer
 import work.msdnicrosoft.avm.util.ProxyServerUtil.sendMessage
 import work.msdnicrosoft.avm.util.ProxyServerUtil.sendPlayer
 import kotlin.jvm.optionals.getOrElse
@@ -37,14 +38,8 @@ object SendAllCommand {
         }
     }
 
-    /**
-     * Sends all players to a specific server.
-     *
-     * @param serverName the name of the server to send players to
-     * @param reason the reason for the send
-     */
     private fun ProxyCommandSender.sendAllPlayers(serverName: String, reason: String) {
-        val server = AVM.server.getServer(serverName).getOrElse {
+        val server = getRegisteredServer(serverName).getOrElse {
             sendLang("server-not-found", serverName)
             return
         }
