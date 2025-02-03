@@ -83,7 +83,7 @@ object MsgCommand {
         serializer.buildComponent(this)
             .replace("%player_name_from%", from)
             .replace("%player_name_to%", to)
-            .replace("%player_message%", message.let { if (config.allowFormatCode) SERIALIZER.parse(it) else it })
+            .replace("%player_message%", message.let { if (config.allowFormatCode) serializer.parse(it) else it })
             .replace("%player_message_sent_time%", dateTime)
             .build()
 
