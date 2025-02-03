@@ -34,10 +34,6 @@ object CommandUtil {
             val rootCommand = rootJavaClass.getAnnotationIfPresent(COMMAND_HEADER_ANNOTATION) ?: return@execute
             val rootName = rootCommand.name
 
-            if (checkPermission && !sender.hasPermission(rootCommand.permission)) {
-                return@execute
-            }
-
             sender.sendLang("general-help-header", self.version.get(), rootName)
 
             rootJavaClass.declaredFields
