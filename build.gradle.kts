@@ -16,9 +16,9 @@ plugins {
 
 base {
     val grgit: Grgit? by lazy(LazyThreadSafetyMode.NONE) {
-		runCatching {
-			grgitService.service.get().grgit
-		}.getOrNull()
+        runCatching {
+            grgitService.service.get().grgit
+        }.getOrNull()
     }
 
     fun getLatestCommit(): Commit? = grgit?.head()
