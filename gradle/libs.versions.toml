@@ -2,7 +2,7 @@
 
 # Gradle Plugins
 kotlin = "2.1.10"
-detekt = "1.23.7"
+detekt = "1.23.8"
 taboolib = "2.0.22"
 grgit = "5.3.0"
 
