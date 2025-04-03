@@ -13,7 +13,7 @@ netty = "4.1.119.Final"
 
 # Shade Dependencies
 kaml = "0.74.0"
-kotlin-serialization = "1.8.0"
+kotlin-serialization = "1.8.1"
 enhanced-legacy-text = "2.0.0-SNAPSHOT"
 asm = "9.8"
 byte-buddy-agent = "1.17.5"
