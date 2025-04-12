@@ -8,7 +8,7 @@ grgit = "5.3.0"
 
 # CompileOnly Dependencies
 velocity = "3.4.0-SNAPSHOT"
-floodgate = "2.2.3-SNAPSHOT"
+floodgate = "2.2.4-SNAPSHOT"
 netty = "4.2.0.Final"
 
 # Shade Dependencies
