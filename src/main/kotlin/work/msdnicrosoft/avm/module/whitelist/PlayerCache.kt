@@ -22,17 +22,15 @@ object PlayerCache {
         get() = players.toList()
 
     fun reload() {
-        if (!config.enabled) return
-
-        players.clear()
+        if (config.enabled) players.clear()
     }
 
     fun add(player: String) {
-        if (!config.enabled) return
-
-        if (players.size >= config.maxSize) {
-            players.remove(players.last())
+        if (config.enabled) {
+            if (players.size >= config.maxSize) {
+                players.remove(players.last())
+            }
+            players.add(player)
         }
-        players.add(player)
     }
 }

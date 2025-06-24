@@ -19,10 +19,8 @@ object ComponentUtil {
      * @return A HoverEvent showing the deserialized hover text, or null if the format has no hover text.
      */
     fun createHoverEvent(format: Format, deserialize: String.() -> Component): HoverEvent<Component?>? =
-        if (!format.hover.isNullOrEmpty()) {
-            HoverEvent.showText(format.hover.joinToString("\n").deserialize())
-        } else {
-            null
+        format.hover?.takeIf { it.isNotEmpty() }?.let {
+            HoverEvent.showText(it.joinToString("\n").deserialize())
         }
 
     /**
@@ -33,16 +31,15 @@ object ComponentUtil {
      *
      * @return A ClickEvent representing the action to be performed when clicked, or null if the format is invalid.
      */
-    fun createClickEvent(format: Format, replacer: String.() -> String): ClickEvent? {
-        if (!validateFormat(format)) return null
-        return when {
+    fun createClickEvent(format: Format, replacer: String.() -> String): ClickEvent? =
+        when {
+            !validateFormat(format) -> null
             !format.command.isNullOrEmpty() -> ClickEvent.runCommand(format.command.replacer())
             !format.suggest.isNullOrEmpty() -> ClickEvent.suggestCommand(format.suggest.replacer())
             !format.url.isNullOrEmpty() -> ClickEvent.openUrl(format.url.replacer())
             !format.clipboard.isNullOrEmpty() -> ClickEvent.copyToClipboard(format.clipboard.replacer())
             else -> null
         }
-    }
 
     /**
      * Validates a given format.

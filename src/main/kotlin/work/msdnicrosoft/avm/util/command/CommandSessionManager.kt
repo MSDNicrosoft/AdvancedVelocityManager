@@ -24,27 +24,7 @@ object CommandSessionManager {
     /**
      * The result of executing a command session.
      */
-    enum class ExecuteResult {
-        /**
-         * The command session was executed successfully.
-         */
-        SUCCESS,
-
-        /**
-         * The command session has expired.
-         */
-        EXPIRED,
-
-        /**
-         * Failed to execute the command session.
-         */
-        FAILED,
-
-        /**
-         * The command session was not found.
-         */
-        NOT_FOUND
-    }
+    enum class ExecuteResult { SUCCESS, EXPIRED, FAILED, NOT_FOUND }
 
     /**
      * Represents an action to be executed in a command session.
