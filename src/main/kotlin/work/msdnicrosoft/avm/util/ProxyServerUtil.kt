@@ -26,7 +26,8 @@ object ProxyServerUtil {
      * @param name The name of the server.
      * @return An optional containing the server if found, otherwise an empty optional.
      */
-    fun getRegisteredServer(name: String): Optional<RegisteredServer> = AVM.plugin.server.getServer(name)
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun getRegisteredServer(name: String): Optional<RegisteredServer> = AVM.plugin.server.getServer(name)
 
     /**
      * Gets a player by its username.
@@ -34,7 +35,8 @@ object ProxyServerUtil {
      * @param name The username of the player.
      * @return An optional containing the player if found, otherwise an empty optional.
      */
-    fun getPlayer(name: String): Optional<Player> = AVM.plugin.server.getPlayer(name)
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun getPlayer(name: String): Optional<Player> = AVM.plugin.server.getPlayer(name)
 
     /**
      * Gets a player by its UUID.
@@ -50,7 +52,8 @@ object ProxyServerUtil {
      * @param name The name of the server.
      * @return Whether the server exists.
      */
-    fun isValidRegisteredServer(name: String): Boolean = getRegisteredServer(name).isPresent
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun isValidRegisteredServer(name: String): Boolean = getRegisteredServer(name).isPresent
 
     /**
      * Checks if a player with the given username exists.
@@ -66,7 +69,8 @@ object ProxyServerUtil {
      * @param uuid The UUID of the player.
      * @return Whether the player exists.
      */
-    fun isValidPlayer(uuid: UUID): Boolean = getPlayer(uuid).isPresent
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun isValidPlayer(uuid: UUID): Boolean = getPlayer(uuid).isPresent
 
     /**
      * Kicks a list of players from the server.
@@ -74,7 +78,8 @@ object ProxyServerUtil {
      * @param reason The reason for the kick.
      * @param players The players to kick.
      */
-    fun kickPlayers(reason: String, vararg players: Player) {
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun kickPlayers(reason: String, vararg players: Player) {
         kickPlayers(reason, players.toList())
     }
 
@@ -84,7 +89,8 @@ object ProxyServerUtil {
      * @param reason The reason for the kick.
      * @param players The players to kick.
      */
-    fun kickPlayers(reason: String, players: Iterable<Player>) {
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun kickPlayers(reason: String, players: Iterable<Player>) {
         players.forEach { player ->
             player.disconnect(reason.formated())
         }
@@ -96,10 +102,12 @@ object ProxyServerUtil {
      * @param server The server to send the player to.
      * @param player The player to send.
      */
-    fun sendPlayer(server: RegisteredServer, player: Player): CompletableFuture<Boolean> =
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun sendPlayer(server: RegisteredServer, player: Player): CompletableFuture<Boolean> =
         player.createConnectionRequest(server).connectWithIndication()
 
-    fun Player.sendMessage(message: String) {
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun Player.sendMessage(message: String) {
         sendMessage(message.formated())
     }
 }
