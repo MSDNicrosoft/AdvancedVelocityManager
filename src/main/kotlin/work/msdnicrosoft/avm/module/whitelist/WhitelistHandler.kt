@@ -47,14 +47,12 @@ object WhitelistHandler {
         if (!WhitelistManager.isInWhitelist(username)) {
             event.result = PreLoginEvent.PreLoginComponentResult.denied(config.message.formated())
             PlayerCache.add(username)
-            return
-        }
-
-        if (event.result.isAllowed) {
-            when (WhitelistManager.getPlayer(username)?.onlineMode) {
-                true -> event.result = PreLoginEvent.PreLoginComponentResult.forceOnlineMode()
-                false -> event.result = PreLoginEvent.PreLoginComponentResult.forceOfflineMode()
-                null -> {}
+        } else {
+            WhitelistManager.getPlayer(username)?.onlineMode?.let {
+                event.result = when (it) {
+                    true -> PreLoginEvent.PreLoginComponentResult.forceOnlineMode()
+                    false -> PreLoginEvent.PreLoginComponentResult.forceOfflineMode()
+                }
             }
         }
     }
