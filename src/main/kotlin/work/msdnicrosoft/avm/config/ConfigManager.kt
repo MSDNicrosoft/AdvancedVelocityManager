@@ -61,7 +61,8 @@ object ConfigManager {
     fun save(initialize: Boolean = false): Boolean {
         if (!file.exists()) {
             logger.info(
-                "Configuration file does not exist${if (initialize) ", generating default configuration..." else ""}"
+                "Configuration file does not exist{}",
+                if (initialize) ", generating default configuration..." else ""
             )
         }
 
@@ -80,11 +81,12 @@ object ConfigManager {
 
     fun reload(): Boolean = load(reload = true)
 
-    fun validate() {
+    private fun validate() {
+        // Validate Chat-Bridge Passthrough mode name
         try {
             ChatBridge.mode = ChatBridge.PassthroughMode.valueOf(config.chatBridge.chatPassthrough.mode.uppercase())
         } catch (_: IllegalArgumentException) {
-            logger.warn("Incorrect Chat-Passthrough mode name!")
+            logger.warn("Invalid Chat-Passthrough mode name!")
             logger.warn("Plugin will fallback to `ALL` mode")
             ChatBridge.mode = ChatBridge.PassthroughMode.ALL
         }
