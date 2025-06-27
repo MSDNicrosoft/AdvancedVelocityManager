@@ -44,7 +44,8 @@ object ProxyServerUtil {
      * @param uuid The UUID of the player.
      * @return An optional containing the player if found, otherwise an empty optional.
      */
-    fun getPlayer(uuid: UUID): Optional<Player> = AVM.plugin.server.getPlayer(uuid)
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun getPlayer(uuid: UUID): Optional<Player> = AVM.plugin.server.getPlayer(uuid)
 
     /**
      * Checks if a server with the given name exists.
@@ -61,7 +62,8 @@ object ProxyServerUtil {
      * @param username The username of the player.
      * @return Whether the player exists.
      */
-    fun isValidPlayer(username: String): Boolean = getPlayer(username).isPresent
+    @Suppress("NOTHING_TO_INLINE")
+    inline fun isValidPlayer(username: String): Boolean = getPlayer(username).isPresent
 
     /**
      * Checks if a player with the given UUID exists.
