@@ -84,7 +84,7 @@ object ConfigManager {
     private fun validate() {
         // Validate Chat-Bridge Passthrough mode name
         try {
-            ChatBridge.mode = ChatBridge.PassthroughMode.valueOf(config.chatBridge.chatPassthrough.mode.uppercase())
+            ChatBridge.mode = ChatBridge.PassthroughMode.of(config.chatBridge.chatPassthrough.mode)
         } catch (_: IllegalArgumentException) {
             logger.warn("Invalid Chat-Passthrough mode name!")
             logger.warn("Plugin will fallback to `ALL` mode")

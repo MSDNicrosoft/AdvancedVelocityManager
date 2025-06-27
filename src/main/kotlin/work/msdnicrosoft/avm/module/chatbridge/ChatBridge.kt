@@ -36,7 +36,11 @@ object ChatBridge {
          * If they match one of patterns,
          * chat messages will be sent to the backend server.
          */
-        PATTERN
+        PATTERN;
+
+        companion object {
+            fun of(mode: String): PassthroughMode = valueOf(mode.uppercase())
+        }
     }
 
     /**
