@@ -50,30 +50,25 @@ object SendAllCommand {
             return
         }
 
-        val (bypassed, playerToSend) = AVM.server.allPlayers
+        val (bypassed, toSend) = AVM.server.allPlayers
             .filter { it.currentServer.get().serverInfo.name != serverName }
             .partition { it.hasPermission("avm.sendall.bypass") }
 
-        val failedPlayers = buildList {
-            playerToSend.forEach { player ->
-                sendPlayer(server, player).thenAccept { success ->
+        submitAsync(now = true) {
+            toSend.forEach { player ->
+                sendPlayer(server, player).thenAcceptAsync { success ->
                     if (success) {
                         player.sendMessage(reason)
-                    } else {
-                        add(player)
                     }
                 }
             }
-        }
-        sendLang(
-            "command-sendall-executor",
-            playerToSend.size - failedPlayers.size,
-            serverNickname,
-            bypassed.size,
-            failedPlayers.size
-        )
-        if (!failedPlayers.isEmpty()) {
-            sendLang("command-sendall-executor-failed", failedPlayers.size, serverNickname)
+
+            sendLang(
+                "command-sendall-executor",
+                toSend.size,
+                serverNickname,
+                bypassed.size
+            )
         }
     }
 }
