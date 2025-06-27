@@ -98,7 +98,7 @@ taboolib {
         install(Velocity)
     }
     version {
-        taboolib = "6.2.2"
+        taboolib = "6.2.3-b217935"
         coroutines = null
     }
     relocate("kotlinx.serialization", "avm.kotlinx.serialization")
