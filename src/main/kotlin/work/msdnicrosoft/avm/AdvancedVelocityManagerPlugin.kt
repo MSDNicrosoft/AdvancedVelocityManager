@@ -31,7 +31,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
 
     override fun onEnable() {
         logger.debug("Nya~!")
-        ConfigManager.load()
+        require(ConfigManager.load()) { "Failed to load configuration, aborting initialization" }
         Language.default = ConfigManager.config.defaultLang
         CommandSessionManager.onEnable()
         WhitelistManager.onEnable()
