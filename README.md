@@ -72,7 +72,7 @@ We appreciate the contributions of these projects to the open-source community.
 
 ## TODO
 
-- [ ] Publish to [Modrinth](https://modrinth.com) 
+- [ ] Publish to [Modrinth](https://modrinth.com) & [SpigotMC](https://www.spigotmc.org/)
 - [x] `/msg` Private chat across servers
 - [x] TabList Synchronization
 - [ ] More advanced chat interaction
@@ -80,6 +80,7 @@ We appreciate the contributions of these projects to the open-source community.
 - [x] Offline whitelist support
 - [ ] Web Interface Request Management (HTTP / gRPC / WebSocket)  **[May be deprecated]**
 - [ ] Chat Message logging
+- [ ] Multi-language support
 
 ## License and Copyright
 
