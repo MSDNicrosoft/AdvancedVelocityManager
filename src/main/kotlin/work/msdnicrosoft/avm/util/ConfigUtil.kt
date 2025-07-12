@@ -5,7 +5,7 @@ import work.msdnicrosoft.avm.config.ConfigManager
 object ConfigUtil {
     /**
      * Retrieves the server nickname from the serverMapping configuration.
-     * If no mapping is found for the server, returns the original server name.
+     * If no mapping is found for the server, return the original server name.
      *
      * @param server The server name to retrieve the nickname for.
      * @return The server nickname.

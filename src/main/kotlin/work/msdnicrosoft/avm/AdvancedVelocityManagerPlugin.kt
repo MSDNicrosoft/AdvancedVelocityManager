@@ -50,11 +50,9 @@ object AdvancedVelocityManagerPlugin : Plugin() {
     }
 
     override fun onActive() {
-        if (self.version.get().contains("DEV")) {
-            logger.warn("You are using the development version of this plugin.")
-        }
-        if (self.version.get().contains("SNAPSHOT")) {
-            logger.warn("You are using the snapshot version of this plugin.")
+        self.version.get().let { version ->
+            if (version.contains("DEV")) logger.warn("You are using the development version of this plugin.")
+            if (version.contains("SNAPSHOT")) logger.warn("You are using the snapshot version of this plugin.")
         }
     }
 

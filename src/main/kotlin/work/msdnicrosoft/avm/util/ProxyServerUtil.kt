@@ -4,7 +4,7 @@ import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import com.velocitypowered.api.proxy.server.ServerPing
 import net.kyori.adventure.text.Component
-import work.msdnicrosoft.avm.util.StringUtil.formated
+import work.msdnicrosoft.avm.util.string.formated
 import java.util.Optional
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
@@ -13,7 +13,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 object ProxyServerUtil {
 
     /**
-     * A server ping result with unknown version and description.
+     * A server ping result with an unknown version and description.
      */
     val TIMEOUT_PING_RESULT: ServerPing = ServerPing.builder()
         .version(ServerPing.Version(-1, "Unknown"))

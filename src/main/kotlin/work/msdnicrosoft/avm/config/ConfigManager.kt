@@ -5,11 +5,12 @@ import kotlinx.serialization.SerializationException
 import taboolib.common.platform.function.getDataFolder
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
-import work.msdnicrosoft.avm.util.FileUtil.decodeFromString
-import work.msdnicrosoft.avm.util.FileUtil.encodeToString
-import work.msdnicrosoft.avm.util.FileUtil.readTextWithBuffer
-import work.msdnicrosoft.avm.util.FileUtil.writeTextWithBuffer
-import work.msdnicrosoft.avm.util.FileUtil.yaml
+import work.msdnicrosoft.avm.util.file.FileUtil.YAML
+import work.msdnicrosoft.avm.util.file.decodeFromString
+import work.msdnicrosoft.avm.util.file.encodeToString
+import work.msdnicrosoft.avm.util.file.readTextWithBuffer
+import work.msdnicrosoft.avm.util.file.writeTextWithBuffer
+import work.msdnicrosoft.avm.util.string.isValidUrl
 import java.io.IOException
 
 object ConfigManager {
@@ -18,7 +19,7 @@ object ConfigManager {
 
     val DEFAULT_CONFIG by lazy { AVMConfig() }
 
-    var config = AVMConfig()
+    lateinit var config: AVMConfig
 
     /**
      * Loads the configuration from the file.
@@ -32,7 +33,7 @@ object ConfigManager {
         logger.info("{} configuration...", if (reload) "Reloading" else "Loading")
 
         return try {
-            config = yaml.decodeFromString<AVMConfig>(file.readTextWithBuffer())
+            config = YAML.decodeFromString<AVMConfig>(file.readTextWithBuffer())
             // TODO Migrate config
             validate()
             true
@@ -40,9 +41,8 @@ object ConfigManager {
             logger.error("Failed to read configuration file", e)
             false
         } catch (e: YamlException) {
-            logger.error("Failed to decode configuration content from file")
             logger.error(
-                "{} (line {}, column {}) of file is incorrect",
+                "Failed to decode configuration content from file: {} (line {}, column {})",
                 e.path.toHumanReadableString(),
                 e.line,
                 e.column
@@ -68,7 +68,7 @@ object ConfigManager {
 
         return try {
             file.parentFile.mkdirs()
-            file.writeTextWithBuffer(yaml.encodeToString(if (!initialize) config else DEFAULT_CONFIG))
+            file.writeTextWithBuffer(YAML.encodeToString(if (!initialize) config else DEFAULT_CONFIG))
             true
         } catch (e: IOException) {
             logger.error("Failed to save configuration to file", e)

@@ -19,7 +19,7 @@ import taboolib.common.platform.event.SubscribeEvent
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.StringUtil.formated
+import work.msdnicrosoft.avm.util.string.formated
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 /**
@@ -37,11 +37,8 @@ object WhitelistHandler {
 
     @SubscribeEvent(postOrder = PostOrder.EARLY)
     fun onPreLogin(event: PreLoginEvent) {
-        // Blocked by other plugins
-        if (!event.result.isAllowed) return
-
-        // Whitelist is off
-        if (WhitelistManager.state == WhitelistManager.WhitelistState.OFF) return
+        // Blocked by other plugins or whitelist is off
+        if (!event.result.isAllowed || !WhitelistManager.enabled) return
 
         val username = getUsername(event.username, event.connection)
         if (!WhitelistManager.isInWhitelist(username)) {
@@ -64,11 +61,8 @@ object WhitelistHandler {
 
     @SubscribeEvent(postOrder = PostOrder.EARLY)
     fun onServerPreConnect(event: ServerPreConnectEvent) {
-        // Blocked by other plugins
-        if (event.result.server.isEmpty) return
-
-        // Whitelist is off
-        if (WhitelistManager.state == WhitelistManager.WhitelistState.OFF) return
+        // Blocked by other plugins or whitelist is off
+        if (event.result.server.isEmpty || !WhitelistManager.enabled) return
 
         val serverName = event.originalServer.serverInfo.name
         val player = event.player
@@ -85,7 +79,7 @@ object WhitelistHandler {
 
     /**
      * Retrieves the username for the player attempting to connect.
-     * This method supports Floodgate integration to obtain the correct username for linked accounts.
+     * This method supports Floodgate integration to get the correct username for linked accounts.
      *
      * @param username The username of the player attempting to connect.
      * @param connection The InboundConnection associated with the player's connection.

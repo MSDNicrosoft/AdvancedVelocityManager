@@ -7,10 +7,10 @@ import work.msdnicrosoft.avm.config.data.ChatBridge
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
 import work.msdnicrosoft.avm.util.ProxyServerUtil.TIMEOUT_PING_RESULT
-import work.msdnicrosoft.avm.util.StringUtil.replace
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.serializer
+import work.msdnicrosoft.avm.util.string.replace
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
@@ -38,7 +38,7 @@ class ChatMessage(private val event: PlayerChatEvent, private val config: ChatBr
     private val player = event.player
     private val playerUsername = player.username
     private val playerUuid = player.uniqueId.toString()
-    private val playerPing = player.ping.let { if (it == -1L) "Unknown" else it.toString() }
+    private val playerPing = player.ping.toString()
 
     /**
      * Deserialize the message by replacing placeholders with actual values.

@@ -33,7 +33,7 @@ object ChatBridge {
         NONE,
 
         /**
-         * If they match one of patterns,
+         * If they match one of the patterns,
          * chat messages will be sent to the backend server.
          */
         PATTERN;
@@ -71,11 +71,11 @@ object ChatBridge {
                 val matched = patterns.contains.any { it in playerMessage } ||
                     patterns.startswith.any { playerMessage.startsWith(it) } ||
                     patterns.endswith.any { playerMessage.endsWith(it) }
-                if (!matched) {
+                if (matched) {
+                    sendMessage(message, serverName)
+                } else {
                     event.result = PlayerChatEvent.ChatResult.denied()
                     sendMessage(message)
-                } else {
-                    sendMessage(message, serverName)
                 }
             }
         }
@@ -84,7 +84,7 @@ object ChatBridge {
     /**
      * This event listener is triggered when a command is executed.
      * It checks if the command is related to private chat
-     * and if the configuration not allows for taking over private chat.
+     * and if the configuration does not allow for taking over private chat.
      *
      * If the conditions are met, the command is forwarded to the server.
      */
@@ -100,11 +100,13 @@ object ChatBridge {
     }
 
     private fun sendMessage(message: Component, vararg ignoredServer: String) {
-        for (server in AVM.plugin.server.allServers) {
-            if (server.serverInfo.name in ignoredServer) continue
-            server.playersConnected.forEach { player ->
-                player.sendMessage(message)
+        AVM.plugin.server.allServers
+            .parallelStream()
+            .filter { it.serverInfo.name !in ignoredServer }
+            .forEach { server ->
+                server.playersConnected.forEach { player ->
+                    player.sendMessage(message)
+                }
             }
-        }
     }
 }

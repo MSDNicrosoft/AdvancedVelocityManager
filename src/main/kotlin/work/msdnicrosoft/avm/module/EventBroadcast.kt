@@ -9,8 +9,8 @@ import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submitAsync
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
-import work.msdnicrosoft.avm.util.StringUtil.formated
-import work.msdnicrosoft.avm.util.StringUtil.replace
+import work.msdnicrosoft.avm.util.string.formated
+import work.msdnicrosoft.avm.util.string.replace
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @PlatformSide(Platform.VELOCITY)
@@ -23,8 +23,8 @@ object EventBroadcast {
     fun onPlayerDisconnect(event: DisconnectEvent) {
         if (!config.leave.enabled) return
 
-        // If a player failed to join the server (due to incompatible server version, etc.),
-        // plugin will send the leave message accidentally.
+        // If a player failed to join the server (due to an incompatible server version, etc.),
+        // the plugin will send the leave message accidentally.
         // To avoid this, we check the login status.
         if (event.loginStatus != DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) return
 

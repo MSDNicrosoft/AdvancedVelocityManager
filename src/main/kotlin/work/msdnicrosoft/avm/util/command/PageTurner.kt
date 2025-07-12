@@ -4,6 +4,7 @@ import taboolib.common.platform.ProxyCommandSender
 import taboolib.module.chat.ComponentText
 import taboolib.module.chat.Components
 import taboolib.module.lang.asLangText
+import kotlin.math.ceil
 
 /**
  * Pagination helper for commands that need to display a list of items spread across multiple pages.
@@ -41,5 +42,20 @@ class PageTurner(val sender: ProxyCommandSender, val command: String) {
             .append(pageOf)
             .append(" ")
             .append(next)
+    }
+
+    companion object {
+        /**
+         * The number of items to display per page.
+         */
+        const val ITEMS_PER_PAGE = 10
+
+        /**
+         * Calculates the maximum number of pages for the given number of items.
+         *
+         * @param page The number of items.
+         * @return The maximum number of pages.
+         */
+        fun getMaxPage(page: Int): Int = ceil(page.toFloat() / ITEMS_PER_PAGE.toFloat()).toInt()
     }
 }

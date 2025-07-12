@@ -6,7 +6,7 @@ import work.msdnicrosoft.avm.config.ConfigManager
 
 /**
  * Handles caching of players for whitelist functionality within the Advanced Velocity Manager.
- * This object is utilized to provide a completion source for the `whitelist add` command by caching
+ * This object is used to provide a completion source for the `whitelist add` command by caching
  * player information. It interacts with the WhitelistManager to check if players are whitelisted and
  * manages a cache of players based on the server configuration.
  */
@@ -18,7 +18,7 @@ object PlayerCache {
 
     private val players = mutableSetOf<String>()
 
-    val readOnly
+    val readOnly: List<String>
         get() = players.toList()
 
     fun reload() {

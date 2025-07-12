@@ -7,11 +7,11 @@ import taboolib.module.lang.asLangText
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.Player
 import work.msdnicrosoft.avm.util.ConfigUtil.getServersInGroup
 import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroup
-import work.msdnicrosoft.avm.util.StringUtil.replace
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.serializer
 import work.msdnicrosoft.avm.util.component.Format
+import work.msdnicrosoft.avm.util.string.replace
 
 class WhitelistPlayer(val player: Player, val sender: ProxyCommandSender) {
 
@@ -40,11 +40,12 @@ class WhitelistPlayer(val player: Player, val sender: ProxyCommandSender) {
      * Deserialize the message by replacing placeholders with actual values.
      * @return The deserialized message with placeholders replaced.
      */
-    private fun String.deserialize(serverName: String? = null): Component = serializer.buildComponent(this)
-        .replace("%player_name%", playerUsername)
-        .replace("%player_uuid%", playerUuid)
-        .let { if (serverName != null) it.replace("%server_name%", serverName) else it }
-        .build()
+    private fun String.deserialize(serverName: String? = null): Component =
+        serializer.buildComponent(this)
+            .replace("%player_name%", playerUsername)
+            .replace("%player_uuid%", playerUuid)
+            .let { if (serverName != null) it.replace("%server_name%", serverName) else it }
+            .build()
 
     /**
      * Replace placeholders in the message with actual player and server information.
