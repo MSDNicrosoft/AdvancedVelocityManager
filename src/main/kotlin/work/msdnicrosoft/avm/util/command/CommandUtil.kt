@@ -36,30 +36,23 @@ object CommandUtil {
 
             sender.sendLang("general-help-header", self.version.get(), rootName)
 
-            rootJavaClass.declaredFields
+            rootJavaClass.declaredFields.asSequence()
+                .onEach { it.trySetAccessible() }
                 .filter { field ->
-                    // Disable access check
-                    field.trySetAccessible()
-
-                    // Field is a command
-                    val command = field.getAnnotationIfPresent(COMMAND_BODY_ANNOTATION) ?: return@filter false
-
-                    val hasPermission = !checkPermission || sender.hasPermission(command.permission)
-
-                    !command.hidden && !command.optional && hasPermission
+                    field.getAnnotationIfPresent(COMMAND_BODY_ANNOTATION)?.let { command ->
+                        val hasPermission = !checkPermission || sender.hasPermission(command.permission)
+                        !command.hidden && !command.optional && hasPermission
+                    } == true
                 }.forEach { field ->
                     val rawArguments = field.getAnnotationIfPresent(SHOULD_SHOW_ANNOTATION)?.arguments ?: return@forEach
-
-                    // Colorize arguments
                     val arguments = rawArguments.joinToString(" ") { arg ->
-                        when {
-                            arg.startsWith("{") -> "&c$arg"
-                            arg.startsWith("[") -> "&8$arg"
-                            arg.startsWith("<") -> "&7$arg"
+                        when (arg.firstOrNull()) {
+                            '{' -> "&c$arg"
+                            '[' -> "&8$arg"
+                            '<' -> "&7$arg"
                             else -> arg
                         }
                     }
-
                     sender.sendLang(
                         "general-help-each-command",
                         rootName,
