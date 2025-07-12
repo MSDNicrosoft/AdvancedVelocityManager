@@ -2,7 +2,8 @@ general-on: "&aon"
 general-off: "&4off"
 general-username: "username"
 general-uuid: "UUID"
-general-empty-server: "&7The server is empty"
+general-page-not-found: "&7This page does not exist"
+general-empty-server: "&7There is no players in the server"
 general-turn-to-previous-page: "&eClick to turn to previous page"
 general-turn-to-next-page: "&eClick to turn to text page"
 general-help-header:
@@ -41,7 +42,7 @@ command-avm-confirm-expired: "&dThis session command has expired"
 command-avm-confirm-failed: "&cFailed to execute this session command"
 command-avm-confirm-not-found: "&dUnknown session command"
 
-command-avm-import-success: "&7Imported data from {0} successfully! &8Took: {1} ms"
+command-avm-import-success: "&7Imported data from {0} successfully! &8Took: {1}"
 command-avm-import-failed: "&cFailed to import data from {0}, please check console log"
 command-avm-import-need-confirm:
   - "&e&lWarning: This action will override the existing configuration and data!"
@@ -76,8 +77,6 @@ command-sendall-executor:
     args:
       - hover: "&eReason: sendall.allow-bypass enabled & player(s) have permission &6avm.sendall.bypass"
 
-command-sendall-executor-failed: "&cFailed to send {0} player(s) to {1}"
-
 command-kick-target: "&7{0} kicked you from server"
 command-kickall-executor:
   - type: JSON
@@ -89,10 +88,10 @@ command-avm-reload-success: "&aReloaded successfully! &8Took: {0} ms"
 command-avm-reload-failed: "&cReload failed, please check console log"
 
 command-avmwl-add-success: "&2Added {0} to the whitelist server list of {1}"
-command-avmwl-add-request-not-found: "&dThe player does not exist on minecraft.net"
-command-avmwl-add-request-failed: "&cAn error occurred while querying the player on minecraft.net"
-command-avmwl-add-already-exists: "&4The player has been already in the whitelist"
-command-avmwl-add-uuid-unsupported: "&dAdding a whitelist with UUID in offline mode is not supported"
+command-avmwl-add-request-not-found: "&dFailed: The player does not exist"
+command-avmwl-add-request-failed: "&cFailed: An error occurred while querying the player"
+command-avmwl-add-already-exists: "&6The player has been already in the whitelist"
+command-avmwl-add-uuid-unsupported: "&dFailed: Adding a whitelist with UUID in offline mode is not supported"
 
 command-avmwl-remove-full-success: "&2Removed {0} from the whitelist"
 command-avmwl-remove-server-success: "&2Removed {0} from the whitelist server list of {1}"
@@ -108,10 +107,10 @@ command-avmwl-clear-need-confirm:
 command-avmwl-clear-success: "&2Whitelist cleared!"
 command-avmwl-clear-failed: "&cFailed to clear the whitelist. See console log"
 
-command-avmwl-list-empty: "&7The whitelist is empty (in this page)"
+command-avmwl-list-empty: "&7There are no whitelisted players"
 command-avmwl-list-header: "&7There are {0} player(s) in the whitelist"
 
-command-avmwl-find-empty: "&dCould not find relevant player(s) in this page"
+command-avmwl-find-empty: "&dCould not find relevant player(s)"
 command-avmwl-find-header: "&7Found relevant player(s):"
 
 command-avmwl-state: "&7Whitelist is {0}"
