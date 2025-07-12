@@ -59,7 +59,7 @@ This plugin supports fast transfer of players between different servers, custom 
 
 ### Configuration File
 
-The `config.yml` configuration file allows you to customize various aspects of the plugin, including server mapping, broadcast messages, command configurations, whitelist settings and etc.
+The `config.yml` configuration file allows you to customize various aspects of the plugin, including server mapping, broadcast messages, command configurations, whitelist settings, etc.
 
 ## Acknowledgements
 
