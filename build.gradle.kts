@@ -35,7 +35,7 @@ base {
             return@buildString
         }
 
-        if (!grgit!!.status().isClean()) {
+        if (!grgit!!.status().isClean) {
             append("-DEV")
             return@buildString
         }
