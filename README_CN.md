@@ -80,6 +80,7 @@ AdvancedVelocityManager 是一个为 Minecraft Velocity 代理服务器设计的
 - [x] 离线模式白名单
 - [ ] Web 接口请求管理 (HTTP / gRPC / WebSocket) **[可能废弃]**
 - [ ] 聊天消息日志输出
+- [ ] 服务器 Ping 玩家列表
 
 ## 许可与版权
 
