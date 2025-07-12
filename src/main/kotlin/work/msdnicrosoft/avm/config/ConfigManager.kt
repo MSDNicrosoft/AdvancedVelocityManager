@@ -90,5 +90,34 @@ object ConfigManager {
             logger.warn("Plugin will fallback to `ALL` mode")
             ChatBridge.mode = ChatBridge.PassthroughMode.ALL
         }
+
+        // Validate UUID query API URL
+        if (!config.whitelist.queryApi.uuid.isValidUrl()) {
+            config.whitelist.queryApi.uuid = DEFAULT_CONFIG.whitelist.queryApi.uuid
+            logger.warn("Invalid UUID query API URL!")
+            logger.warn("Plugin will fallback to default URL")
+        }
+
+        // Validate Profile query API URL
+        if (!config.whitelist.queryApi.profile.isValidUrl()) {
+            config.whitelist.queryApi.profile = DEFAULT_CONFIG.whitelist.queryApi.profile
+            logger.warn("Invalid Profile query API URL!")
+            logger.warn("Plugin will fallback to default URL")
+        }
+
+        // Validate Cache-Players max size
+        if (config.whitelist.cachePlayers.maxSize < 1) {
+            config.whitelist.cachePlayers.maxSize = DEFAULT_CONFIG.whitelist.cachePlayers.maxSize
+            logger.warn("Invalid Cache-Players max size!")
+            logger.warn("Plugin will fallback to default max size")
+        }
     }
+
+//    private fun migrate() {
+//        val currentVersion = YAML.decodeFromString<Version>(file.readTextWithBuffer()).version
+//
+//        if (currentVersion == 1 && DEFAULT_CONFIG.version == 1) {
+//            config = config.copy(version = 2)
+//        }
+//    }
 }
