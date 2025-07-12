@@ -81,6 +81,7 @@ comments:
     searchInInnerObject: true
     searchInInnerInterface: true
     searchInProtectedClass: false
+    ignoreDefaultCompanionObject: false
   UndocumentedPublicFunction:
     active: false
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
@@ -301,6 +302,7 @@ exceptions:
     exceptionNames:
       - 'Error'
       - 'Exception'
+      - 'RuntimeException'
       - 'Throwable'
 
 naming:
@@ -347,6 +349,17 @@ naming:
   MatchingDeclarationName:
     active: true
     mustBeFirst: true
+    multiplatformTargets:
+      - 'ios'
+      - 'android'
+      - 'js'
+      - 'jvm'
+      - 'native'
+      - 'iosArm64'
+      - 'iosX64'
+      - 'macosX64'
+      - 'mingwX64'
+      - 'linuxX64'
   MemberNameEqualsClassName:
     active: true
     ignoreOverridden: true
@@ -363,7 +376,7 @@ naming:
     active: true
     packagePattern: '[a-z]+(\.[a-z][A-Za-z0-9]*)*'
   TopLevelPropertyNaming:
-    active: false
+    active: true
     constantPattern: '[A-Z][_A-Z0-9]*'
     propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
     privatePropertyPattern: '_?[A-Za-z][_A-Za-z0-9]*'
@@ -615,11 +628,6 @@ style:
       - '1'
       - '2'
       - '20'
-      - '200'
-      - '299'
-      - '204'
-      - '404'
-      - '10' # TODO Remove
     ignoreHashCodeFunction: true
     ignorePropertyDeclaration: false
     ignoreLocalVariableDeclaration: false
@@ -714,23 +722,23 @@ style:
   UnnecessaryAbstractClass:
     active: true
   UnnecessaryAnnotationUseSiteTarget:
-    active: false
+    active: true
   UnnecessaryApply:
     active: true
   UnnecessaryBackticks:
-    active: false
+    active: true
   UnnecessaryBracesAroundTrailingLambda:
-    active: false
+    active: true
   UnnecessaryFilter:
     active: true
   UnnecessaryInheritance:
     active: true
   UnnecessaryInnerClass:
-    active: false
+    active: true
   UnnecessaryLet:
     active: true
   UnnecessaryParentheses:
-    active: false
+    active: true
     allowForUnclearPrecedence: false
   UntilInsteadOfRangeTo:
     active: true
@@ -785,7 +793,7 @@ style:
     active: true
     ignoreLateinitVar: false
   WildcardImport:
-    active: false
+    active: true
     excludeImports:
       - 'java.util.*'
 
@@ -952,7 +960,7 @@ formatting:
     active: true
     autoCorrect: true
   NoWildcardImports:
-    active: false
+    active: true
     packagesToUseImportOnDemandProperty: 'java.util.*,kotlinx.android.synthetic.**'
   NullableTypeSpacing:
     active: true
