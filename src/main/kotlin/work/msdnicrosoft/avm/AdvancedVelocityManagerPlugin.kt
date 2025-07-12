@@ -9,9 +9,9 @@ import taboolib.common.util.unsafeLazy
 import taboolib.module.lang.Language
 import taboolib.platform.VelocityPlugin
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.module.chatbridge.inject.InstrumentationAccess
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
+import work.msdnicrosoft.avm.patch.InstrumentationAccess
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
 
 @PlatformSide(Platform.VELOCITY)
@@ -32,15 +32,14 @@ object AdvancedVelocityManagerPlugin : Plugin() {
     override fun onEnable() {
         logger.debug("Nya~!")
         require(ConfigManager.load()) { "Failed to load configuration, aborting initialization" }
-        Language.default = ConfigManager.config.defaultLang
-        CommandSessionManager.onEnable()
-        WhitelistManager.onEnable()
+        loadLanguage()
+        CommandSessionManager.init()
+        WhitelistManager.init()
     }
 
     override fun onDisable() {
-        WhitelistManager.onDisable()
-        CommandSessionManager.onDisable()
-
+        WhitelistManager.disable()
+        CommandSessionManager.disable()
         plugin.server.commandManager.run {
             unregister("avm")
             unregister("avmwl")
@@ -62,10 +61,10 @@ object AdvancedVelocityManagerPlugin : Plugin() {
                 return false
             }
 
-            reloadLanguage()
-            CommandSessionManager.onEnable()
+            loadLanguage(reload = true)
+            CommandSessionManager.reload()
             PlayerCache.reload()
-            WhitelistManager.onEnable(reload = true)
+            WhitelistManager.reload()
             return true
         } catch (e: Exception) {
             logger.error("Failed to reload plugin", e)
@@ -73,9 +72,13 @@ object AdvancedVelocityManagerPlugin : Plugin() {
         }
     }
 
-    private fun reloadLanguage() {
-        logger.info("Reloading language...")
-        Language.reload()
+    private fun loadLanguage(reload: Boolean = false) {
+        if (reload) {
+            logger.info("Reloading language...")
+            Language.reload()
+        } else {
+            logger.info("Loading language...")
+        }
         Language.default = ConfigManager.config.defaultLang
     }
 }

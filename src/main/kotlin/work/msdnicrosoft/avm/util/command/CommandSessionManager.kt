@@ -49,11 +49,9 @@ object CommandSessionManager {
      *
      * This function starts a task that removes expired command sessions every 20 minutes.
      */
-    fun onEnable() {
+    fun init() {
         removalTask = submitAsync(period = 20 * 60L) {
-            sessions.forEach { (sessionId, action) ->
-                if (action.isExpired()) remove(sessionId)
-            }
+            sessions.entries.removeIf { it.value.isExpired() }
         }
     }
 
@@ -62,8 +60,15 @@ object CommandSessionManager {
      *
      * This function cancels the removal task.
      */
-    fun onDisable() {
+    fun disable() {
         removalTask.cancel()
+    }
+
+    fun reload() {
+        logger.info("Reloading command sessions...")
+        disable()
+        sessions.clear()
+        init()
     }
 
     /**
@@ -84,28 +89,17 @@ object CommandSessionManager {
      */
     fun executeAction(sessionId: SessionId): ExecuteResult {
         val session = sessions.remove(sessionId) ?: return ExecuteResult.NOT_FOUND
-        return session.run {
-            try {
-                if (isExpired()) {
-                    ExecuteResult.EXPIRED
-                } else {
-                    block.invoke()
-                    ExecuteResult.SUCCESS
-                }
-            } catch (e: Exception) {
-                logger.warn("Failed to execute session command", e)
-                ExecuteResult.FAILED
+        return try {
+            if (session.isExpired()) {
+                ExecuteResult.EXPIRED
+            } else {
+                session.block.invoke()
+                ExecuteResult.SUCCESS
             }
+        } catch (e: Exception) {
+            logger.warn("Failed to execute session command", e)
+            ExecuteResult.FAILED
         }
-    }
-
-    /**
-     * Removes a command session from the manager.
-     *
-     * @param sessionId The ID of the command session.
-     */
-    private fun remove(sessionId: SessionId) {
-        sessions.remove(sessionId)
     }
 
     /**
@@ -117,9 +111,8 @@ object CommandSessionManager {
      * @return The generated session ID.
      */
     fun generateSessionId(name: String, time: Long, command: String): String {
-        val digest = MessageDigest.getInstance("SHA-256").apply {
-            update("$name$time$command".toByteArray())
-        }.digest()
+        val digest = MessageDigest.getInstance("SHA-256")
+            .digest("$name$time$command".toByteArray())
         return BaseEncoding.base32().omitPadding().encode(digest)
     }
 }

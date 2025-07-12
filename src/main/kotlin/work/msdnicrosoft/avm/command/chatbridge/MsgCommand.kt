@@ -34,12 +34,9 @@ object MsgCommand {
     val main = mainCommand {
         dynamic("targets") {
             suggestion<ProxyCommandSender>(uncheck = false) { sender, _ ->
-                if (config.takeOverPrivateChat || sender.isConsole()) {
-                    AVM.plugin.server.allPlayers.map { it.username }
-                } else {
-                    getPlayer(sender.name).get()
-                        .currentServer.get()
-                        .server.playersConnected.map { it.username }
+                when {
+                    config.takeOverPrivateChat || sender.isConsole() -> AVM.plugin.server.allPlayers.map { it.username }
+                    else -> getPlayer(sender.name).get().currentServer.get().server.playersConnected.map { it.username }
                 }
             }
             dynamic("message") {
@@ -49,19 +46,14 @@ object MsgCommand {
                         sender.sendLang("player-not-found", targets)
                         return@execute
                     }
-
                     val message = context["message"]
 
                     if (!sender.isConsole()) {
                         getPlayer(sender.name).presentRun {
-                            sendMessage(
-                                config.privateChatFormat.sender.buildMessage(sender, player, message)
-                            )
+                            sendMessage(config.privateChatFormat.sender.buildMessage(sender, player, message))
                         }
                     }
-                    player.sendMessage(
-                        config.privateChatFormat.receiver.buildMessage(sender, player, message)
-                    )
+                    player.sendMessage(config.privateChatFormat.receiver.buildMessage(sender, player, message))
                 }
             }
         }
@@ -71,7 +63,7 @@ object MsgCommand {
         val time = getDateTime()
         return Component.join(
             JoinConfiguration.noSeparators(),
-            this.map { format ->
+            map { format ->
                 format.text.deserialize(sender.name, player.username, message, time)
                     .hoverEvent(createHoverEvent(format) { deserialize(sender.name, player.username, message, time) })
                     .clickEvent(createClickEvent(format) { replacePlaceHolders(sender.name, player.username, time) })
@@ -83,7 +75,7 @@ object MsgCommand {
         serializer.buildComponent(this)
             .replace("%player_name_from%", from)
             .replace("%player_name_to%", to)
-            .replace("%player_message%", message.let { if (config.allowFormatCode) serializer.parse(it) else it })
+            .replace("%player_message%", if (config.allowFormatCode) serializer.parse(message) else message)
             .replace("%player_message_sent_time%", dateTime)
             .build()
 

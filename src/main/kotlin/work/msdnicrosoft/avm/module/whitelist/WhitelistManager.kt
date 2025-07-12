@@ -107,14 +107,14 @@ object WhitelistManager {
      *
      * @param reload If true, the whitelist will be reloaded from the disk.
      */
-    fun onEnable(reload: Boolean = false) {
+    fun init(reload: Boolean = false) {
         load(reload)
         updateCache()
     }
 
-    fun onDisable() {
-        save()
-    }
+    fun reload() = init(reload = true)
+
+    fun disable(): Boolean = save()
 
     /**
      * Saves the whitelist to disk.

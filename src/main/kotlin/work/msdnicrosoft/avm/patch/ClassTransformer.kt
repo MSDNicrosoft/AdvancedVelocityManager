@@ -27,7 +27,7 @@
  * SOFTWARE.
  */
 
-package work.msdnicrosoft.avm.module.chatbridge.inject
+package work.msdnicrosoft.avm.patch
 
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
@@ -56,26 +56,19 @@ object ClassTransformer : ClassFileTransformer {
     ): ByteArray? {
         if (className != TARGET_CLASS_NAME) return null
 
-        val node = ClassNode()
-        ClassReader(classfileBuffer).accept(node, 0)
-        injectReturnStatement(node)
-
-        val writer = ClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES)
-        node.accept(writer)
-        val buffer = writer.toByteArray()
-        writeClassToFile(className, buffer)
-        return buffer
-    }
-
-    /**
-     * Injects a return statement into the targeted method of the provided ClassNode.
-     *
-     * @param node the ClassNode representing the class
-     */
-    private fun injectReturnStatement(node: ClassNode) = node.methods.forEach { method ->
-        if (method.name == TARGET_METHOD_NAME && method.desc == TARGET_METHOD_DESC) {
-            method.instructions.iterator().add(InsnNode(Opcodes.RETURN))
+        val node = ClassNode().apply {
+            ClassReader(classfileBuffer).accept(this@apply, 0)
         }
+
+        node.methods.find { method ->
+            method.name == TARGET_METHOD_NAME && method.desc == TARGET_METHOD_DESC
+        }?.instructions?.iterator()?.add(InsnNode(Opcodes.RETURN))
+
+        val buffer = ClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES).apply {
+            node.accept(this)
+        }.toByteArray().also { buffer -> writeClassToFile(className, buffer) }
+
+        return buffer
     }
 
     /**
@@ -85,10 +78,11 @@ object ClassTransformer : ClassFileTransformer {
      * @param buffer the byte array representing the transformed class
      */
     private fun writeClassToFile(className: String, buffer: ByteArray) {
-        val outputPath = InstrumentationAccess.TRANSFORMER_OUTPUT_PATH.resolve("$className.class")
         try {
-            outputPath.parent.createDirectories()
-            outputPath.writeBytes(buffer)
+            InstrumentationAccess.TRANSFORMER_OUTPUT_PATH.resolve("$className.class").apply {
+                parent.createDirectories()
+                writeBytes(buffer)
+            }
         } catch (e: Exception) {
             logger.error("Failed to write transformed class $className to disk", e)
         }

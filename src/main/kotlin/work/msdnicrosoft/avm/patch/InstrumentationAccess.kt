@@ -27,7 +27,7 @@
  * SOFTWARE.
  */
 
-package work.msdnicrosoft.avm.module.chatbridge.inject
+package work.msdnicrosoft.avm.patch
 
 import com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedChatHandler
 import net.bytebuddy.agent.ByteBuddyAgent
@@ -45,7 +45,7 @@ object InstrumentationAccess {
     /**
      * Path to the directory where transformed classes are stored.
      */
-    val TRANSFORMER_OUTPUT_PATH = Path("./.avm-inject")
+    val TRANSFORMER_OUTPUT_PATH = Path("./.avm-patch")
 
     /**
      * Class object for the Velocity KeyedChatHandler class.
@@ -72,7 +72,7 @@ object InstrumentationAccess {
             instrumentation = ByteBuddyAgent.install()
 
             if ("-XX:+EnableDynamicAgentLoading" !in ManagementFactory.getRuntimeMXBean().inputArguments) {
-                logger.info("Detected dynamic java agent loading warnings.")
+                logger.info("Dynamic agent loading warnings detected.")
                 logger.info("It is expected behavior and you can safely ignore the warnings.")
             }
 

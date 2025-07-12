@@ -3,22 +3,24 @@ package work.msdnicrosoft.avm.command
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.command.*
+import taboolib.common.platform.command.CommandBody
+import taboolib.common.platform.command.CommandHeader
+import taboolib.common.platform.command.mainCommand
+import taboolib.common.platform.command.subCommand
+import taboolib.common.platform.function.submitAsync
 import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.annotations.ShouldShow
+import work.msdnicrosoft.avm.command.utility.ImportCommand
 import work.msdnicrosoft.avm.command.utility.KickAllCommand
 import work.msdnicrosoft.avm.command.utility.KickCommand
 import work.msdnicrosoft.avm.command.utility.SendAllCommand
 import work.msdnicrosoft.avm.command.utility.SendCommand
-import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
 import work.msdnicrosoft.avm.util.command.CommandSessionManager
+import work.msdnicrosoft.avm.util.command.CommandSessionManager.ExecuteResult
 import work.msdnicrosoft.avm.util.command.CommandUtil
 import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
-import kotlin.system.measureTimeMillis
+import kotlin.time.measureTime
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
-import work.msdnicrosoft.avm.module.importer.LlsManagerImporter.import as LlsManagerImport
-import work.msdnicrosoft.avm.module.importer.QuAnVelocityWhitelistImporter.import as QuAnVelocityWhitelistImport
 
 @PlatformSide(Platform.VELOCITY)
 @CommandHeader(name = "avm")
@@ -29,9 +31,9 @@ object AVMCommand {
     val reload = subCommand {
         execute<ProxyCommandSender> { sender, _, _ ->
             var success = false
-            val elapsed = measureTimeMillis { success = AVM.reload() }
+            val elapsed = measureTime { success = AVM.reload() }
             if (success) {
-                sender.sendLang("command-avm-reload-success", elapsed)
+                sender.sendLang("command-avm-reload-success", elapsed.toString())
             } else {
                 sender.sendLang("command-avm-reload-failed")
             }
@@ -58,65 +60,21 @@ object AVMCommand {
     val confirm = subCommand {
         dynamic("session") {
             execute<ProxyCommandSender> { sender, context, _ ->
-                when (CommandSessionManager.executeAction(context["session"])) {
-                    CommandSessionManager.ExecuteResult.SUCCESS -> {}
-                    CommandSessionManager.ExecuteResult.EXPIRED -> sender.sendLang("command-avm-confirm-expired")
-                    CommandSessionManager.ExecuteResult.FAILED -> sender.sendLang("command-avm-confirm-failed")
-                    CommandSessionManager.ExecuteResult.NOT_FOUND -> sender.sendLang("command-avm-confirm-not-found")
+                submitAsync(now = true) {
+                    when (CommandSessionManager.executeAction(context["session"])) {
+                        ExecuteResult.SUCCESS -> {}
+                        ExecuteResult.EXPIRED -> sender.sendLang("command-avm-confirm-expired")
+                        ExecuteResult.FAILED -> sender.sendLang("command-avm-confirm-failed")
+                        ExecuteResult.NOT_FOUND -> sender.sendLang("command-avm-confirm-not-found")
+                    }
                 }
             }
         }
     }
-
-    enum class PluginName { LLS_MANAGER, QU_AN_VELOCITYWHITELIST }
 
     @ShouldShow("<pluginName>", "<defaultServer>")
     @CommandBody(permission = "avm.command.import")
-    val import = subCommand {
-        dynamic("pluginName") {
-            suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                listOf("lls-manager", "qu-an-velocitywhitelist")
-            }
-            dynamic("defaultServer") {
-                suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                    buildSet {
-                        addAll(ConfigManager.config.whitelist.serverGroups.keys)
-                        addAll(AVM.plugin.server.allServers.map { it.serverInfo.name })
-                    }.toList()
-                }
-                execute<ProxyCommandSender> { sender, context, argument ->
-                    val pluginName = context["pluginName"]
-                    val defaultServer = context["defaultServer"]
-                    if (!isValidServer(defaultServer)) {
-                        sender.sendLang("server-not-found", defaultServer)
-                        return@execute
-                    }
-
-                    val sessionId = CommandSessionManager.generateSessionId(
-                        sender.name,
-                        System.currentTimeMillis(),
-                        argument
-                    )
-
-                    CommandSessionManager.add(sessionId) {
-                        var success = false
-                        val elapsed = measureTimeMillis {
-                            success = when (PluginName.valueOf(pluginName.replace("-", "_").uppercase())) {
-                                PluginName.LLS_MANAGER -> sender.LlsManagerImport(defaultServer)
-                                PluginName.QU_AN_VELOCITYWHITELIST -> sender.QuAnVelocityWhitelistImport(defaultServer)
-                            }
-                        }
-                        if (success) {
-                            sender.sendLang("command-avm-import-success", pluginName, elapsed)
-                        } else {
-                            sender.sendLang("command-avm-import-failed", pluginName)
-                        }
-                    }
-                    sender.sendLang("command-avm-import-need-confirm", "/avm confirm $sessionId")
-                }
-            }
-        }
-    }
+    val import = ImportCommand.command
 
     @ShouldShow("<player>", "[reason]")
     @CommandBody(permission = "avm.command.kick")
