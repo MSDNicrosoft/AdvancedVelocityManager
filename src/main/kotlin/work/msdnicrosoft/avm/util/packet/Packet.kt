@@ -1,3 +1,8 @@
+/**
+ * Portions of this code are modified from lls-manager
+ * https://github.com/plusls/lls-manager/blob/master/src/main/java/com/plusls/llsmanager/util/PacketUtil.java
+ */
+
 package work.msdnicrosoft.avm.util.packet
 
 import com.velocitypowered.api.network.ProtocolVersion
