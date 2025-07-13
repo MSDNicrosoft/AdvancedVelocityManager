@@ -43,6 +43,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
         ChatBridge.init()
         TabSyncHandler.init()
         EventBroadcast.init()
+        Metrics.init()
     }
 
     override fun onDisable() {
