@@ -80,7 +80,7 @@ object EventBroadcast {
         plugin.server.allPlayers
             .parallelStream()
             .forEach { player ->
-            player.sendMessage(message.formated())
-        }
+                player.sendMessage(message.formated())
+            }
     }
 }

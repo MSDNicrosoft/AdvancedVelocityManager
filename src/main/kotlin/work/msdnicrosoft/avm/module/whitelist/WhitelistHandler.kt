@@ -17,7 +17,6 @@ import org.geysermc.floodgate.api.player.FloodgatePlayer
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.library.reflex.Reflex.Companion.getProperty
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.string.formated
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
@@ -89,16 +88,12 @@ object WhitelistHandler {
     private fun getUsername(username: String, connection: InboundConnection): String {
         // Compatible with Floodgate
         if (hasFloodgate) {
-            try {
-                val channel = connection.getProperty<InitialInboundConnection>("delegate")!!.connection.channel
-                val player: FloodgatePlayer? = channel
-                    .attr(AttributeKey.valueOf<FloodgatePlayer>("floodgate-player"))
-                    .get()
-                if (player?.isLinked == true) {
-                    return player.linkedPlayer.javaUsername
-                }
-            } catch (e: IllegalAccessException) {
-                logger.error("Failed to process Floodgate player", e)
+            val channel = connection.getProperty<InitialInboundConnection>("delegate")!!.connection.channel
+            val player: FloodgatePlayer? = channel
+                .attr(AttributeKey.valueOf<FloodgatePlayer>("floodgate-player"))
+                .get()
+            if (player?.isLinked == true) {
+                return player.linkedPlayer.javaUsername
             }
         }
         return username
