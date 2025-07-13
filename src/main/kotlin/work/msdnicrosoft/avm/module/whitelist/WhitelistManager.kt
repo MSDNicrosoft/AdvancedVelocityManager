@@ -6,6 +6,7 @@ import kotlinx.serialization.SerializationException
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common.platform.function.submit
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.HttpUtil
 import work.msdnicrosoft.avm.util.command.PageTurner
@@ -20,7 +21,6 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.util.UUID
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @Suppress("TooManyFunctions")
 object WhitelistManager {
@@ -98,7 +98,7 @@ object WhitelistManager {
         get() = PageTurner.getMaxPage(whitelist.size)
 
     inline val serverIsOnlineMode: Boolean
-        get() = AVM.plugin.server.configuration.isOnlineMode
+        get() = plugin.server.configuration.isOnlineMode
 
     private inline fun <T> withLock(block: () -> T): T = synchronized(lock) { block() }
 
@@ -110,11 +110,18 @@ object WhitelistManager {
     fun init(reload: Boolean = false) {
         load(reload)
         updateCache()
+        plugin.server.eventManager.register(plugin, WhitelistHandler)
     }
 
-    fun reload() = init(reload = true)
+    fun disable(): Boolean {
+        plugin.server.eventManager.unregisterListener(plugin, WhitelistHandler)
+        return save()
+    }
 
-    fun disable(): Boolean = save()
+    fun reload() {
+        plugin.server.eventManager.unregisterListener(plugin, WhitelistHandler)
+        init(reload = true)
+    }
 
     /**
      * Saves the whitelist to disk.

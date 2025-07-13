@@ -1,12 +1,13 @@
 package work.msdnicrosoft.avm.module.chatbridge
 
+import com.velocitypowered.api.event.PostOrder
+import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.command.CommandExecuteEvent
 import com.velocitypowered.api.event.player.PlayerChatEvent
 import net.kyori.adventure.text.Component
 import taboolib.common.platform.command.CommandHeader
-import taboolib.common.platform.event.PostOrder
-import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common5.util.startsWithAny
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.command.chatbridge.MsgCommand
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
@@ -16,7 +17,9 @@ object ChatBridge {
     private inline val config
         get() = ConfigManager.config.chatBridge
 
-    private val PRIVATE_CHAT_COMMANDS by lazy { MsgCommand.javaClass.getAnnotation(CommandHeader::class.java).aliases }
+    private val PRIVATE_CHAT_COMMANDS by lazy {
+        MsgCommand.javaClass.getAnnotation(CommandHeader::class.java).aliases
+    }
 
     /**
      * Represents the different modes of passthrough for chat messages.
@@ -43,6 +46,14 @@ object ChatBridge {
         }
     }
 
+    fun init() {
+        plugin.server.eventManager.register(plugin, this)
+    }
+
+    fun disable() {
+        plugin.server.eventManager.unregisterListener(plugin, this)
+    }
+
     /**
      * Represents the current passthrough mode for chat messages.
      *
@@ -51,7 +62,7 @@ object ChatBridge {
     var mode: PassthroughMode = PassthroughMode.ALL
 
     @Suppress("Deprecation")
-    @SubscribeEvent(postOrder = PostOrder.FIRST)
+    @Subscribe(order = PostOrder.FIRST)
     fun onPlayerChatChat(event: PlayerChatEvent) {
         if (!config.enabled) return
 
@@ -88,7 +99,7 @@ object ChatBridge {
      *
      * If the conditions are met, the command is forwarded to the server.
      */
-    @SubscribeEvent
+    @Subscribe
     fun onCommandExecute(event: CommandExecuteEvent) {
         val isPrivateChat = PRIVATE_CHAT_COMMANDS.any { event.command.split(" ")[0].startsWithAny(event.command) }
 

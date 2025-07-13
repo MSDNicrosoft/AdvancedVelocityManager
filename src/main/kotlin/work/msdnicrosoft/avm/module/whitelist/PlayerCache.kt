@@ -26,11 +26,11 @@ object PlayerCache {
     }
 
     fun add(player: String) {
-        if (config.enabled) {
-            if (players.size >= config.maxSize) {
-                players.remove(players.last())
-            }
-            players.add(player)
+        if (!config.enabled) return
+
+        if (players.size >= config.maxSize) {
+            players.remove(players.last())
         }
+        players.add(player)
     }
 }

@@ -5,6 +5,8 @@
 
 package work.msdnicrosoft.avm.module.whitelist
 
+import com.velocitypowered.api.event.PostOrder
+import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.LoginEvent
 import com.velocitypowered.api.event.connection.PreLoginEvent
 import com.velocitypowered.api.event.player.ServerPreConnectEvent
@@ -14,8 +16,6 @@ import io.netty.util.AttributeKey
 import org.geysermc.floodgate.api.player.FloodgatePlayer
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
-import taboolib.common.platform.event.PostOrder
-import taboolib.common.platform.event.SubscribeEvent
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 import work.msdnicrosoft.avm.config.ConfigManager
@@ -35,7 +35,7 @@ object WhitelistHandler {
 
     private val hasFloodgate by lazy { AVM.plugin.server.pluginManager.getPlugin("floodgate").isPresent }
 
-    @SubscribeEvent(postOrder = PostOrder.EARLY)
+    @Subscribe(order = PostOrder.EARLY)
     fun onPreLogin(event: PreLoginEvent) {
         // Blocked by other plugins or whitelist is off
         if (!event.result.isAllowed || !WhitelistManager.enabled) return
@@ -54,12 +54,12 @@ object WhitelistHandler {
         }
     }
 
-    @SubscribeEvent
+    @Subscribe
     fun onPlayerLogin(event: LoginEvent) {
         WhitelistManager.updatePlayer(event.player.username, event.player.uniqueId)
     }
 
-    @SubscribeEvent(postOrder = PostOrder.EARLY)
+    @Subscribe(order = PostOrder.EARLY)
     fun onServerPreConnect(event: ServerPreConnectEvent) {
         // Blocked by other plugins or whitelist is off
         if (event.result.server.isEmpty || !WhitelistManager.enabled) return

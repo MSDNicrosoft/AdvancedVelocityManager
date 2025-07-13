@@ -1,17 +1,17 @@
 package work.msdnicrosoft.avm.module
 
+import com.velocitypowered.api.event.PostOrder
+import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.ServerConnectedEvent
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
-import taboolib.common.platform.event.PostOrder
-import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submitAsync
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.string.formated
 import work.msdnicrosoft.avm.util.string.replace
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @PlatformSide(Platform.VELOCITY)
 object EventBroadcast {
@@ -19,7 +19,15 @@ object EventBroadcast {
     private inline val config
         get() = ConfigManager.config.broadcast
 
-    @SubscribeEvent(postOrder = PostOrder.FIRST)
+    fun init() {
+        plugin.server.eventManager.register(plugin, this)
+    }
+
+    fun disable() {
+        plugin.server.eventManager.unregisterListener(plugin, this)
+    }
+
+    @Subscribe(order = PostOrder.FIRST)
     fun onPlayerDisconnect(event: DisconnectEvent) {
         if (!config.leave.enabled) return
 
@@ -28,10 +36,10 @@ object EventBroadcast {
         // To avoid this, we check the login status.
         if (event.loginStatus != DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) return
 
-        sendProxyServerMessage(config.leave.message.replace("%player_name%", event.player.username))
+        sendMessage(config.leave.message.replace("%player_name%", event.player.username))
     }
 
-    @SubscribeEvent(postOrder = PostOrder.FIRST)
+    @Subscribe(order = PostOrder.FIRST)
     fun onPlayerConnected(event: ServerConnectedEvent) {
         val username = event.player.username
         val targetServerName = event.server.serverInfo.name
@@ -44,7 +52,7 @@ object EventBroadcast {
                 val previousServerName = previousServer.serverInfo.name
                 val previousServerNickname = getServerNickname(previousServerName)
 
-                sendProxyServerMessage(
+                sendMessage(
                     config.switch.message.replace(
                         "%player_name%" to username,
                         "%previous_server_name%" to previousServerName,
@@ -57,7 +65,7 @@ object EventBroadcast {
             {
                 if (!config.join.enabled) return@ifPresentOrElse
 
-                sendProxyServerMessage(
+                sendMessage(
                     config.join.message.replace(
                         "%player_name%" to username,
                         "%server_name%" to targetServerName,
@@ -68,8 +76,10 @@ object EventBroadcast {
         )
     }
 
-    private fun sendProxyServerMessage(message: String) = submitAsync {
-        AVM.plugin.server.allPlayers.forEach { player ->
+    private fun sendMessage(message: String) = submitAsync {
+        plugin.server.allPlayers
+            .parallelStream()
+            .forEach { player ->
             player.sendMessage(message.formated())
         }
     }

@@ -9,6 +9,9 @@ import taboolib.common.util.unsafeLazy
 import taboolib.module.lang.Language
 import taboolib.platform.VelocityPlugin
 import work.msdnicrosoft.avm.config.ConfigManager
+import work.msdnicrosoft.avm.module.EventBroadcast
+import work.msdnicrosoft.avm.module.TabSyncHandler
+import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.patch.InstrumentationAccess
@@ -31,21 +34,28 @@ object AdvancedVelocityManagerPlugin : Plugin() {
 
     override fun onEnable() {
         logger.debug("Nya~!")
+
         require(ConfigManager.load()) { "Failed to load configuration, aborting initialization" }
         loadLanguage()
+
         CommandSessionManager.init()
         WhitelistManager.init()
+        ChatBridge.init()
+        TabSyncHandler.init()
+        EventBroadcast.init()
     }
 
     override fun onDisable() {
         WhitelistManager.disable()
+        ChatBridge.disable()
+        TabSyncHandler.disable()
+        EventBroadcast.disable()
         CommandSessionManager.disable()
         plugin.server.commandManager.run {
             unregister("avm")
             unregister("avmwl")
             unregister("msg")
         }
-        plugin.server.eventManager.unregisterListeners(plugin)
     }
 
     override fun onActive() {
