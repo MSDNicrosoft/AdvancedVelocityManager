@@ -1,0 +1,101 @@
+/**
+ * Portions of this code are modified from lls-manager
+ * https://github.com/plusls/lls-manager/blob/master/src/main/java/com/plusls/llsmanager/minimapWorldSync/PlayerSpawnPosition.java
+ */
+
+package work.msdnicrosoft.avm.module.mapsync
+
+import com.velocitypowered.api.network.ProtocolVersion
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
+import com.velocitypowered.proxy.connection.MinecraftSessionHandler
+import com.velocitypowered.proxy.connection.backend.BackendPlaySessionHandler
+import com.velocitypowered.proxy.connection.backend.VelocityServerConnection
+import com.velocitypowered.proxy.protocol.MinecraftPacket
+import com.velocitypowered.proxy.protocol.ProtocolUtils.Direction
+import com.velocitypowered.proxy.protocol.StateRegistry
+import io.netty.buffer.ByteBuf
+import io.netty.buffer.ByteBufUtil
+import io.netty.buffer.Unpooled
+import taboolib.library.reflex.Reflex.Companion.getProperty
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.util.packet.Packet
+import work.msdnicrosoft.avm.util.packet.Packet.Companion.mapping
+import java.nio.charset.StandardCharsets
+import java.util.zip.CRC32
+
+object XaeroMapHandler {
+    private val XAERO_MINI_MAP_CHANNEL = MinecraftChannelIdentifier.create("xaerominimap", "main")
+    private val XAERO_WORLD_MAP_CHANNEL = MinecraftChannelIdentifier.create("xaeroworldmap", "main")
+
+    // https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Protocol_version_numbers
+    @Suppress("MagicNumber")
+    private val MAPPINGS = listOf(
+        mapping(0x05, ProtocolVersion.MINECRAFT_1_7_2, false),
+        mapping(0x43, ProtocolVersion.MINECRAFT_1_9, false),
+        mapping(0x45, ProtocolVersion.MINECRAFT_1_12, false),
+        mapping(0x46, ProtocolVersion.MINECRAFT_1_12_1, false),
+        mapping(0x49, ProtocolVersion.MINECRAFT_1_13, false),
+        mapping(0x4D, ProtocolVersion.MINECRAFT_1_14, false),
+        mapping(0x4E, ProtocolVersion.MINECRAFT_1_15, false),
+        mapping(0x42, ProtocolVersion.MINECRAFT_1_16, false),
+        mapping(0x4B, ProtocolVersion.MINECRAFT_1_17, false),
+        mapping(0x4A, ProtocolVersion.MINECRAFT_1_19, false),
+        mapping(0x4D, ProtocolVersion.MINECRAFT_1_19_1, false),
+        mapping(0x4C, ProtocolVersion.MINECRAFT_1_19_3, false),
+        mapping(0x50, ProtocolVersion.MINECRAFT_1_19_4, false),
+        mapping(0x52, ProtocolVersion.MINECRAFT_1_20_2, false),
+        mapping(0x54, ProtocolVersion.MINECRAFT_1_20_3, false),
+        mapping(0x56, ProtocolVersion.MINECRAFT_1_20_5, false),
+        mapping(0x5B, ProtocolVersion.MINECRAFT_1_21_4, false),
+        mapping(0x5A, ProtocolVersion.MINECRAFT_1_21_5, false),
+    )
+
+    fun init() {
+        Packet.of(SetDefaultSpawnPositionPacket::class)
+            .direction(Direction.CLIENTBOUND)
+            .stateRegistry(StateRegistry.PLAY)
+            .packetSupplier { SetDefaultSpawnPositionPacket() }
+            .mappings(MAPPINGS)
+            .register()
+
+        plugin.server.channelRegistrar.register(XAERO_WORLD_MAP_CHANNEL)
+        plugin.server.channelRegistrar.register(XAERO_MINI_MAP_CHANNEL)
+    }
+
+    class SetDefaultSpawnPositionPacket : MinecraftPacket {
+        private var data: ByteBuf? = null
+
+        override fun decode(buf: ByteBuf, direction: Direction?, protocolVersion: ProtocolVersion?) {
+            data = buf.readBytes(buf.readableBytes())
+        }
+
+        override fun encode(buf: ByteBuf, direction: Direction?, protocolVersion: ProtocolVersion?) {
+            buf.writeBytes(data)
+            data?.release()
+        }
+
+        override fun handle(handler: MinecraftSessionHandler): Boolean {
+            val serverConnection = (handler as BackendPlaySessionHandler)
+                .getProperty<VelocityServerConnection>("serverConn")
+            checkNotNull(serverConnection) { "Server connection not found in handler" }
+
+            serverConnection.player.connection.write(this)
+
+            val serverNameBytes = serverConnection.serverInfo.name.toByteArray(StandardCharsets.UTF_8)
+            val crc32 = CRC32().apply {
+                update(serverNameBytes)
+            }
+            val buf = Unpooled.buffer().apply {
+                writeByte(0x00) // Packet ID
+                writeInt(crc32.value.toInt()) // World ID
+            }
+            val xaeroArray = ByteBufUtil.getBytes(buf)
+            buf.release()
+
+            serverConnection.player.sendPluginMessage(XAERO_WORLD_MAP_CHANNEL, xaeroArray)
+            serverConnection.player.sendPluginMessage(XAERO_MINI_MAP_CHANNEL, xaeroArray)
+
+            return true
+        }
+    }
+}

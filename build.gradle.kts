@@ -96,6 +96,7 @@ taboolib {
     env {
         install(CommandHelper, I18n)
         install(Velocity)
+        install(Metrics)
     }
     version {
         taboolib = "6.2.3-b217935"
@@ -112,6 +113,7 @@ dependencies {
     compileOnly(libs.bundles.velocity)
     compileOnly(libs.floodgate)
     compileOnly(libs.netty)
+    compileOnly(libs.fastutil)
 
     compileOnly(kotlin("stdlib"))
 
