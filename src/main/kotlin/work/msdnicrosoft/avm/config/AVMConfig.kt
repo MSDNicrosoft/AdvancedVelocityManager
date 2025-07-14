@@ -5,6 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import work.msdnicrosoft.avm.config.data.Broadcast
 import work.msdnicrosoft.avm.config.data.ChatBridge
+import work.msdnicrosoft.avm.config.data.MapSync
 import work.msdnicrosoft.avm.config.data.TabSync
 import work.msdnicrosoft.avm.config.data.Utility
 import work.msdnicrosoft.avm.config.data.Whitelist
@@ -59,5 +60,9 @@ data class AVMConfig(
 
     @YamlComment("The TabList Synchronization configuration")
     @SerialName("tab-sync")
-    val tabSync: TabSync = TabSync()
+    val tabSync: TabSync = TabSync(),
+
+    @YamlComment("The Map Synchronization configuration")
+    @SerialName("map-sync")
+    val mapSync: MapSync = MapSync()
 )

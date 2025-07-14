@@ -1,0 +1,66 @@
+/**
+ * Portions of this code are modified from lls-manager
+ * https://github.com/plusls/lls-manager/blob/master/src/main/java/com/plusls/llsmanager/minimapWorldSync/MinimapWorldSyncHandler.java
+ */
+
+package work.msdnicrosoft.avm.module.mapsync
+
+import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.connection.PluginMessageEvent
+import com.velocitypowered.api.proxy.Player
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
+import io.netty.buffer.ByteBufUtil
+import io.netty.buffer.Unpooled
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.config.ConfigManager
+import work.msdnicrosoft.avm.util.netty.useThenApply
+import java.nio.charset.StandardCharsets
+
+object WorldInfoHandler {
+    private val WORLD_INFO_CHANNEL = MinecraftChannelIdentifier.create("worldinfo", "world_id")
+
+    private inline val config
+        get() = ConfigManager.config.mapSync.worldInfo
+
+    fun init() {
+        plugin.server.channelRegistrar.register(WORLD_INFO_CHANNEL)
+        plugin.server.eventManager.register(plugin, this)
+    }
+
+    fun disable() {
+        plugin.server.channelRegistrar.unregister(WORLD_INFO_CHANNEL)
+        plugin.server.eventManager.unregisterListener(plugin, this)
+    }
+
+    @Subscribe
+    fun onPluginMessage(event: PluginMessageEvent) {
+        val player = event.source as? Player ?: return
+        if (event.identifier != WORLD_INFO_CHANNEL) return
+
+        player.currentServer.ifPresent { connection ->
+            val serverName = connection.serverInfo.name
+            if (config.modern) {
+                player.sendPluginMessage(WORLD_INFO_CHANNEL, createArray(serverName, true))
+            }
+            if (config.legacy) {
+                player.sendPluginMessage(WORLD_INFO_CHANNEL, createArray(serverName, false))
+            }
+        }
+
+        if (config.modern || config.legacy) {
+            event.result = PluginMessageEvent.ForwardResult.handled()
+        }
+    }
+
+    @Suppress("MagicNumber")
+    private fun createArray(serverName: String, modern: Boolean): ByteArray {
+        val serverNameBytes = serverName.toByteArray(StandardCharsets.UTF_8)
+        return Unpooled.buffer().useThenApply {
+            writeByte(0x00) // Packet ID
+            if (modern) writeByte(0x2A) // New packet
+            writeByte(serverNameBytes.size)
+            writeBytes(serverNameBytes)
+            ByteBufUtil.getBytes(this)
+        }
+    }
+}

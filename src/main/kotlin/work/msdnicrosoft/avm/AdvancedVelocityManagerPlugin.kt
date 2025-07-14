@@ -12,7 +12,7 @@ import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.EventBroadcast
 import work.msdnicrosoft.avm.module.TabSyncHandler
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
-import work.msdnicrosoft.avm.module.mapsync.VoxelMapHandler
+import work.msdnicrosoft.avm.module.mapsync.WorldInfoHandler
 import work.msdnicrosoft.avm.module.mapsync.XaeroMapHandler
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
@@ -45,7 +45,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
         ChatBridge.init()
         TabSyncHandler.init()
         EventBroadcast.init()
-        VoxelMapHandler.init()
+        WorldInfoHandler.init()
         XaeroMapHandler.init()
         Metrics.init()
     }
@@ -55,7 +55,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
         ChatBridge.disable()
         TabSyncHandler.disable()
         EventBroadcast.disable()
-        VoxelMapHandler.disable()
+        WorldInfoHandler.disable()
         CommandSessionManager.disable()
         plugin.server.commandManager.run {
             unregister("avm")

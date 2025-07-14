@@ -18,6 +18,9 @@ import io.netty.buffer.ByteBufUtil
 import io.netty.buffer.Unpooled
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.config.ConfigManager
+import work.msdnicrosoft.avm.util.netty.use
+import work.msdnicrosoft.avm.util.netty.useThenApply
 import work.msdnicrosoft.avm.util.packet.Packet
 import work.msdnicrosoft.avm.util.packet.Packet.Companion.mapping
 import java.nio.charset.StandardCharsets
@@ -26,6 +29,9 @@ import java.util.zip.CRC32
 object XaeroMapHandler {
     private val XAERO_MINI_MAP_CHANNEL = MinecraftChannelIdentifier.create("xaerominimap", "main")
     private val XAERO_WORLD_MAP_CHANNEL = MinecraftChannelIdentifier.create("xaeroworldmap", "main")
+
+    private inline val config
+        get() = ConfigManager.config.mapSync.xaero
 
     // https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Protocol_version_numbers
     @Suppress("MagicNumber")
@@ -70,30 +76,36 @@ object XaeroMapHandler {
         }
 
         override fun encode(buf: ByteBuf, direction: Direction?, protocolVersion: ProtocolVersion?) {
-            buf.writeBytes(data)
-            data?.release()
+            data?.use {
+                buf.writeBytes(data)
+            }
         }
 
         override fun handle(handler: MinecraftSessionHandler): Boolean {
-            val serverConnection = (handler as BackendPlaySessionHandler)
+            if (!config.world && !config.mini) return true
+
+            val connection = (handler as BackendPlaySessionHandler)
                 .getProperty<VelocityServerConnection>("serverConn")
-            checkNotNull(serverConnection) { "Server connection not found in handler" }
+                ?: error("Server connection not found in handler")
 
-            serverConnection.player.connection.write(this)
+            connection.player.connection.write(this)
 
-            val serverNameBytes = serverConnection.serverInfo.name.toByteArray(StandardCharsets.UTF_8)
-            val crc32 = CRC32().apply {
+            val serverNameBytes = connection.serverInfo.name.toByteArray(StandardCharsets.UTF_8)
+            val worldId = CRC32().apply {
                 update(serverNameBytes)
-            }
-            val buf = Unpooled.buffer().apply {
+            }.value.toInt()
+            val array = Unpooled.buffer().useThenApply {
                 writeByte(0x00) // Packet ID
-                writeInt(crc32.value.toInt()) // World ID
+                writeInt(worldId) // World ID
+                ByteBufUtil.getBytes(this)
             }
-            val xaeroArray = ByteBufUtil.getBytes(buf)
-            buf.release()
 
-            serverConnection.player.sendPluginMessage(XAERO_WORLD_MAP_CHANNEL, xaeroArray)
-            serverConnection.player.sendPluginMessage(XAERO_MINI_MAP_CHANNEL, xaeroArray)
+            if (config.world) {
+                connection.player.sendPluginMessage(XAERO_WORLD_MAP_CHANNEL, array)
+            }
+            if (config.mini) {
+                connection.player.sendPluginMessage(XAERO_MINI_MAP_CHANNEL, array)
+            }
 
             return true
         }
