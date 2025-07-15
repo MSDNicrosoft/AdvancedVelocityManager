@@ -20,7 +20,10 @@
       <w>takeneko</w>
       <w>trplugins</w>
       <w>velocitywhitelist</w>
+      <w>worldinfo</w>
       <w>xaero</w>
+      <w>xaerominimap</w>
+      <w>xaeroworldmap</w>
     </words>
   </dictionary>
 </component>
