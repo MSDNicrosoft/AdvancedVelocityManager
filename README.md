@@ -81,7 +81,6 @@ We appreciate the contributions of these projects to the open-source community.
 - [ ] Web Interface Request Management (HTTP / gRPC / WebSocket)  **[May be deprecated]**
 - [ ] Chat Message logging
 - [ ] Multi-language support
-- [ ] ServerPing Player List
 
 ## License and Copyright
 
