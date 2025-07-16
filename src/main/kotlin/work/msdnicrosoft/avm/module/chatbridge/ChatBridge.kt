@@ -10,6 +10,7 @@ import taboolib.common5.util.startsWithAny
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.command.chatbridge.MsgCommand
 import work.msdnicrosoft.avm.config.ConfigManager
+import work.msdnicrosoft.avm.module.Logging
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 object ChatBridge {
@@ -90,6 +91,12 @@ object ChatBridge {
                 }
             }
         }
+
+        if (config.logging) {
+            Logging.log(
+                "[$serverName]<${event.player.username}> ${event.message}"
+            )
+        }
     }
 
     /**
@@ -111,7 +118,7 @@ object ChatBridge {
     }
 
     private fun sendMessage(message: Component, vararg ignoredServer: String) {
-        AVM.plugin.server.allServers
+        plugin.server.allServers
             .parallelStream()
             .filter { it.serverInfo.name !in ignoredServer }
             .forEach { server ->

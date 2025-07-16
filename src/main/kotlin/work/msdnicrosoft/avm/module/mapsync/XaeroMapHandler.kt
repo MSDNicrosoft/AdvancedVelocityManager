@@ -16,6 +16,8 @@ import com.velocitypowered.proxy.protocol.StateRegistry
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufUtil
 import io.netty.buffer.Unpooled
+import taboolib.common.platform.Platform
+import taboolib.common.platform.PlatformSide
 import taboolib.library.reflex.Reflex.Companion.getProperty
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
@@ -26,6 +28,7 @@ import work.msdnicrosoft.avm.util.packet.Packet.Companion.mapping
 import java.nio.charset.StandardCharsets
 import java.util.zip.CRC32
 
+@PlatformSide(Platform.VELOCITY)
 object XaeroMapHandler {
     private val XAERO_MINI_MAP_CHANNEL = MinecraftChannelIdentifier.create("xaerominimap", "main")
     private val XAERO_WORLD_MAP_CHANNEL = MinecraftChannelIdentifier.create("xaeroworldmap", "main")

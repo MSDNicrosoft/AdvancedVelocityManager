@@ -8,7 +8,7 @@ import work.msdnicrosoft.avm.util.string.formated
 import java.util.Optional
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 
 object ProxyServerUtil {
 
@@ -27,7 +27,7 @@ object ProxyServerUtil {
      * @return An optional containing the server if found, otherwise an empty optional.
      */
     @Suppress("NOTHING_TO_INLINE")
-    inline fun getRegisteredServer(name: String): Optional<RegisteredServer> = AVM.plugin.server.getServer(name)
+    inline fun getRegisteredServer(name: String): Optional<RegisteredServer> = plugin.server.getServer(name)
 
     /**
      * Gets a player by its username.
@@ -36,7 +36,7 @@ object ProxyServerUtil {
      * @return An optional containing the player if found, otherwise an empty optional.
      */
     @Suppress("NOTHING_TO_INLINE")
-    inline fun getPlayer(name: String): Optional<Player> = AVM.plugin.server.getPlayer(name)
+    inline fun getPlayer(name: String): Optional<Player> = plugin.server.getPlayer(name)
 
     /**
      * Gets a player by its UUID.
@@ -45,7 +45,7 @@ object ProxyServerUtil {
      * @return An optional containing the player if found, otherwise an empty optional.
      */
     @Suppress("NOTHING_TO_INLINE")
-    inline fun getPlayer(uuid: UUID): Optional<Player> = AVM.plugin.server.getPlayer(uuid)
+    inline fun getPlayer(uuid: UUID): Optional<Player> = plugin.server.getPlayer(uuid)
 
     /**
      * Checks if a server with the given name exists.

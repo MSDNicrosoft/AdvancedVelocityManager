@@ -37,6 +37,10 @@ object EventBroadcast {
         if (event.loginStatus != DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) return
 
         sendMessage(config.leave.message.replace("%player_name%", event.player.username))
+
+        if (config.leave.logging) {
+            Logging.log("[-] ${event.player.username} left the server")
+        }
     }
 
     @Subscribe(order = PostOrder.FIRST)
@@ -61,6 +65,10 @@ object EventBroadcast {
                         "%target_server_name%" to targetServerName
                     )
                 )
+
+                if (config.switch.logging) {
+                    Logging.log("[⇄] $username: $previousServerName ➟ $targetServerName")
+                }
             },
             {
                 if (!config.join.enabled) return@ifPresentOrElse
@@ -72,6 +80,10 @@ object EventBroadcast {
                         "%server_nickname%" to targetServerNickname
                     )
                 )
+
+                if (config.join.logging) {
+                    Logging.log("[+] $username joined server $targetServerName")
+                }
             }
         )
     }

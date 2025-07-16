@@ -10,6 +10,9 @@ data class ChatBridge(
     @YamlComment("Whether to enable Chat Bridge")
     var enabled: Boolean = true,
 
+    @YamlComment("Whether to enable logging chat messages to file")
+    val logging: Boolean = false,
+
     @YamlComment(
         "Whether to allow players to use format code in chat",
         "Learn more: ",

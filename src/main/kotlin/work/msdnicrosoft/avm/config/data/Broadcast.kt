@@ -23,6 +23,9 @@ data class Broadcast(
         @YamlComment("Whether to enable join broadcast")
         var enabled: Boolean = true,
 
+        @YamlComment("Whether to enable logging join broadcast to file")
+        val logging: Boolean = false,
+
         @YamlComment(
             "The join broadcast message",
             "",
@@ -41,6 +44,9 @@ data class Broadcast(
         @YamlComment("Whether to enable leave broadcast")
         var enabled: Boolean = true,
 
+        @YamlComment("Whether to enable logging leave broadcast to file")
+        val logging: Boolean = false,
+
         @YamlComment(
             "The leave broadcast message",
             "",
@@ -56,6 +62,9 @@ data class Broadcast(
     data class Switch(
         @YamlComment("Whether to enable switch broadcast")
         var enabled: Boolean = true,
+
+        @YamlComment("Whether to enable logging switch broadcast to file")
+        val logging: Boolean = false,
 
         @YamlComment(
             "The switch broadcast message",
