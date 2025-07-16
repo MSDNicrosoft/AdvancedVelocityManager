@@ -1,6 +1,7 @@
 import io.izzel.taboolib.gradle.*
 import org.ajoberstar.grgit.Commit
 import org.ajoberstar.grgit.Grgit
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -134,7 +135,13 @@ detekt {
 }
 
 tasks {
+    compileJava {
+        targetCompatibility = "17"
+    }
     compileKotlin {
         dependsOn("detekt")
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_17
+        }
     }
 }

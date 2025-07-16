@@ -11,7 +11,6 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.command.chatbridge.MsgCommand
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.Logging
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 object ChatBridge {
 
