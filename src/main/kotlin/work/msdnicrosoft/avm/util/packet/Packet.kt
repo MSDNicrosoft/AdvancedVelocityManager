@@ -124,7 +124,6 @@ class Packet<T : MinecraftPacket> private constructor(private val packet: Class<
      * Registers this packet as a **new** entry in the Velocity packet registry.
      *
      * @throws IllegalStateException if no mappings have been provided
-     * @throws IllegalStateException if the registry for the chosen direction cannot be located
      */
     fun register() {
         check(mappings.isNotEmpty()) { "You must provide at least one packet mapping" }
@@ -146,8 +145,6 @@ class Packet<T : MinecraftPacket> private constructor(private val packet: Class<
      *
      * This method walks through every protocol registry that contains the old
      * packet and swaps both the numeric id → supplier map and the class → id map.
-     *
-     * @throws IllegalStateException if the old packet has no entry in any registry, or if internal fields are missing
      */
     fun replace() {
         val packetRegistry = stateRegistry.asResolver()
