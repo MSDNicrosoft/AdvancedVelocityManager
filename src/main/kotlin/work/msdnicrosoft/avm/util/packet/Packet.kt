@@ -5,6 +5,9 @@
 
 package work.msdnicrosoft.avm.util.packet
 
+import com.highcapable.kavaref.KavaRef.Companion.asResolver
+import com.highcapable.kavaref.KavaRef.Companion.resolve
+import com.highcapable.kavaref.extension.classOf
 import com.velocitypowered.api.network.ProtocolVersion
 import com.velocitypowered.proxy.protocol.MinecraftPacket
 import com.velocitypowered.proxy.protocol.ProtocolUtils.Direction
@@ -13,8 +16,6 @@ import com.velocitypowered.proxy.protocol.StateRegistry.PacketMapping
 import com.velocitypowered.proxy.protocol.StateRegistry.PacketRegistry
 import io.netty.util.collection.IntObjectMap
 import it.unimi.dsi.fastutil.objects.Object2IntMap
-import taboolib.library.reflex.Reflex.Companion.getProperty
-import taboolib.library.reflex.Reflex.Companion.invokeMethod
 import java.util.function.Supplier
 import kotlin.reflect.KClass
 
@@ -29,10 +30,10 @@ import kotlin.reflect.KClass
  *
  * @param T concrete packet type that implements [MinecraftPacket]
  */
-@Suppress("unused")
+@Suppress("unused", "UnsafeCallOnNullableType")
 class Packet<T : MinecraftPacket> private constructor(private val packet: Class<T>) {
     private lateinit var oldPacket: Class<T>
-    private lateinit var direction: Direction
+    private lateinit var direction: String
     private lateinit var packetSupplier: Supplier<T>
     private lateinit var stateRegistry: StateRegistry
     private val mappings = mutableListOf<PacketMapping>()
@@ -66,7 +67,7 @@ class Packet<T : MinecraftPacket> private constructor(private val packet: Class<
      * @return this builder for chaining
      */
     fun direction(direction: Direction): Packet<T> {
-        this.direction = direction
+        this.direction = direction.name.lowercase()
         return this
     }
 
@@ -128,11 +129,15 @@ class Packet<T : MinecraftPacket> private constructor(private val packet: Class<
     fun register() {
         check(mappings.isNotEmpty()) { "You must provide at least one packet mapping" }
 
-        val directionName = direction.name.lowercase()
-        val packetRegistry = stateRegistry.getProperty<PacketRegistry>(directionName)
-            ?: error("Packet registry not found for $directionName play state")
+        val packetRegistry = stateRegistry.asResolver()
+            .firstField {
+                name = direction
+                superclass()
+            }.get<PacketRegistry>()!!
 
-        packetRegistry.invokeMethod<Nothing>("register", packet, packetSupplier, mappings.toTypedArray())
+        packetRegistry.asResolver()
+            .firstMethod { name = "register" }
+            .invoke(packet, packetSupplier, mappings.toTypedArray())
     }
 
     /**
@@ -145,16 +150,27 @@ class Packet<T : MinecraftPacket> private constructor(private val packet: Class<
      * @throws IllegalStateException if the old packet has no entry in any registry, or if internal fields are missing
      */
     fun replace() {
-        val versions = packet.getProperty<Map<ProtocolVersion, PacketRegistry.ProtocolRegistry>>("versions")
-            ?: error("Packet does not have versions property")
+        val packetRegistry = stateRegistry.asResolver()
+            .firstField { name = direction }
+            .get<PacketRegistry>()!!
 
-        versions.forEach { protoRegistry ->
-            val packetIdToSupplier = protoRegistry
-                .getProperty<IntObjectMap<Supplier<out MinecraftPacket>>>("packetIdToSupplier")
-                ?: error("Packet does not have packetIdToSupplier property")
-            val packetClassToId = protoRegistry
-                .getProperty<Object2IntMap<Class<out MinecraftPacket>>>("packetClassToId")
-                ?: error("Packet does not have packetClassToId property")
+        val versions = packetRegistry.asResolver()
+            .firstField { name = "versions" }
+            .get<Map<ProtocolVersion, PacketRegistry.ProtocolRegistry>>()!!
+
+        val packetIdToSupplierResolver = classOf<PacketRegistry.ProtocolRegistry>().resolve()
+            .firstField { name = "packetIdToSupplier" }
+        val packetClassToIdResolver = classOf<PacketRegistry.ProtocolRegistry>().resolve()
+            .firstField { name = "packetClassToId" }
+
+        versions.values.forEach { protoRegistry ->
+            val packetIdToSupplier = packetIdToSupplierResolver.copy()
+                .of(protoRegistry)
+                .get<IntObjectMap<Supplier<out MinecraftPacket>>>()!!
+
+            val packetClassToId = packetClassToIdResolver.copy()
+                .of(protoRegistry)
+                .get<Object2IntMap<Class<out MinecraftPacket>>>()!!
 
             val packetId = packetClassToId.object2IntEntrySet()
                 .find { entry -> oldPacket.isAssignableFrom(entry.key) }
@@ -168,7 +184,12 @@ class Packet<T : MinecraftPacket> private constructor(private val packet: Class<
     }
 
     companion object {
-        private val STATE_REGISTRY = StateRegistry::class.java
+        private val STATE_REGISTRY_MAP_RESOLVER = classOf<StateRegistry>().resolve()
+
+        private val STATE_REGISTRY_MAP_METHOD = STATE_REGISTRY_MAP_RESOLVER.firstMethod {
+            name = "map"
+            parameters(Int::class, ProtocolVersion::class, ProtocolVersion::class, Boolean::class)
+        }
 
         /**
          * Creates a new builder for the given packet class.
@@ -188,8 +209,7 @@ class Packet<T : MinecraftPacket> private constructor(private val packet: Class<
          * @return a new [PacketMapping]
          */
         fun mapping(id: Int, from: ProtocolVersion, encodeOnly: Boolean): PacketMapping =
-            STATE_REGISTRY.invokeMethod<PacketMapping>("map", id, from, encodeOnly, isStatic = true)
-                ?: error("Packet mapping not found for id: $id, version: $from")
+            mapping(id, from, null, encodeOnly)
 
         /**
          * Factory method for a [PacketMapping] that applies between two protocol versions.
@@ -200,8 +220,7 @@ class Packet<T : MinecraftPacket> private constructor(private val packet: Class<
          * @param encodeOnly encode-only flag
          * @return a new [PacketMapping]
          */
-        fun mapping(id: Int, from: ProtocolVersion, to: ProtocolVersion, encodeOnly: Boolean): PacketMapping =
-            STATE_REGISTRY.invokeMethod<PacketMapping>("map", id, from, to, encodeOnly, isStatic = true)
-                ?: error("Packet mapping not found for id: $id, version: $from - $to")
+        fun mapping(id: Int, from: ProtocolVersion, to: ProtocolVersion?, encodeOnly: Boolean): PacketMapping =
+            STATE_REGISTRY_MAP_METHOD.invoke<PacketMapping>(id, from, to, encodeOnly)!!
     }
 }

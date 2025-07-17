@@ -56,6 +56,7 @@ base {
 }
 
 repositories {
+    mavenCentral()
     if (System.getenv("CI")?.toBoolean() != true) {
         maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库
     }
@@ -80,7 +81,6 @@ repositories {
             includeGroup("com.velocitypowered")
         }
     }
-    mavenCentral()
 }
 
 taboolib {
@@ -106,6 +106,7 @@ taboolib {
     relocate("kotlinx.serialization", "avm.kotlinx.serialization")
     relocate("dev.vankka.enhancedlegacytext", "avm.dev.vankka.enhancedlegacytext")
     relocate("com.charleskorn.kaml", "avm.com.charleskorn.kaml")
+    relocate("com.highcapable.kavaref", "avm.com.highcapable.kavaref")
 }
 
 dependencies {
@@ -115,16 +116,14 @@ dependencies {
     compileOnly(libs.floodgate)
     compileOnly(libs.netty)
     compileOnly(libs.fastutil)
-
     compileOnly(kotlin("stdlib"))
 
     taboo(libs.kaml)
-
     taboo(libs.kotlin.serialization.json) { isTransitive = false }
     taboo(libs.enhanced.legacy.text) { isTransitive = false }
-
     taboo(libs.bundles.asm)
     taboo(libs.byte.buddy.agent)
+    taboo(libs.bundles.kavaref)
 }
 
 detekt {

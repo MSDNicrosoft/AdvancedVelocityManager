@@ -1,5 +1,6 @@
 package work.msdnicrosoft.avm.util.command
 
+import com.highcapable.kavaref.KavaRef.Companion.asResolver
 import taboolib.common.platform.PlatformFactory
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.CommandBody
@@ -8,13 +9,11 @@ import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.component.CommandComponent
 import taboolib.common.platform.service.PlatformCommand
 import taboolib.common.reflect.getAnnotationIfPresent
-import taboolib.library.reflex.Reflex.Companion.getProperty
 import taboolib.module.chat.colored
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.self
 import work.msdnicrosoft.avm.annotations.ShouldShow
-import kotlin.reflect.KClass
 
 object CommandUtil {
 
@@ -28,9 +27,9 @@ object CommandUtil {
      * https://github.com/TrPlugins/TrMenu/blob/076bacb874cc1a2217ba8ccd4909405b28e7170d
      * /plugin/src/main/kotlin/trplugins/menu/module/internal/command/CommandHandler.kt
      */
-    fun <T : Any> CommandComponent.buildHelper(commandRoot: KClass<T>, checkPermission: Boolean = true) {
+    fun <T : Any> CommandComponent.buildHelper(commandRoot: Class<T>, checkPermission: Boolean = true) {
         execute<ProxyCommandSender> { sender, _, _ ->
-            val rootJavaClass = commandRoot.java
+            val rootJavaClass = commandRoot
             val rootCommand = rootJavaClass.getAnnotationIfPresent(COMMAND_HEADER_ANNOTATION) ?: return@execute
             val rootName = rootCommand.name
 
@@ -76,7 +75,10 @@ object CommandUtil {
         index: Int,
         state: Int
     ) {
-        val args = context.getProperty<Array<String>>("realArgs")?.toList()?.subList(0, index).orEmpty()
+        val args = context.asResolver()
+            .firstField { name = "realArgs" }
+            .get<Array<String>>()
+            ?.toList()?.subList(0, index).orEmpty()
         val str = buildString {
             append(context.name)
             if (args.size > 1) append(" ${args.subList(0, args.size - 1).joinToString(" ").trim()}")

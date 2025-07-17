@@ -5,6 +5,8 @@
 
 package work.msdnicrosoft.avm.module.mapsync
 
+import com.highcapable.kavaref.KavaRef.Companion.resolve
+import com.highcapable.kavaref.extension.classOf
 import com.velocitypowered.api.network.ProtocolVersion
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler
@@ -18,7 +20,6 @@ import io.netty.buffer.ByteBufUtil
 import io.netty.buffer.Unpooled
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
-import taboolib.library.reflex.Reflex.Companion.getProperty
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.netty.use
@@ -84,12 +85,13 @@ object XaeroMapHandler {
             }
         }
 
+        @Suppress("UnsafeCallOnNullableType")
         override fun handle(handler: MinecraftSessionHandler): Boolean {
             if (!config.world && !config.mini) return true
 
-            val connection = (handler as BackendPlaySessionHandler)
-                .getProperty<VelocityServerConnection>("serverConn")
-                ?: error("Server connection not found in handler")
+            val connection = resolver.copy()
+                .of(handler as BackendPlaySessionHandler)
+                .get<VelocityServerConnection>()!!
 
             connection.player.connection.write(this)
 
@@ -111,6 +113,11 @@ object XaeroMapHandler {
             }
 
             return true
+        }
+
+        companion object {
+            private val resolver = classOf<BackendPlaySessionHandler>().resolve()
+                .firstField { name = "serverConn" }
         }
     }
 }

@@ -5,6 +5,8 @@
 
 package work.msdnicrosoft.avm.module.whitelist
 
+import com.highcapable.kavaref.KavaRef.Companion.resolve
+import com.highcapable.kavaref.extension.classOf
 import com.velocitypowered.api.event.PostOrder
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.LoginEvent
@@ -16,7 +18,6 @@ import io.netty.util.AttributeKey
 import org.geysermc.floodgate.api.player.FloodgatePlayer
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
-import taboolib.library.reflex.Reflex.Companion.getProperty
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.string.formated
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
@@ -31,6 +32,11 @@ object WhitelistHandler {
 
     private inline val config
         get() = ConfigManager.config.whitelist
+
+    private val resolver by lazy {
+        classOf<InboundConnection>().resolve()
+            .firstField { name = "delegate" }
+    }
 
     private val hasFloodgate by lazy { AVM.plugin.server.pluginManager.getPlugin("floodgate").isPresent }
 
@@ -88,7 +94,9 @@ object WhitelistHandler {
     private fun getUsername(username: String, connection: InboundConnection): String {
         // Compatible with Floodgate
         if (hasFloodgate) {
-            val channel = connection.getProperty<InitialInboundConnection>("delegate")!!.connection.channel
+            val channel = resolver.copy()
+                .of(connection)
+                .get<InitialInboundConnection>()!!.connection.channel
             val player: FloodgatePlayer? = channel
                 .attr(AttributeKey.valueOf<FloodgatePlayer>("floodgate-player"))
                 .get()

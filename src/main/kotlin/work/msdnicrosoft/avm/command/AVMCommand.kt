@@ -112,7 +112,7 @@ object AVMCommand {
 
     @CommandBody
     val main = mainCommand {
-        buildHelper(this@AVMCommand::class)
+        buildHelper(this@AVMCommand.javaClass)
         incorrectCommand(CommandUtil::incorrectCommandFeedback)
         incorrectSender(CommandUtil::incorrectSenderFeedback)
     }
