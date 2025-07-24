@@ -172,11 +172,10 @@ class Packet<T : MinecraftPacket> private constructor(private val packet: Class<
             val packetId = packetClassToId.object2IntEntrySet()
                 .find { entry -> oldPacket.isAssignableFrom(entry.key) }
                 ?.intValue
+                ?: return@forEach
 
-            if (packetId != null) {
-                packetIdToSupplier.put(packetId, packetSupplier)
-                packetClassToId.put(packet, packetId)
-            }
+            packetIdToSupplier[packetId] = packetSupplier
+            packetClassToId[packet] = packetId
         }
     }
 

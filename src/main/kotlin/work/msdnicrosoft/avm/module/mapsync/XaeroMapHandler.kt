@@ -34,10 +34,8 @@ object XaeroMapHandler {
     private val XAERO_MINI_MAP_CHANNEL = MinecraftChannelIdentifier.create("xaerominimap", "main")
     private val XAERO_WORLD_MAP_CHANNEL = MinecraftChannelIdentifier.create("xaeroworldmap", "main")
 
-    private inline val config
-        get() = ConfigManager.config.mapSync.xaero
-
     // https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Protocol_version_numbers
+    // https://minecraft.wiki/w/Java_Edition_protocol/Packets#Set_Default_Spawn_Position
     @Suppress("MagicNumber")
     private val MAPPINGS = listOf(
         mapping(0x05, ProtocolVersion.MINECRAFT_1_7_2, false),
@@ -64,7 +62,7 @@ object XaeroMapHandler {
         Packet.of(SetDefaultSpawnPositionPacket::class)
             .direction(Direction.CLIENTBOUND)
             .stateRegistry(StateRegistry.PLAY)
-            .packetSupplier { SetDefaultSpawnPositionPacket() }
+            .packetSupplier(::SetDefaultSpawnPositionPacket)
             .mappings(MAPPINGS)
             .register()
 
@@ -86,11 +84,11 @@ object XaeroMapHandler {
         }
 
         @Suppress("UnsafeCallOnNullableType")
-        override fun handle(handler: MinecraftSessionHandler): Boolean {
+        override fun handle(sessionHandler: MinecraftSessionHandler): Boolean {
             if (!config.world && !config.mini) return true
 
             val connection = resolver.copy()
-                .of(handler as BackendPlaySessionHandler)
+                .of(sessionHandler as BackendPlaySessionHandler)
                 .get<VelocityServerConnection>()!!
 
             connection.player.connection.write(this)
@@ -118,6 +116,9 @@ object XaeroMapHandler {
         companion object {
             private val resolver = classOf<BackendPlaySessionHandler>().resolve()
                 .firstField { name = "serverConn" }
+
+            private inline val config
+                get() = ConfigManager.config.mapSync.xaero
         }
     }
 }
