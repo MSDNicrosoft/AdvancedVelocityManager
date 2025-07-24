@@ -53,6 +53,8 @@ object EventBroadcast {
             { previousServer ->
                 if (!config.switch.enabled) return@ifPresentOrElse
 
+                if (previousServer == event.server) return@ifPresentOrElse
+
                 val previousServerName = previousServer.serverInfo.name
                 val previousServerNickname = getServerNickname(previousServerName)
 
