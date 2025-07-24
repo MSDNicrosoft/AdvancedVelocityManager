@@ -7,9 +7,9 @@ import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.submitAsync
 import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.config.ConfigManager
+import work.msdnicrosoft.avm.module.CommandSessionManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.ProxyServerUtil.kickPlayers
-import work.msdnicrosoft.avm.util.command.CommandSessionManager
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @PlatformSide(Platform.VELOCITY)

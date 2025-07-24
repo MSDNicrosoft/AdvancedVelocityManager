@@ -6,9 +6,9 @@ import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.subCommand
 import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.config.ConfigManager
+import work.msdnicrosoft.avm.module.CommandSessionManager
 import work.msdnicrosoft.avm.module.imports.PluginName
 import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
-import work.msdnicrosoft.avm.util.command.CommandSessionManager
 import kotlin.time.measureTime
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 

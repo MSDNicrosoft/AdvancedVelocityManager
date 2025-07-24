@@ -1,4 +1,4 @@
-package work.msdnicrosoft.avm.util.command
+package work.msdnicrosoft.avm.module
 
 import com.google.common.io.BaseEncoding
 import taboolib.common.platform.Platform

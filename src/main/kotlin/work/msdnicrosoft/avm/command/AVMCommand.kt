@@ -15,8 +15,8 @@ import work.msdnicrosoft.avm.command.utility.KickAllCommand
 import work.msdnicrosoft.avm.command.utility.KickCommand
 import work.msdnicrosoft.avm.command.utility.SendAllCommand
 import work.msdnicrosoft.avm.command.utility.SendCommand
-import work.msdnicrosoft.avm.util.command.CommandSessionManager
-import work.msdnicrosoft.avm.util.command.CommandSessionManager.ExecuteResult
+import work.msdnicrosoft.avm.module.CommandSessionManager
+import work.msdnicrosoft.avm.module.CommandSessionManager.ExecuteResult
 import work.msdnicrosoft.avm.util.command.CommandUtil
 import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
 import kotlin.time.measureTime

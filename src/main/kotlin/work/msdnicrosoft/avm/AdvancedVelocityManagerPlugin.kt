@@ -9,6 +9,7 @@ import taboolib.common.util.unsafeLazy
 import taboolib.module.lang.Language
 import taboolib.platform.VelocityPlugin
 import work.msdnicrosoft.avm.config.ConfigManager
+import work.msdnicrosoft.avm.module.CommandSessionManager
 import work.msdnicrosoft.avm.module.EventBroadcast
 import work.msdnicrosoft.avm.module.TabSyncHandler
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
@@ -17,7 +18,6 @@ import work.msdnicrosoft.avm.module.mapsync.XaeroMapHandler
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.patch.InstrumentationAccess
-import work.msdnicrosoft.avm.util.command.CommandSessionManager
 
 @PlatformSide(Platform.VELOCITY)
 object AdvancedVelocityManagerPlugin : Plugin() {
