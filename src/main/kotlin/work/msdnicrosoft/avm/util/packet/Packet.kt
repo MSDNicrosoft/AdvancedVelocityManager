@@ -12,10 +12,15 @@ import com.velocitypowered.api.network.ProtocolVersion
 import com.velocitypowered.proxy.protocol.MinecraftPacket
 import com.velocitypowered.proxy.protocol.ProtocolUtils.Direction
 import com.velocitypowered.proxy.protocol.StateRegistry
+import com.velocitypowered.proxy.protocol.StateRegistry.HANDSHAKE
+import com.velocitypowered.proxy.protocol.StateRegistry.LOGIN
+import com.velocitypowered.proxy.protocol.StateRegistry.PLAY
 import com.velocitypowered.proxy.protocol.StateRegistry.PacketMapping
 import com.velocitypowered.proxy.protocol.StateRegistry.PacketRegistry
+import com.velocitypowered.proxy.protocol.StateRegistry.STATUS
 import io.netty.util.collection.IntObjectMap
 import it.unimi.dsi.fastutil.objects.Object2IntMap
+import work.msdnicrosoft.avm.util.packet.Packet.Companion.mapping
 import java.util.function.Supplier
 import kotlin.reflect.KClass
 
@@ -72,7 +77,7 @@ class Packet<T : MinecraftPacket> private constructor(private val packet: Class<
     }
 
     /**
-     * Specifies the state registry (hand-shake, status, login, play) in which the packet will live.
+     * Specifies the state registry ([HANDSHAKE], [STATUS], [LOGIN] and [PLAY]) in which the packet will live.
      *
      * @param stateRegistry the Velocity state registry
      * @return this builder for chaining
@@ -180,9 +185,7 @@ class Packet<T : MinecraftPacket> private constructor(private val packet: Class<
     }
 
     companion object {
-        private val STATE_REGISTRY_MAP_RESOLVER = classOf<StateRegistry>().resolve()
-
-        private val STATE_REGISTRY_MAP_METHOD = STATE_REGISTRY_MAP_RESOLVER.firstMethod {
+        private val STATE_REGISTRY_MAP_METHOD = classOf<StateRegistry>().resolve().firstMethod {
             name = "map"
             parameters(Int::class, ProtocolVersion::class, ProtocolVersion::class, Boolean::class)
         }

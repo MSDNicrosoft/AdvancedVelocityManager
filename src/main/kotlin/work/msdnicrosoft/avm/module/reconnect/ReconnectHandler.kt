@@ -9,7 +9,6 @@ import com.velocitypowered.proxy.protocol.StateRegistry
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.flattener.ComponentFlattener
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
-import taboolib.module.configuration.util.config
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.packet.s2c.PlayerAbilitiesPacket
