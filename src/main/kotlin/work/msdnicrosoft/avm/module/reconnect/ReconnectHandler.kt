@@ -9,19 +9,23 @@ import com.velocitypowered.proxy.protocol.StateRegistry
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.flattener.ComponentFlattener
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import taboolib.module.configuration.util.config
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.packet.s2c.PlayerAbilitiesPacket
 import work.msdnicrosoft.avm.util.packet.Packet
 import work.msdnicrosoft.avm.util.packet.Packet.Companion.mapping
 
 object ReconnectHandler {
+    private inline val config
+        get() = ConfigManager.config.reconnect
 
     private val serializer = PlainTextComponentSerializer.builder()
         .flattener(ComponentFlattener.basic())
         .build()
 
-    private val regex =
-        Regex("((?i)^(server closed|server is restarting|multiplayer\\.disconnect\\.server_shutdown))+$")
+    private inline val regex
+        get() = Regex(config.pattern)
 
     // https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Protocol_version_numbers
     // https://minecraft.wiki/w/Java_Edition_protocol/Packets#Player_Abilities_(clientbound)
