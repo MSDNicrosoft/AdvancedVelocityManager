@@ -113,6 +113,7 @@ dependencies {
     detektPlugins(libs.detekt.formatting)
 
     compileOnly(libs.bundles.velocity)
+    compileOnly(libs.bundles.asm)
     compileOnly(libs.floodgate)
     compileOnly(libs.netty)
     compileOnly(libs.fastutil)
@@ -121,7 +122,6 @@ dependencies {
     taboo(libs.kaml)
     taboo(libs.kotlin.serialization.json) { isTransitive = false }
     taboo(libs.enhanced.legacy.text) { isTransitive = false }
-    taboo(libs.bundles.asm)
     taboo(libs.byte.buddy.agent)
     taboo(libs.bundles.kavaref)
 }
