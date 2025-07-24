@@ -38,6 +38,7 @@ object AdvancedVelocityManagerPlugin : Plugin() {
         logger.debug("Nya~!")
 
         require(ConfigManager.load()) { "Failed to load configuration, aborting initialization" }
+
         loadLanguage()
 
         CommandSessionManager.init()

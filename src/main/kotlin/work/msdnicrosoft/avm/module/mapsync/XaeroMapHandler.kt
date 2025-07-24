@@ -78,9 +78,7 @@ object XaeroMapHandler {
         }
 
         override fun encode(buf: ByteBuf, direction: Direction?, protocolVersion: ProtocolVersion?) {
-            data?.use {
-                buf.writeBytes(data)
-            }
+            data?.use { buf.writeBytes(data) }
         }
 
         @Suppress("UnsafeCallOnNullableType")
