@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 import work.msdnicrosoft.avm.config.data.Broadcast
 import work.msdnicrosoft.avm.config.data.ChatBridge
 import work.msdnicrosoft.avm.config.data.MapSync
+import work.msdnicrosoft.avm.config.data.Reconnect
 import work.msdnicrosoft.avm.config.data.TabSync
 import work.msdnicrosoft.avm.config.data.Utility
 import work.msdnicrosoft.avm.config.data.Whitelist
@@ -64,5 +65,8 @@ data class AVMConfig(
 
     @YamlComment("The Map Synchronization configuration")
     @SerialName("map-sync")
-    val mapSync: MapSync = MapSync()
+    val mapSync: MapSync = MapSync(),
+
+    @YamlComment("The Reconnection configuration")
+    val reconnect: Reconnect = Reconnect(),
 )
