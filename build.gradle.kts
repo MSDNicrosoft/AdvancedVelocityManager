@@ -104,7 +104,6 @@ taboolib {
         coroutines = null
     }
     relocate("kotlinx.serialization", "avm.kotlinx.serialization")
-    relocate("dev.vankka.enhancedlegacytext", "avm.dev.vankka.enhancedlegacytext")
     relocate("com.charleskorn.kaml", "avm.com.charleskorn.kaml")
     relocate("com.highcapable.kavaref", "avm.com.highcapable.kavaref")
 }
@@ -121,7 +120,6 @@ dependencies {
 
     taboo(libs.kaml)
     taboo(libs.kotlin.serialization.json) { isTransitive = false }
-    taboo(libs.enhanced.legacy.text) { isTransitive = false }
     taboo(libs.byte.buddy.agent)
     taboo(libs.bundles.kavaref)
 }

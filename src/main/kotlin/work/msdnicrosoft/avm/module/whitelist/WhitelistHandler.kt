@@ -20,7 +20,7 @@ import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.string.formated
+import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 
 /**
  * Handles whitelist functionality for the server, including integration with Floodgate for player identification.
@@ -47,7 +47,7 @@ object WhitelistHandler {
 
         val username = getUsername(event.username, event.connection)
         if (!WhitelistManager.isInWhitelist(username)) {
-            event.result = PreLoginEvent.PreLoginComponentResult.denied(config.message.formated())
+            event.result = PreLoginEvent.PreLoginComponentResult.denied(miniMessage.deserialize(config.message))
             PlayerCache.add(username)
         } else {
             WhitelistManager.getPlayer(username)?.onlineMode?.let {
@@ -74,7 +74,7 @@ object WhitelistHandler {
 
         if (!WhitelistManager.isInServerWhitelist(player.uniqueId, serverName)) {
             event.result = ServerPreConnectEvent.ServerResult.denied()
-            val message = config.message.formated()
+            val message = miniMessage.deserialize(config.message)
             player.sendMessage(message)
             if (event.previousServer == null) {
                 player.disconnect(message)

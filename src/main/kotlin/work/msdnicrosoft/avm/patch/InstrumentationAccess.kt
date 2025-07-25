@@ -118,5 +118,5 @@ object InstrumentationAccess {
     }
 
     private fun isSignedVelocityInstalled() =
-        AVM.plugin.server.pluginManager.getPlugin("signedvelocity").isPresent
+        plugin.server.pluginManager.getPlugin("signedvelocity").isPresent
 }

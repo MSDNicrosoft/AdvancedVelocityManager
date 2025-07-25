@@ -6,6 +6,7 @@ import com.velocitypowered.api.event.player.ServerConnectedEvent
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.player.TabListEntry
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.function.submitAsync
@@ -78,9 +79,10 @@ object TabSyncHandler {
     }
 
     private inline val Player.displayName: Component?
-        get() = ComponentUtil.serializer.buildComponent(ConfigManager.config.tabSync.format)
-            .replace("%server_name%", currentServer.get().serverInfo.name)
-            .replace("%server_nickname%", ConfigUtil.getServerNickname(currentServer.get().serverInfo.name))
-            .replace("%player_name%", username)
-            .build()
+        get() = ComponentUtil.miniMessage.deserialize(
+            config.format,
+            Placeholder.parsed("server_name", currentServer.get().serverInfo.name),
+            Placeholder.parsed("server_nickname", ConfigUtil.getServerNickname(currentServer.get().serverInfo.name)),
+            Placeholder.parsed("player_name", username)
+        )
 }

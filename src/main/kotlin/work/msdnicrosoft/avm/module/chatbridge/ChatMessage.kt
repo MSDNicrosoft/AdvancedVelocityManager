@@ -3,13 +3,15 @@ package work.msdnicrosoft.avm.module.chatbridge
 import com.velocitypowered.api.event.player.PlayerChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import work.msdnicrosoft.avm.config.data.ChatBridge
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
 import work.msdnicrosoft.avm.util.ProxyServerUtil.TIMEOUT_PING_RESULT
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
-import work.msdnicrosoft.avm.util.component.ComponentUtil.serializer
+import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
+import work.msdnicrosoft.avm.util.component.ComponentUtil.styleOnlyMiniMessage
 import work.msdnicrosoft.avm.util.string.replace
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -44,31 +46,36 @@ class ChatMessage(private val event: PlayerChatEvent, private val config: ChatBr
      * Deserialize the message by replacing placeholders with actual values.
      * @return The deserialized message with placeholders replaced.
      */
-    private fun String.deserialize() = serializer.buildComponent(this)
-        .replace("%player_name%", playerUsername)
-        .replace("%player_uuid%", playerUuid)
-        .replace("%player_ping%", playerPing)
-        .replace("%player_message%", event.message.let { if (config.allowFormatCode) serializer.parse(it) else it })
-        .replace("%server_name%", serverName)
-        .replace("%server_nickname%", serverNickname)
-        .replace("%server_online_players%", serverOnlinePlayers)
-        .replace("%server_version%", serverVersion)
-        .replace("%player_message_sent_time%", getDateTime())
-        .build()
+    private fun String.deserialize() = miniMessage.deserialize(
+        this,
+        Placeholder.parsed("player_name", playerUsername),
+        Placeholder.parsed("player_uuid", playerUuid),
+        Placeholder.parsed("player_ping", playerPing),
+        Placeholder.parsed("server_name", serverName),
+        Placeholder.parsed("server_nickname", serverNickname),
+        Placeholder.parsed("server_online_players", serverOnlinePlayers),
+        Placeholder.parsed("server_version", serverVersion),
+        Placeholder.parsed("player_message_sent_time", getDateTime()),
+        if (config.allowFormatCode) {
+            Placeholder.component("player_message", styleOnlyMiniMessage.deserialize(event.message))
+        } else {
+            Placeholder.parsed("player_message", event.message)
+        },
+    )
 
     /**
      * Replace placeholders in the message with actual player and server information.
      * @return The message with placeholders replaced.
      */
     private fun String.replacePlaceholders() = this.replace(
-        "%player_name%" to playerUsername,
-        "%player_uuid%" to playerUuid,
-        "%player_ping%" to playerPing,
-        "%player_message%" to event.message,
-        "%server_name%" to serverName,
-        "%server_nickname%" to serverNickname,
-        "%server_online_players%" to serverOnlinePlayers,
-        "%server_version%" to serverVersion
+        "<player_name>" to playerUsername,
+        "<player_uuid>" to playerUuid,
+        "<player_ping>" to playerPing,
+        "<player_message>" to event.message,
+        "<server_name>" to serverName,
+        "<server_nickname>" to serverNickname,
+        "<server_online_players>" to serverOnlinePlayers,
+        "<server_version>" to serverVersion
     )
 
     /**

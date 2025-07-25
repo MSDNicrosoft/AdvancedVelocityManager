@@ -1,14 +1,28 @@
 package work.msdnicrosoft.avm.util.component
-
-import dev.vankka.enhancedlegacytext.EnhancedLegacyText
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 
 object ComponentUtil {
 
-    val serializer: EnhancedLegacyText = EnhancedLegacyText.get()
+    val miniMessage = MiniMessage.miniMessage()
+
+    val styleOnlyMiniMessage = MiniMessage.builder()
+        .tags(
+            TagResolver.builder()
+                .resolver(StandardTags.font())
+                .resolver(StandardTags.color())
+                .resolver(StandardTags.decorations())
+                .resolver(StandardTags.gradient())
+                .resolver(StandardTags.rainbow())
+                .resolver(StandardTags.reset())
+                .resolver(StandardTags.shadowColor())
+                .build()
+        ).build()
 
     /**
      * Creates a HoverEvent based on the provided format and deserialization function.

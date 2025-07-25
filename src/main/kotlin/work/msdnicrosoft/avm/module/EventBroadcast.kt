@@ -4,14 +4,15 @@ import com.velocitypowered.api.event.PostOrder
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.ServerConnectedEvent
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.function.submitAsync
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
-import work.msdnicrosoft.avm.util.string.formated
-import work.msdnicrosoft.avm.util.string.replace
+import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 
 @PlatformSide(Platform.VELOCITY)
 object EventBroadcast {
@@ -36,7 +37,12 @@ object EventBroadcast {
         // To avoid this, we check the login status.
         if (event.loginStatus != DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) return
 
-        sendMessage(config.leave.message.replace("%player_name%", event.player.username))
+        sendMessage(
+            miniMessage.deserialize(
+                config.leave.message,
+                Placeholder.parsed("player_name", event.player.username)
+            )
+        )
 
         if (config.leave.logging) {
             Logging.log("[-] ${event.player.username} left the server")
@@ -59,12 +65,12 @@ object EventBroadcast {
                 val previousServerNickname = getServerNickname(previousServerName)
 
                 sendMessage(
-                    config.switch.message.replace(
-                        "%player_name%" to username,
-                        "%previous_server_name%" to previousServerName,
-                        "%previous_server_nickname%" to previousServerNickname,
-                        "%target_server_nickname%" to targetServerNickname,
-                        "%target_server_name%" to targetServerName
+                    miniMessage.deserialize(
+                        config.switch.message,
+                        Placeholder.parsed("player_name", username),
+                        Placeholder.parsed("previous_server_name", previousServerName),
+                        Placeholder.parsed("previous_server_nickname", previousServerNickname),
+                        Placeholder.parsed("target_server_nickname", targetServerNickname),
                     )
                 )
 
@@ -76,10 +82,11 @@ object EventBroadcast {
                 if (!config.join.enabled) return@ifPresentOrElse
 
                 sendMessage(
-                    config.join.message.replace(
-                        "%player_name%" to username,
-                        "%server_name%" to targetServerName,
-                        "%server_nickname%" to targetServerNickname
+                    miniMessage.deserialize(
+                        config.join.message,
+                        Placeholder.parsed("player_name", username),
+                        Placeholder.parsed("server_name", targetServerName),
+                        Placeholder.parsed("server_nickname", targetServerNickname)
                     )
                 )
 
@@ -90,11 +97,9 @@ object EventBroadcast {
         )
     }
 
-    private fun sendMessage(message: String) = submitAsync {
+    private fun sendMessage(message: Component) = submitAsync {
         plugin.server.allPlayers
             .parallelStream()
-            .forEach { player ->
-                player.sendMessage(message.formated())
-            }
+            .forEach { player -> player.sendMessage(message) }
     }
 }

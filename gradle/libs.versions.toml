@@ -16,7 +16,6 @@ fastutil = "8.5.15"
 # Shade Dependencies
 kaml = "0.85.0"
 kotlin-serialization = "1.9.0"
-enhanced-legacy-text = "2.0.0-SNAPSHOT"
 byte-buddy-agent = "1.17.6"
 kavaref = "1.0.1"
 
@@ -44,7 +43,6 @@ fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil"}
 # Shade Dependencies
 kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
 kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
-enhanced-legacy-text = { module = "dev.vankka:enhancedlegacytext", version.ref = "enhanced-legacy-text" }
 asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
 asm-util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
 byte-buddy-agent = { module = "net.bytebuddy:byte-buddy-agent", version.ref = "byte-buddy-agent" }

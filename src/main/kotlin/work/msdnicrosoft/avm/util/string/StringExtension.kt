@@ -1,9 +1,7 @@
 package work.msdnicrosoft.avm.util.string
 
 import com.velocitypowered.api.util.UuidUtils
-import net.kyori.adventure.text.Component
-import work.msdnicrosoft.avm.util.component.ComponentUtil
-import java.util.UUID
+import java.util.*
 
 /**
  * Repeats a string a specified number of times.
@@ -40,14 +38,6 @@ inline fun String.isUuid(): Boolean = runCatching { this.toUuid() }.isSuccess
  */
 @Suppress("NOTHING_TO_INLINE")
 inline fun String.toUuid(): UUID = UuidUtils.fromUndashed(this.replace("-", ""))
-
-/**
- * Parses a string as a component.
- *
- * @return The parsed component.
- */
-@Suppress("NOTHING_TO_INLINE")
-inline fun String.formated(): Component = ComponentUtil.serializer.parse(this)
 
 /**
  * Checks if the string is a valid URL.

@@ -35,15 +35,15 @@ data class AVMConfig(
         "",
         "Format: server-name: server-nickname",
         "Example:",
-        "   survival: \"&aSurvival\"",
-        "   factions: \"&aFactions\"",
-        "   minigames: \"&eMinigames\""
+        "   survival: \"<green>Survival\"",
+        "   factions: \"<green>Factions\"",
+        "   minigames: \"<yellow>Minigames\""
     )
     @SerialName("server-mapping")
     val serverMapping: Map<String, String> = mapOf(
-        "lobby" to "&fLobby",
-        "factions" to "&aFactions",
-        "minigames" to "&eMinigames"
+        "lobby" to "<white>Lobby",
+        "factions" to "<green>Factions",
+        "minigames" to "<yellow>Minigames"
     ),
 
     @YamlComment("The event broadcast configuration")
