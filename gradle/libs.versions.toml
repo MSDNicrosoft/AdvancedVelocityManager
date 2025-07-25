@@ -8,6 +8,7 @@ grgit = "5.3.2"
 
 # CompileOnly Dependencies
 velocity = "3.4.0-SNAPSHOT"
+asm = "9.8"
 floodgate = "2.2.4-SNAPSHOT"
 netty = "4.2.3.Final"
 fastutil = "8.5.15"
@@ -16,7 +17,6 @@ fastutil = "8.5.15"
 kaml = "0.85.0"
 kotlin-serialization = "1.9.0"
 enhanced-legacy-text = "2.0.0-SNAPSHOT"
-asm = "9.8"
 byte-buddy-agent = "1.17.6"
 kavaref = "1.0.1"
 
