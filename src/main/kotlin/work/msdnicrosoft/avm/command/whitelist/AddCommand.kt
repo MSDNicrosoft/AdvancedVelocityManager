@@ -6,6 +6,7 @@ import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.bool
 import taboolib.common.platform.command.subCommand
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
@@ -13,7 +14,6 @@ import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.AddResult
 import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
 import work.msdnicrosoft.avm.util.string.isUuid
 import work.msdnicrosoft.avm.util.string.toUuid
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @PlatformSide(Platform.VELOCITY)
 object AddCommand {
@@ -24,7 +24,7 @@ object AddCommand {
     val command = subCommand {
         dynamic("player") {
             suggestion<ProxyCommandSender>(uncheck = true) { _, _ ->
-                (PlayerCache.readOnly + AVM.plugin.server.allPlayers.map { it.username } + WhitelistManager.usernames)
+                (PlayerCache.readOnly + plugin.server.allPlayers.map { it.username } + WhitelistManager.usernames)
                     .distinct()
             }
             dynamic("server") {
@@ -35,7 +35,7 @@ object AddCommand {
                     } else {
                         WhitelistManager.getPlayer(player)
                     }?.serverList
-                    (config.serverGroups.keys + AVM.plugin.server.allServers.map { it.serverInfo.name })
+                    (config.serverGroups.keys + plugin.server.allServers.map { it.serverInfo.name })
                         .filterNot { whitelistedServers?.contains(it) == true }
                         .distinct()
                 }

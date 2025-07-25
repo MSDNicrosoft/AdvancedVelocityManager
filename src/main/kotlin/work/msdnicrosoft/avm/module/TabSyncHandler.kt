@@ -9,7 +9,7 @@ import net.kyori.adventure.text.Component
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.function.submitAsync
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil
 import work.msdnicrosoft.avm.util.component.ComponentUtil
@@ -21,14 +21,11 @@ object TabSyncHandler {
         get() = ConfigManager.config.tabSync
 
     fun init() {
-        AdvancedVelocityManagerPlugin.plugin.server.eventManager.register(AdvancedVelocityManagerPlugin.plugin, this)
+        plugin.server.eventManager.register(plugin, this)
     }
 
     fun disable() {
-        AdvancedVelocityManagerPlugin.plugin.server.eventManager.unregisterListener(
-            AdvancedVelocityManagerPlugin.plugin,
-            this
-        )
+        plugin.server.eventManager.unregisterListener(plugin, this)
     }
 
     @Subscribe
@@ -36,7 +33,7 @@ object TabSyncHandler {
         if (!config.enabled) return
 
         submitAsync(delay = 20) {
-            AdvancedVelocityManagerPlugin.plugin.server.allPlayers.forEach { player ->
+            plugin.server.allPlayers.forEach { player ->
                 player.tabList.removeEntry(event.player.uniqueId)
             }
         }
@@ -48,7 +45,7 @@ object TabSyncHandler {
 
         submitAsync(delay = 20) {
             val player = event.player
-            AdvancedVelocityManagerPlugin.plugin.server.allPlayers.forEach { entryPlayer ->
+            plugin.server.allPlayers.forEach { entryPlayer ->
                 if (entryPlayer != player) {
                     this@TabSyncHandler.update(player, entryPlayer)
                 }

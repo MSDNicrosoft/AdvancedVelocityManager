@@ -7,17 +7,17 @@ import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.submitAsync
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.util.ProxyServerUtil.getPlayer
 import work.msdnicrosoft.avm.util.ProxyServerUtil.kickPlayers
 import kotlin.jvm.optionals.getOrElse
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVM
 
 @PlatformSide(Platform.VELOCITY)
 object KickCommand {
     val command = subCommand {
         dynamic("player") {
             suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                AVM.server.allPlayers.map { it.username }
+                plugin.server.allPlayers.map { it.username }
             }
             dynamic("reason") {
                 execute<ProxyCommandSender> { sender, context, _ ->

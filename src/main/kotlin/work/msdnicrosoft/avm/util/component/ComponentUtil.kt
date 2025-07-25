@@ -18,8 +18,8 @@ object ComponentUtil {
      *
      * @return A HoverEvent showing the deserialized hover text, or null if the format has no hover text.
      */
-    fun createHoverEvent(format: Format, deserialize: String.() -> Component): HoverEvent<Component?>? =
-        format.hover?.takeIf { it.isNotEmpty() }?.let {
+    fun createHoverEvent(format: Format, deserialize: String.() -> Component): HoverEvent<Component>? =
+        format.hover.takeIf { !it.isNullOrEmpty() }?.let {
             HoverEvent.showText(it.joinToString("\n").deserialize())
         }
 

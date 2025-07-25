@@ -18,9 +18,9 @@ import io.netty.util.AttributeKey
 import org.geysermc.floodgate.api.player.FloodgatePlayer
 import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.string.formated
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 /**
  * Handles whitelist functionality for the server, including integration with Floodgate for player identification.
@@ -38,7 +38,7 @@ object WhitelistHandler {
             .firstField { name = "delegate" }
     }
 
-    private val hasFloodgate by lazy { AVM.plugin.server.pluginManager.getPlugin("floodgate").isPresent }
+    private val hasFloodgate by lazy { plugin.server.pluginManager.getPlugin("floodgate").isPresent }
 
     @Subscribe(order = PostOrder.EARLY)
     fun onPreLogin(event: PreLoginEvent) {

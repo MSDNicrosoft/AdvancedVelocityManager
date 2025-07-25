@@ -8,6 +8,7 @@ import taboolib.common.platform.ProxyCommandSender
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendError
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.data.UUIDSerializer
@@ -15,7 +16,6 @@ import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import java.util.UUID
 import kotlin.io.path.exists
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @PlatformSide(Platform.VELOCITY)
 object QuAnVelocityWhitelistImporter : Importer {
@@ -29,7 +29,7 @@ object QuAnVelocityWhitelistImporter : Importer {
         val name: String
     )
 
-    private val PATH by lazy { AVM.plugin.configDirectory.parent.resolve("VelocityWhitelist") }
+    private val PATH by lazy { plugin.configDirectory.parent.resolve("VelocityWhitelist") }
     private val CONFIG_PATH by lazy { PATH.resolve("config.toml") }
     private val WHITELIST_PATH by lazy {
         if (WhitelistManager.serverIsOnlineMode) {

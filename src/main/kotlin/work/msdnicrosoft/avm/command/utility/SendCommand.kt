@@ -8,12 +8,12 @@ import taboolib.common.platform.command.player
 import taboolib.common.platform.command.subCommand
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.ProxyServerUtil.getPlayer
 import work.msdnicrosoft.avm.util.ProxyServerUtil.getRegisteredServer
 import work.msdnicrosoft.avm.util.ProxyServerUtil.sendPlayer
 import kotlin.jvm.optionals.getOrElse
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVM
 
 @PlatformSide(Platform.VELOCITY)
 object SendCommand {
@@ -21,11 +21,11 @@ object SendCommand {
     val command = subCommand {
         player("player") {
             suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                AVM.server.allPlayers.map { it.username }
+                plugin.server.allPlayers.map { it.username }
             }
             dynamic("server") {
                 suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                    AVM.server.allServers.map { it.serverInfo.name }
+                    plugin.server.allServers.map { it.serverInfo.name }
                 }
                 dynamic("reason") {
                     execute<ProxyCommandSender> { sender, context, _ ->

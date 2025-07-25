@@ -7,10 +7,10 @@ import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.submitAsync
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.ProxyServerUtil.kickPlayers
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @PlatformSide(Platform.VELOCITY)
 object OnCommand {
@@ -28,9 +28,9 @@ object OnCommand {
                 kickPlayers(
                     config.message,
                     if (WhitelistManager.isEmpty) {
-                        AVM.plugin.server.allPlayers
+                        plugin.server.allPlayers
                     } else {
-                        AVM.plugin.server.allPlayers.filter { it.uniqueId !in WhitelistManager.uuids }
+                        plugin.server.allPlayers.filter { it.uniqueId !in WhitelistManager.uuids }
                     }
                 )
             }

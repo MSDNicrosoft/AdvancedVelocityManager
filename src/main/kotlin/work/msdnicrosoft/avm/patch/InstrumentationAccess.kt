@@ -32,6 +32,7 @@ package work.msdnicrosoft.avm.patch
 import com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedChatHandler
 import net.bytebuddy.agent.ByteBuddyAgent
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import java.io.IOException
 import java.lang.instrument.Instrumentation
 import java.lang.management.ManagementFactory
@@ -39,7 +40,6 @@ import java.nio.file.Files
 import kotlin.io.path.Path
 import kotlin.io.path.deleteExisting
 import kotlin.io.path.isDirectory
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 object InstrumentationAccess {
     /**

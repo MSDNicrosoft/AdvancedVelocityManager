@@ -5,12 +5,12 @@ import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.subCommand
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.CommandSessionManager
 import work.msdnicrosoft.avm.module.imports.PluginName
 import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
 import kotlin.time.measureTime
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @PlatformSide(Platform.VELOCITY)
 object ImportCommand {
@@ -23,7 +23,7 @@ object ImportCommand {
             suggestion<ProxyCommandSender>(uncheck = false) { _, _ -> PluginName.plugins }
             dynamic("defaultServer") {
                 suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                    (config.serverGroups.keys + AVM.plugin.server.allServers.map { it.serverInfo.name }).toList()
+                    (config.serverGroups.keys + plugin.server.allServers.map { it.serverInfo.name }).toList()
                 }
                 execute<ProxyCommandSender> { sender, context, argument ->
                     val pluginName = context["pluginName"]

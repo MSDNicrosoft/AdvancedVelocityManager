@@ -6,11 +6,11 @@ import taboolib.common.platform.ProxyCommandSender
 import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.submitAsync
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.CommandSessionManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.ProxyServerUtil.kickPlayers
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @PlatformSide(Platform.VELOCITY)
 object ClearCommand {
@@ -30,7 +30,7 @@ object ClearCommand {
                 }
                 if (config.enabled) {
                     submitAsync(now = true) {
-                        kickPlayers(config.message, AVM.plugin.server.allPlayers)
+                        kickPlayers(config.message, plugin.server.allPlayers)
                     }
                 }
             }

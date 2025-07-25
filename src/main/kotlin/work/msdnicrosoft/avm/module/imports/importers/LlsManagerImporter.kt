@@ -6,6 +6,7 @@ import taboolib.common.platform.ProxyCommandSender
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendError
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
@@ -14,7 +15,6 @@ import kotlin.io.path.exists
 import kotlin.io.path.extension
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.nameWithoutExtension
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 object LlsManagerImporter : Importer {
 
@@ -40,7 +40,7 @@ object LlsManagerImporter : Importer {
         val onlineMode: Boolean
     )
 
-    private val PATH by lazy { AVM.plugin.configDirectory.parent.resolve("lls-manager") }
+    private val PATH by lazy { plugin.configDirectory.parent.resolve("lls-manager") }
     private val CONFIG_PATH by lazy { PATH.resolve("config.json") }
     private val PLAYER_DATA_PATH by lazy { PATH.resolve("player") }
 

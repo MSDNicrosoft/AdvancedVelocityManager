@@ -7,12 +7,12 @@ import taboolib.common.platform.command.subCommand
 import taboolib.common.platform.function.submitAsync
 import taboolib.module.lang.asLangText
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.ProxyServerUtil.getRegisteredServer
 import work.msdnicrosoft.avm.util.ProxyServerUtil.sendMessage
 import work.msdnicrosoft.avm.util.ProxyServerUtil.sendPlayer
 import kotlin.jvm.optionals.getOrElse
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin as AVM
 
 @PlatformSide(Platform.VELOCITY)
 object SendAllCommand {
@@ -20,7 +20,7 @@ object SendAllCommand {
     val command = subCommand {
         dynamic("server") {
             suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                AVM.server.allServers.map { it.serverInfo.name }
+                plugin.server.allServers.map { it.serverInfo.name }
             }
             dynamic("reason") {
                 execute<ProxyCommandSender> { sender, context, _ ->
@@ -51,7 +51,7 @@ object SendAllCommand {
             return
         }
 
-        val (bypassed, toSend) = AVM.server.allPlayers
+        val (bypassed, toSend) = plugin.server.allPlayers
             .filter { it.currentServer.get().serverInfo.name != serverName }
             .partition { it.hasPermission("avm.sendall.bypass") }
 

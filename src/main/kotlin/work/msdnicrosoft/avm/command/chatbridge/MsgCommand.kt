@@ -13,6 +13,7 @@ import taboolib.common.platform.command.mainCommand
 import taboolib.common.util.isConsole
 import taboolib.common.util.presentRun
 import taboolib.module.lang.sendLang
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
 import work.msdnicrosoft.avm.util.ProxyServerUtil.getPlayer
@@ -21,7 +22,6 @@ import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.serializer
 import work.msdnicrosoft.avm.util.component.Format
 import kotlin.jvm.optionals.getOrElse
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
 @PlatformSide(Platform.VELOCITY)
 @CommandHeader(name = "msg", aliases = ["tell", "w"], permissionDefault = PermissionDefault.NOT_OP)
@@ -34,9 +34,10 @@ object MsgCommand {
     val main = mainCommand {
         dynamic("targets") {
             suggestion<ProxyCommandSender>(uncheck = false) { sender, _ ->
-                when {
-                    config.takeOverPrivateChat || sender.isConsole() -> AVM.plugin.server.allPlayers.map { it.username }
-                    else -> getPlayer(sender.name).get().currentServer.get().server.playersConnected.map { it.username }
+                if (config.takeOverPrivateChat || sender.isConsole()) {
+                    plugin.server.allPlayers.map { it.username }
+                } else {
+                    getPlayer(sender.name).get().currentServer.get().server.playersConnected.map { it.username }
                 }
             }
             dynamic("message") {
