@@ -7,15 +7,12 @@ import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.player.TabListEntry
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.function.submitAsync
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil
 import work.msdnicrosoft.avm.util.component.ComponentUtil
 
-@PlatformSide(Platform.VELOCITY)
 object TabSyncHandler {
 
     private inline val config
@@ -81,8 +78,8 @@ object TabSyncHandler {
     private inline val Player.displayName: Component?
         get() = ComponentUtil.miniMessage.deserialize(
             config.format,
-            Placeholder.parsed("server_name", currentServer.get().serverInfo.name),
-            Placeholder.parsed("server_nickname", ConfigUtil.getServerNickname(currentServer.get().serverInfo.name)),
-            Placeholder.parsed("player_name", username)
+            Placeholder.unparsed("server_name", currentServer.get().serverInfo.name),
+            Placeholder.unparsed("server_nickname", ConfigUtil.getServerNickname(currentServer.get().serverInfo.name)),
+            Placeholder.unparsed("player_name", username)
         )
 }

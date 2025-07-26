@@ -6,15 +6,12 @@ import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.ServerConnectedEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.function.submitAsync
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 
-@PlatformSide(Platform.VELOCITY)
 object EventBroadcast {
 
     private inline val config
@@ -40,7 +37,7 @@ object EventBroadcast {
         sendMessage(
             miniMessage.deserialize(
                 config.leave.message,
-                Placeholder.parsed("player_name", event.player.username)
+                Placeholder.unparsed("player_name", event.player.username)
             )
         )
 
@@ -67,10 +64,10 @@ object EventBroadcast {
                 sendMessage(
                     miniMessage.deserialize(
                         config.switch.message,
-                        Placeholder.parsed("player_name", username),
-                        Placeholder.parsed("previous_server_name", previousServerName),
-                        Placeholder.parsed("previous_server_nickname", previousServerNickname),
-                        Placeholder.parsed("target_server_nickname", targetServerNickname),
+                        Placeholder.unparsed("player_name", username),
+                        Placeholder.unparsed("previous_server_name", previousServerName),
+                        Placeholder.unparsed("previous_server_nickname", previousServerNickname),
+                        Placeholder.unparsed("target_server_nickname", targetServerNickname),
                     )
                 )
 
@@ -84,9 +81,9 @@ object EventBroadcast {
                 sendMessage(
                     miniMessage.deserialize(
                         config.join.message,
-                        Placeholder.parsed("player_name", username),
-                        Placeholder.parsed("server_name", targetServerName),
-                        Placeholder.parsed("server_nickname", targetServerNickname)
+                        Placeholder.unparsed("player_name", username),
+                        Placeholder.unparsed("server_name", targetServerName),
+                        Placeholder.unparsed("server_nickname", targetServerNickname)
                     )
                 )
 

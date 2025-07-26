@@ -1,16 +1,11 @@
 package work.msdnicrosoft.avm.module
 
 import com.google.common.io.BaseEncoding
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.function.submitAsync
 import taboolib.common.platform.service.PlatformExecutor
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
 import java.security.MessageDigest
 import java.util.concurrent.ConcurrentHashMap
-
-typealias ExecuteBlock = () -> Any?
-typealias SessionId = String
 
 /**
  * A manager for command sessions.
@@ -18,7 +13,6 @@ typealias SessionId = String
  * Command sessions are used to execute commands.
  * This class provides functionality to add, execute, and remove command sessions.
  */
-@PlatformSide(Platform.VELOCITY)
 object CommandSessionManager {
 
     /**
@@ -33,11 +27,11 @@ object CommandSessionManager {
      * @property block The block of code to be executed.
      * @property expirationTime The time at which the action expires.
      */
-    data class Action(var executed: Boolean = false, val block: ExecuteBlock, val expirationTime: Long) {
+    data class Action(var executed: Boolean = false, val block: () -> Any?, val expirationTime: Long) {
         fun isExpired(): Boolean = System.currentTimeMillis() > expirationTime
     }
 
-    private val sessions = ConcurrentHashMap<SessionId, Action>()
+    private val sessions = ConcurrentHashMap<String, Action>()
 
     /**
      * The task responsible for removing expired command sessions.
@@ -77,7 +71,7 @@ object CommandSessionManager {
      * @param sessionId The ID of the command session.
      * @param block The block of code to be executed.
      */
-    fun add(sessionId: SessionId, block: ExecuteBlock) {
+    fun add(sessionId: String, block: () -> Any?) {
         sessions[sessionId] = Action(block = block, expirationTime = System.currentTimeMillis() + 60_000L)
     }
 
@@ -87,7 +81,7 @@ object CommandSessionManager {
      * @param sessionId The ID of the command session.
      * @return The result of executing the command session.
      */
-    fun executeAction(sessionId: SessionId): ExecuteResult {
+    fun executeAction(sessionId: String): ExecuteResult {
         val session = sessions.remove(sessionId) ?: return ExecuteResult.NOT_FOUND
         return try {
             if (session.isExpired()) {

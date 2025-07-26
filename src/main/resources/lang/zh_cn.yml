@@ -1,0 +1,151 @@
+avm:
+  general:
+    "on": "<green>开启"
+    "off": "<dark_red>关闭"
+    username: "用户名"
+    uuid: "UUID"
+    empty.server: "<gray>此服务器中没有玩家"
+    turn.to:
+        previous: "<yellow>点击转到上一页"
+        next: "<yellow>点击转到下一页"
+    unknown:
+      cause: "未知原因"
+      command: "<red>未知或不完整的命令，请查看错误信息"
+      argument: "<red>命令参数不正确"
+      sender: "命令执行者不正确"
+      here: "此处"
+    not:
+      exist:
+        page: "<gray>此页面不存在"
+        server: "<red>服务器 <white><server> <red>不存在！"
+        player: "<red>玩家 <white><player> <red>不存在！"
+    help:
+      header:
+        "1":
+          text: "  <name> <white>v<version>"
+          name:
+            text: "<aqua>Advanced<dark_aqua>Velocity<blue>Manager"
+            hover: "<gray>AdvancedVelocityManager 是一个现代且高级的 Velocity 插件"
+        "2":
+          text: "  <gray>输入: <white>/<root_command> <dark_gray>..."
+        subcommands: "  <gray>子命令:"
+      each:
+        text: "    <dark_gray>- <full>"
+        full:
+          text: "<white><subcommand> <arguments>"
+          hover: "<white><root_command> <subcommand> <dark_gray>- <gray><arguments>"
+        description: "      <gray><description>"
+
+  whitelist:
+    player:
+      server:
+        hover:
+          "1": "<dark_aqua>这是一个服务器组，包含如下服务器:"
+          "2": "<gold>▶ <yellow>点击将 <server_name> <yellow>从 <player_name> <yellow>的白名单服务器列表中移除"
+      username:
+        hover: "<gold>▶ <yellow>点击从白名单中移除此玩家"
+      uuid:
+        hover: "<gold>▶ <yellow>点击复制"
+    page:
+      must.larger.than.zero: "<red>页码必须大于零！"
+    save.failed: "<red>无法保存白名单文件，请查看控制台日志！"
+
+  command:
+    avm:
+      info:
+        description: "<gray>查看插件信息"
+        plugin:
+          name: "<gray>插件名: <aqua><name>"
+          version: "<gray>插件版本: <white><version>"
+        server: "<gray>服务端: <dark_aqua><server>"
+      confirm:
+        description: "<gray>确认操作"
+        expired: "<light_purple>该会话命令已过期"
+        failed: "<red>无法执行此会话命令"
+        not.found: "<light_purple>未知会话命令"
+      import:
+        description: "<gray>从其它插件导入数据"
+        success: "<gray>从 <plugin_name> 导入数据成功！<dark_gray>耗费: <elapsed>"
+        failed: "<red>从 <plugin_name> 导入数据失败，请查看控制台日志！"
+        need.confirm:
+          "1":
+            text: "<yellow><bold>警告：此操作将覆盖现有配置和数据！"
+          "2":
+            text: "<gray>点击此消息或执行命令 <white><command> <gray>以确认操作!"
+            hover: "<gray>确认操作"
+        config:
+          not.exist: "<dark_gray><plugin_name> 的配置文件不存在，跳过..."
+          failed: "<red>无法从 <plugin_name> 导入配置: <reason>"
+        whitelist:
+          not.exist: "<dark_gray><plugin_name> 的白名单文件不存在，跳过..."
+          failed: "<red>无法从 <plugin_name> 导入白名单: <reason>"
+        player:
+          not.exist: "<dark_gray> 的玩家数据文件夹不存在，跳过..."
+          failed: "<red>无法从 <plugin_name> 导入玩家 <player> : <reason>"
+      send:
+        description: "<gray>将单个玩家从一个服务器发送到另一个服务器"
+        executor:
+          success: "<dark_green>已将玩家 <player> 发送到服务器 <server>"
+          failed: "<red>无法将玩家 <player> 发送到服务器 <server>"
+        target: "<gray><executor> 将你发送到服务器 <server>"
+      sendall:
+        description: "<gray>将指定服务器的所有玩家发送到另一个服务器"
+        executor:
+          text: "<dark_green>已将 <player_total> 名玩家发送到服务器 <server> 并且<bypass>"
+          bypass:
+            text: "有 <player_bypass> 名玩家跳过"
+            hover: "<yellow>原因：sendall.allow-bypass 已启用，并且玩家拥有权限 <gold>avm.sendall.bypass"
+      kick:
+        description: "<gray>踢出指定玩家，并可选择提供理由"
+        target: "<gray><executor> 将你踢出了服务器"
+      kickall:
+        description: "<gray>从指定服务器踢出所有玩家，并可选择提供理由"
+        executor:
+          text: "<dark_green>已将 <player_total> 名玩家已被踢出服务器，并且<bypass>"
+          bypass:
+            text: "有 <player_bypass> 名玩家跳过"
+            hover: "<yellow>原因：kickall.allow-bypass 已启用，并且玩家拥有权限 <gold>avm.kickall.bypass"
+      reload:
+        description: "<gray>放弃内存中的数据，然后从文件中重载配置、语言和白名单"
+        success: "<green>重载成功! <dark_gray>耗费: <elapsed> ms"
+        failed: "<red>重载失败! 请查看控制台日志"
+
+    avmwl:
+      add:
+        description: "<gray>通过用户名或 UUID 将玩家添加到白名单"
+        success: "<dark_green>已将 <player> 添加到 <server> 的白名单服务器列表中"
+        request:
+          not.found: "<light_purple>失败: 此玩家不存在"
+          failed: "<red>失败: 查询玩家时出错"
+        already.exists: "<gold>此玩家已在白名单中"
+        uuid.unsupported: "<light_purple>失败: 不支持在离线模式下通过 UUID 添加白名单"
+      remove:
+        description: "<gray>从白名单中移除玩家"
+        success:
+          full: "<dark_green>已将 <player> 从白名单中移除"
+          server: "<dark_green>已将 <player> 从 <server> 的白名单服务器列表中移除"
+        not.found: "<light_purple>此玩家不在白名单中"
+      clear:
+        description: "<gray>清空白名单"
+        need.confirm:
+          "1":
+            text: "<yellow><bold>警告: 此操作将清空白名单！"
+          "2":
+            text: "<gray>点击此消息或执行命令 <white><command> <gray>以确认操作!"
+            hover: "<gray>确认操作"
+        success: "<dark_green>白名单已清空!"
+        failed: "<red>无法清空白名单，请查看控制台日志"
+      list:
+        description: "<gray>查看白名单"
+        empty: "<gray>白名单中没有玩家"
+        header: "<gray>白名单中有 <player> 名玩家"
+      find:
+        description: "<gray>通过关键词在白名单内查找玩家"
+        empty: "<light_purple>暂未找到相关玩家"
+        header: "<gray>已找到相关玩家:"
+      status:
+        description: "<gray>查看白名单状态"
+        state: "<gray>白名单已<state>"
+        cache: "<gray>当前补全缓存: <white><current>/<total>"
+      on.description: "<gray>开启白名单"
+      off.description: "<gray>关闭白名单"

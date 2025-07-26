@@ -10,7 +10,6 @@ import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
 import work.msdnicrosoft.avm.util.ProxyServerUtil.TIMEOUT_PING_RESULT
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
-import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 import work.msdnicrosoft.avm.util.component.ComponentUtil.styleOnlyMiniMessage
 import work.msdnicrosoft.avm.util.string.replace
 import java.util.concurrent.TimeUnit
@@ -46,20 +45,20 @@ class ChatMessage(private val event: PlayerChatEvent, private val config: ChatBr
      * Deserialize the message by replacing placeholders with actual values.
      * @return The deserialized message with placeholders replaced.
      */
-    private fun String.deserialize() = miniMessage.deserialize(
+    private fun String.deserialize() = styleOnlyMiniMessage.deserialize(
         this,
-        Placeholder.parsed("player_name", playerUsername),
-        Placeholder.parsed("player_uuid", playerUuid),
-        Placeholder.parsed("player_ping", playerPing),
-        Placeholder.parsed("server_name", serverName),
-        Placeholder.parsed("server_nickname", serverNickname),
-        Placeholder.parsed("server_online_players", serverOnlinePlayers),
-        Placeholder.parsed("server_version", serverVersion),
-        Placeholder.parsed("player_message_sent_time", getDateTime()),
+        Placeholder.unparsed("player_name", playerUsername),
+        Placeholder.unparsed("player_uuid", playerUuid),
+        Placeholder.unparsed("player_ping", playerPing),
+        Placeholder.unparsed("server_name", serverName),
+        Placeholder.unparsed("server_nickname", serverNickname),
+        Placeholder.unparsed("server_online_players", serverOnlinePlayers),
+        Placeholder.unparsed("server_version", serverVersion),
+        Placeholder.unparsed("player_message_sent_time", getDateTime()),
         if (config.allowFormatCode) {
-            Placeholder.component("player_message", styleOnlyMiniMessage.deserialize(event.message))
-        } else {
             Placeholder.parsed("player_message", event.message)
+        } else {
+            Placeholder.unparsed("player_message", event.message)
         },
     )
 

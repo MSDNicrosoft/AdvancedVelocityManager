@@ -1,17 +1,17 @@
 package work.msdnicrosoft.avm.module.imports
 
-import taboolib.common.platform.ProxyCommandSender
+import com.velocitypowered.api.command.CommandSource
 import work.msdnicrosoft.avm.module.imports.importers.LlsManagerImporter
 import work.msdnicrosoft.avm.module.imports.importers.QuAnVelocityWhitelistImporter
 
 enum class PluginName {
     LLS_MANAGER {
-        override fun import(sender: ProxyCommandSender, defaultServer: String): Boolean =
-            LlsManagerImporter.import(sender, defaultServer)
+        override fun import(source: CommandSource, defaultServer: String): Boolean =
+            LlsManagerImporter.import(source, defaultServer)
     },
     QU_AN_VELOCITYWHITELIST {
-        override fun import(sender: ProxyCommandSender, defaultServer: String): Boolean =
-            QuAnVelocityWhitelistImporter.import(sender, defaultServer)
+        override fun import(source: CommandSource, defaultServer: String): Boolean =
+            QuAnVelocityWhitelistImporter.import(source, defaultServer)
     };
 
     companion object {
@@ -20,5 +20,5 @@ enum class PluginName {
         fun of(name: String): PluginName = valueOf(name.replace("-", "_").uppercase())
     }
 
-    abstract fun import(sender: ProxyCommandSender, defaultServer: String): Boolean
+    abstract fun import(source: CommandSource, defaultServer: String): Boolean
 }

@@ -1,18 +1,21 @@
 package work.msdnicrosoft.avm.util.command
 
-import taboolib.common.platform.ProxyCommandSender
-import taboolib.module.chat.ComponentText
-import taboolib.module.chat.Components
-import taboolib.module.lang.asLangText
+import com.velocitypowered.api.command.CommandSource
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.JoinConfiguration
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
+import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
+import work.msdnicrosoft.avm.util.component.tr
 import kotlin.math.ceil
 
 /**
  * Pagination helper for commands that need to display a list of items spread across multiple pages.
  *
- * @param sender The command sender.
+ * @param commandSource The command source.
  * @param command The command name for the pagination component.
  */
-class PageTurner(val sender: ProxyCommandSender, val command: String) {
+class PageTurner(val commandSource: CommandSource, val command: String) {
 
     /**
      * Builds a pagination component with navigation buttons and a page indicator.
@@ -21,27 +24,25 @@ class PageTurner(val sender: ProxyCommandSender, val command: String) {
      * @param maxPage The total number of pages.
      * @return A ComponentText representing the pagination component.
      */
-    fun build(currentPage: Int, maxPage: Int): ComponentText {
-        val previous = if (currentPage == 1) {
-            Components.text("§8[§7<-§8]")
-        } else {
-            Components.text("§8[§6<-§8]")
-                .hoverText(sender.asLangText("general-turn-to-previous-page"))
-                .clickRunCommand("$command ${currentPage - 1}")
-        }
-        val pageOf = Components.text("§b$currentPage§b/§b$maxPage")
-        val next = if (currentPage == maxPage) {
-            Components.text("§8[§7->§8]")
-        } else {
-            Components.text("§8[§6->§8]")
-                .hoverText(sender.asLangText("general-turn-to-next-page"))
-                .clickRunCommand("$command ${currentPage + 1}")
-        }
-        return previous
-            .append(" ")
-            .append(pageOf)
-            .append(" ")
-            .append(next)
+    fun build(currentPage: Int, maxPage: Int): Component {
+        return Component.join(
+            JoinConfiguration.spaces(),
+            if (currentPage == 1) {
+                navigationButton("<gray><-")
+            } else {
+                navigationButton("<gold><-")
+                    .hoverEvent(HoverEvent.showText(tr("avm.general.turn.to.previous")))
+                    .clickEvent(ClickEvent.runCommand("$command ${currentPage - 1}"))
+            },
+            miniMessage.deserialize("<aqua>$currentPage/$maxPage"),
+            if (currentPage == maxPage) {
+                navigationButton("<gray>->")
+            } else {
+                navigationButton("<gold>->")
+                    .hoverEvent(HoverEvent.showText(tr("avm.general.turn.to.next")))
+                    .clickEvent(ClickEvent.runCommand("$command ${currentPage + 1}"))
+            }
+        )
     }
 
     companion object {
@@ -57,5 +58,7 @@ class PageTurner(val sender: ProxyCommandSender, val command: String) {
          * @return The maximum number of pages.
          */
         fun getMaxPage(page: Int): Int = ceil(page.toFloat() / ITEMS_PER_PAGE.toFloat()).toInt()
+
+        private fun navigationButton(arrow: String) = miniMessage.deserialize("<dark_gray>[$arrow<dark_gray>]")
     }
 }

@@ -6,8 +6,10 @@ import taboolib.common.platform.Platform
 import taboolib.common.platform.PlatformSide
 import taboolib.common.platform.Plugin
 import taboolib.common.util.unsafeLazy
-import taboolib.module.lang.Language
 import taboolib.platform.VelocityPlugin
+import work.msdnicrosoft.avm.command.AVMCommand
+import work.msdnicrosoft.avm.command.WhitelistCommand
+import work.msdnicrosoft.avm.command.chatbridge.MsgCommand
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.CommandSessionManager
 import work.msdnicrosoft.avm.module.EventBroadcast
@@ -19,6 +21,7 @@ import work.msdnicrosoft.avm.module.reconnect.ReconnectHandler
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.patch.InstrumentationAccess
+import work.msdnicrosoft.avm.util.i18n.TranslateManager
 
 @PlatformSide(Platform.VELOCITY)
 object AdvancedVelocityManagerPlugin : Plugin() {
@@ -50,6 +53,11 @@ object AdvancedVelocityManagerPlugin : Plugin() {
         WorldInfoHandler.init()
         XaeroMapHandler.init()
         ReconnectHandler.init()
+
+        MsgCommand.init()
+        AVMCommand.init()
+        WhitelistCommand.init()
+
         Metrics.init()
     }
 
@@ -61,11 +69,11 @@ object AdvancedVelocityManagerPlugin : Plugin() {
         WorldInfoHandler.disable()
         ReconnectHandler.disable()
         CommandSessionManager.disable()
-        plugin.server.commandManager.run {
-            unregister("avm")
-            unregister("avmwl")
-            unregister("msg")
-        }
+        TranslateManager.disable()
+
+        MsgCommand.disable()
+        AVMCommand.disable()
+        WhitelistCommand.disable()
     }
 
     override fun onActive() {
@@ -95,10 +103,10 @@ object AdvancedVelocityManagerPlugin : Plugin() {
     private fun loadLanguage(reload: Boolean = false) {
         if (reload) {
             logger.info("Reloading language...")
-            Language.reload()
+            TranslateManager.reload()
         } else {
             logger.info("Loading language...")
+            TranslateManager.init()
         }
-        Language.default = ConfigManager.config.defaultLang
     }
 }

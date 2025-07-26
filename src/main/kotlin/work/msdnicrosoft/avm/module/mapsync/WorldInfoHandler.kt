@@ -11,14 +11,11 @@ import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import io.netty.buffer.ByteBufUtil
 import io.netty.buffer.Unpooled
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.netty.useThenApply
 import java.nio.charset.StandardCharsets
 
-@PlatformSide(Platform.VELOCITY)
 object WorldInfoHandler {
     private val WORLD_INFO_CHANNEL = MinecraftChannelIdentifier.create("worldinfo", "world_id")
 
