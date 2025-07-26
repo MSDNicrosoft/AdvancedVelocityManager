@@ -34,7 +34,7 @@ avm:
       server:
         hover:
           "1": "<dark_aqua>This is a server group, containing the following servers:"
-          "2": "<gold>▶ <yellow>Click to remove %server_name% <yellow>from the whitelist server list of %player_name%"
+          "2": "<gold>▶ <yellow>Click to remove <server_name> <yellow>from the whitelist server list of <player_name>"
       username:
         hover: "<gold>▶ <yellow>Click to remove this player from the whitelist"
       uuid:
