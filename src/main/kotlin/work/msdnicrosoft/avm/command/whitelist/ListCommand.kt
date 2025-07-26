@@ -1,52 +1,58 @@
 package work.msdnicrosoft.avm.command.whitelist
 
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
-import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.command.int
-import taboolib.common.platform.command.subCommand
-import taboolib.module.lang.sendLang
+import com.mojang.brigadier.Command
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.velocitypowered.api.command.CommandSource
+import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.command.WhitelistCommand.sendWhitelistPlayers
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.command.PageTurner
+import work.msdnicrosoft.avm.util.command.*
 
-@PlatformSide(Platform.VELOCITY)
 object ListCommand {
-    val command = subCommand {
-        dynamic("page") {
-            suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                (1..WhitelistManager.maxPage).map { it.toString() }
-            }
-            execute<ProxyCommandSender> { sender, context, _ ->
-                val page = context.int("page")
-                if (page < 1) {
-                    sender.sendLang("whitelist-page-must-larger-than-zero")
-                    return@execute
-                }
-                sender.listWhitelist(page)
-            }
-        }
-        execute<ProxyCommandSender> { sender, _, _ ->
-            sender.listWhitelist(1)
-        }
-    }
 
-    private fun ProxyCommandSender.listWhitelist(page: Int) {
+    val command: LiteralArgumentBuilder<CommandSource> = literal("list")
+        .requires { source -> source.hasPermission("avm.command.whitelist.list") }
+        .executes { context ->
+            context.source.listWhitelist(1)
+            Command.SINGLE_SUCCESS
+        }
+        .then(
+            intArgument("page")
+                .suggests { context, builder ->
+                    for (page in 1..WhitelistManager.maxPage) builder.suggest(page)
+                    builder.buildFuture()
+                }.executes { context ->
+                    val page = context.getInt("page")
+                    if (page < 1) {
+                        context.source.sendTranslatable("avm.whitelist.page.must.larger.than.zero")
+                        return@executes Command.SINGLE_SUCCESS
+                    }
+
+                    context.source.listWhitelist(page)
+
+                    Command.SINGLE_SUCCESS
+                }
+        )
+
+    private fun CommandSource.listWhitelist(page: Int) {
         if (WhitelistManager.isEmpty) {
-            sendLang("command-avmwl-list-empty")
+            sendTranslatable("avm.command.avmwl.list.empty")
             return
         }
         val maxPage = WhitelistManager.maxPage
         if (page > maxPage) {
-            sendLang("general-page-not-found")
+            sendTranslatable("avm.general.not.exist.page")
             return
         }
-        if (page == 1) sendLang("command-avmwl-list-header", WhitelistManager.size)
+        if (page == 1) {
+            sendTranslatable(
+                "avm.command.avmwl.list.header",
+                Argument.numeric("player", WhitelistManager.size)
+            )
+        }
 
         sendWhitelistPlayers(WhitelistManager.pageOf(page))
 
-        PageTurner(this, "/avmwl list")
-            .build(page, maxPage)
-            .sendTo(this)
+        sendMessage(PageTurner(this, "/avmwl list").build(page, maxPage))
     }
 }

@@ -1,4 +1,5 @@
-import io.izzel.taboolib.gradle.*
+import io.izzel.taboolib.gradle.Metrics
+import io.izzel.taboolib.gradle.Velocity
 import org.ajoberstar.grgit.Commit
 import org.ajoberstar.grgit.Grgit
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -13,6 +14,7 @@ plugins {
     alias(libs.plugins.taboolib)
 
     alias(libs.plugins.grgit)
+    alias(libs.plugins.yamlang)
 }
 
 base {
@@ -66,11 +68,6 @@ repositories {
             includeGroup("com.velocitypowered")
         }
     }
-    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-        content {
-            includeGroup("dev.vankka")
-        }
-    }
     maven("https://repo.opencollab.dev/main/") {
         content {
             includeGroupByRegex("org.geysermc.*")
@@ -95,16 +92,14 @@ taboolib {
         }
     }
     env {
-        install(CommandHelper, I18n)
         install(Velocity)
         install(Metrics)
     }
     version {
-        taboolib = "6.2.3-b217935"
+        taboolib = "6.2.3-ac49c9a"
         coroutines = null
     }
     relocate("kotlinx.serialization", "avm.kotlinx.serialization")
-    relocate("dev.vankka.enhancedlegacytext", "avm.dev.vankka.enhancedlegacytext")
     relocate("com.charleskorn.kaml", "avm.com.charleskorn.kaml")
     relocate("com.highcapable.kavaref", "avm.com.highcapable.kavaref")
 }
@@ -121,9 +116,13 @@ dependencies {
 
     taboo(libs.kaml)
     taboo(libs.kotlin.serialization.json) { isTransitive = false }
-    taboo(libs.enhanced.legacy.text) { isTransitive = false }
     taboo(libs.byte.buddy.agent)
     taboo(libs.bundles.kavaref)
+}
+
+yamlang {
+    targetSourceSets = listOf(sourceSets.main.get())
+    inputDir.set("lang")
 }
 
 detekt {

@@ -1,23 +1,19 @@
 package work.msdnicrosoft.avm.module.imports.importers
 
 import com.moandjiezana.toml.Toml
+import com.velocitypowered.api.command.CommandSource
 import kotlinx.serialization.Serializable
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
-import taboolib.common.platform.ProxyCommandSender
-import taboolib.module.lang.asLangText
-import taboolib.module.lang.sendError
-import taboolib.module.lang.sendLang
+import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
+import work.msdnicrosoft.avm.util.command.sendTranslatable
 import work.msdnicrosoft.avm.util.data.UUIDSerializer
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
-import java.util.UUID
+import java.util.*
 import kotlin.io.path.exists
 
-@PlatformSide(Platform.VELOCITY)
 object QuAnVelocityWhitelistImporter : Importer {
 
     override val pluginName = "(qu-an) VelocityWhitelist"
@@ -39,25 +35,31 @@ object QuAnVelocityWhitelistImporter : Importer {
         }
     }
 
-    override fun import(sender: ProxyCommandSender, defaultServer: String): Boolean {
+    override fun import(source: CommandSource, defaultServer: String): Boolean {
         val configSuccess = if (CONFIG_PATH.exists()) {
-            sender.importConfig()
+            source.importConfig()
         } else {
-            sender.sendLang("command-avm-import-config-does-not-exist", pluginName)
+            source.sendTranslatable(
+                "avm.command.avm.import.config.not.exist",
+                Argument.string("plugin_name", pluginName)
+            )
             false
         }
 
         val whitelistSuccess = if (WHITELIST_PATH.exists()) {
-            sender.importWhitelist(defaultServer)
+            source.importWhitelist(defaultServer)
         } else {
-            sender.sendLang("command-avm-import-whitelist-does-not-exist", pluginName)
+            source.sendTranslatable(
+                "avm.command.avm.import.whitelist.not.exist",
+                Argument.string("plugin_name", pluginName)
+            )
             false
         }
 
         return configSuccess && whitelistSuccess
     }
 
-    private fun ProxyCommandSender.importConfig(): Boolean =
+    private fun CommandSource.importConfig(): Boolean =
         try {
             val config = Toml().read(CONFIG_PATH.readTextWithBuffer())
             ConfigManager.config.run {
@@ -67,11 +69,15 @@ object QuAnVelocityWhitelistImporter : Importer {
             }
             ConfigManager.save()
         } catch (e: Exception) {
-            sendError("command-avm-import-config-failed", pluginName, e.message ?: asLangText("unknown-cause"))
+            sendTranslatable(
+                "avm.command.avm.import.config.failed",
+                Argument.string("plugin_name", pluginName),
+                Argument.string("reason", e.message.orEmpty())
+            )
             false
         }
 
-    private fun ProxyCommandSender.importWhitelist(defaultServer: String): Boolean =
+    private fun CommandSource.importWhitelist(defaultServer: String): Boolean =
         try {
             val whitelist = JSON.decodeFromString<List<Player>>(WHITELIST_PATH.readTextWithBuffer())
 
@@ -82,7 +88,11 @@ object QuAnVelocityWhitelistImporter : Importer {
             }
             true
         } catch (e: Exception) {
-            sendError("command-avm-import-whitelist-failed", pluginName, e.message ?: asLangText("unknown-cause"))
+            sendTranslatable(
+                "avm.command.avm.import.whitelist.failed",
+                Argument.string("plugin_name", pluginName),
+                Argument.string("reason", e.message.orEmpty())
+            )
             false
         }
 }

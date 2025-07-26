@@ -1,53 +1,63 @@
 package work.msdnicrosoft.avm.command.utility
 
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
-import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.command.subCommand
+import com.mojang.brigadier.Command
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.velocitypowered.api.command.CommandSource
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.minimessage.translation.Argument
 import taboolib.common.platform.function.submitAsync
-import taboolib.module.lang.asLangText
-import taboolib.module.lang.sendLang
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.ProxyServerUtil.getRegisteredServer
-import work.msdnicrosoft.avm.util.ProxyServerUtil.sendMessage
 import work.msdnicrosoft.avm.util.ProxyServerUtil.sendPlayer
+import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
+import work.msdnicrosoft.avm.util.component.tr
 import kotlin.jvm.optionals.getOrElse
 
-@PlatformSide(Platform.VELOCITY)
 object SendAllCommand {
 
-    val command = subCommand {
-        dynamic("server") {
-            suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                plugin.server.allServers.map { it.serverInfo.name }
-            }
-            dynamic("reason") {
-                execute<ProxyCommandSender> { sender, context, _ ->
-                    sender.sendAllPlayers(context["server"], context["reason"])
+    val command: LiteralArgumentBuilder<CommandSource> = literal("sendall")
+        .requires { source -> source.hasPermission("avm.command.sendall") }
+        .then(
+            wordArgument("server")
+                .suggests { context, builder ->
+                    plugin.server.allServers.map { it.serverInfo.name }.forEach(builder::suggest)
+                    builder.buildFuture()
                 }
-            }
-            execute<ProxyCommandSender> { sender, context, _ ->
-                val serverName = context["server"]
-                val reason = sender.asLangText(
-                    "command-send-target",
-                    sender.name,
-                    getServerNickname(serverName)
+                .executes { context ->
+                    val serverName = context.getString("server")
+                    context.source.sendAllPlayers(
+                        serverName,
+                        tr(
+                            "avm.command.avm.send.target",
+                            Argument.string("executor", context.source.name),
+                            Argument.string("server", getServerNickname(serverName))
+                        )
+                    )
+                    Command.SINGLE_SUCCESS
+                }.then(
+                    wordArgument("reason")
+                        .executes { context ->
+                            context.source.sendAllPlayers(
+                                context.getString("reason"),
+                                miniMessage.deserialize(context.getString("reason"))
+                            )
+                            Command.SINGLE_SUCCESS
+                        }
                 )
-                sender.sendAllPlayers(serverName, reason)
-            }
-        }
-    }
+        )
 
-    private fun ProxyCommandSender.sendAllPlayers(serverName: String, reason: String) {
+    private fun CommandSource.sendAllPlayers(serverName: String, reason: Component) {
         val server = getRegisteredServer(serverName).getOrElse {
-            sendLang("server-not-found", serverName)
+            sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
             return
         }
         val serverNickname = getServerNickname(serverName)
 
         if (server.playersConnected.isEmpty()) {
-            sendLang("general-empty-server")
+            sendTranslatable("avm.general.empty.server")
             return
         }
 
@@ -64,11 +74,18 @@ object SendAllCommand {
                 }
             }
 
-            sendLang(
-                "command-sendall-executor",
-                toSend.size,
-                serverNickname,
-                bypassed.size
+            sendTranslatable(
+                "avm.command.avm.sendall.executor.text",
+                Argument.numeric("player_total", toSend.size),
+                Argument.string("server", serverNickname),
+                Argument.component(
+                    "bypass",
+                    tr(
+                        "avm.command.avm.sendall.executor.bypass.text",
+                        Argument.numeric("player_bypass", bypassed.size)
+                    ).hoverEvent(HoverEvent.showText(tr("avm.command.avm.sendall.executor.bypass.hover")))
+                )
+
             )
         }
     }

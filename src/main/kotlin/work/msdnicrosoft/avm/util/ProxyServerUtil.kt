@@ -5,7 +5,7 @@ import com.velocitypowered.api.proxy.server.RegisteredServer
 import com.velocitypowered.api.proxy.server.ServerPing
 import net.kyori.adventure.text.Component
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
-import work.msdnicrosoft.avm.util.string.formated
+import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 import java.util.Optional
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
@@ -94,7 +94,7 @@ object ProxyServerUtil {
     @Suppress("NOTHING_TO_INLINE")
     inline fun kickPlayers(reason: String, players: Iterable<Player>) {
         players.forEach { player ->
-            player.disconnect(reason.formated())
+            player.disconnect(miniMessage.deserialize(reason))
         }
     }
 
@@ -110,6 +110,6 @@ object ProxyServerUtil {
 
     @Suppress("NOTHING_TO_INLINE")
     inline fun Player.sendMessage(message: String) {
-        sendMessage(message.formated())
+        sendMessage(miniMessage.deserialize(message))
     }
 }

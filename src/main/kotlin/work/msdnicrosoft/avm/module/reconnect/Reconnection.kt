@@ -10,7 +10,7 @@ import com.velocitypowered.proxy.protocol.packet.BossBarPacket
 import net.kyori.adventure.title.Title
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.packet.s2c.PlayerAbilitiesPacket
-import work.msdnicrosoft.avm.util.component.ComponentUtil.serializer
+import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 
@@ -21,8 +21,8 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
     private val scheduledExecutor = player.connection.eventLoop()
 
     private val connectingTitle = Title.title(
-        serializer.parse(config.message.connecting.title),
-        serializer.parse(config.message.connecting.subtitle),
+        miniMessage.deserialize(config.message.connecting.title),
+        miniMessage.deserialize(config.message.connecting.subtitle),
         Title.Times.times(
             Duration.ofMillis(0L),
             Duration.ofMillis(30_000L),
@@ -31,8 +31,8 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
     )
 
     private val waitingTitle = Title.title(
-        serializer.parse(config.message.waiting.title),
-        serializer.parse(config.message.waiting.subtitle),
+        miniMessage.deserialize(config.message.waiting.title),
+        miniMessage.deserialize(config.message.waiting.subtitle),
         Title.Times.times(
             Duration.ofMillis(0L),
             Duration.ofMillis(30_000L),

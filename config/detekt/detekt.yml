@@ -793,7 +793,7 @@ style:
     active: true
     ignoreLateinitVar: false
   WildcardImport:
-    active: true
+    active: false
     excludeImports:
       - 'java.util.*'
 
@@ -893,7 +893,7 @@ formatting:
     autoCorrect: true
     indentSize: 4
   MaximumLineLength:
-    active: true
+    active: false
     maxLineLength: 120
     ignoreBackTickedIdentifier: false
   ModifierListSpacing:
@@ -960,7 +960,7 @@ formatting:
     active: true
     autoCorrect: true
   NoWildcardImports:
-    active: true
+    active: false
     packagesToUseImportOnDemandProperty: 'java.util.*,kotlinx.android.synthetic.**'
   NullableTypeSpacing:
     active: true

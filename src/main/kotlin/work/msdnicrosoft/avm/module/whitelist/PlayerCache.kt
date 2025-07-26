@@ -1,7 +1,5 @@
 package work.msdnicrosoft.avm.module.whitelist
 
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
 import work.msdnicrosoft.avm.config.ConfigManager
 
 /**
@@ -10,7 +8,6 @@ import work.msdnicrosoft.avm.config.ConfigManager
  * player information. It interacts with the WhitelistManager to check if players are whitelisted and
  * manages a cache of players based on the server configuration.
  */
-@PlatformSide(Platform.VELOCITY)
 object PlayerCache {
 
     private inline val config
