@@ -8,12 +8,6 @@ avm:
     turn.to:
       previous: "<yellow>Click to turn to previous page"
       next: "<yellow>Click to turn to next page"
-    unknown:
-      cause: "Unknown cause"
-      command: "<red>Unknown or incomplete command, see below for error"
-      argument: "<red>Incorrect argument for command"
-      sender: "Incorrect sender for command"
-      here: "HERE"
     not.found:
      page: "<gray>This page does not exist"
      server: "<red>Server <white><server> <red>does not exist！"

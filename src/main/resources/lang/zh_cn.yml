@@ -6,14 +6,8 @@ avm:
     uuid: "UUID"
     empty.server: "<gray>此服务器中没有玩家"
     turn.to:
-        previous: "<yellow>点击转到上一页"
-        next: "<yellow>点击转到下一页"
-    unknown:
-      cause: "未知原因"
-      command: "<red>未知或不完整的命令，请查看错误信息"
-      argument: "<red>命令参数不正确"
-      sender: "命令执行者不正确"
-      here: "此处"
+      previous: "<yellow>点击转到上一页"
+      next: "<yellow>点击转到下一页"
     not:
       exist:
         page: "<gray>此页面不存在"
