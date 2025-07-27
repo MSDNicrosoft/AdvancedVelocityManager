@@ -6,12 +6,12 @@ import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.translation.Argument
-import taboolib.common.platform.function.submitAsync
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
-import work.msdnicrosoft.avm.util.ProxyServerUtil.getRegisteredServer
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.util.command.*
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getRegisteredServer
+import work.msdnicrosoft.avm.util.server.task
 import kotlin.jvm.optionals.getOrElse
 
 object KickAllCommand {
@@ -19,7 +19,7 @@ object KickAllCommand {
     val command: LiteralArgumentBuilder<CommandSource> = literal("kick")
         .requires { source -> source.hasPermission("avm.command.kick") }
         .executes { context ->
-            plugin.server.allPlayers.filter { !it.hasPermission("avm.kickall.bypass") }
+            server.allPlayers.filter { !it.hasPermission("avm.kickall.bypass") }
                 .forEach {
                     it.disconnect(
                         tr(
@@ -33,7 +33,7 @@ object KickAllCommand {
         .then(
             wordArgument("server")
                 .suggests { context, builder ->
-                    plugin.server.allServers.map { it.serverInfo.name }.forEach(builder::suggest)
+                    server.allServers.forEach { builder.suggest(it.serverInfo.name) }
                     builder.buildFuture()
                 }
                 .executes { context ->
@@ -71,7 +71,7 @@ object KickAllCommand {
 
         val (bypassed, toKick) = server.playersConnected.partition { it.hasPermission("avm.kickall.bypass") }
 
-        submitAsync(now = true) {
+        task {
             toKick.forEach { player ->
                 player.disconnect(reason)
             }

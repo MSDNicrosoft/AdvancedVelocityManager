@@ -3,14 +3,16 @@ package work.msdnicrosoft.avm.util.i18n
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslator
 import net.kyori.adventure.translation.GlobalTranslator
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
+import java.io.FileOutputStream
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.jar.JarFile
+import kotlin.io.path.div
 import kotlin.io.path.extension
 import kotlin.io.path.isRegularFile
-import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.nameWithoutExtension
 
 object TranslateManager : MiniMessageTranslator() {
@@ -18,13 +20,15 @@ object TranslateManager : MiniMessageTranslator() {
 
     private val globalTranslator = GlobalTranslator.translator()
 
-    private val languageFilePath = plugin.configDirectory.resolve("lang")
+    private val languageFilePath = dataDirectory / "lang"
 
     private val translations: MutableMap<Locale, ConcurrentHashMap<String, String>> = mutableMapOf()
 
     private val defaultLocale = Locale.forLanguageTag("en_US")
 
     fun init() {
+        languageFilePath.toFile().mkdirs()
+
         registerTranslations()
         globalTranslator.addSource(this)
     }
@@ -38,24 +42,45 @@ object TranslateManager : MiniMessageTranslator() {
         registerTranslations()
     }
 
+    @Suppress("NestedBlockDepth")
+    private fun extractTranslations() {
+        val jarUrl = this::class.java.protectionDomain.codeSource?.location ?: return
+        JarFile(jarUrl.path).use { jarFile ->
+            jarFile.entries().asSequence()
+                .filter { it.name.startsWith("lang/") && !it.isDirectory }
+                .forEach { entry ->
+                    val outPath = languageFilePath / entry.name.removePrefix("lang/")
+                    outPath.toFile().parentFile.mkdirs()
+                    jarFile.getInputStream(entry).use { input ->
+                        FileOutputStream(outPath.toFile()).use { output ->
+                            input.copyTo(output)
+                        }
+                    }
+                }
+        }
+    }
+
+    private fun getLanguageFiles() =
+        languageFilePath.asSequence().filter { it.extension.equals("json", ignoreCase = true) && it.isRegularFile() }
+
     private fun registerTranslations() {
-        languageFilePath.listDirectoryEntries()
-            .asSequence()
-            .filter { it.extension.equals("json", ignoreCase = true) && it.isRegularFile() }
-            .forEach { languageFile ->
-                val locale = Locale.forLanguageTag(languageFile.nameWithoutExtension)
-                val currentTranslations = JSON.decodeFromString<Map<String, String>>(languageFile.readTextWithBuffer())
-                translations.computeIfAbsent(locale) { ConcurrentHashMap() }.putAll(currentTranslations)
-            }
+        if (getLanguageFiles().toList().isEmpty()) {
+            extractTranslations()
+        }
+
+        getLanguageFiles().forEach { languageFile ->
+            val locale = Locale.forLanguageTag(languageFile.nameWithoutExtension)
+            val currentTranslations = JSON.decodeFromString<Map<String, String>>(languageFile.readTextWithBuffer())
+            translations.computeIfAbsent(locale) { ConcurrentHashMap() }.putAll(currentTranslations)
+        }
     }
 
     override fun name(): Key = name
 
-    @Suppress("UnsafeCallOnNullableType")
-    override fun getMiniMessageString(key: String, locale: Locale): String? =
-        (
-            translations[locale]
-                ?: translations[Locale.forLanguageTag(locale.language)]
-                ?: translations[defaultLocale]
-            )!![key]
+    override fun getMiniMessageString(key: String, locale: Locale): String? {
+        val currentLocale = translations[locale]
+            ?: translations[Locale.forLanguageTag(locale.language)]
+            ?: translations[defaultLocale]
+        return currentLocale?.get(key)
+    }
 }

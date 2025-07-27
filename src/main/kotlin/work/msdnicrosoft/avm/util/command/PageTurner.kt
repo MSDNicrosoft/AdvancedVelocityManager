@@ -1,6 +1,5 @@
 package work.msdnicrosoft.avm.util.command
 
-import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.event.ClickEvent
@@ -12,10 +11,9 @@ import kotlin.math.ceil
 /**
  * Pagination helper for commands that need to display a list of items spread across multiple pages.
  *
- * @param commandSource The command source.
  * @param command The command name for the pagination component.
  */
-class PageTurner(val commandSource: CommandSource, val command: String) {
+class PageTurner(val command: String) {
 
     /**
      * Builds a pagination component with navigation buttons and a page indicator.

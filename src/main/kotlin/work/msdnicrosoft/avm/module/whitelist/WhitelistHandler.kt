@@ -16,7 +16,7 @@ import com.velocitypowered.api.proxy.InboundConnection
 import com.velocitypowered.proxy.connection.client.InitialInboundConnection
 import io.netty.util.AttributeKey
 import org.geysermc.floodgate.api.player.FloodgatePlayer
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 

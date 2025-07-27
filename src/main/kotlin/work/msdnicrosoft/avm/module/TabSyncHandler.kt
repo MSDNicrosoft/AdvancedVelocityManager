@@ -7,11 +7,13 @@ import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.player.TabListEntry
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import taboolib.common.platform.function.submitAsync
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil
 import work.msdnicrosoft.avm.util.component.ComponentUtil
+import work.msdnicrosoft.avm.util.server.task
 
 object TabSyncHandler {
 
@@ -19,19 +21,19 @@ object TabSyncHandler {
         get() = ConfigManager.config.tabSync
 
     fun init() {
-        plugin.server.eventManager.register(plugin, this)
+        eventManager.register(plugin, this)
     }
 
     fun disable() {
-        plugin.server.eventManager.unregisterListener(plugin, this)
+        eventManager.unregisterListener(plugin, this)
     }
 
     @Subscribe
     fun onPlayerDisconnect(event: DisconnectEvent) {
         if (!config.enabled) return
 
-        submitAsync(delay = 20) {
-            plugin.server.allPlayers.forEach { player ->
+        task {
+            server.allPlayers.forEach { player ->
                 player.tabList.removeEntry(event.player.uniqueId)
             }
         }
@@ -41,9 +43,9 @@ object TabSyncHandler {
     fun onPlayerConnected(event: ServerConnectedEvent) {
         if (!config.enabled) return
 
-        submitAsync(delay = 20) {
+        task {
             val player = event.player
-            plugin.server.allPlayers.forEach { entryPlayer ->
+            server.allPlayers.forEach { entryPlayer ->
                 if (entryPlayer != player) {
                     this@TabSyncHandler.update(player, entryPlayer)
                 }

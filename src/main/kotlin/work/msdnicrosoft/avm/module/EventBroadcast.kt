@@ -6,11 +6,12 @@ import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.ServerConnectedEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import taboolib.common.platform.function.submitAsync
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
+import work.msdnicrosoft.avm.util.server.task
 
 object EventBroadcast {
 
@@ -18,11 +19,11 @@ object EventBroadcast {
         get() = ConfigManager.config.broadcast
 
     fun init() {
-        plugin.server.eventManager.register(plugin, this)
+        eventManager.register(plugin, this)
     }
 
     fun disable() {
-        plugin.server.eventManager.unregisterListener(plugin, this)
+        eventManager.unregisterListener(plugin, this)
     }
 
     @Subscribe(order = PostOrder.FIRST)
@@ -94,7 +95,7 @@ object EventBroadcast {
         )
     }
 
-    private fun sendMessage(message: Component) = submitAsync {
+    private fun sendMessage(message: Component) = task {
         plugin.server.allPlayers
             .parallelStream()
             .forEach { player -> player.sendMessage(message) }

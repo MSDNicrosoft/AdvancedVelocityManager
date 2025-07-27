@@ -4,14 +4,14 @@ import com.mojang.brigadier.Command
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.minimessage.translation.Argument
-import taboolib.common.platform.function.submitAsync
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.command.literal
 import work.msdnicrosoft.avm.util.command.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
+import work.msdnicrosoft.avm.util.server.task
 
 object OnCommand {
 
@@ -28,13 +28,13 @@ object OnCommand {
                 Argument.component("state", tr("avm.general.on"))
             )
 
-            submitAsync(now = true) {
+            task {
                 kickPlayers(
                     config.message,
                     if (WhitelistManager.isEmpty) {
-                        plugin.server.allPlayers
+                        server.allPlayers
                     } else {
-                        plugin.server.allPlayers.filter { it.uniqueId !in WhitelistManager.uuids }
+                        server.allPlayers.filter { it.uniqueId !in WhitelistManager.uuids }
                     }
                 )
             }

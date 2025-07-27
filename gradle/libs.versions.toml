@@ -3,9 +3,9 @@
 # Gradle Plugins
 kotlin = "2.2.0"
 detekt = "1.23.8"
-taboolib = "2.0.25"
 grgit = "5.3.2"
 yamlang = "1.4.1"
+shadow = "8.3.8"
 
 # CompileOnly Dependencies
 velocity = "3.4.0-SNAPSHOT"
@@ -26,9 +26,9 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 detekt-compiler = { id = "io.github.detekt.gradle.compiler-plugin", version.ref = "detekt" }
-taboolib = { id = "io.izzel.taboolib", version.ref = "taboolib" }
 grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
 yamlang = { id = "me.fallenbreath.yamlang", version.ref = "yamlang" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 
 [libraries]
 

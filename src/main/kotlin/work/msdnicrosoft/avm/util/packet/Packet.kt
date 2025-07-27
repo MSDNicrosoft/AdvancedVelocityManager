@@ -12,12 +12,7 @@ import com.velocitypowered.api.network.ProtocolVersion
 import com.velocitypowered.proxy.protocol.MinecraftPacket
 import com.velocitypowered.proxy.protocol.ProtocolUtils.Direction
 import com.velocitypowered.proxy.protocol.StateRegistry
-import com.velocitypowered.proxy.protocol.StateRegistry.HANDSHAKE
-import com.velocitypowered.proxy.protocol.StateRegistry.LOGIN
-import com.velocitypowered.proxy.protocol.StateRegistry.PLAY
-import com.velocitypowered.proxy.protocol.StateRegistry.PacketMapping
-import com.velocitypowered.proxy.protocol.StateRegistry.PacketRegistry
-import com.velocitypowered.proxy.protocol.StateRegistry.STATUS
+import com.velocitypowered.proxy.protocol.StateRegistry.*
 import io.netty.util.collection.IntObjectMap
 import it.unimi.dsi.fastutil.objects.Object2IntMap
 import work.msdnicrosoft.avm.util.packet.Packet.Companion.mapping

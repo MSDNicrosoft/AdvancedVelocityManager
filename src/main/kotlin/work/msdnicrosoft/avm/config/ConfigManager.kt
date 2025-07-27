@@ -2,8 +2,8 @@ package work.msdnicrosoft.avm.config
 
 import com.charleskorn.kaml.YamlException
 import kotlinx.serialization.SerializationException
-import taboolib.common.platform.function.getDataFolder
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
 import work.msdnicrosoft.avm.util.file.FileUtil.YAML
 import work.msdnicrosoft.avm.util.file.decodeFromString
@@ -12,10 +12,11 @@ import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import work.msdnicrosoft.avm.util.file.writeTextWithBuffer
 import work.msdnicrosoft.avm.util.string.isValidUrl
 import java.io.IOException
+import kotlin.io.path.div
 
 object ConfigManager {
 
-    private val file by lazy { getDataFolder().resolve("config.yml") }
+    private val file = (dataDirectory / "config.yml").toFile()
 
     val DEFAULT_CONFIG by lazy { AVMConfig() }
 

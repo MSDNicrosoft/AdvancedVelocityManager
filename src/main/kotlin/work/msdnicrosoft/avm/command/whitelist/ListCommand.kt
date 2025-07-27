@@ -53,6 +53,6 @@ object ListCommand {
 
         sendWhitelistPlayers(WhitelistManager.pageOf(page))
 
-        sendMessage(PageTurner(this, "/avmwl list").build(page, maxPage))
+        sendMessage(PageTurner("/avmwl list").build(page, maxPage))
     }
 }

@@ -11,7 +11,6 @@ import work.msdnicrosoft.avm.util.command.isConsole
 import work.msdnicrosoft.avm.util.command.literal
 import work.msdnicrosoft.avm.util.command.register
 import work.msdnicrosoft.avm.util.command.unregister
-import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 
 object WhitelistCommand {
 
@@ -52,7 +51,7 @@ object WhitelistCommand {
                         "<reset>$it"
                     }
                 }
-                sendMessage(miniMessage.deserialize("<gray>${player.name} <dark_gray>:<reset> $servers"))
+                sendRichMessage("<gray>${player.name} <dark_gray>:<reset> $servers")
             }
         } else {
             players.forEach { player ->

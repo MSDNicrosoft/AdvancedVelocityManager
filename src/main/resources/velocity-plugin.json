@@ -1,0 +1,11 @@
+{
+  "id": "advancedvelocitymanager",
+  "name": "AdvancedVelocityManager",
+  "main": "work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin",
+  "version": "${version}",
+  "description": "AdvancedVelocityManager is a modern and advanced Velocity plugin",
+  "url": "https://github.com/MSDNicrosoft/AdvancedVelocityManager",
+  "authors": [
+    "MSDNicrosoft"
+  ]
+}

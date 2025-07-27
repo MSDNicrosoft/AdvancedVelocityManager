@@ -34,7 +34,7 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.InsnNode
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 import java.lang.instrument.ClassFileTransformer
 import java.security.ProtectionDomain
 import kotlin.io.path.createDirectories

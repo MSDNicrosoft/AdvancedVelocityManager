@@ -1,28 +1,38 @@
 package work.msdnicrosoft.avm.module
 
-import taboolib.common.LifeCycle
-import taboolib.common.io.newFile
-import taboolib.common.platform.Awake
-import taboolib.common.platform.Schedule
-import taboolib.common.platform.function.getDataFolder
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
+import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
+import com.velocitypowered.api.scheduler.ScheduledTask
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.util.DateTimeUtil
-import java.io.File
+import work.msdnicrosoft.avm.util.server.task
+import kotlin.io.path.div
 
 object Logging {
-    private val LOG_DIR by lazy { File(getDataFolder(), "logs") }
+    private val LOG_DIR = dataDirectory / "logs"
 
     private val messages = mutableListOf<String>()
 
-    @Suppress("unused")
-    @Schedule(delay = 15 * 20L, period = 60 * 20L, async = true)
-    @Awake(LifeCycle.DISABLE)
+    private var writeTask: ScheduledTask? = null
+
+    fun init() {
+        eventManager.register(plugin, this)
+        writeTask = task(repeatInMillis = 5 * 60 * 1000L, runnable = ::write)
+    }
+
+    @Suppress("UnusedParameter")
+    @Subscribe
+    fun onProxyShutdown(event: ProxyShutdownEvent) {
+        write()
+    }
+
     private fun write() {
-        val file = newFile(
-            LOG_DIR,
-            "${DateTimeUtil.getDateTime("yyyy-MM-dd")}.log",
-            create = true
-        )
+        if (messages.isEmpty()) return
+
+        val file = (LOG_DIR / "${DateTimeUtil.getDateTime("yyyy-MM-dd")}.log").toFile()
 
         try {
             file.bufferedWriter().use { writer ->

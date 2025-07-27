@@ -5,7 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.translation.Argument
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.CommandSessionManager
 import work.msdnicrosoft.avm.module.imports.PluginName
@@ -29,8 +29,8 @@ object ImportCommand {
                 }.then(
                     wordArgument("Default Server")
                         .suggests { context, builder ->
-                            (config.serverGroups.keys + plugin.server.allServers.map { it.serverInfo.name })
-                                .forEach(builder::suggest)
+                            config.serverGroups.keys.forEach(builder::suggest)
+                            server.allServers.forEach { builder.suggest(it.serverInfo.name) }
                             builder.buildFuture()
                         }.executes { context ->
                             val source = context.source

@@ -1,9 +1,9 @@
 package work.msdnicrosoft.avm.module
 
 import com.google.common.io.BaseEncoding
-import taboolib.common.platform.function.submitAsync
-import taboolib.common.platform.service.PlatformExecutor
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
+import com.velocitypowered.api.scheduler.ScheduledTask
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
+import work.msdnicrosoft.avm.util.server.task
 import java.security.MessageDigest
 import java.util.concurrent.ConcurrentHashMap
 
@@ -31,12 +31,16 @@ object CommandSessionManager {
         fun isExpired(): Boolean = System.currentTimeMillis() > expirationTime
     }
 
+    private val sha256 = MessageDigest.getInstance("SHA-256")
+
+    private val base32 = BaseEncoding.base32().omitPadding()
+
     private val sessions = ConcurrentHashMap<String, Action>()
 
     /**
      * The task responsible for removing expired command sessions.
      */
-    private lateinit var removalTask: PlatformExecutor.PlatformTask
+    private lateinit var removalTask: ScheduledTask
 
     /**
      * Initializes the command session manager.
@@ -44,7 +48,7 @@ object CommandSessionManager {
      * This function starts a task that removes expired command sessions every 20 minutes.
      */
     fun init() {
-        removalTask = submitAsync(period = 20 * 60L) {
+        removalTask = task(repeatInMillis = 20 * 60 * 1000L) {
             sessions.entries.removeIf { it.value.isExpired() }
         }
     }
@@ -105,8 +109,7 @@ object CommandSessionManager {
      * @return The generated session ID.
      */
     fun generateSessionId(name: String, time: Long, command: String): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-            .digest("$name$time$command".toByteArray())
-        return BaseEncoding.base32().omitPadding().encode(digest)
+        val digest = sha256.digest("$name$time$command".toByteArray())
+        return base32.encode(digest)
     }
 }

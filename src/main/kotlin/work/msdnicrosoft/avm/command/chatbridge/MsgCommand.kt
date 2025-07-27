@@ -8,15 +8,15 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.translation.Argument
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
-import work.msdnicrosoft.avm.util.ProxyServerUtil.getPlayer
 import work.msdnicrosoft.avm.util.command.*
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.styleOnlyMiniMessage
 import work.msdnicrosoft.avm.util.component.Format
+import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getPlayer
 import kotlin.jvm.optionals.getOrElse
 
 object MsgCommand {
@@ -37,20 +37,15 @@ object MsgCommand {
     val command: LiteralCommandNode<CommandSource> = literal("msg").then(
         wordArgument("targets")
             .suggests { context, builder ->
-                val source = context.source
-
-                val suggestions = if (config.takeOverPrivateChat || source.isConsole) {
-                    plugin.server.allPlayers.map { it.username }
+                if (config.takeOverPrivateChat || context.source.isConsole) {
+                    server.allPlayers.map { it.username }
                 } else {
-                    source.toPlayer().currentServer.get().server.playersConnected.map { it.username }
-                }
-                suggestions.forEach(builder::suggest)
+                    context.source.toPlayer().currentServer.get().server.playersConnected.map { it.username }
+                }.forEach(builder::suggest)
                 builder.buildFuture()
-            }.then(
+            }
+            .then(
                 wordArgument("message")
-                    .suggests { context, builder ->
-                        builder.buildFuture()
-                    }
                     .executes { context ->
                         val source = context.source
 

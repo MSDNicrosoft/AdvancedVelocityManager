@@ -6,16 +6,16 @@ import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.translation.Argument
-import taboolib.common.platform.function.submitAsync
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.CommandSessionManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.command.literal
 import work.msdnicrosoft.avm.util.command.name
 import work.msdnicrosoft.avm.util.command.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
+import work.msdnicrosoft.avm.util.server.task
 
 object ClearCommand {
 
@@ -39,9 +39,7 @@ object ClearCommand {
                     context.source.sendTranslatable("avm.command.avmwl.clear.failed")
                 }
                 if (config.enabled) {
-                    submitAsync(now = true) {
-                        kickPlayers(config.message, plugin.server.allPlayers)
-                    }
+                    task { kickPlayers(config.message, server.allPlayers) }
                 }
             }
             context.source.sendTranslatable("avm.command.avmwl.clear.need.confirm.1.text")

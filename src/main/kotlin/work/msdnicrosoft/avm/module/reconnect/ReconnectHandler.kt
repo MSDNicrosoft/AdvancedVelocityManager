@@ -9,7 +9,8 @@ import com.velocitypowered.proxy.protocol.StateRegistry
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.flattener.ComponentFlattener
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.packet.s2c.PlayerAbilitiesPacket
 import work.msdnicrosoft.avm.util.packet.Packet
@@ -56,11 +57,11 @@ object ReconnectHandler {
             .packetSupplier(::PlayerAbilitiesPacket)
             .mappings(MAPPINGS)
             .register()
-        plugin.server.eventManager.register(plugin, this)
+        eventManager.register(plugin, this)
     }
 
     fun disable() {
-        plugin.server.eventManager.unregisterListener(plugin, this)
+        eventManager.unregisterListener(plugin, this)
     }
 
     @Subscribe

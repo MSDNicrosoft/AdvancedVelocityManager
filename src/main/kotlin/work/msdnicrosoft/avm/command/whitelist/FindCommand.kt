@@ -20,10 +20,12 @@ object FindCommand {
                         addAll(PlayerCache.readOnly)
                     }.forEach(builder::suggest)
                     builder.buildFuture()
-                }.executes { context ->
+                }
+                .executes { context ->
                     context.source.listFind(1, context.getString("keyword"))
                     Command.SINGLE_SUCCESS
-                }.then(
+                }
+                .then(
                     intArgument("page")
                         .executes { context ->
                             val page = context.getInt("page")
@@ -62,6 +64,6 @@ object FindCommand {
         if (page == 1) sendTranslatable("avm.command.avmwl.find.header")
 
         sendWhitelistPlayers(result)
-        sendMessage(PageTurner(this, "/avmwl find $keyword").build(page, maxPage))
+        sendMessage(PageTurner("/avmwl find $keyword").build(page, maxPage))
     }
 }

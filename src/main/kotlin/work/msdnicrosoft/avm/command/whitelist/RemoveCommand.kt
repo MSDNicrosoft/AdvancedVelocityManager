@@ -4,17 +4,16 @@ import com.mojang.brigadier.Command
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.minimessage.translation.Argument
-import taboolib.common.platform.function.submitAsync
-import taboolib.common.util.presentRun
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
-import work.msdnicrosoft.avm.util.ProxyServerUtil.getPlayer
-import work.msdnicrosoft.avm.util.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.command.getString
 import work.msdnicrosoft.avm.util.command.literal
 import work.msdnicrosoft.avm.util.command.sendTranslatable
 import work.msdnicrosoft.avm.util.command.wordArgument
+import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getPlayer
+import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
+import work.msdnicrosoft.avm.util.server.task
 import work.msdnicrosoft.avm.util.string.isUuid
 import work.msdnicrosoft.avm.util.string.toUuid
 
@@ -30,10 +29,12 @@ object RemoveCommand {
                 .suggests { context, builder ->
                     WhitelistManager.usernames.forEach(builder::suggest)
                     builder.buildFuture()
-                }.executes { context ->
+                }
+                .executes { context ->
                     context.source.removePlayer(context.getString("player"))
                     Command.SINGLE_SUCCESS
-                }.then(
+                }
+                .then(
                     wordArgument("server")
                         .suggests { context, builder ->
                             val player = context.getString("player")
@@ -44,7 +45,8 @@ object RemoveCommand {
                             }?.serverList
                             serverList?.forEach(builder::suggest)
                             builder.buildFuture()
-                        }.executes { context ->
+                        }
+                        .executes { context ->
                             val serverName = context.getString("server")
                             if (!isValidServer(serverName)) {
                                 context.source.sendTranslatable(
@@ -95,15 +97,15 @@ object RemoveCommand {
         }
 
         if (config.enabled) {
-            submitAsync(now = true) {
+            task {
                 val player = if (isUuid) {
                     getPlayer(playerName.toUuid())
                 } else {
                     getPlayer(playerName)
                 }
-                player.presentRun {
-                    if (!WhitelistManager.isInServerWhitelist(uniqueId, currentServer.get().serverInfo.name)) {
-                        kickPlayers(config.message, this)
+                player.ifPresent {
+                    if (!WhitelistManager.isInServerWhitelist(it.uniqueId, it.currentServer.get().serverInfo.name)) {
+                        kickPlayers(config.message, it)
                     }
                 }
             }

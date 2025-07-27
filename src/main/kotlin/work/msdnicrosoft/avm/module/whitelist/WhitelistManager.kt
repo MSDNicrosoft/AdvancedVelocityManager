@@ -3,10 +3,11 @@ package work.msdnicrosoft.avm.module.whitelist
 import com.velocitypowered.api.util.UuidUtils
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
-import taboolib.common.platform.function.getDataFolder
-import taboolib.common.platform.function.submit
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.HttpUtil
 import work.msdnicrosoft.avm.util.command.PageTurner
@@ -14,6 +15,7 @@ import work.msdnicrosoft.avm.util.data.UUIDSerializer
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import work.msdnicrosoft.avm.util.file.writeTextWithBuffer
+import work.msdnicrosoft.avm.util.server.task
 import work.msdnicrosoft.avm.util.string.toUuid
 import java.io.IOException
 import java.net.URI
@@ -21,6 +23,7 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.util.UUID
+import kotlin.io.path.div
 
 @Suppress("TooManyFunctions")
 object WhitelistManager {
@@ -37,7 +40,7 @@ object WhitelistManager {
 
     private val httpClient = HttpClient.newHttpClient()
 
-    private val file by lazy { getDataFolder().resolve("whitelist.json") }
+    private val file = (dataDirectory / "whitelist.json").toFile()
 
     enum class AddResult {
         SUCCESS,
@@ -98,7 +101,7 @@ object WhitelistManager {
         get() = PageTurner.getMaxPage(whitelist.size)
 
     inline val serverIsOnlineMode: Boolean
-        get() = plugin.server.configuration.isOnlineMode
+        get() = server.configuration.isOnlineMode
 
     private inline fun <T> withLock(block: () -> T): T = synchronized(lock) { block() }
 
@@ -110,16 +113,16 @@ object WhitelistManager {
     fun init(reload: Boolean = false) {
         load(reload)
         updateCache()
-        plugin.server.eventManager.register(plugin, WhitelistHandler)
+        eventManager.register(plugin, WhitelistHandler)
     }
 
     fun disable(): Boolean {
-        plugin.server.eventManager.unregisterListener(plugin, WhitelistHandler)
+        eventManager.unregisterListener(plugin, WhitelistHandler)
         return save()
     }
 
     fun reload() {
-        plugin.server.eventManager.unregisterListener(plugin, WhitelistHandler)
+        eventManager.unregisterListener(plugin, WhitelistHandler)
         init(reload = true)
     }
 
@@ -454,10 +457,10 @@ object WhitelistManager {
             }.get()
     }
 
-    fun updatePlayer(username: String, uuid: UUID) = submit(now = true) {
+    fun updatePlayer(username: String, uuid: UUID) = task {
         withLock {
             val player = whitelist.find { it.uuid == uuid }
-            if (player == null) return@submit
+            if (player == null) return@task
             player.name = username
         }
         save()

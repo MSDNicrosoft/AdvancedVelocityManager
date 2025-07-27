@@ -7,7 +7,7 @@ import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 
 object ComponentUtil {
 

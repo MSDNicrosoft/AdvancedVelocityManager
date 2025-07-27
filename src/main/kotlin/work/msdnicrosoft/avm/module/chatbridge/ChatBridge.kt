@@ -5,8 +5,7 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.command.CommandExecuteEvent
 import com.velocitypowered.api.event.player.PlayerChatEvent
 import net.kyori.adventure.text.Component
-import taboolib.common5.util.startsWithAny
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.command.chatbridge.MsgCommand
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.Logging
@@ -102,7 +101,12 @@ object ChatBridge {
      */
     @Subscribe
     fun onCommandExecute(event: CommandExecuteEvent) {
-        val isPrivateChat = MsgCommand.aliases.any { event.command.split(" ")[0].startsWithAny(event.command) }
+        val isPrivateChat = MsgCommand.aliases.any {
+            event.command
+                .split(" ")[0]
+                .replace("/", "")
+                .startsWith(event.command)
+        }
 
         if (!isPrivateChat) return
 

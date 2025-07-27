@@ -1,11 +1,11 @@
-package work.msdnicrosoft.avm.util
+package work.msdnicrosoft.avm.util.server
 
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import com.velocitypowered.api.proxy.server.ServerPing
 import net.kyori.adventure.text.Component
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
-import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin
+import work.msdnicrosoft.avm.util.component.ComponentUtil
 import java.util.Optional
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
@@ -27,7 +27,11 @@ object ProxyServerUtil {
      * @return An optional containing the server if found, otherwise an empty optional.
      */
     @Suppress("NOTHING_TO_INLINE")
-    inline fun getRegisteredServer(name: String): Optional<RegisteredServer> = plugin.server.getServer(name)
+    inline fun getRegisteredServer(
+        name: String
+    ): Optional<RegisteredServer> = AdvancedVelocityManagerPlugin.Companion.server.getServer(
+        name
+    )
 
     /**
      * Gets a player by its username.
@@ -36,7 +40,9 @@ object ProxyServerUtil {
      * @return An optional containing the player if found, otherwise an empty optional.
      */
     @Suppress("NOTHING_TO_INLINE")
-    inline fun getPlayer(name: String): Optional<Player> = plugin.server.getPlayer(name)
+    inline fun getPlayer(name: String): Optional<Player> = AdvancedVelocityManagerPlugin.Companion.server.getPlayer(
+        name
+    )
 
     /**
      * Gets a player by its UUID.
@@ -45,7 +51,7 @@ object ProxyServerUtil {
      * @return An optional containing the player if found, otherwise an empty optional.
      */
     @Suppress("NOTHING_TO_INLINE")
-    inline fun getPlayer(uuid: UUID): Optional<Player> = plugin.server.getPlayer(uuid)
+    inline fun getPlayer(uuid: UUID): Optional<Player> = AdvancedVelocityManagerPlugin.Companion.server.getPlayer(uuid)
 
     /**
      * Checks if a server with the given name exists.
@@ -94,7 +100,7 @@ object ProxyServerUtil {
     @Suppress("NOTHING_TO_INLINE")
     inline fun kickPlayers(reason: String, players: Iterable<Player>) {
         players.forEach { player ->
-            player.disconnect(miniMessage.deserialize(reason))
+            player.disconnect(ComponentUtil.miniMessage.deserialize(reason))
         }
     }
 
@@ -110,6 +116,6 @@ object ProxyServerUtil {
 
     @Suppress("NOTHING_TO_INLINE")
     inline fun Player.sendMessage(message: String) {
-        sendMessage(miniMessage.deserialize(message))
+        sendMessage(ComponentUtil.miniMessage.deserialize(message))
     }
 }

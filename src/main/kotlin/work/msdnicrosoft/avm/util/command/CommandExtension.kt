@@ -18,7 +18,8 @@ import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.ComponentLike
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.commandManager
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 
 inline fun literal(literal: String): LiteralArgumentBuilder<CommandSource> = literal(literal)
 
@@ -55,8 +56,8 @@ inline val CommandSource.isPlayer: Boolean
 inline val CommandSource.name: String
     get() = if (this is Player) this.username else "Console"
 
-inline fun CommandSource.toPlayer() = this as Player
-inline fun CommandSource.toConsole() = this as ConsoleCommandSource
+inline fun CommandSource.toPlayer(): Player = this as Player
+inline fun CommandSource.toConsole(): ConsoleCommandSource = this as ConsoleCommandSource
 inline fun CommandSource.toConnectedPlayer(): ConnectedPlayer = this as ConnectedPlayer
 
 inline fun CommandSource.sendTranslatable(
@@ -66,12 +67,12 @@ inline fun CommandSource.sendTranslatable(
 
 fun LiteralCommandNode<CommandSource>.register(vararg aliases: String) {
     val command = BrigadierCommand(this)
-    val meta = plugin.server.commandManager.metaBuilder(command)
+    val meta = commandManager.metaBuilder(command)
         .aliases(*aliases)
         .plugin(plugin)
         .build()
-    plugin.server.commandManager.register(meta, command)
+    commandManager.register(meta, command)
 }
 
 fun LiteralCommandNode<CommandSource>.unregister() =
-    plugin.server.commandManager.unregister(this.name)
+    commandManager.unregister(this.name)

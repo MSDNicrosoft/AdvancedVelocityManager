@@ -7,10 +7,10 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import work.msdnicrosoft.avm.config.data.ChatBridge
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
-import work.msdnicrosoft.avm.util.ProxyServerUtil.TIMEOUT_PING_RESULT
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.styleOnlyMiniMessage
+import work.msdnicrosoft.avm.util.server.ProxyServerUtil.TIMEOUT_PING_RESULT
 import work.msdnicrosoft.avm.util.string.replace
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException

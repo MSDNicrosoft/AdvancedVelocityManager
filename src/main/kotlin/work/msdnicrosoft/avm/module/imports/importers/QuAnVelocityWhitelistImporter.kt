@@ -4,7 +4,7 @@ import com.moandjiezana.toml.Toml
 import com.velocitypowered.api.command.CommandSource
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.minimessage.translation.Argument
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.command.sendTranslatable
@@ -12,6 +12,7 @@ import work.msdnicrosoft.avm.util.data.UUIDSerializer
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import java.util.*
+import kotlin.io.path.div
 import kotlin.io.path.exists
 
 object QuAnVelocityWhitelistImporter : Importer {
@@ -25,15 +26,14 @@ object QuAnVelocityWhitelistImporter : Importer {
         val name: String
     )
 
-    private val PATH by lazy { plugin.configDirectory.parent.resolve("VelocityWhitelist") }
-    private val CONFIG_PATH by lazy { PATH.resolve("config.toml") }
-    private val WHITELIST_PATH by lazy {
+    private val PATH = dataDirectory.parent / "VelocityWhitelist"
+    private val CONFIG_PATH = PATH / "config.toml"
+    private val WHITELIST_PATH =
         if (WhitelistManager.serverIsOnlineMode) {
-            PATH.resolve("whitelist.json")
+            PATH / "whitelist.json"
         } else {
-            PATH.resolve("whitelist_offline.json")
+            PATH / "whitelist_offline.json"
         }
-    }
 
     override fun import(source: CommandSource, defaultServer: String): Boolean {
         val configSuccess = if (CONFIG_PATH.exists()) {

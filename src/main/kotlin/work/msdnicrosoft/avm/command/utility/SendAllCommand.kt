@@ -6,14 +6,14 @@ import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.translation.Argument
-import taboolib.common.platform.function.submitAsync
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
-import work.msdnicrosoft.avm.util.ProxyServerUtil.getRegisteredServer
-import work.msdnicrosoft.avm.util.ProxyServerUtil.sendPlayer
 import work.msdnicrosoft.avm.util.command.*
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getRegisteredServer
+import work.msdnicrosoft.avm.util.server.ProxyServerUtil.sendPlayer
+import work.msdnicrosoft.avm.util.server.task
 import kotlin.jvm.optionals.getOrElse
 
 object SendAllCommand {
@@ -23,7 +23,7 @@ object SendAllCommand {
         .then(
             wordArgument("server")
                 .suggests { context, builder ->
-                    plugin.server.allServers.map { it.serverInfo.name }.forEach(builder::suggest)
+                    server.allServers.forEach { builder.suggest(it.serverInfo.name) }
                     builder.buildFuture()
                 }
                 .executes { context ->
@@ -37,7 +37,8 @@ object SendAllCommand {
                         )
                     )
                     Command.SINGLE_SUCCESS
-                }.then(
+                }
+                .then(
                     wordArgument("reason")
                         .executes { context ->
                             context.source.sendAllPlayers(
@@ -50,24 +51,24 @@ object SendAllCommand {
         )
 
     private fun CommandSource.sendAllPlayers(serverName: String, reason: Component) {
-        val server = getRegisteredServer(serverName).getOrElse {
+        val registeredServer = getRegisteredServer(serverName).getOrElse {
             sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
             return
         }
         val serverNickname = getServerNickname(serverName)
 
-        if (server.playersConnected.isEmpty()) {
+        if (registeredServer.playersConnected.isEmpty()) {
             sendTranslatable("avm.general.empty.server")
             return
         }
 
-        val (bypassed, toSend) = plugin.server.allPlayers
+        val (bypassed, toSend) = server.allPlayers
             .filter { it.currentServer.get().serverInfo.name != serverName }
             .partition { it.hasPermission("avm.sendall.bypass") }
 
-        submitAsync(now = true) {
+        task {
             toSend.forEach { player ->
-                sendPlayer(server, player).thenAcceptAsync { success ->
+                sendPlayer(registeredServer, player).thenAcceptAsync { success ->
                     if (success) {
                         player.sendMessage(reason)
                     }

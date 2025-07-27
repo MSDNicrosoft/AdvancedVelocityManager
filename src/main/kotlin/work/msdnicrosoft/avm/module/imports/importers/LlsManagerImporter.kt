@@ -4,7 +4,7 @@ import com.velocitypowered.api.command.CommandSource
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.text.minimessage.translation.Argument
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.command.sendTranslatable
@@ -36,9 +36,9 @@ object LlsManagerImporter : Importer {
         val onlineMode: Boolean
     )
 
-    private val PATH by lazy { plugin.configDirectory.parent.resolve("lls-manager") }
-    private val CONFIG_PATH by lazy { PATH.resolve("config.json") }
-    private val PLAYER_DATA_PATH by lazy { PATH.resolve("player") }
+    private val PATH = dataDirectory.parent / "lls-manager"
+    private val CONFIG_PATH = PATH / "config.json"
+    private val PLAYER_DATA_PATH = PATH / "player"
 
     override fun import(source: CommandSource, defaultServer: String): Boolean {
         val configSuccess = if (CONFIG_PATH.exists()) {

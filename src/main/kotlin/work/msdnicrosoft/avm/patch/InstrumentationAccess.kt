@@ -31,8 +31,8 @@ package work.msdnicrosoft.avm.patch
 
 import com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedChatHandler
 import net.bytebuddy.agent.ByteBuddyAgent
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import java.io.IOException
 import java.lang.instrument.Instrumentation
 import java.lang.management.ManagementFactory
@@ -118,5 +118,5 @@ object InstrumentationAccess {
     }
 
     private fun isSignedVelocityInstalled() =
-        plugin.server.pluginManager.getPlugin("signedvelocity").isPresent
+        server.pluginManager.getPlugin("signedvelocity").isPresent
 }

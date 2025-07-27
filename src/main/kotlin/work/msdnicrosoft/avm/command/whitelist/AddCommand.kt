@@ -4,7 +4,7 @@ import com.mojang.brigadier.Command
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.minimessage.translation.Argument
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
@@ -24,10 +24,14 @@ object AddCommand {
         .then(
             wordArgument("player")
                 .suggests { context, builder ->
-                    (PlayerCache.readOnly + plugin.server.allPlayers.map { it.username } + WhitelistManager.usernames)
-                        .distinct().forEach(builder::suggest)
+                    buildSet {
+                        addAll(PlayerCache.readOnly)
+                        addAll(server.allPlayers.map { it.username })
+                        addAll(WhitelistManager.usernames)
+                    }.forEach(builder::suggest)
                     builder.buildFuture()
-                }.then(
+                }
+                .then(
                     wordArgument("server")
                         .suggests { context, builder ->
                             val player = context.getString("player")
@@ -36,15 +40,19 @@ object AddCommand {
                             } else {
                                 WhitelistManager.getPlayer(player)
                             }?.serverList
-                            (config.serverGroups.keys + plugin.server.allServers.map { it.serverInfo.name })
-                                .filterNot { whitelistedServers?.contains(it) == true }
-                                .distinct()
-                                .forEach(builder::suggest)
+                            buildSet {
+                                addAll(config.serverGroups.keys)
+                                addAll(server.allServers.map { it.serverInfo.name })
+                            }.filterNot {
+                                whitelistedServers?.contains(it) == true
+                            }.forEach(builder::suggest)
                             builder.buildFuture()
-                        }.executes { context ->
+                        }
+                        .executes { context ->
                             context.source.addPlayer(context.getString("player"), context.getString("server"))
                             Command.SINGLE_SUCCESS
-                        }.then(
+                        }
+                        .then(
                             boolArgument("onlineMode")
                                 .executes { context ->
                                     context.source.addPlayer(
@@ -82,6 +90,7 @@ object AddCommand {
                 Argument.string("player", player),
                 Argument.string("server", serverName)
             )
+
             AddResult.API_LOOKUP_NOT_FOUND -> sendTranslatable("avm.command.avmwl.add.request.not.found")
             AddResult.API_LOOKUP_REQUEST_FAILED -> sendTranslatable("avm.command.avmwl.add.request.failed")
             AddResult.ALREADY_EXISTS -> sendTranslatable("avm.command.avmwl.add.already.exists")
