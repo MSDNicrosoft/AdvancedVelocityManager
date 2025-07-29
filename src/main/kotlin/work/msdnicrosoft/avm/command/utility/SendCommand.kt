@@ -9,6 +9,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.command.*
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
+import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getPlayer
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getRegisteredServer
@@ -32,10 +33,10 @@ object SendCommand {
                             builder.buildFuture()
                         }
                         .executes { context ->
-                            val serverName = context.getString("server")
+                            val serverName = context.get<String>("server")
                             val serverNickname = getServerNickname(serverName)
                             context.source.sendPlayer(
-                                context.getString("player"),
+                                context.get<String>("player"),
                                 serverName,
                                 tr(
                                     "avm.command.avm.send.target",
@@ -49,9 +50,9 @@ object SendCommand {
                             wordArgument("reason")
                                 .executes { context ->
                                     context.source.sendPlayer(
-                                        context.getString("player"),
-                                        context.getString("server"),
-                                        miniMessage.deserialize(context.getString("reason"))
+                                        context.get<String>("player"),
+                                        context.get<String>("server"),
+                                        miniMessage.deserialize(context.get<String>("reason"))
                                     )
 
                                     Command.SINGLE_SUCCESS

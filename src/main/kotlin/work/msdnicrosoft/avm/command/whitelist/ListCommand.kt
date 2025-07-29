@@ -7,6 +7,7 @@ import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.command.WhitelistCommand.sendWhitelistPlayers
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.component.sendTranslatable
 
 object ListCommand {
 
@@ -22,7 +23,7 @@ object ListCommand {
                     for (page in 1..WhitelistManager.maxPage) builder.suggest(page)
                     builder.buildFuture()
                 }.executes { context ->
-                    val page = context.getInt("page")
+                    val page = context.get<Int>("page")
                     if (page < 1) {
                         context.source.sendTranslatable("avm.whitelist.page.must.larger.than.zero")
                         return@executes Command.SINGLE_SUCCESS

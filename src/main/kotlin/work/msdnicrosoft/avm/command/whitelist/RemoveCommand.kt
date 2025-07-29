@@ -7,10 +7,8 @@ import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
-import work.msdnicrosoft.avm.util.command.getString
-import work.msdnicrosoft.avm.util.command.literal
-import work.msdnicrosoft.avm.util.command.sendTranslatable
-import work.msdnicrosoft.avm.util.command.wordArgument
+import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getPlayer
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.server.task
@@ -31,13 +29,13 @@ object RemoveCommand {
                     builder.buildFuture()
                 }
                 .executes { context ->
-                    context.source.removePlayer(context.getString("player"))
+                    context.source.removePlayer(context.get<String>("player"))
                     Command.SINGLE_SUCCESS
                 }
                 .then(
                     wordArgument("server")
                         .suggests { context, builder ->
-                            val player = context.getString("player")
+                            val player = context.get<String>("player")
                             val serverList = if (player.isUuid()) {
                                 WhitelistManager.getPlayer(player.toUuid())
                             } else {
@@ -47,7 +45,7 @@ object RemoveCommand {
                             builder.buildFuture()
                         }
                         .executes { context ->
-                            val serverName = context.getString("server")
+                            val serverName = context.get<String>("server")
                             if (!isValidServer(serverName)) {
                                 context.source.sendTranslatable(
                                     "avm.general.not.exist.server",
@@ -55,7 +53,7 @@ object RemoveCommand {
                                 )
                                 return@executes Command.SINGLE_SUCCESS
                             }
-                            context.source.removePlayer(context.getString("player"), serverName)
+                            context.source.removePlayer(context.get<String>("player"), serverName)
                             Command.SINGLE_SUCCESS
                         }
                 )

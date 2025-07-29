@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package work.msdnicrosoft.avm.util.file
 
 import com.charleskorn.kaml.Yaml
@@ -13,14 +15,8 @@ inline fun <reified T> Yaml.decodeFromString(string: String): T =
 inline fun <reified T> Yaml.encodeToString(value: T): String =
     encodeToString(serializersModule.serializer(), value)
 
-@Suppress("NOTHING_TO_INLINE")
 inline fun Path.readTextWithBuffer(): String = this.bufferedReader().use { it.readText() }
-
-@Suppress("NOTHING_TO_INLINE")
 inline fun File.readTextWithBuffer(): String = this.bufferedReader().use { it.readText() }
 
-@Suppress("NOTHING_TO_INLINE")
 inline fun Path.writeTextWithBuffer(text: String) = this.bufferedWriter().use { it.write(text) }
-
-@Suppress("NOTHING_TO_INLINE")
 inline fun File.writeTextWithBuffer(text: String) = this.bufferedWriter().use { it.write(text) }

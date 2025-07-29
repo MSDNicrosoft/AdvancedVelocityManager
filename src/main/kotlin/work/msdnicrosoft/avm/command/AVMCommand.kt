@@ -12,7 +12,7 @@ import work.msdnicrosoft.avm.command.utility.*
 import work.msdnicrosoft.avm.module.CommandSessionManager
 import work.msdnicrosoft.avm.module.CommandSessionManager.ExecuteResult
 import work.msdnicrosoft.avm.util.command.*
-import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelp
+import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.task
 import kotlin.time.measureTime
@@ -74,7 +74,7 @@ object AVMCommand {
             wordArgument("session")
                 .executes { context ->
                     task {
-                        val result = when (CommandSessionManager.executeAction(context.getString("session"))) {
+                        val result = when (CommandSessionManager.executeAction(context.get<String>("session"))) {
                             ExecuteResult.SUCCESS -> return@task
                             ExecuteResult.EXPIRED -> "avm.command.avm.confirm.expired"
                             ExecuteResult.FAILED -> "avm.command.avm.confirm.failed"

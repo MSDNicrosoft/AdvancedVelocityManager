@@ -6,7 +6,7 @@ import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.command.literal
-import work.msdnicrosoft.avm.util.command.sendTranslatable
+import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 
 object OffCommand {

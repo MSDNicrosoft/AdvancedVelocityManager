@@ -9,6 +9,7 @@ import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.util.command.*
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
+import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getRegisteredServer
 import work.msdnicrosoft.avm.util.server.task
@@ -38,7 +39,7 @@ object KickAllCommand {
                 }
                 .executes { context ->
                     context.source.kickAllPlayers(
-                        context.getString("server"),
+                        context.get<String>("server"),
                         tr(
                             "avm.command.avm.kick.target",
                             Argument.string("executor", context.source.name)
@@ -50,8 +51,8 @@ object KickAllCommand {
                     wordArgument("reason")
                         .executes { context ->
                             context.source.kickAllPlayers(
-                                context.getString("server"),
-                                miniMessage.deserialize(context.getString("reason"))
+                                context.get<String>("server"),
+                                miniMessage.deserialize(context.get<String>("reason"))
                             )
                             Command.SINGLE_SUCCESS
                         }

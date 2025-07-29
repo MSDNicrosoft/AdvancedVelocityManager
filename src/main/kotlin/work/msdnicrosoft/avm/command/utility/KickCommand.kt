@@ -8,6 +8,7 @@ import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.util.command.*
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
+import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getPlayer
 import work.msdnicrosoft.avm.util.server.task
@@ -25,7 +26,7 @@ object KickCommand {
                 }
                 .executes { context ->
                     context.source.kickPlayer(
-                        context.getString("player"),
+                        context.get<String>("player"),
                         tr("avm.command.avm.kick.target", Argument.string("executor", context.source.name))
                     )
 
@@ -35,8 +36,8 @@ object KickCommand {
                     wordArgument("reason")
                         .executes { context ->
                             context.source.kickPlayer(
-                                context.getString("player"),
-                                miniMessage.deserialize(context.getString("reason"))
+                                context.get<String>("player"),
+                                miniMessage.deserialize(context.get<String>("reason"))
                             )
 
                             Command.SINGLE_SUCCESS

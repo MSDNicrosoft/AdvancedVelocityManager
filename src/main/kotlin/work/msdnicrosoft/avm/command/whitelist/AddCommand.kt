@@ -11,6 +11,7 @@ import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.AddResult
 import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
 import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.string.isUuid
 import work.msdnicrosoft.avm.util.string.toUuid
 
@@ -34,7 +35,7 @@ object AddCommand {
                 .then(
                     wordArgument("server")
                         .suggests { context, builder ->
-                            val player = context.getString("player")
+                            val player = context.get<String>("player")
                             val whitelistedServers = if (player.isUuid()) {
                                 WhitelistManager.getPlayer(player.toUuid())
                             } else {
@@ -49,16 +50,16 @@ object AddCommand {
                             builder.buildFuture()
                         }
                         .executes { context ->
-                            context.source.addPlayer(context.getString("player"), context.getString("server"))
+                            context.source.addPlayer(context.get<String>("player"), context.get<String>("server"))
                             Command.SINGLE_SUCCESS
                         }
                         .then(
                             boolArgument("onlineMode")
                                 .executes { context ->
                                     context.source.addPlayer(
-                                        context.getString("player"),
-                                        context.getString("server"),
-                                        context.getBool("onlineMode")
+                                        context.get<String>("player"),
+                                        context.get<String>("server"),
+                                        context.get<Boolean>("onlineMode")
                                     )
                                     Command.SINGLE_SUCCESS
                                 }

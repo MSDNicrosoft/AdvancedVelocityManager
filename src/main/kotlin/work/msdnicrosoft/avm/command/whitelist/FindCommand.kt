@@ -7,6 +7,7 @@ import work.msdnicrosoft.avm.command.WhitelistCommand.sendWhitelistPlayers
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.component.sendTranslatable
 
 object FindCommand {
 
@@ -22,18 +23,18 @@ object FindCommand {
                     builder.buildFuture()
                 }
                 .executes { context ->
-                    context.source.listFind(1, context.getString("keyword"))
+                    context.source.listFind(1, context.get<String>("keyword"))
                     Command.SINGLE_SUCCESS
                 }
                 .then(
                     intArgument("page")
                         .executes { context ->
-                            val page = context.getInt("page")
+                            val page = context.get<Int>("page")
                             if (page < 1) {
                                 context.source.sendTranslatable("avm.whitelist.page.must.larger.than.zero")
                                 return@executes Command.SINGLE_SUCCESS
                             }
-                            context.source.listFind(page, context.getString("keyword"))
+                            context.source.listFind(page, context.get<String>("keyword"))
                             Command.SINGLE_SUCCESS
                         }
                 )

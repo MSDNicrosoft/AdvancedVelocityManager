@@ -2,50 +2,24 @@
 
 package work.msdnicrosoft.avm.util.command
 
-import com.mojang.brigadier.arguments.ArgumentType
-import com.mojang.brigadier.arguments.BoolArgumentType
-import com.mojang.brigadier.arguments.IntegerArgumentType
-import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.Command
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
-import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
-import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.context.CommandContext
-import com.mojang.brigadier.tree.LiteralCommandNode
-import com.velocitypowered.api.command.BrigadierCommand
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.ConsoleCommandSource
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.ComponentLike
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.commandManager
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
-
-inline fun literal(literal: String): LiteralArgumentBuilder<CommandSource> = literal(literal)
-
-inline fun <T> argument(name: String, type: ArgumentType<T>): RequiredArgumentBuilder<CommandSource, T> =
-    RequiredArgumentBuilder.argument(name, type)
-
-inline fun intArgument(name: String): RequiredArgumentBuilder<CommandSource, Int> =
-    argument(name, IntegerArgumentType.integer())
-
-inline fun wordArgument(name: String): RequiredArgumentBuilder<CommandSource, String> =
-    argument(name, StringArgumentType.word())
-
-inline fun greedyStringArgument(name: String): RequiredArgumentBuilder<CommandSource, String> =
-    argument(name, StringArgumentType.greedyString())
-
-inline fun boolArgument(name: String): RequiredArgumentBuilder<CommandSource, Boolean> =
-    argument(name, BoolArgumentType.bool())
-
-inline fun CommandContext<CommandSource>.getString(name: String): String =
-    StringArgumentType.getString(this, name)
-
-inline fun CommandContext<CommandSource>.getInt(name: String): Int =
-    IntegerArgumentType.getInteger(this, name)
-
-inline fun CommandContext<CommandSource>.getBool(name: String): Boolean =
-    BoolArgumentType.getBool(this, name)
+import work.msdnicrosoft.avm.annotations.CommandNode
+import work.msdnicrosoft.avm.annotations.RootCommand
+import work.msdnicrosoft.avm.util.component.ComponentUtil
+import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.reflect.getAnnotationIfPresent
 
 inline val CommandSource.isConsole: Boolean
     get() = this is ConsoleCommandSource
@@ -60,19 +34,61 @@ inline fun CommandSource.toPlayer(): Player = this as Player
 inline fun CommandSource.toConsole(): ConsoleCommandSource = this as ConsoleCommandSource
 inline fun CommandSource.toConnectedPlayer(): ConnectedPlayer = this as ConnectedPlayer
 
-inline fun CommandSource.sendTranslatable(
-    key: String,
-    vararg args: ComponentLike
-) = this.sendMessage(Component.translatable(key, *args))
+@Suppress("UNCHECKED_CAST", "SameReturnValue")
+fun CommandContext<CommandSource>.buildHelp(commandRoot: Class<*>, checkPermission: Boolean = true): Int {
+    val rootCommand = commandRoot.getAnnotationIfPresent<RootCommand>() ?: return Command.SINGLE_SUCCESS
+    val rootName = rootCommand.name
 
-fun LiteralCommandNode<CommandSource>.register(vararg aliases: String) {
-    val command = BrigadierCommand(this)
-    val meta = commandManager.metaBuilder(command)
-        .aliases(*aliases)
-        .plugin(plugin)
-        .build()
-    commandManager.register(meta, command)
+    this.source.sendTranslatable(
+        "avm.general.help.header.1.text",
+        Argument.component(
+            "name",
+            tr("avm.general.plugin.name")
+                .hoverEvent(HoverEvent.showText(tr("avm.general.help.header.1.name.hover")))
+        ),
+        Argument.string("version", plugin.self.version.get()),
+    )
+    this.source.sendTranslatable(
+        "avm.general.help.header.2.text",
+        Argument.string("root_command", rootName)
+    )
+    this.source.sendTranslatable("avm.general.help.header.subcommands")
+
+    commandRoot.declaredFields.forEach { field ->
+        field.trySetAccessible()
+
+        val commandNode = field.getAnnotationIfPresent<CommandNode>() ?: return@forEach
+
+        val command = field[commandRoot] as LiteralArgumentBuilder<CommandSource>
+
+        if (checkPermission && !command.requirement.test(this.source)) return@forEach
+
+        val arguments = commandNode.arguments.joinToString(" ") { arg ->
+            when (arg.firstOrNull()) {
+                '[' -> "<dark_gray>$arg"
+                '<' -> "<gray>$arg"
+                else -> arg
+            }
+        }
+
+        val description = tr("avm.command.$rootName.${commandNode.name}.description")
+        val hoverEvent = HoverEvent.showText(
+            ComponentUtil.miniMessage.deserialize(
+                "<white>$rootName ${commandNode.name} <dark_gray>- <gray><desc>",
+                Placeholder.component("desc", description)
+            )
+        )
+        this.source.sendMessage(
+            ComponentUtil.miniMessage.deserialize("    <dark_gray>- <white>${commandNode.name} $arguments")
+                .hoverEvent(hoverEvent)
+                .clickEvent(ClickEvent.suggestCommand("/$rootCommand ${commandNode.name}"))
+        )
+        this.source.sendMessage(
+            ComponentUtil.miniMessage.deserialize(
+                "      <gray><desc>",
+                Placeholder.component("desc", description)
+            )
+        )
+    }
+    return Command.SINGLE_SUCCESS
 }
-
-fun LiteralCommandNode<CommandSource>.unregister() =
-    commandManager.unregister(this.name)

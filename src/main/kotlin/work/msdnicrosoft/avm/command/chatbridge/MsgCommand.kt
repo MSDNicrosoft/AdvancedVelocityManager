@@ -16,6 +16,7 @@ import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.styleOnlyMiniMessage
 import work.msdnicrosoft.avm.util.component.Format
+import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getPlayer
 import kotlin.jvm.optionals.getOrElse
 
@@ -49,7 +50,7 @@ object MsgCommand {
                     .executes { context ->
                         val source = context.source
 
-                        val targets = context.getString("targets")
+                        val targets = context.get<String>("targets")
                         val player = getPlayer(targets).getOrElse {
                             source.sendTranslatable(
                                 "avm.general.not.exist.player",
@@ -58,7 +59,7 @@ object MsgCommand {
                             return@executes Command.SINGLE_SUCCESS
                         }
 
-                        val message = context.getString("message")
+                        val message = context.get<String>("message")
 
                         if (!source.isConsole) {
                             source.sendMessage(config.privateChatFormat.sender.buildMessage(source, player, message))
