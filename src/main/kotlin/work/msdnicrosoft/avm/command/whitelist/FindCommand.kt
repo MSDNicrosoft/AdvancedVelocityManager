@@ -8,6 +8,7 @@ import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.command.*
 import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.server.task
 
 object FindCommand {
 
@@ -34,7 +35,7 @@ object FindCommand {
                                 context.source.sendTranslatable("avm.whitelist.page.must.larger.than.zero")
                                 return@executes Command.SINGLE_SUCCESS
                             }
-                            context.source.listFind(page, context.get<String>("keyword"))
+                            task { context.source.listFind(page, context.get<String>("keyword")) }
                             Command.SINGLE_SUCCESS
                         }
                 )

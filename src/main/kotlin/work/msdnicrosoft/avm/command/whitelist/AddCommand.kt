@@ -12,6 +12,7 @@ import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.AddResult
 import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
 import work.msdnicrosoft.avm.util.command.*
 import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.server.task
 import work.msdnicrosoft.avm.util.string.isUuid
 import work.msdnicrosoft.avm.util.string.toUuid
 
@@ -56,11 +57,13 @@ object AddCommand {
                         .then(
                             boolArgument("onlineMode")
                                 .executes { context ->
-                                    context.source.addPlayer(
-                                        context.get<String>("player"),
-                                        context.get<String>("server"),
-                                        context.get<Boolean>("onlineMode")
-                                    )
+                                    task {
+                                        context.source.addPlayer(
+                                            context.get<String>("player"),
+                                            context.get<String>("server"),
+                                            context.get<Boolean>("onlineMode")
+                                        )
+                                    }
                                     Command.SINGLE_SUCCESS
                                 }
                         )
