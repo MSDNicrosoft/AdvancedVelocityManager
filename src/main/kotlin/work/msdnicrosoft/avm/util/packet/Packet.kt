@@ -15,6 +15,7 @@ import com.velocitypowered.proxy.protocol.StateRegistry
 import com.velocitypowered.proxy.protocol.StateRegistry.*
 import io.netty.util.collection.IntObjectMap
 import it.unimi.dsi.fastutil.objects.Object2IntMap
+import work.msdnicrosoft.avm.util.packet.MinecraftVersion.Companion.toProtocolVersion
 import work.msdnicrosoft.avm.util.packet.Packet.Companion.mapping
 import java.util.function.Supplier
 import kotlin.reflect.KClass
@@ -36,7 +37,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
     private lateinit var direction: String
     private lateinit var packetSupplier: Supplier<P>
     private lateinit var stateRegistry: StateRegistry
-    private val mappings = mutableListOf<PacketMapping>()
+    private val mappings = mutableListOf<PacketMapping?>()
 
     /**
      * Sets the *old* packet class that will be replaced when [replace] is called.
@@ -91,7 +92,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @param encodeOnly if true this mapping is used only for encoding
      * @return this builder for chaining
      */
-    fun mapping(id: Int, from: ProtocolVersion, to: ProtocolVersion, encodeOnly: Boolean): Packet<P> {
+    fun mapping(id: Int, from: MinecraftVersion, to: MinecraftVersion, encodeOnly: Boolean): Packet<P> {
         mappings.add(Companion.mapping(id, from, to, encodeOnly))
         return this
     }
@@ -104,7 +105,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @param encodeOnly if true this mapping is used only for encoding
      * @return this builder for chaining
      */
-    fun mapping(id: Int, from: ProtocolVersion, encodeOnly: Boolean): Packet<P> {
+    fun mapping(id: Int, from: MinecraftVersion, encodeOnly: Boolean): Packet<P> {
         mappings.add(Companion.mapping(id, from, encodeOnly))
         return this
     }
@@ -115,7 +116,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @param mappings the mappings to append
      * @return this builder for chaining
      */
-    fun mappings(mappings: Collection<PacketMapping>): Packet<P> {
+    fun mappings(mappings: Collection<PacketMapping?>): Packet<P> {
         this.mappings.addAll(mappings)
         return this
     }
@@ -136,7 +137,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
 
         packetRegistry.asResolver()
             .firstMethod { name = "register" }
-            .invoke(packet, packetSupplier, mappings.toTypedArray())
+            .invoke(packet, packetSupplier, mappings.filterNotNull().toTypedArray())
     }
 
     /**
@@ -202,7 +203,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
          * @param encodeOnly encode-only flag
          * @return a new [PacketMapping]
          */
-        fun mapping(id: Int, from: ProtocolVersion, encodeOnly: Boolean): PacketMapping =
+        fun mapping(id: Int, from: MinecraftVersion, encodeOnly: Boolean): PacketMapping? =
             mapping(id, from, null, encodeOnly)
 
         /**
@@ -214,7 +215,13 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
          * @param encodeOnly encode-only flag
          * @return a new [PacketMapping]
          */
-        fun mapping(id: Int, from: ProtocolVersion, to: ProtocolVersion?, encodeOnly: Boolean): PacketMapping =
-            STATE_REGISTRY_MAP_METHOD.invoke<PacketMapping>(id, from, to, encodeOnly)!!
+        fun mapping(id: Int, from: MinecraftVersion, to: MinecraftVersion?, encodeOnly: Boolean): PacketMapping? {
+            return STATE_REGISTRY_MAP_METHOD.invoke<PacketMapping>(
+                id,
+                from.toProtocolVersion() ?: return null,
+                to?.toProtocolVersion(),
+                encodeOnly
+            )!!
+        }
     }
 }

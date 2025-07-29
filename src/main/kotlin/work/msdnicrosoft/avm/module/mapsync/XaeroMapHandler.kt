@@ -22,6 +22,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.netty.use
 import work.msdnicrosoft.avm.util.netty.useThenApply
+import work.msdnicrosoft.avm.util.packet.MinecraftVersion
 import work.msdnicrosoft.avm.util.packet.Packet
 import work.msdnicrosoft.avm.util.packet.Packet.Companion.mapping
 import java.nio.charset.StandardCharsets
@@ -35,24 +36,24 @@ object XaeroMapHandler {
     // https://minecraft.wiki/w/Java_Edition_protocol/Packets#Set_Default_Spawn_Position
     @Suppress("MagicNumber")
     private val MAPPINGS = listOf(
-        mapping(0x05, ProtocolVersion.MINECRAFT_1_7_2, false),
-        mapping(0x43, ProtocolVersion.MINECRAFT_1_9, false),
-        mapping(0x45, ProtocolVersion.MINECRAFT_1_12, false),
-        mapping(0x46, ProtocolVersion.MINECRAFT_1_12_1, false),
-        mapping(0x49, ProtocolVersion.MINECRAFT_1_13, false),
-        mapping(0x4D, ProtocolVersion.MINECRAFT_1_14, false),
-        mapping(0x4E, ProtocolVersion.MINECRAFT_1_15, false),
-        mapping(0x42, ProtocolVersion.MINECRAFT_1_16, false),
-        mapping(0x4B, ProtocolVersion.MINECRAFT_1_17, false),
-        mapping(0x4A, ProtocolVersion.MINECRAFT_1_19, false),
-        mapping(0x4D, ProtocolVersion.MINECRAFT_1_19_1, false),
-        mapping(0x4C, ProtocolVersion.MINECRAFT_1_19_3, false),
-        mapping(0x50, ProtocolVersion.MINECRAFT_1_19_4, false),
-        mapping(0x52, ProtocolVersion.MINECRAFT_1_20_2, false),
-        mapping(0x54, ProtocolVersion.MINECRAFT_1_20_3, false),
-        mapping(0x56, ProtocolVersion.MINECRAFT_1_20_5, false),
-        mapping(0x5B, ProtocolVersion.MINECRAFT_1_21_4, false),
-        mapping(0x5A, ProtocolVersion.MINECRAFT_1_21_5, false),
+        mapping(0x05, MinecraftVersion.MINECRAFT_1_7_2, false),
+        mapping(0x43, MinecraftVersion.MINECRAFT_1_9, false),
+        mapping(0x45, MinecraftVersion.MINECRAFT_1_12, false),
+        mapping(0x46, MinecraftVersion.MINECRAFT_1_12_1, false),
+        mapping(0x49, MinecraftVersion.MINECRAFT_1_13, false),
+        mapping(0x4D, MinecraftVersion.MINECRAFT_1_14, false),
+        mapping(0x4E, MinecraftVersion.MINECRAFT_1_15, false),
+        mapping(0x42, MinecraftVersion.MINECRAFT_1_16, false),
+        mapping(0x4B, MinecraftVersion.MINECRAFT_1_17, false),
+        mapping(0x4A, MinecraftVersion.MINECRAFT_1_19, false),
+        mapping(0x4D, MinecraftVersion.MINECRAFT_1_19_1, false),
+        mapping(0x4C, MinecraftVersion.MINECRAFT_1_19_3, false),
+        mapping(0x50, MinecraftVersion.MINECRAFT_1_19_4, false),
+        mapping(0x52, MinecraftVersion.MINECRAFT_1_20_2, false),
+        mapping(0x54, MinecraftVersion.MINECRAFT_1_20_3, false),
+        mapping(0x56, MinecraftVersion.MINECRAFT_1_20_5, false),
+        mapping(0x5B, MinecraftVersion.MINECRAFT_1_21_4, false),
+        mapping(0x5A, MinecraftVersion.MINECRAFT_1_21_5, false),
     )
 
     fun init() {
