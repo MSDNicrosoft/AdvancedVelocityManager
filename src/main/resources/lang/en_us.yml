@@ -1,5 +1,6 @@
 avm:
   general:
+    plugin.name: "<aqua>Advanced<dark_aqua>Velocity<blue>Manager"
     "on": "<green>on"
     "off": "<dark_red>off"
     username: "username"
@@ -15,19 +16,11 @@ avm:
     help:
       header:
         "1":
-          text: "  <name> <white>v<version>"  # version
-          name:
-            text: "<aqua>Advanced<dark_aqua>Velocity<blue>Manager"
-            hover: "<gray>AdvancedVelocityManager is a modern and advanced Velocity plugin"
+          text: "  <name> <white>v<version>"
+          name.hover: "<gray>AdvancedVelocityManager is a modern and advanced Velocity plugin"
         "2":
-          text: "  <gray>Type: [<white>/<root_command> <dark_gray>...]"  # rootCommand
+          text: "  <gray>Type: <white>/<root_command> <dark_gray>..."
         subcommands: "  <gray>Subcommands:"
-      each:
-        text: "    <dark_gray>- <full>"  # subcommand
-        full:
-          text: "<white><subcommand> <arguments>"
-          hover: "<white><root_command> <subcommand> <dark_gray>- <gray><arguments>"
-        description: "      <gray><description>"  # description
 
   whitelist:
     player:
@@ -48,7 +41,7 @@ avm:
       info:
         description: "<gray>View plugin information"
         plugin:
-          name: "<gray>Plugin Name: <aqua><name>"
+          name: "<gray>Plugin Name: <name>"
           version: "<gray>Plugin Version: <white><version>"
         server: "<gray>Server: <dark_aqua><server>"
       confirm:

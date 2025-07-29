@@ -1,5 +1,6 @@
 avm:
   general:
+    plugin.name: "<aqua>Advanced<dark_aqua>Velocity<blue>Manager"
     "on": "<green>开启"
     "off": "<dark_red>关闭"
     username: "用户名"
@@ -17,18 +18,10 @@ avm:
       header:
         "1":
           text: "  <name> <white>v<version>"
-          name:
-            text: "<aqua>Advanced<dark_aqua>Velocity<blue>Manager"
-            hover: "<gray>AdvancedVelocityManager 是一个现代且高级的 Velocity 插件"
+          name.hover: "<gray>AdvancedVelocityManager 是一个现代且高级的 Velocity 插件"
         "2":
           text: "  <gray>输入: <white>/<root_command> <dark_gray>..."
         subcommands: "  <gray>子命令:"
-      each:
-        text: "    <dark_gray>- <full>"
-        full:
-          text: "<white><subcommand> <arguments>"
-          hover: "<white><root_command> <subcommand> <dark_gray>- <gray><arguments>"
-        description: "      <gray><description>"
 
   whitelist:
     player:
@@ -49,7 +42,7 @@ avm:
       info:
         description: "<gray>查看插件信息"
         plugin:
-          name: "<gray>插件名: <aqua><name>"
+          name: "<gray>插件名: <name>"
           version: "<gray>插件版本: <white><version>"
         server: "<gray>服务端: <dark_aqua><server>"
       confirm:

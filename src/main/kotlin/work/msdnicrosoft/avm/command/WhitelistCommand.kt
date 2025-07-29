@@ -2,6 +2,8 @@ package work.msdnicrosoft.avm.command
 
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.velocitypowered.api.command.CommandSource
+import work.msdnicrosoft.avm.annotations.CommandNode
+import work.msdnicrosoft.avm.annotations.RootCommand
 import work.msdnicrosoft.avm.command.whitelist.*
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistPlayer
@@ -12,6 +14,7 @@ import work.msdnicrosoft.avm.util.command.literal
 import work.msdnicrosoft.avm.util.command.register
 import work.msdnicrosoft.avm.util.command.unregister
 
+@RootCommand("avmwl")
 object WhitelistCommand {
 
     fun init() {
@@ -22,15 +25,39 @@ object WhitelistCommand {
         command.unregister()
     }
 
+    @CommandNode("add", "<player>", "<server>", "[onlineMode]")
+    val add = AddCommand.command
+
+    @CommandNode("clear")
+    val clear = ClearCommand.command
+
+    @CommandNode("find", "<keyword>", "[page]")
+    val find = FindCommand.command
+
+    @CommandNode("list", "[page]")
+    val list = ListCommand.command
+
+    @CommandNode("off")
+    val off = OffCommand.command
+
+    @CommandNode("on")
+    val on = OnCommand.command
+
+    @CommandNode("remove", "<player>", "[server]")
+    val remove = RemoveCommand.command
+
+    @CommandNode("status")
+    val status = StatusCommand.command
+
     val command: LiteralCommandNode<CommandSource> = literal("avmwl")
-        .then(AddCommand.command)
-        .then(ClearCommand.command)
-        .then(FindCommand.command)
-        .then(ListCommand.command)
-        .then(OffCommand.command)
-        .then(OnCommand.command)
-        .then(RemoveCommand.command)
-        .then(StatusCommand.command)
+        .then(add)
+        .then(clear)
+        .then(find)
+        .then(list)
+        .then(off)
+        .then(on)
+        .then(remove)
+        .then(status)
         .build()
 
     /**

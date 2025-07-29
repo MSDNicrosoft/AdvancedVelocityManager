@@ -32,16 +32,14 @@ import java.nio.file.Path
 
 class AdvancedVelocityManagerPlugin {
     val server: ProxyServer
-    val logger: ComponentLogger
     val dataDirectory: Path
     val self: PluginDescription by lazy {
         server.pluginManager.getPlugin("advancedvelocitymanager").get().description
     }
 
     @Inject
-    constructor(server: ProxyServer, logger: ComponentLogger, @DataDirectory dataDirectory: Path) {
+    constructor(server: ProxyServer, @DataDirectory dataDirectory: Path) {
         this.server = server
-        this.logger = logger
         this.dataDirectory = dataDirectory
         plugin = this
     }
@@ -58,8 +56,6 @@ class AdvancedVelocityManagerPlugin {
         loadLanguage()
         initializeModules()
         registerCommands()
-
-        Metrics.init()
 
         self.version.get().let { version ->
             if (version.contains("DEV")) logger.warn("You are using the development version of this plugin.")
@@ -133,8 +129,7 @@ class AdvancedVelocityManagerPlugin {
         lateinit var plugin: AdvancedVelocityManagerPlugin
             private set
 
-        inline val logger: ComponentLogger
-            get() = plugin.logger
+        val logger: ComponentLogger = ComponentLogger.logger("AdvancedVelocityManager")
 
         inline val server: ProxyServer
             get() = plugin.server

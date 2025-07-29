@@ -7,13 +7,11 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirecto
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import java.io.FileOutputStream
+import java.nio.file.Path
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.jar.JarFile
-import kotlin.io.path.div
-import kotlin.io.path.extension
-import kotlin.io.path.isRegularFile
-import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.*
 
 object TranslateManager : MiniMessageTranslator() {
     private val name = Key.key("avm")
@@ -27,8 +25,6 @@ object TranslateManager : MiniMessageTranslator() {
     private val defaultLocale = Locale.forLanguageTag("en_US")
 
     fun init() {
-        languageFilePath.toFile().mkdirs()
-
         registerTranslations()
         globalTranslator.addSource(this)
     }
@@ -60,15 +56,18 @@ object TranslateManager : MiniMessageTranslator() {
         }
     }
 
-    private fun getLanguageFiles() =
-        languageFilePath.asSequence().filter { it.extension.equals("json", ignoreCase = true) && it.isRegularFile() }
+    private fun getLanguageFiles(): List<Path> {
+        languageFilePath.toFile().mkdirs()
+        return languageFilePath.listDirectoryEntries()
+            .filter { it.extension.equals("json", ignoreCase = true) && it.isRegularFile() }
+    }
 
     private fun registerTranslations() {
-        if (getLanguageFiles().toList().isEmpty()) {
+        if (getLanguageFiles().isEmpty()) {
             extractTranslations()
         }
 
-        getLanguageFiles().forEach { languageFile ->
+        for (languageFile in getLanguageFiles()) {
             val locale = Locale.forLanguageTag(languageFile.nameWithoutExtension)
             val currentTranslations = JSON.decodeFromString<Map<String, String>>(languageFile.readTextWithBuffer())
             translations.computeIfAbsent(locale) { ConcurrentHashMap() }.putAll(currentTranslations)
