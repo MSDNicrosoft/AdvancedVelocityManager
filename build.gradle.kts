@@ -121,13 +121,13 @@ tasks {
         archiveClassifier = null
 
         doFirst {
-            exclude("META-INF/**kotlin_module")
             exclude("META-INF/maven/**")
             exclude("META-INF/versions/**")
             exclude("META-INF/proguard/**")
             exclude("META-INF/com.android.tools/**")
         }
 
+        relocate("kotlin", "avm.kotlin")
         relocate("kotlinx.serialization", "avm.kotlinx.serialization")
         relocate("com.charleskorn.kaml", "avm.com.charleskorn.kaml")
         relocate("com.highcapable.kavaref", "avm.com.highcapable.kavaref")
