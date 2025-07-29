@@ -39,16 +39,30 @@ object TranslateManager : MiniMessageTranslator() {
     }
 
     @Suppress("NestedBlockDepth")
-    private fun extractTranslations() {
+    private fun checkAndUpdateTranslations() {
         val jarUrl = this::class.java.protectionDomain.codeSource?.location ?: return
         JarFile(jarUrl.path).use { jarFile ->
             jarFile.entries().asSequence()
                 .filter { it.name.startsWith("lang/") && !it.isDirectory }
                 .forEach { entry ->
-                    val outPath = languageFilePath / entry.name.removePrefix("lang/")
-                    outPath.toFile().parentFile.mkdirs()
+                    val outPath = (languageFilePath / entry.name.removePrefix("lang/")).toFile()
+                    outPath.parentFile.mkdirs()
+
+                    val fileExists = outPath.exists()
+                    val fileContentChanged = if (fileExists) {
+                        val localContent = outPath.readTextWithBuffer()
+                        val jarContent = jarFile.getInputStream(entry).bufferedReader().use { it.readText() }
+                        localContent != jarContent
+                    } else {
+                        true
+                    }
+
+                    if (fileExists && !fileContentChanged) {
+                        return@forEach
+                    }
+
                     jarFile.getInputStream(entry).use { input ->
-                        FileOutputStream(outPath.toFile()).use { output ->
+                        FileOutputStream(outPath).use { output ->
                             input.copyTo(output)
                         }
                     }
@@ -64,7 +78,7 @@ object TranslateManager : MiniMessageTranslator() {
 
     private fun registerTranslations() {
         if (getLanguageFiles().isEmpty()) {
-            extractTranslations()
+            checkAndUpdateTranslations()
         }
 
         for (languageFile in getLanguageFiles()) {
