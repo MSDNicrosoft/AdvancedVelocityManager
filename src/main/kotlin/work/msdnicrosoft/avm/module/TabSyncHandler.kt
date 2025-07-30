@@ -2,7 +2,7 @@ package work.msdnicrosoft.avm.module
 
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
-import com.velocitypowered.api.event.player.ServerConnectedEvent
+import com.velocitypowered.api.event.player.ServerPostConnectEvent
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.player.TabListEntry
 import net.kyori.adventure.text.Component
@@ -12,7 +12,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil
-import work.msdnicrosoft.avm.util.component.ComponentUtil
+import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 import work.msdnicrosoft.avm.util.server.task
 
 object TabSyncHandler {
@@ -40,7 +40,7 @@ object TabSyncHandler {
     }
 
     @Subscribe
-    fun onPlayerConnected(event: ServerConnectedEvent) {
+    fun onPostPlayerConnected(event: ServerPostConnectEvent) {
         if (!config.enabled) return
 
         task {
@@ -77,11 +77,11 @@ object TabSyncHandler {
         )
     }
 
-    private inline val Player.displayName: Component?
-        get() = ComponentUtil.miniMessage.deserialize(
+    private inline val Player.displayName: Component
+        get() = miniMessage.deserialize(
             config.format,
             Placeholder.unparsed("server_name", currentServer.get().serverInfo.name),
-            Placeholder.unparsed("server_nickname", ConfigUtil.getServerNickname(currentServer.get().serverInfo.name)),
+            Placeholder.parsed("server_nickname", ConfigUtil.getServerNickname(currentServer.get().serverInfo.name)),
             Placeholder.unparsed("player_name", username)
         )
 }
