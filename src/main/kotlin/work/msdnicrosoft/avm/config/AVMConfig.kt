@@ -18,7 +18,7 @@ data class AVMConfig(
         "",
         "DO NOT CHANGE THIS, OTHERWISE IT MAY CAUSE CRITICAL PROBLEMS"
     )
-    val version: Int = 1,
+    val version: Int = 2,
 
     @YamlComment(
         "The language for plugin to use",

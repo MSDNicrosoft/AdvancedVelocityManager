@@ -4,6 +4,7 @@ import com.charleskorn.kaml.YamlException
 import kotlinx.serialization.SerializationException
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
+import work.msdnicrosoft.avm.config.data.Version
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
 import work.msdnicrosoft.avm.util.file.FileUtil.YAML
 import work.msdnicrosoft.avm.util.file.decodeFromString
@@ -34,8 +35,8 @@ object ConfigManager {
         logger.info("{} configuration...", if (reload) "Reloading" else "Loading")
 
         return try {
+            migrate()
             config = YAML.decodeFromString<AVMConfig>(file.readTextWithBuffer())
-            // TODO Migrate config
             validate()
             true
         } catch (e: IOException) {
@@ -114,11 +115,17 @@ object ConfigManager {
         }
     }
 
-//    private fun migrate() {
-//        val currentVersion = YAML.decodeFromString<Version>(file.readTextWithBuffer()).version
-//
-//        if (currentVersion == 1 && DEFAULT_CONFIG.version == 1) {
-//            config = config.copy(version = 2)
-//        }
-//    }
+    private fun migrate() {
+        val currentVersion = YAML.decodeFromString<Version>(file.readTextWithBuffer()).version
+        if (currentVersion == DEFAULT_CONFIG.version) return
+        when (currentVersion) {
+            1 if DEFAULT_CONFIG.version == 2 -> {
+                logger.warn("Detected old config version, please migrate config:")
+                logger.warn("1. Move your config file to another place and execute `/avm reload` to regenerate config")
+                logger.warn("2. Manually compare and migrate configurations")
+                logger.warn("3. Execute `/avm reload` again to apply changes ")
+                error("Old configuration version")
+            }
+        }
+    }
 }
