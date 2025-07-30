@@ -102,7 +102,8 @@ object ChatBridge {
     @Subscribe
     fun onCommandExecute(event: CommandExecuteEvent) {
         val eventCommand = event.command
-            .split(" ")[0]
+            .split(" ")
+            .first()
             .replace("/", "")
         val isPrivateChat = MsgCommand.aliases.any { eventCommand.startsWith(it) }
 
