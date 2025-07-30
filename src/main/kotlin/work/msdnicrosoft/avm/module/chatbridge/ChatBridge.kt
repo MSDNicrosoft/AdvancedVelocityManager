@@ -101,12 +101,10 @@ object ChatBridge {
      */
     @Subscribe
     fun onCommandExecute(event: CommandExecuteEvent) {
-        val isPrivateChat = MsgCommand.aliases.any {
-            event.command
-                .split(" ")[0]
-                .replace("/", "")
-                .startsWith(event.command)
-        }
+        val eventCommand = event.command
+            .split(" ")[0]
+            .replace("/", "")
+        val isPrivateChat = MsgCommand.aliases.any { eventCommand.startsWith(it) }
 
         if (!isPrivateChat) return
 
