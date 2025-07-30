@@ -79,7 +79,6 @@ repositories {
 
 dependencies {
     detektPlugins(libs.detekt.formatting)
-    annotationProcessor(libs.velocity.api)
 
     compileOnly(libs.bundles.velocity)
     compileOnly(libs.bundles.asm)
