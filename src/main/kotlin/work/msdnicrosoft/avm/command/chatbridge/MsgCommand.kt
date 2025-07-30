@@ -6,6 +6,7 @@ import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
+import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
@@ -13,7 +14,6 @@ import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
 import work.msdnicrosoft.avm.util.command.*
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
-import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.styleOnlyMiniMessage
 import work.msdnicrosoft.avm.util.component.Format
 import work.msdnicrosoft.avm.util.component.sendTranslatable
@@ -77,7 +77,11 @@ object MsgCommand {
             JoinConfiguration.noSeparators(),
             map { format ->
                 format.text.deserialize(sender.name, player.username, message, time)
-                    .hoverEvent(createHoverEvent(format) { deserialize(sender.name, player.username, message, time) })
+                    .hoverEvent(
+                        format.hover?.joinToString("\n")
+                            ?.deserialize(sender.name, player.username, message, time)
+                            ?.let { HoverEvent.showText(it) }
+                    )
                     .clickEvent(createClickEvent(format) { replacePlaceHolders(sender.name, player.username, time) })
             }
         )

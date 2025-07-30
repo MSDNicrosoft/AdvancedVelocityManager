@@ -3,12 +3,12 @@ package work.msdnicrosoft.avm.module.chatbridge
 import com.velocitypowered.api.event.player.PlayerChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
+import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import work.msdnicrosoft.avm.config.data.ChatBridge
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
-import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.styleOnlyMiniMessage
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.TIMEOUT_PING_RESULT
 import work.msdnicrosoft.avm.util.string.replace
@@ -85,8 +85,8 @@ class ChatMessage(private val event: PlayerChatEvent, private val config: ChatBr
         JoinConfiguration.noSeparators(),
         config.publicChatFormat.map { format ->
             format.text.deserialize()
+                .hoverEvent(format.hover?.joinToString("\n")?.deserialize()?.let { HoverEvent.showText(it) })
                 .clickEvent(createClickEvent(format) { replacePlaceholders() })
-                .hoverEvent(createHoverEvent(format) { deserialize() })
         }
     )
 }

@@ -1,9 +1,6 @@
 package work.msdnicrosoft.avm.util.component
 
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
@@ -25,25 +22,6 @@ object ComponentUtil {
                 .resolver(StandardTags.shadowColor())
                 .build()
         ).build()
-
-    /**
-     * Creates a HoverEvent based on the provided format and deserialization function.
-     *
-     * @param format The format to extract hover text from.
-     * @param deserialize A function to deserialize the hover text into a Component.
-     *
-     * @return A HoverEvent showing the deserialized hover text, or null if the format has no hover text.
-     */
-    @Suppress("UnsafeCallOnNullableType")
-    fun createHoverEvent(format: Format, deserialize: String.() -> Component): HoverEvent<Component>? {
-        if (!format.hover.isNullOrEmpty()) return null
-        return HoverEvent.showText(
-            Component.join(
-                JoinConfiguration.newlines(),
-                format.hover!!.map(deserialize)
-            )
-        )
-    }
 
     /**
      * Creates a ClickEvent based on the provided format and replacer function.
