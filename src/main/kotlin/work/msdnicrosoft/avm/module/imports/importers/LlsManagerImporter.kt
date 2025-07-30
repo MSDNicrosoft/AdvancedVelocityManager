@@ -1,20 +1,16 @@
 package work.msdnicrosoft.avm.module.imports.importers
 
+import com.velocitypowered.api.command.CommandSource
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import taboolib.common.platform.ProxyCommandSender
-import taboolib.module.lang.asLangText
-import taboolib.module.lang.sendError
-import taboolib.module.lang.sendLang
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import net.kyori.adventure.text.minimessage.translation.Argument
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
+import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
-import kotlin.io.path.exists
-import kotlin.io.path.extension
-import kotlin.io.path.listDirectoryEntries
-import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.*
 
 object LlsManagerImporter : Importer {
 
@@ -40,29 +36,35 @@ object LlsManagerImporter : Importer {
         val onlineMode: Boolean
     )
 
-    private val PATH by lazy { plugin.configDirectory.parent.resolve("lls-manager") }
-    private val CONFIG_PATH by lazy { PATH.resolve("config.json") }
-    private val PLAYER_DATA_PATH by lazy { PATH.resolve("player") }
+    private val PATH = dataDirectory.parent / "lls-manager"
+    private val CONFIG_PATH = PATH / "config.json"
+    private val PLAYER_DATA_PATH = PATH / "player"
 
-    override fun import(sender: ProxyCommandSender, defaultServer: String): Boolean {
+    override fun import(source: CommandSource, defaultServer: String): Boolean {
         val configSuccess = if (CONFIG_PATH.exists()) {
-            sender.importConfig()
+            source.importConfig()
         } else {
-            sender.sendLang("command-avm-import-config-does-not-exist", pluginName)
+            source.sendTranslatable(
+                "avm.command.avm.import.config.not.exist",
+                Argument.string("plugin_name", pluginName)
+            )
             false
         }
 
         val playerDataSuccess = if (PLAYER_DATA_PATH.exists()) {
-            sender.importPlayerData(defaultServer)
+            source.importPlayerData(defaultServer)
         } else {
-            sender.sendLang("command-avm-import-player-does-not-exist", pluginName)
+            source.sendTranslatable(
+                "avm.command.avm.import.player.not.exist",
+                Argument.string("plugin_name", pluginName)
+            )
             false
         }
 
         return configSuccess && playerDataSuccess
     }
 
-    private fun ProxyCommandSender.importConfig(): Boolean =
+    private fun CommandSource.importConfig(): Boolean =
         try {
             val config = JSON.decodeFromString<Config>(CONFIG_PATH.readTextWithBuffer())
 
@@ -76,17 +78,21 @@ object LlsManagerImporter : Importer {
             }
             ConfigManager.save()
         } catch (e: Exception) {
-            sendError("command-avm-import-config-failed", pluginName, e.message ?: asLangText("unknown-cause"))
+            sendTranslatable(
+                "avm.command.avm.import.config.failed",
+                Argument.string("plugin_name", QuAnVelocityWhitelistImporter.pluginName),
+                Argument.string("reason", e.message.orEmpty())
+            )
             false
         }
 
     @Suppress("NestedBlockDepth")
-    private fun ProxyCommandSender.importPlayerData(defaultServer: String): Boolean {
+    private fun CommandSource.importPlayerData(defaultServer: String): Boolean {
         var success = true
 
         PLAYER_DATA_PATH.listDirectoryEntries()
             .asSequence()
-            .filter { it.extension.equals("json", ignoreCase = true) }
+            .filter { it.extension.equals("json", ignoreCase = true) && it.isRegularFile() }
             .forEach { file ->
                 val username = file.nameWithoutExtension
                 try {
@@ -96,11 +102,11 @@ object LlsManagerImporter : Importer {
                         WhitelistManager.add(username, server, llsPlayer.onlineMode)
                     }
                 } catch (e: Exception) {
-                    sendError(
-                        "command-avm-import-player-data-failed",
-                        username,
-                        pluginName,
-                        e.message ?: asLangText("unknown-cause")
+                    sendTranslatable(
+                        "avm.command.avm.import.player.failed",
+                        Argument.string("player", username),
+                        Argument.string("plugin_name", QuAnVelocityWhitelistImporter.pluginName),
+                        Argument.string("reason", e.message.orEmpty())
                     )
                     success = false
                 }

@@ -3,10 +3,11 @@ package work.msdnicrosoft.avm.module.whitelist
 import com.velocitypowered.api.util.UuidUtils
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
-import taboolib.common.platform.function.getDataFolder
-import taboolib.common.platform.function.submit
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.HttpUtil
 import work.msdnicrosoft.avm.util.command.PageTurner
@@ -14,30 +15,21 @@ import work.msdnicrosoft.avm.util.data.UUIDSerializer
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import work.msdnicrosoft.avm.util.file.writeTextWithBuffer
+import work.msdnicrosoft.avm.util.server.task
 import work.msdnicrosoft.avm.util.string.toUuid
 import java.io.IOException
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import java.util.UUID
+import java.util.*
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
+import kotlin.io.path.div
 
 @Suppress("TooManyFunctions")
 object WhitelistManager {
-
-    private inline val config
-        get() = ConfigManager.config.whitelist
-
-    /**
-     * This constant is used to indicate that a player was not found.
-     */
-    private const val NOT_FOUND_RESULT = "--NOT_FOUND--"
-
-    private val lock = Any()
-
-    private val httpClient = HttpClient.newHttpClient()
-
-    private val file by lazy { getDataFolder().resolve("whitelist.json") }
 
     enum class AddResult {
         SUCCESS,
@@ -75,6 +67,20 @@ object WhitelistManager {
     @Serializable
     data class ApiResponse(val id: String, val name: String)
 
+    private inline val config
+        get() = ConfigManager.config.whitelist
+
+    /**
+     * This constant is used to indicate that a player was not found.
+     */
+    private const val NOT_FOUND_RESULT = "--NOT_FOUND--"
+
+    private val lock = ReentrantReadWriteLock()
+
+    private val httpClient = HttpClient.newHttpClient()
+
+    private val file = (dataDirectory / "whitelist.json").toFile()
+
     private val whitelist = mutableListOf<Player>()
 
     val usernames = hashSetOf<String>()
@@ -98,9 +104,7 @@ object WhitelistManager {
         get() = PageTurner.getMaxPage(whitelist.size)
 
     inline val serverIsOnlineMode: Boolean
-        get() = plugin.server.configuration.isOnlineMode
-
-    private inline fun <T> withLock(block: () -> T): T = synchronized(lock) { block() }
+        get() = server.configuration.isOnlineMode
 
     /**
      * Called when the plugin is enabled.
@@ -110,16 +114,16 @@ object WhitelistManager {
     fun init(reload: Boolean = false) {
         load(reload)
         updateCache()
-        plugin.server.eventManager.register(plugin, WhitelistHandler)
+        eventManager.register(plugin, WhitelistHandler)
     }
 
     fun disable(): Boolean {
-        plugin.server.eventManager.unregisterListener(plugin, WhitelistHandler)
+        eventManager.unregisterListener(plugin, WhitelistHandler)
         return save()
     }
 
     fun reload() {
-        plugin.server.eventManager.unregisterListener(plugin, WhitelistHandler)
+        eventManager.unregisterListener(plugin, WhitelistHandler)
         init(reload = true)
     }
 
@@ -135,9 +139,7 @@ object WhitelistManager {
 
         return try {
             file.parentFile.mkdirs()
-            withLock {
-                file.writeTextWithBuffer(JSON.encodeToString(if (initialize) listOf() else whitelist))
-            }
+            lock.read { file.writeTextWithBuffer(JSON.encodeToString(if (initialize) listOf() else whitelist)) }
             true
         } catch (e: IOException) {
             logger.error("Failed to save whitelist", e)
@@ -156,7 +158,7 @@ object WhitelistManager {
         logger.info("{} whitelist...", if (reload) "Reloading" else "Loading")
 
         return try {
-            withLock {
+            lock.write {
                 whitelist.clear()
                 whitelist.addAll(JSON.decodeFromString<List<Player>>(file.readTextWithBuffer()))
             }
@@ -174,7 +176,7 @@ object WhitelistManager {
      * Updates the cache of usernames and UUIDs.
      */
     private fun updateCache() {
-        withLock {
+        lock.write {
             uuids.clear()
             uuids.addAll(whitelist.map { it.uuid })
 
@@ -242,8 +244,9 @@ object WhitelistManager {
     fun add(username: String, uuid: UUID, server: String, onlineMode: Boolean?): AddResult {
         // Check if the player is already in the server whitelist
         if (isInServerWhitelist(uuid, server)) return AddResult.ALREADY_EXISTS
-        withLock {
-            val player = whitelist.find { it.uuid == uuid }
+
+        val player = lock.read { whitelist.find { it.uuid == uuid } }
+        lock.write {
             if (player == null) {
                 whitelist.add(Player(username, uuid, onlineMode ?: serverIsOnlineMode, listOf(server)))
                 uuids.add(uuid)
@@ -291,10 +294,11 @@ object WhitelistManager {
      * @return The result of the remove operation.
      */
     fun remove(player: Player, server: String?): RemoveResult {
-        withLock {
+        lock.read {
             // If a server is specified, check if it's in the player's server list
             if (player !in whitelist) return RemoveResult.FAIL_NOT_FOUND
-
+        }
+        lock.write {
             if (server != null) {
                 if (server !in player.serverList) return RemoveResult.FAIL_NOT_FOUND
 
@@ -324,7 +328,7 @@ object WhitelistManager {
      * @return `true` if the whitelist was successfully cleared and saved, `false` otherwise.
      */
     fun clear(): Boolean {
-        withLock {
+        lock.write {
             whitelist.clear()
             uuids.clear()
             usernames.clear()
@@ -340,7 +344,7 @@ object WhitelistManager {
      * @return A list of players matching the search criteria.
      */
     fun find(keyword: String, page: Int): List<Player> {
-        val filtered = withLock { whitelist.filter { keyword in it.name } }
+        val filtered = lock.read { whitelist.filter { keyword in it.name } }
         val pages = filtered.chunked(PageTurner.ITEMS_PER_PAGE)
         return pages.getOrNull(page - 1).orEmpty()
     }
@@ -348,22 +352,22 @@ object WhitelistManager {
     /**
      * Finds a player in the whitelist by their UUID.
      */
-    fun getPlayer(username: String): Player? = withLock { whitelist.find { it.name == username } }
+    fun getPlayer(username: String): Player? = lock.read { whitelist.find { it.name == username } }
 
     /**
      * Finds a player in the whitelist by their UUID.
      */
-    fun getPlayer(uuid: UUID): Player? = withLock { whitelist.find { it.uuid == uuid } }
+    fun getPlayer(uuid: UUID): Player? = lock.read { whitelist.find { it.uuid == uuid } }
 
     /**
      * Checks if a player with the given identifier is in the whitelist.
      */
-    fun isInWhitelist(uuid: UUID): Boolean = withLock { uuid in uuids }
+    fun isInWhitelist(uuid: UUID): Boolean = lock.read { uuid in uuids }
 
     /**
      * Checks if a player with the given identifier is in the whitelist.
      */
-    fun isInWhitelist(username: String): Boolean = withLock { username in usernames }
+    fun isInWhitelist(username: String): Boolean = lock.read { username in usernames }
 
     /**
      * Checks if a player with the given UUID is allowed to connect to a specific server.
@@ -372,7 +376,7 @@ object WhitelistManager {
      * If the player is in the whitelist, it then checks if the server is in the list of allowed servers for the player.
      */
     @Suppress("UnsafeCallOnNullableType")
-    fun isInServerWhitelist(uuid: UUID, server: String): Boolean = withLock {
+    fun isInServerWhitelist(uuid: UUID, server: String): Boolean = lock.read {
         if (!isInWhitelist(uuid)) return false
 
         val serverList = getPlayer(uuid)!!.serverList
@@ -454,12 +458,9 @@ object WhitelistManager {
             }.get()
     }
 
-    fun updatePlayer(username: String, uuid: UUID) = submit(now = true) {
-        withLock {
-            val player = whitelist.find { it.uuid == uuid }
-            if (player == null) return@submit
-            player.name = username
-        }
+    fun updatePlayer(username: String, uuid: UUID) = task {
+        val player = lock.read { whitelist.find { it.uuid == uuid } } ?: return@task
+        lock.write { player.name = username }
         save()
         updateCache()
     }
@@ -471,7 +472,7 @@ object WhitelistManager {
      * @return A list of players on the specified page.
      */
     fun pageOf(page: Int): List<Player> {
-        val pages = withLock { whitelist.toList().chunked(PageTurner.ITEMS_PER_PAGE) }
+        val pages = lock.read { whitelist.chunked(PageTurner.ITEMS_PER_PAGE) }
         return pages[page - 1]
     }
 }

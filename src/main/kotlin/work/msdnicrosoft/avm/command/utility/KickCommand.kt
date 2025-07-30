@@ -1,40 +1,55 @@
 package work.msdnicrosoft.avm.command.utility
 
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
-import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.command.subCommand
-import taboolib.common.platform.function.submitAsync
-import taboolib.module.lang.asLangText
-import taboolib.module.lang.sendLang
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
-import work.msdnicrosoft.avm.util.ProxyServerUtil.getPlayer
-import work.msdnicrosoft.avm.util.ProxyServerUtil.kickPlayers
+import com.mojang.brigadier.Command
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.velocitypowered.api.command.CommandSource
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.translation.Argument
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
+import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
+import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getPlayer
+import work.msdnicrosoft.avm.util.server.task
 import kotlin.jvm.optionals.getOrElse
 
-@PlatformSide(Platform.VELOCITY)
 object KickCommand {
-    val command = subCommand {
-        dynamic("player") {
-            suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                plugin.server.allPlayers.map { it.username }
-            }
-            dynamic("reason") {
-                execute<ProxyCommandSender> { sender, context, _ ->
-                    sender.kickPlayer(context["player"], context["reason"])
-                }
-            }
-            execute<ProxyCommandSender> { sender, context, _ ->
-                sender.kickPlayer(context["player"], sender.asLangText("command-kick-target", sender.name))
-            }
-        }
-    }
 
-    private fun ProxyCommandSender.kickPlayer(player: String, reason: String) {
+    val command: LiteralArgumentBuilder<CommandSource> = literal("kick")
+        .requires { source -> source.hasPermission("avm.command.kick") }
+        .then(
+            wordArgument("player")
+                .suggests { context, builder ->
+                    server.allPlayers.forEach { builder.suggest(it.username) }
+                    builder.buildFuture()
+                }
+                .executes { context ->
+                    context.source.kickPlayer(
+                        context.get<String>("player"),
+                        tr("avm.command.avm.kick.target", Argument.string("executor", context.source.name))
+                    )
+
+                    Command.SINGLE_SUCCESS
+                }
+                .then(
+                    wordArgument("reason")
+                        .executes { context ->
+                            context.source.kickPlayer(
+                                context.get<String>("player"),
+                                miniMessage.deserialize(context.get<String>("reason"))
+                            )
+
+                            Command.SINGLE_SUCCESS
+                        }
+                )
+        )
+
+    private fun CommandSource.kickPlayer(player: String, reason: Component) {
         val playerToKick = getPlayer(player).getOrElse {
-            sendLang("player-not-found", player)
+            sendTranslatable("avm.general.not.exist.player", Argument.string("player", player))
             return
         }
-        submitAsync(now = true) { kickPlayers(reason, playerToKick) }
+        task { playerToKick.disconnect(reason) }
     }
 }

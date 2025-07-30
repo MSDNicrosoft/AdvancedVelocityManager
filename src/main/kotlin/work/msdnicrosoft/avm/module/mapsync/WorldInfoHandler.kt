@@ -11,14 +11,13 @@ import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import io.netty.buffer.ByteBufUtil
 import io.netty.buffer.Unpooled
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.channelRegistrar
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.netty.useThenApply
 import java.nio.charset.StandardCharsets
 
-@PlatformSide(Platform.VELOCITY)
 object WorldInfoHandler {
     private val WORLD_INFO_CHANNEL = MinecraftChannelIdentifier.create("worldinfo", "world_id")
 
@@ -26,13 +25,13 @@ object WorldInfoHandler {
         get() = ConfigManager.config.mapSync.worldInfo
 
     fun init() {
-        plugin.server.channelRegistrar.register(WORLD_INFO_CHANNEL)
-        plugin.server.eventManager.register(plugin, this)
+        channelRegistrar.register(WORLD_INFO_CHANNEL)
+        eventManager.register(plugin, this)
     }
 
     fun disable() {
-        plugin.server.channelRegistrar.unregister(WORLD_INFO_CHANNEL)
-        plugin.server.eventManager.unregisterListener(plugin, this)
+        channelRegistrar.unregister(WORLD_INFO_CHANNEL)
+        eventManager.unregisterListener(plugin, this)
     }
 
     @Subscribe

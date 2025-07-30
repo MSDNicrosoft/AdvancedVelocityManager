@@ -3,13 +3,14 @@ package work.msdnicrosoft.avm.module.chatbridge
 import com.velocitypowered.api.event.player.PlayerChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
+import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import work.msdnicrosoft.avm.config.data.ChatBridge
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
-import work.msdnicrosoft.avm.util.ProxyServerUtil.TIMEOUT_PING_RESULT
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
-import work.msdnicrosoft.avm.util.component.ComponentUtil.createHoverEvent
-import work.msdnicrosoft.avm.util.component.ComponentUtil.serializer
+import work.msdnicrosoft.avm.util.component.ComponentUtil.styleOnlyMiniMessage
+import work.msdnicrosoft.avm.util.server.ProxyServerUtil.TIMEOUT_PING_RESULT
 import work.msdnicrosoft.avm.util.string.replace
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -44,31 +45,36 @@ class ChatMessage(private val event: PlayerChatEvent, private val config: ChatBr
      * Deserialize the message by replacing placeholders with actual values.
      * @return The deserialized message with placeholders replaced.
      */
-    private fun String.deserialize() = serializer.buildComponent(this)
-        .replace("%player_name%", playerUsername)
-        .replace("%player_uuid%", playerUuid)
-        .replace("%player_ping%", playerPing)
-        .replace("%player_message%", event.message.let { if (config.allowFormatCode) serializer.parse(it) else it })
-        .replace("%server_name%", serverName)
-        .replace("%server_nickname%", serverNickname)
-        .replace("%server_online_players%", serverOnlinePlayers)
-        .replace("%server_version%", serverVersion)
-        .replace("%player_message_sent_time%", getDateTime())
-        .build()
+    private fun String.deserialize() = styleOnlyMiniMessage.deserialize(
+        this,
+        Placeholder.unparsed("player_name", playerUsername),
+        Placeholder.unparsed("player_uuid", playerUuid),
+        Placeholder.unparsed("player_ping", playerPing),
+        Placeholder.unparsed("server_name", serverName),
+        Placeholder.unparsed("server_nickname", serverNickname),
+        Placeholder.unparsed("server_online_players", serverOnlinePlayers),
+        Placeholder.unparsed("server_version", serverVersion),
+        Placeholder.unparsed("player_message_sent_time", getDateTime()),
+        if (config.allowFormatCode) {
+            Placeholder.parsed("player_message", event.message)
+        } else {
+            Placeholder.unparsed("player_message", event.message)
+        },
+    )
 
     /**
      * Replace placeholders in the message with actual player and server information.
      * @return The message with placeholders replaced.
      */
     private fun String.replacePlaceholders() = this.replace(
-        "%player_name%" to playerUsername,
-        "%player_uuid%" to playerUuid,
-        "%player_ping%" to playerPing,
-        "%player_message%" to event.message,
-        "%server_name%" to serverName,
-        "%server_nickname%" to serverNickname,
-        "%server_online_players%" to serverOnlinePlayers,
-        "%server_version%" to serverVersion
+        "<player_name>" to playerUsername,
+        "<player_uuid>" to playerUuid,
+        "<player_ping>" to playerPing,
+        "<player_message>" to event.message,
+        "<server_name>" to serverName,
+        "<server_nickname>" to serverNickname,
+        "<server_online_players>" to serverOnlinePlayers,
+        "<server_version>" to serverVersion
     )
 
     /**
@@ -79,8 +85,8 @@ class ChatMessage(private val event: PlayerChatEvent, private val config: ChatBr
         JoinConfiguration.noSeparators(),
         config.publicChatFormat.map { format ->
             format.text.deserialize()
+                .hoverEvent(format.hover?.joinToString("\n")?.deserialize()?.let { HoverEvent.showText(it) })
                 .clickEvent(createClickEvent(format) { replacePlaceholders() })
-                .hoverEvent(createHoverEvent(format) { deserialize() })
         }
     )
 }

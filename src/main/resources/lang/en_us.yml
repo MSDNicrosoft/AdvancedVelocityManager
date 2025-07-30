@@ -1,0 +1,137 @@
+avm:
+  general:
+    plugin.name: "<aqua>Advanced<dark_aqua>Velocity<blue>Manager"
+    "on": "<green>on"
+    "off": "<dark_red>off"
+    username: "username"
+    uuid: "UUID"
+    empty.server: "<gray>There is no players in the server"
+    turn.to:
+      previous: "<yellow>Click to turn to previous page"
+      next: "<yellow>Click to turn to next page"
+    not.found:
+     page: "<gray>This page does not exist"
+     server: "<red>Server <white><server> <red>does not exist！"
+     player: "<red>Player <white><player> <red>does not exist！"
+    help:
+      header:
+        "1":
+          text: "  <name> <white>v<version>"
+          name.hover: "<gray>AdvancedVelocityManager is a modern and advanced Velocity plugin"
+        "2":
+          text: "  <gray>Type: <white>/<root_command> <dark_gray>..."
+        subcommands: "  <gray>Subcommands:"
+
+  whitelist:
+    player:
+      server:
+        hover:
+          "1": "<dark_aqua>This is a server group, containing the following servers:"
+          "2": "<gold>▶ <yellow>Click to remove <server_name> <yellow>from the whitelist server list of <player_name>"
+      username:
+        hover: "<gold>▶ <yellow>Click to remove this player from the whitelist"
+      uuid:
+        hover: "<gold>▶ <yellow>Click to copy"
+    page:
+      must.larger.than.zero: "<red>Page number must be larger than zero!"
+    save.failed: "<red>Failed to save the whitelist file, please check console log"
+
+  command:
+    avm:
+      info:
+        description: "<gray>View plugin information"
+        plugin:
+          name: "<gray>Plugin Name: <name>"
+          version: "<gray>Plugin Version: <white><version>"
+        server: "<gray>Server: <dark_aqua><server>"
+      confirm:
+        description: "<gray>Confirm actions"
+        expired: "<light_purple>This session command has expired"
+        failed: "<red>Failed to execute this session command"
+        not.found: "<light_purple>Unknown session command"
+      import:
+        description: "<gray>Import data from other plugins"
+        success: "<gray>Imported data from <plugin_name> successfully! <dark_gray>Took: <elapsed>"
+        failed: "<red>Failed to import data from <plugin_name>, please check console log"
+        need.confirm:
+          "1":
+            text: "<yellow><bold>Warning: This action will override the existing configuration and data!"
+          "2":
+            text: "<gray>Click this message or execute command <white><command> <gray>to confirm the action!"
+            hover: "<gray>Confirm the action"
+        config:
+          not.exist: "<dark_gray>The configuration file of <plugin_name> does not exist, skipping..."
+          failed: "<red>Failed to import configuration from <plugin_name>: <reason>"
+        whitelist:
+          not.exist: "<dark_gray>The whitelist file of <plugin_name> does not exist, skipping..."
+          failed: "<red>Failed to import whitelist from <plugin_name>: <reason>"
+        player:
+          not.exist: "<dark_gray>The player data folder of <plugin_name> does not exist, skipping..."
+          failed: "<red>Failed to import player <player> from <plugin_name>: <reason>"
+      send:
+        description: "<gray>Send a specified player from one server to another"
+        executor:
+          success: "<dark_green>Player <player> has been sent to server <server>"
+          failed: "<red>Failed to send player <player> to server <server>"
+        target: "<gray><executor> sent you to server <server>"
+      sendall:
+        description: "<gray>Send all players from a specified server to another"
+        executor:
+          text: "<dark_green><player_total> player(s) have been sent to <server> and <bypass>"
+          bypass:
+            text: "<player_bypass> player(s) bypassed"
+            hover: "<yellow>Reason: sendall.allow-bypass enabled & player(s) have permission <gold>avm.sendall.bypass"
+      kick:
+        description: "<gray>Kick a specified player with an optional reason"
+        target: "<gray><executor> kicked you from server"
+      kickall:
+        description: "<gray>Kick all players from a specified server with an optional reason"
+        executor:
+          text: "<dark_green><player_total> player(s) have been kicked and <bypass>"
+          bypass:
+            text: "<player_bypass> player(s) bypassed"
+            hover: "<yellow>Reason: kickall.allow-bypass enabled & player(s) have permission <gold>avm.kickall.bypass"
+      reload:
+        description: "<gray>Discard data in memory, then reload config, language and whitelist from files"
+        success: "<green>Reloaded successfully! <dark_gray>Took: <elapsed> ms"
+        failed: "<red>Reload failed, please check console log"
+
+    avmwl:
+      add:
+        description: "<gray>Add a player to the whitelist by username or UUID"
+        success: "<dark_green>Added <player> to the whitelist"
+        request:
+          not.found: "<light_purple>Failed: The player does not exist"
+          failed: "<red>Failed: An error occurred while querying the player"
+        already.exists: "<gold>The player has been already in the whitelist"
+        uuid.unsupported: "<light_purple>Failed: Adding a whitelist with UUID in offline mode is not supported"
+      remove:
+        description: "<gray>Remove a player from the whitelist"
+        success:
+          full: "<dark_green>Removed <player> from the whitelist"
+          server: "<dark_green>Removed <player> from the whitelist server list of <server>"
+        not.found: "<light_purple>The player is not in the whitelist"
+      clear:
+        description: "<gray>Clear the whitelist"
+        need.confirm:
+          "1":
+            text: "<yellow><bold>Warning: This action will clear the whitelist!"
+          "2":
+            text: "<gray>Click this message or execute command <white><command> <gray>to confirm the action!"
+            hover: "<gray>Confirm the action"
+        success: "<dark_green>Whitelist cleared!"
+        failed: "<red>Failed to clear the whitelist, see console log"
+      list:
+        description: "<gray>View the whitelist"
+        empty: "<gray>There are no whitelisted players"
+        header: "<gray>There are <player> player(s) in the whitelist"
+      find:
+        description: "<gray>Find player(s) in the whitelist by keyword"
+        empty: "<light_purple>Could not find relevant player(s)"
+        header: "<gray>Found relevant player(s):"
+      status:
+        description: "<gray>View the whitelist status"
+        state: "<gray>Whitelist is <state>"
+        cache: "<gray>Current completion cache: <white><current>/<total>"
+      on.description: "<gray>Turn on the whitelist"
+      off.description: "<gray>Turn off the whitelist"

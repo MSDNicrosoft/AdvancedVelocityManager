@@ -1,40 +1,57 @@
 package work.msdnicrosoft.avm.command.whitelist
 
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
-import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.command.subCommand
-import taboolib.common.platform.function.submitAsync
-import taboolib.module.lang.sendLang
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import com.mojang.brigadier.Command
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.velocitypowered.api.command.CommandSource
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.minimessage.translation.Argument
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.CommandSessionManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.ProxyServerUtil.kickPlayers
+import work.msdnicrosoft.avm.util.command.literal
+import work.msdnicrosoft.avm.util.command.name
+import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
+import work.msdnicrosoft.avm.util.server.task
 
-@PlatformSide(Platform.VELOCITY)
 object ClearCommand {
 
     private inline val config
         get() = ConfigManager.config.whitelist
 
-    val command = subCommand {
-        execute<ProxyCommandSender> { sender, _, argument ->
-            val sessionId = CommandSessionManager.generateSessionId(sender.name, System.currentTimeMillis(), argument)
+    val command: LiteralArgumentBuilder<CommandSource> = literal("clear")
+        .requires { source -> source.hasPermission("avm.command.whitelist.clear") }
+        .executes { context ->
+            val sessionId =
+                CommandSessionManager.generateSessionId(
+                    context.source.name,
+                    System.currentTimeMillis(),
+                    context.arguments.values.joinToString(" ")
+                )
 
             CommandSessionManager.add(sessionId) {
                 if (WhitelistManager.clear()) {
-                    sender.sendLang("command-avmwl-clear-success")
+                    context.source.sendTranslatable("avm.command.avmwl.clear.success")
                 } else {
-                    sender.sendLang("command-avmwl-clear-failed")
+                    context.source.sendTranslatable("avm.command.avmwl.clear.failed")
                 }
                 if (config.enabled) {
-                    submitAsync(now = true) {
-                        kickPlayers(config.message, plugin.server.allPlayers)
-                    }
+                    task { kickPlayers(config.message, server.allPlayers) }
                 }
             }
-            sender.sendLang("command-avmwl-clear-need-confirm", "/avm confirm $sessionId")
+            context.source.sendTranslatable("avm.command.avmwl.clear.need.confirm.1.text")
+            context.source.sendMessage(
+                tr(
+                    "avm.command.avmwl.clear.need.confirm.2.text",
+                    Argument.string("command", "/avm confirm $sessionId")
+                )
+                    .clickEvent(ClickEvent.runCommand("/avm confirm $sessionId"))
+                    .hoverEvent(HoverEvent.showText(tr("avm.command.avmwl.clear.need.confirm.2.hover")))
+            )
+
+            Command.SINGLE_SUCCESS
         }
-    }
 }

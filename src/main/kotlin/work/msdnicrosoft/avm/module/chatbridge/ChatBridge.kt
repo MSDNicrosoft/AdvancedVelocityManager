@@ -5,9 +5,7 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.command.CommandExecuteEvent
 import com.velocitypowered.api.event.player.PlayerChatEvent
 import net.kyori.adventure.text.Component
-import taboolib.common.platform.command.CommandHeader
-import taboolib.common5.util.startsWithAny
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.command.chatbridge.MsgCommand
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.Logging
@@ -16,10 +14,6 @@ object ChatBridge {
 
     private inline val config
         get() = ConfigManager.config.chatBridge
-
-    private val PRIVATE_CHAT_COMMANDS by lazy {
-        MsgCommand.javaClass.getAnnotation(CommandHeader::class.java).aliases
-    }
 
     /**
      * Represents the different modes of passthrough for chat messages.
@@ -107,7 +101,11 @@ object ChatBridge {
      */
     @Subscribe
     fun onCommandExecute(event: CommandExecuteEvent) {
-        val isPrivateChat = PRIVATE_CHAT_COMMANDS.any { event.command.split(" ")[0].startsWithAny(event.command) }
+        val eventCommand = event.command
+            .split(" ")
+            .first()
+            .replace("/", "")
+        val isPrivateChat = MsgCommand.aliases.any { eventCommand.startsWith(it) }
 
         if (!isPrivateChat) return
 

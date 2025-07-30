@@ -11,12 +11,12 @@ data class TabSync(
     @YamlComment(
         "The display format for each player in tab list",
         "",
-        "Default: &8[%server_nickname%&8] &r%player_name%",
+        "Default: <dark_gray>[<server_nickname><dark_gray>] <reset><player_name>",
         "",
         "Available placeholders:",
-        "%player_name% - The username of a player who sent a message",
-        "%server_name% - The name of the server where a player sent a message",
-        "%server_nickname% - The nickname of the server where a player sent a message",
+        "<player_name> - The username of a player who sent a message",
+        "<server_name> - The name of the server where a player sent a message",
+        "<server_nickname> - The nickname of the server where a player sent a message",
     )
-    val format: String = "&8[%server_nickname%&8] &r%player_name%"
+    val format: String = "<dark_gray>[<server_nickname><dark_gray>] <reset><player_name>"
 )

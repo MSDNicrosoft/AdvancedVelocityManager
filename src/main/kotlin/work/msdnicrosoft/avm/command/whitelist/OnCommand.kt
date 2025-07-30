@@ -1,39 +1,44 @@
 package work.msdnicrosoft.avm.command.whitelist
 
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
-import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.command.subCommand
-import taboolib.common.platform.function.submitAsync
-import taboolib.module.lang.asLangText
-import taboolib.module.lang.sendLang
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import com.mojang.brigadier.Command
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.velocitypowered.api.command.CommandSource
+import net.kyori.adventure.text.minimessage.translation.Argument
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.ProxyServerUtil.kickPlayers
+import work.msdnicrosoft.avm.util.command.literal
+import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
+import work.msdnicrosoft.avm.util.server.task
 
-@PlatformSide(Platform.VELOCITY)
 object OnCommand {
 
     private inline val config
         get() = ConfigManager.config.whitelist
 
-    val command = subCommand {
-        execute<ProxyCommandSender> { sender, _, _ ->
+    val command: LiteralArgumentBuilder<CommandSource> = literal("on")
+        .requires { source -> source.hasPermission("avm.command.whitelist.on") }
+        .executes { context ->
             WhitelistManager.enabled = true
 
-            sender.sendLang("command-avmwl-state", sender.asLangText("general-on"))
+            context.source.sendTranslatable(
+                "avm.command.avmwl.status.state",
+                Argument.component("state", tr("avm.general.on"))
+            )
 
-            submitAsync(now = true) {
+            task {
                 kickPlayers(
                     config.message,
                     if (WhitelistManager.isEmpty) {
-                        plugin.server.allPlayers
+                        server.allPlayers
                     } else {
-                        plugin.server.allPlayers.filter { it.uniqueId !in WhitelistManager.uuids }
+                        server.allPlayers.filter { it.uniqueId !in WhitelistManager.uuids }
                     }
                 )
             }
+
+            Command.SINGLE_SUCCESS
         }
-    }
 }

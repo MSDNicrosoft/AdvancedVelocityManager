@@ -1,4 +1,3 @@
-import io.izzel.taboolib.gradle.*
 import org.ajoberstar.grgit.Commit
 import org.ajoberstar.grgit.Grgit
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -10,9 +9,9 @@ plugins {
     alias(libs.plugins.detekt)
 //    alias(libs.plugins.detekt.compiler)
 
-    alias(libs.plugins.taboolib)
-
     alias(libs.plugins.grgit)
+    alias(libs.plugins.yamlang)
+    alias(libs.plugins.shadow)
 }
 
 base {
@@ -66,11 +65,6 @@ repositories {
             includeGroup("com.velocitypowered")
         }
     }
-    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-        content {
-            includeGroup("dev.vankka")
-        }
-    }
     maven("https://repo.opencollab.dev/main/") {
         content {
             includeGroupByRegex("org.geysermc.*")
@@ -83,32 +77,6 @@ repositories {
     }
 }
 
-taboolib {
-    description {
-        name("AdvancedVelocityManager")
-        desc("AdvancedVelocityManager is a modern and advanced Velocity plugin")
-        links {
-            name("homepage").url("https://github.com/MSDNicrosoft/AdvancedVelocityManager")
-        }
-        contributors {
-            name("MSDNicrosoft")
-        }
-    }
-    env {
-        install(CommandHelper, I18n)
-        install(Velocity)
-        install(Metrics)
-    }
-    version {
-        taboolib = "6.2.3-b217935"
-        coroutines = null
-    }
-    relocate("kotlinx.serialization", "avm.kotlinx.serialization")
-    relocate("dev.vankka.enhancedlegacytext", "avm.dev.vankka.enhancedlegacytext")
-    relocate("com.charleskorn.kaml", "avm.com.charleskorn.kaml")
-    relocate("com.highcapable.kavaref", "avm.com.highcapable.kavaref")
-}
-
 dependencies {
     detektPlugins(libs.detekt.formatting)
 
@@ -119,11 +87,15 @@ dependencies {
     compileOnly(libs.fastutil)
     compileOnly(kotlin("stdlib"))
 
-    taboo(libs.kaml)
-    taboo(libs.kotlin.serialization.json) { isTransitive = false }
-    taboo(libs.enhanced.legacy.text) { isTransitive = false }
-    taboo(libs.byte.buddy.agent)
-    taboo(libs.bundles.kavaref)
+    implementation(libs.kaml)
+    implementation(libs.kotlin.serialization.json) { isTransitive = false }
+    implementation(libs.byte.buddy.agent)
+    implementation(libs.bundles.kavaref)
+}
+
+yamlang {
+    targetSourceSets = listOf(sourceSets.main.get())
+    inputDir.set("lang")
 }
 
 detekt {
@@ -134,11 +106,38 @@ detekt {
 }
 
 tasks {
+    build {
+        dependsOn(shadowJar)
+    }
     compileJava {
         targetCompatibility = "17"
     }
+    jar {
+        archiveFileName = "${rootProject.name}-${rootProject.version}-unshaded.jar"
+    }
+    shadowJar {
+        minimize()
+        archiveClassifier = null
+
+        doFirst {
+            exclude("META-INF/maven/**")
+            exclude("META-INF/versions/**")
+            exclude("META-INF/proguard/**")
+            exclude("META-INF/com.android.tools/**")
+        }
+
+        relocate("kotlin", "avm.kotlin")
+        relocate("kotlinx.serialization", "avm.kotlinx.serialization")
+        relocate("com.charleskorn.kaml", "avm.com.charleskorn.kaml")
+        relocate("com.highcapable.kavaref", "avm.com.highcapable.kavaref")
+    }
+    processResources {
+        filesMatching("velocity-plugin.json") {
+            expand("version" to version)
+        }
+    }
     compileKotlin {
-        dependsOn("detekt")
+        dependsOn(detekt)
         compilerOptions {
             jvmTarget = JvmTarget.JVM_17
         }

@@ -1,96 +1,105 @@
 package work.msdnicrosoft.avm.command
 
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
-import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.command.CommandBody
-import taboolib.common.platform.command.CommandHeader
-import taboolib.common.platform.command.mainCommand
-import taboolib.common.platform.command.subCommand
-import taboolib.common.platform.function.submitAsync
-import taboolib.module.lang.sendLang
-import work.msdnicrosoft.avm.annotations.ShouldShow
-import work.msdnicrosoft.avm.command.utility.ImportCommand
-import work.msdnicrosoft.avm.command.utility.KickAllCommand
-import work.msdnicrosoft.avm.command.utility.KickCommand
-import work.msdnicrosoft.avm.command.utility.SendAllCommand
-import work.msdnicrosoft.avm.command.utility.SendCommand
+import com.mojang.brigadier.Command
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.mojang.brigadier.tree.LiteralCommandNode
+import com.velocitypowered.api.command.CommandSource
+import net.kyori.adventure.text.minimessage.translation.Argument
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
+import work.msdnicrosoft.avm.annotations.CommandNode
+import work.msdnicrosoft.avm.annotations.RootCommand
+import work.msdnicrosoft.avm.command.utility.*
 import work.msdnicrosoft.avm.module.CommandSessionManager
 import work.msdnicrosoft.avm.module.CommandSessionManager.ExecuteResult
-import work.msdnicrosoft.avm.util.command.CommandUtil
-import work.msdnicrosoft.avm.util.command.CommandUtil.buildHelper
+import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.server.task
 import kotlin.time.measureTime
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin as AVM
 
-@PlatformSide(Platform.VELOCITY)
-@CommandHeader(name = "avm")
+@RootCommand("avm")
 object AVMCommand {
 
-    @ShouldShow
-    @CommandBody(permission = "avm.command.reload")
-    val reload = subCommand {
-        execute<ProxyCommandSender> { sender, _, _ ->
+    fun init() {
+        command.register()
+    }
+
+    fun disable() {
+        command.unregister()
+    }
+
+    @CommandNode("reload")
+    val reload: LiteralArgumentBuilder<CommandSource> = literal("reload")
+        .requires { source -> source.hasPermission("avm.command.reload") }
+        .executes { context ->
             var success = false
-            val elapsed = measureTime { success = AVM.reload() }
+            val elapsed = measureTime { success = plugin.reload() }
             if (success) {
-                sender.sendLang("command-avm-reload-success", elapsed.toString())
+                context.source.sendTranslatable(
+                    "avm.command.avm.reload.success",
+                    Argument.string("elapsed", elapsed.inWholeMilliseconds.toString())
+                )
             } else {
-                sender.sendLang("command-avm-reload-failed")
+                context.source.sendTranslatable("avm.command.avm.reload.failed")
             }
-        }
-    }
 
-    @ShouldShow
-    @CommandBody(permission = "avm.command.info")
-    val info = subCommand {
-        execute<ProxyCommandSender> { sender, _, _ ->
-            val velocity = AVM.plugin.server.version
+            Command.SINGLE_SUCCESS
+        }
+
+    @CommandNode("info")
+    val info: LiteralArgumentBuilder<CommandSource> = literal("info")
+        .requires { source -> source.hasPermission("avm.command.info") }
+        .executes { context ->
+            val velocity = plugin.server.version
             // TODO Enabled & Disabled modules
-            sender.sendLang(
-                "command-avm-info",
-                AVM.self.name.get(),
-                AVM.self.version.get(),
-                "${velocity.name} ${velocity.version}"
+            context.source.sendTranslatable(
+                "avm.command.avm.info.plugin.name",
+                Argument.component("name", tr("avm.general.plugin.name"))
             )
+            context.source.sendTranslatable(
+                "avm.command.avm.info.plugin.version",
+                Argument.string("version", plugin.self.version.get())
+            )
+            context.source.sendTranslatable(
+                "avm.command.avm.info.server",
+                Argument.string("server", "${velocity.name} ${velocity.version}")
+            )
+            Command.SINGLE_SUCCESS
         }
-    }
 
-    @ShouldShow("<session>")
-    @CommandBody(permission = "avm.command.confirm")
-    val confirm = subCommand {
-        dynamic("session") {
-            execute<ProxyCommandSender> { sender, context, _ ->
-                submitAsync(now = true) {
-                    when (CommandSessionManager.executeAction(context["session"])) {
-                        ExecuteResult.SUCCESS -> {}
-                        ExecuteResult.EXPIRED -> sender.sendLang("command-avm-confirm-expired")
-                        ExecuteResult.FAILED -> sender.sendLang("command-avm-confirm-failed")
-                        ExecuteResult.NOT_FOUND -> sender.sendLang("command-avm-confirm-not-found")
+    @CommandNode("confirm", "<session>")
+    val confirm: LiteralArgumentBuilder<CommandSource> = literal("confirm")
+        .requires { source -> source.hasPermission("avm.command.confirm") }
+        .then(
+            wordArgument("session")
+                .executes { context ->
+                    task {
+                        val result = when (CommandSessionManager.executeAction(context.get<String>("session"))) {
+                            ExecuteResult.SUCCESS -> return@task
+                            ExecuteResult.EXPIRED -> "avm.command.avm.confirm.expired"
+                            ExecuteResult.FAILED -> "avm.command.avm.confirm.failed"
+                            ExecuteResult.NOT_FOUND -> "avm.command.avm.confirm.not.found"
+                        }
+                        context.source.sendTranslatable(result)
                     }
+                    Command.SINGLE_SUCCESS
                 }
-            }
-        }
-    }
+        )
 
-    @ShouldShow("<pluginName>", "<defaultServer>")
-    @CommandBody(permission = "avm.command.import")
+    @CommandNode("import", "<Plugin Name>", "<Default Server>")
     val import = ImportCommand.command
 
-    @ShouldShow("<player>", "[reason]")
-    @CommandBody(permission = "avm.command.kick")
+    @CommandNode("kick", "<player>", "[reason]")
     val kick = KickCommand.command
 
-    @ShouldShow("[server]", "[reason]")
-    @CommandBody(permission = "avm.command.kickall")
-    val kickall = KickAllCommand.command
+    @CommandNode("kickall", "[server]", "[reason]")
+    val kickAll = KickAllCommand.command
 
-    @ShouldShow("<player>", "<server>", "[reason]")
-    @CommandBody(permission = "avm.command.send")
+    @CommandNode("send", "<player>", "<server>", "[reason]")
     val send = SendCommand.command
 
-    @ShouldShow("<server>", "[reason]")
-    @CommandBody(permission = "avm.command.sendall")
-    val sendall = SendAllCommand.command
+    @CommandNode("sendall", "<server>", "[reason]")
+    val sendAll = SendAllCommand.command
 
 //    @ShouldShow
 //    @CommandBody(permission = "avm.command.enable")
@@ -110,10 +119,15 @@ object AVMCommand {
 //        }
 //    }
 
-    @CommandBody
-    val main = mainCommand {
-        buildHelper(this@AVMCommand.javaClass)
-        incorrectCommand(CommandUtil::incorrectCommandFeedback)
-        incorrectSender(CommandUtil::incorrectSenderFeedback)
-    }
+    val command: LiteralCommandNode<CommandSource> = literal("avm")
+        .executes { context -> context.buildHelp(this@AVMCommand.javaClass) }
+        .then(reload)
+        .then(info)
+        .then(confirm)
+        .then(import)
+        .then(kickAll)
+        .then(kick)
+        .then(sendAll)
+        .then(send)
+        .build()
 }

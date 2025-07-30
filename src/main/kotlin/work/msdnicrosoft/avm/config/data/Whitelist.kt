@@ -17,7 +17,7 @@ data class Whitelist(
     ),
 
     @YamlComment("The message sent to a not whitelisted player")
-    val message: String = "&cYou are not whitelisted on this server.",
+    val message: String = "<red>You are not whitelisted on this server.",
 
     @YamlComment(
         "The API URLs to query for whitelist",

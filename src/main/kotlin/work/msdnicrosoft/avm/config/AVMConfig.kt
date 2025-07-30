@@ -18,7 +18,7 @@ data class AVMConfig(
         "",
         "DO NOT CHANGE THIS, OTHERWISE IT MAY CAUSE CRITICAL PROBLEMS"
     )
-    val version: Int = 1,
+    val version: Int = 2,
 
     @YamlComment(
         "The language for plugin to use",
@@ -35,15 +35,15 @@ data class AVMConfig(
         "",
         "Format: server-name: server-nickname",
         "Example:",
-        "   survival: \"&aSurvival\"",
-        "   factions: \"&aFactions\"",
-        "   minigames: \"&eMinigames\""
+        "   survival: \"<green>Survival\"",
+        "   factions: \"<green>Factions\"",
+        "   minigames: \"<yellow>Minigames\""
     )
     @SerialName("server-mapping")
     val serverMapping: Map<String, String> = mapOf(
-        "lobby" to "&fLobby",
-        "factions" to "&aFactions",
-        "minigames" to "&eMinigames"
+        "lobby" to "<white>Lobby",
+        "factions" to "<green>Factions",
+        "minigames" to "<yellow>Minigames"
     ),
 
     @YamlComment("The event broadcast configuration")

@@ -2,50 +2,50 @@ package work.msdnicrosoft.avm.module
 
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
-import com.velocitypowered.api.event.player.ServerConnectedEvent
+import com.velocitypowered.api.event.player.ServerPostConnectEvent
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.player.TabListEntry
 import net.kyori.adventure.text.Component
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
-import taboolib.common.platform.function.submitAsync
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil
-import work.msdnicrosoft.avm.util.component.ComponentUtil
+import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
+import work.msdnicrosoft.avm.util.server.task
 
-@PlatformSide(Platform.VELOCITY)
 object TabSyncHandler {
 
     private inline val config
         get() = ConfigManager.config.tabSync
 
     fun init() {
-        plugin.server.eventManager.register(plugin, this)
+        eventManager.register(plugin, this)
     }
 
     fun disable() {
-        plugin.server.eventManager.unregisterListener(plugin, this)
+        eventManager.unregisterListener(plugin, this)
     }
 
     @Subscribe
     fun onPlayerDisconnect(event: DisconnectEvent) {
         if (!config.enabled) return
 
-        submitAsync(delay = 20) {
-            plugin.server.allPlayers.forEach { player ->
+        task {
+            server.allPlayers.forEach { player ->
                 player.tabList.removeEntry(event.player.uniqueId)
             }
         }
     }
 
     @Subscribe
-    fun onPlayerConnected(event: ServerConnectedEvent) {
+    fun onPostPlayerConnected(event: ServerPostConnectEvent) {
         if (!config.enabled) return
 
-        submitAsync(delay = 20) {
+        task {
             val player = event.player
-            plugin.server.allPlayers.forEach { entryPlayer ->
+            server.allPlayers.forEach { entryPlayer ->
                 if (entryPlayer != player) {
                     this@TabSyncHandler.update(player, entryPlayer)
                 }
@@ -77,10 +77,11 @@ object TabSyncHandler {
         )
     }
 
-    private inline val Player.displayName: Component?
-        get() = ComponentUtil.serializer.buildComponent(ConfigManager.config.tabSync.format)
-            .replace("%server_name%", currentServer.get().serverInfo.name)
-            .replace("%server_nickname%", ConfigUtil.getServerNickname(currentServer.get().serverInfo.name))
-            .replace("%player_name%", username)
-            .build()
+    private inline val Player.displayName: Component
+        get() = miniMessage.deserialize(
+            config.format,
+            Placeholder.unparsed("server_name", currentServer.get().serverInfo.name),
+            Placeholder.parsed("server_nickname", ConfigUtil.getServerNickname(currentServer.get().serverInfo.name)),
+            Placeholder.unparsed("player_name", username)
+        )
 }

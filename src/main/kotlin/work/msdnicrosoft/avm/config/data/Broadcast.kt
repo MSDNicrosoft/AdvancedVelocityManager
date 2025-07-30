@@ -1,3 +1,5 @@
+@file:Suppress("MaxLineLength")
+
 package work.msdnicrosoft.avm.config.data
 
 import com.charleskorn.kaml.YamlComment
@@ -29,14 +31,14 @@ data class Broadcast(
         @YamlComment(
             "The join broadcast message",
             "",
-            "Default: &7[&a+&7]&r %player_name% &7joined server &r%server_nickname%",
+            "Default: <gray>[<green>+<gray>]<reset> <player_name> <gray>joined server <reset><server_nickname>",
             "",
             "Available placeholders:",
-            "%player_name% - Username of a player who joined the server",
-            "%server_name% - Server name which the player joined in",
-            "%server_nickname% - Server nickname which the player joined in"
+            "<player_name> - Username of a player who joined the server",
+            "<server_name> - Server name which the player joined in",
+            "<server_nickname> - Server nickname which the player joined in"
         )
-        val message: String = "&7[&a+&7]&r %player_name% &7joined server &r%server_nickname%"
+        val message: String = "<gray>[<green>+<gray>]<reset> <player_name> <gray>joined server <reset><server_nickname>"
     )
 
     @Serializable
@@ -50,12 +52,12 @@ data class Broadcast(
         @YamlComment(
             "The leave broadcast message",
             "",
-            "Default: &7[&c-&7]&r %player_name% &2left the server",
+            "Default: <gray>[<red>-<gray>]<reset> <player_name> <dark_green>left the server",
             "",
             "Available placeholders:",
-            "%player_name% - Username of a player who left the server"
+            "<player_name> - Username of a player who left the server"
         )
-        val message: String = "&7[&c-&7]&r %player_name% &2left the server"
+        val message: String = "<gray>[<red>-<gray>]<reset> <player_name> <dark_green>left the server"
     )
 
     @Serializable
@@ -69,16 +71,16 @@ data class Broadcast(
         @YamlComment(
             "The switch broadcast message",
             "",
-            "Default: &8[&b⇄&8]&r %player_name% &7:&r %previous_server_nickname% &6➟&r %target_server_nickname%",
+            "Default: <dark_gray>[<aqua>⇄<dark_gray>] <reset><player_name> <gray>: <reset><previous_server_nickname> <gold>➟ <reset><target_server_nickname>",
             "",
             "Available placeholders:",
-            "%player_name% - Username of a player who joined the server",
-            "%previous_server_name% - Server name which the player switched from",
-            "%previous_server_nickname% - Server nickname which the player switched from",
-            "%target_server_nickname% - Server name which the player switched to",
-            "%target_server_name% - Server name which the player switched to"
+            "<player_name> - Username of a player who joined the server",
+            "<previous_server_name> - Server name which the player switched from",
+            "<previous_server_nickname> - Server nickname which the player switched from",
+            "<target_server_nickname> - Server name which the player switched to",
+            "<target_server_name> - Server name which the player switched to"
         )
         val message: String =
-            "&8[&b⇄&8]&r %player_name% &7:&r %previous_server_nickname% &6➟&r %target_server_nickname%"
+            "<dark_gray>[<aqua>⇄<dark_gray>] <reset><player_name> <gray>: <reset><previous_server_nickname> <gold>➟ <reset><target_server_nickname>"
     )
 }

@@ -1,54 +1,63 @@
 package work.msdnicrosoft.avm.command.whitelist
 
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
-import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.command.subCommand
-import taboolib.common.platform.function.submitAsync
-import taboolib.common.util.presentRun
-import taboolib.module.lang.sendLang
+import com.mojang.brigadier.Command
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.velocitypowered.api.command.CommandSource
+import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
-import work.msdnicrosoft.avm.util.ProxyServerUtil.getPlayer
-import work.msdnicrosoft.avm.util.ProxyServerUtil.kickPlayers
+import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getPlayer
+import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
+import work.msdnicrosoft.avm.util.server.task
 import work.msdnicrosoft.avm.util.string.isUuid
 import work.msdnicrosoft.avm.util.string.toUuid
 
-@PlatformSide(Platform.VELOCITY)
 object RemoveCommand {
 
     private inline val config
         get() = ConfigManager.config.whitelist
 
-    val command = subCommand {
-        dynamic("player") {
-            suggestion<ProxyCommandSender>(uncheck = false) { _, _ ->
-                WhitelistManager.usernames.toList()
-            }
-            dynamic("server") {
-                suggestion<ProxyCommandSender>(uncheck = true) { _, context ->
-                    val player = context["player"]
-                    if (player.isUuid()) {
-                        WhitelistManager.getPlayer(player.toUuid())
-                    } else {
-                        WhitelistManager.getPlayer(player)
-                    }?.serverList
+    val command: LiteralArgumentBuilder<CommandSource> = literal("remove")
+        .requires { source -> source.hasPermission("avm.command.whitelist.remove") }
+        .then(
+            wordArgument("player")
+                .suggests { context, builder ->
+                    WhitelistManager.usernames.forEach(builder::suggest)
+                    builder.buildFuture()
                 }
-                execute<ProxyCommandSender> { sender, context, _ ->
-                    val serverName = context["server"]
-                    if (!isValidServer(serverName)) {
-                        sender.sendLang("server-not-found", serverName)
-                        return@execute
-                    }
-                    sender.removePlayer(context["player"], serverName)
+                .executes { context ->
+                    context.source.removePlayer(context.get<String>("player"))
+                    Command.SINGLE_SUCCESS
                 }
-            }
-            execute<ProxyCommandSender> { sender, context, _ ->
-                sender.removePlayer(context["player"])
-            }
-        }
-    }
+                .then(
+                    wordArgument("server")
+                        .suggests { context, builder ->
+                            val player = context.get<String>("player")
+                            val serverList = if (player.isUuid()) {
+                                WhitelistManager.getPlayer(player.toUuid())
+                            } else {
+                                WhitelistManager.getPlayer(player)
+                            }?.serverList
+                            serverList?.forEach(builder::suggest)
+                            builder.buildFuture()
+                        }
+                        .executes { context ->
+                            val serverName = context.get<String>("server")
+                            if (!isValidServer(serverName)) {
+                                context.source.sendTranslatable(
+                                    "avm.general.not.exist.server",
+                                    Argument.string("server", serverName)
+                                )
+                                return@executes Command.SINGLE_SUCCESS
+                            }
+                            context.source.removePlayer(context.get<String>("player"), serverName)
+                            Command.SINGLE_SUCCESS
+                        }
+                )
+        )
 
     /**
      * Removes a player from the whitelist.
@@ -57,7 +66,7 @@ object RemoveCommand {
      * @param serverName The name of the server to remove the player from.
      * If null, the player will be removed from all servers.
      */
-    private fun ProxyCommandSender.removePlayer(playerName: String, serverName: String? = null) {
+    private fun CommandSource.removePlayer(playerName: String, serverName: String? = null) {
         val isUuid = playerName.isUuid()
         val result = if (isUuid) {
             WhitelistManager.remove(playerName.toUuid(), serverName)
@@ -68,26 +77,33 @@ object RemoveCommand {
         when (result) {
             WhitelistManager.RemoveResult.SUCCESS -> {
                 if (serverName != null) {
-                    sendLang("command-avmwl-remove-server-success", serverName, playerName)
+                    sendTranslatable(
+                        "avm.command.avmwl.remove.success.server",
+                        Argument.string("server", serverName),
+                        Argument.string("player", playerName)
+                    )
                 } else {
-                    sendLang("command-avmwl-remove-full-success", playerName)
+                    sendTranslatable(
+                        "avm.command.avmwl.remove.success.full",
+                        Argument.string("player", playerName)
+                    )
                 }
             }
 
-            WhitelistManager.RemoveResult.FAIL_NOT_FOUND -> sendLang("command-avmwl-remove-not-found")
-            WhitelistManager.RemoveResult.SAVE_FILE_FAILED -> sendLang("command-avmwl-save-failed")
+            WhitelistManager.RemoveResult.FAIL_NOT_FOUND -> sendTranslatable("avm.command.avmwl.remove.not.found")
+            WhitelistManager.RemoveResult.SAVE_FILE_FAILED -> sendTranslatable("avm.whitelist.save.failed")
         }
 
         if (config.enabled) {
-            submitAsync(now = true) {
+            task {
                 val player = if (isUuid) {
                     getPlayer(playerName.toUuid())
                 } else {
                     getPlayer(playerName)
                 }
-                player.presentRun {
-                    if (!WhitelistManager.isInServerWhitelist(uniqueId, currentServer.get().serverInfo.name)) {
-                        kickPlayers(config.message, this)
+                player.ifPresent {
+                    if (!WhitelistManager.isInServerWhitelist(it.uniqueId, it.currentServer.get().serverInfo.name)) {
+                        kickPlayers(config.message, it)
                     }
                 }
             }

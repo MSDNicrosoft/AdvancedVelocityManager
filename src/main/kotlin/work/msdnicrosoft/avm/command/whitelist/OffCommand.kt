@@ -1,19 +1,25 @@
 package work.msdnicrosoft.avm.command.whitelist
 
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
-import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.command.subCommand
-import taboolib.module.lang.asLangText
-import taboolib.module.lang.sendLang
+import com.mojang.brigadier.Command
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.velocitypowered.api.command.CommandSource
+import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
+import work.msdnicrosoft.avm.util.command.literal
+import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.component.tr
 
-@PlatformSide(Platform.VELOCITY)
 object OffCommand {
-    val command = subCommand {
-        execute<ProxyCommandSender> { sender, _, _ ->
+    val command: LiteralArgumentBuilder<CommandSource> = literal("off")
+        .requires { source -> source.hasPermission("avm.command.whitelist.off") }
+        .executes { context ->
             WhitelistManager.enabled = false
-            sender.sendLang("command-avmwl-state", sender.asLangText("general-off"))
+
+            context.source.sendTranslatable(
+                "avm.command.avmwl.status.state",
+                Argument.component("state", tr("avm.general.off"))
+            )
+
+            Command.SINGLE_SUCCESS
         }
-    }
 }

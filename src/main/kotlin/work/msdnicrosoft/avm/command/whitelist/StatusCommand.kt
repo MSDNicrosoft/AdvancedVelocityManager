@@ -1,27 +1,40 @@
 package work.msdnicrosoft.avm.command.whitelist
 
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
-import taboolib.common.platform.ProxyCommandSender
-import taboolib.common.platform.command.subCommand
-import taboolib.module.lang.asLangText
-import taboolib.module.lang.sendLang
+import com.mojang.brigadier.Command
+import com.mojang.brigadier.builder.LiteralArgumentBuilder
+import com.velocitypowered.api.command.CommandSource
+import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
+import work.msdnicrosoft.avm.util.command.literal
+import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.component.tr
 
-@PlatformSide(Platform.VELOCITY)
 object StatusCommand {
 
     private inline val config
         get() = ConfigManager.config.whitelist
 
-    val command = subCommand {
-        execute<ProxyCommandSender> { sender, _, _ ->
+    val command: LiteralArgumentBuilder<CommandSource> = literal("status")
+        .requires { source -> source.hasPermission("avm.command.whitelist.status") }
+        .executes { context ->
             val state = if (WhitelistManager.enabled) "on" else "off"
-            sender.sendLang("command-avmwl-state", sender.asLangText("general-$state"))
-            sender.sendLang("command-avmwl-list-header", WhitelistManager.size)
-            sender.sendLang("command-avmwl-status-cache", PlayerCache.readOnly.size, config.cachePlayers.maxSize)
+
+            context.source.sendTranslatable(
+                "avm.command.avmwl.list.header",
+                Argument.numeric("player", WhitelistManager.size)
+            )
+            context.source.sendTranslatable(
+                "avm.command.avmwl.status.state",
+                Argument.component("state", tr("avm.general.$state"))
+            )
+            context.source.sendTranslatable(
+                "avm.command.avmwl.status.cache",
+                Argument.numeric("current", PlayerCache.readOnly.size),
+                Argument.numeric("total", config.cachePlayers.maxSize)
+            )
+
+            Command.SINGLE_SUCCESS
         }
-    }
 }

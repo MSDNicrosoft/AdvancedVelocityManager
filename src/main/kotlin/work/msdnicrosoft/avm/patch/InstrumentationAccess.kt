@@ -31,21 +31,22 @@ package work.msdnicrosoft.avm.patch
 
 import com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedChatHandler
 import net.bytebuddy.agent.ByteBuddyAgent
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import java.io.IOException
 import java.lang.instrument.Instrumentation
 import java.lang.management.ManagementFactory
 import java.nio.file.Files
-import kotlin.io.path.Path
 import kotlin.io.path.deleteExisting
+import kotlin.io.path.div
 import kotlin.io.path.isDirectory
 
 object InstrumentationAccess {
     /**
      * Path to the directory where transformed classes are stored.
      */
-    val TRANSFORMER_OUTPUT_PATH = Path("./.avm-patch")
+    val TRANSFORMER_OUTPUT_PATH = dataDirectory / ".patch"
 
     /**
      * Class object for the Velocity KeyedChatHandler class.
@@ -118,5 +119,5 @@ object InstrumentationAccess {
     }
 
     private fun isSignedVelocityInstalled() =
-        AVM.plugin.server.pluginManager.getPlugin("signedvelocity").isPresent
+        server.pluginManager.getPlugin("signedvelocity").isPresent
 }

@@ -1,43 +1,43 @@
 package work.msdnicrosoft.avm.util.component
 
-import dev.vankka.enhancedlegacytext.EnhancedLegacyText
-import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.logger
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 
 object ComponentUtil {
 
-    val serializer: EnhancedLegacyText = EnhancedLegacyText.get()
+    val miniMessage = MiniMessage.miniMessage()
 
-    /**
-     * Creates a HoverEvent based on the provided format and deserialization function.
-     *
-     * @param format The format to extract hover text from.
-     * @param deserialize A function to deserialize the hover text into a Component.
-     *
-     * @return A HoverEvent showing the deserialized hover text, or null if the format has no hover text.
-     */
-    fun createHoverEvent(format: Format, deserialize: String.() -> Component): HoverEvent<Component>? =
-        format.hover.takeIf { !it.isNullOrEmpty() }?.let {
-            HoverEvent.showText(it.joinToString("\n").deserialize())
-        }
+    val styleOnlyMiniMessage = MiniMessage.builder()
+        .tags(
+            TagResolver.builder()
+                .resolver(StandardTags.font())
+                .resolver(StandardTags.color())
+                .resolver(StandardTags.decorations())
+                .resolver(StandardTags.gradient())
+                .resolver(StandardTags.rainbow())
+                .resolver(StandardTags.reset())
+                .resolver(StandardTags.shadowColor())
+                .build()
+        ).build()
 
     /**
      * Creates a ClickEvent based on the provided format and replacer function.
      *
      * @param format The format to extract click event data from.
-     * @param replacer A function to replace placeholders in the click event data.
+     * @param replace A function to replace placeholders in the click event data.
      *
      * @return A ClickEvent representing the action to be performed when clicked, or null if the format is invalid.
      */
-    fun createClickEvent(format: Format, replacer: String.() -> String): ClickEvent? =
+    fun createClickEvent(format: Format, replace: String.() -> String): ClickEvent? =
         when {
             !validateFormat(format) -> null
-            !format.command.isNullOrEmpty() -> ClickEvent.runCommand(format.command.replacer())
-            !format.suggest.isNullOrEmpty() -> ClickEvent.suggestCommand(format.suggest.replacer())
-            !format.url.isNullOrEmpty() -> ClickEvent.openUrl(format.url.replacer())
-            !format.clipboard.isNullOrEmpty() -> ClickEvent.copyToClipboard(format.clipboard.replacer())
+            !format.command.isNullOrEmpty() -> ClickEvent.runCommand(format.command.replace())
+            !format.suggest.isNullOrEmpty() -> ClickEvent.suggestCommand(format.suggest.replace())
+            !format.url.isNullOrEmpty() -> ClickEvent.openUrl(format.url.replace())
+            !format.clipboard.isNullOrEmpty() -> ClickEvent.copyToClipboard(format.clipboard.replace())
             else -> null
         }
 

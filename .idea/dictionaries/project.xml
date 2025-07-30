@@ -2,7 +2,6 @@
   <dictionary name="project">
     <words>
       <w>advancedvelocitymanager</w>
-      <w>artifex</w>
       <w>avmwl</w>
       <w>bilibili</w>
       <w>cancellablechat</w>
@@ -13,12 +12,13 @@
       <w>lorg</w>
       <w>modrinth</w>
       <w>msdnicrosoft</w>
+      <w>nicrosoft</w>
       <w>nogit</w>
       <w>quickshop</w>
       <w>sendall</w>
+      <w>signedvelocity</w>
       <w>startswith</w>
       <w>takeneko</w>
-      <w>trplugins</w>
       <w>velocitywhitelist</w>
       <w>worldinfo</w>
       <w>xaero</w>

@@ -1,16 +1,24 @@
 package work.msdnicrosoft.avm
 
+import com.google.inject.Inject
+import com.velocitypowered.api.command.CommandManager
+import com.velocitypowered.api.event.EventManager
+import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
 import com.velocitypowered.api.plugin.PluginDescription
+import com.velocitypowered.api.plugin.annotation.DataDirectory
+import com.velocitypowered.api.proxy.ProxyServer
+import com.velocitypowered.api.proxy.messages.ChannelRegistrar
+import com.velocitypowered.api.scheduler.Scheduler
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger
-import taboolib.common.platform.Platform
-import taboolib.common.platform.PlatformSide
-import taboolib.common.platform.Plugin
-import taboolib.common.util.unsafeLazy
-import taboolib.module.lang.Language
-import taboolib.platform.VelocityPlugin
+import work.msdnicrosoft.avm.command.AVMCommand
+import work.msdnicrosoft.avm.command.WhitelistCommand
+import work.msdnicrosoft.avm.command.chatbridge.MsgCommand
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.CommandSessionManager
 import work.msdnicrosoft.avm.module.EventBroadcast
+import work.msdnicrosoft.avm.module.Logging
 import work.msdnicrosoft.avm.module.TabSyncHandler
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
 import work.msdnicrosoft.avm.module.mapsync.WorldInfoHandler
@@ -19,29 +27,60 @@ import work.msdnicrosoft.avm.module.reconnect.ReconnectHandler
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.patch.InstrumentationAccess
+import work.msdnicrosoft.avm.util.i18n.TranslateManager
+import java.nio.file.Path
 
-@PlatformSide(Platform.VELOCITY)
-object AdvancedVelocityManagerPlugin : Plugin() {
-
-    val plugin by unsafeLazy { VelocityPlugin.getInstance() }
-
-    val logger = ComponentLogger.logger("AdvancedVelocityManager")
-
+class AdvancedVelocityManagerPlugin {
+    val server: ProxyServer
+    val dataDirectory: Path
     val self: PluginDescription by lazy {
-        plugin.server.pluginManager.getPlugin("advancedvelocitymanager").get().description
+        server.pluginManager.getPlugin("advancedvelocitymanager").get().description
     }
 
-    override fun onLoad() {
+    @Inject
+    constructor(server: ProxyServer, @DataDirectory dataDirectory: Path) {
+        this.server = server
+        this.dataDirectory = dataDirectory
+        plugin = this
+    }
+
+    @Suppress("UnusedParameter")
+    @Subscribe
+    fun onProxyInitialization(event: ProxyInitializeEvent) {
         InstrumentationAccess.init()
-    }
 
-    override fun onEnable() {
         logger.debug("Nya~!")
 
         require(ConfigManager.load()) { "Failed to load configuration, aborting initialization" }
 
         loadLanguage()
+        initializeModules()
+        registerCommands()
 
+        self.version.get().let { version ->
+            if (version.contains("DEV")) logger.warn("You are using the development version of this plugin.")
+            if (version.contains("SNAPSHOT")) logger.warn("You are using the snapshot version of this plugin.")
+        }
+    }
+
+    @Suppress("UnusedParameter")
+    @Subscribe
+    fun onProxyShutdown(event: ProxyShutdownEvent) {
+        WhitelistManager.disable()
+        ChatBridge.disable()
+        TabSyncHandler.disable()
+        EventBroadcast.disable()
+        WorldInfoHandler.disable()
+        ReconnectHandler.disable()
+        CommandSessionManager.disable()
+        TranslateManager.disable()
+
+        MsgCommand.disable()
+        AVMCommand.disable()
+        WhitelistCommand.disable()
+    }
+
+    private fun initializeModules() {
         CommandSessionManager.init()
         WhitelistManager.init()
         ChatBridge.init()
@@ -50,29 +89,13 @@ object AdvancedVelocityManagerPlugin : Plugin() {
         WorldInfoHandler.init()
         XaeroMapHandler.init()
         ReconnectHandler.init()
-        Metrics.init()
+        Logging.init()
     }
 
-    override fun onDisable() {
-        WhitelistManager.disable()
-        ChatBridge.disable()
-        TabSyncHandler.disable()
-        EventBroadcast.disable()
-        WorldInfoHandler.disable()
-        ReconnectHandler.disable()
-        CommandSessionManager.disable()
-        plugin.server.commandManager.run {
-            unregister("avm")
-            unregister("avmwl")
-            unregister("msg")
-        }
-    }
-
-    override fun onActive() {
-        self.version.get().let { version ->
-            if (version.contains("DEV")) logger.warn("You are using the development version of this plugin.")
-            if (version.contains("SNAPSHOT")) logger.warn("You are using the snapshot version of this plugin.")
-        }
+    private fun registerCommands() {
+        MsgCommand.init()
+        AVMCommand.init()
+        WhitelistCommand.init()
     }
 
     fun reload(): Boolean {
@@ -95,10 +118,35 @@ object AdvancedVelocityManagerPlugin : Plugin() {
     private fun loadLanguage(reload: Boolean = false) {
         if (reload) {
             logger.info("Reloading language...")
-            Language.reload()
+            TranslateManager.reload()
         } else {
             logger.info("Loading language...")
+            TranslateManager.init()
         }
-        Language.default = ConfigManager.config.defaultLang
+    }
+
+    companion object {
+        lateinit var plugin: AdvancedVelocityManagerPlugin
+            private set
+
+        val logger: ComponentLogger = ComponentLogger.logger("AdvancedVelocityManager")
+
+        inline val server: ProxyServer
+            get() = plugin.server
+
+        inline val scheduler: Scheduler
+            get() = server.scheduler
+
+        inline val dataDirectory: Path
+            get() = plugin.dataDirectory
+
+        inline val commandManager: CommandManager
+            get() = server.commandManager
+
+        inline val eventManager: EventManager
+            get() = server.eventManager
+
+        inline val channelRegistrar: ChannelRegistrar
+            get() = server.channelRegistrar
     }
 }

@@ -3,8 +3,9 @@
 # Gradle Plugins
 kotlin = "2.2.0"
 detekt = "1.23.8"
-taboolib = "2.0.25"
 grgit = "5.3.2"
+yamlang = "1.4.1"
+shadow = "8.3.8"
 
 # CompileOnly Dependencies
 velocity = "3.4.0-SNAPSHOT"
@@ -16,7 +17,6 @@ fastutil = "8.5.15"
 # Shade Dependencies
 kaml = "0.85.0"
 kotlin-serialization = "1.9.0"
-enhanced-legacy-text = "2.0.0-SNAPSHOT"
 byte-buddy-agent = "1.17.6"
 kavaref = "1.0.1"
 
@@ -26,8 +26,9 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 detekt-compiler = { id = "io.github.detekt.gradle.compiler-plugin", version.ref = "detekt" }
-taboolib = { id = "io.izzel.taboolib", version.ref = "taboolib" }
 grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
+yamlang = { id = "me.fallenbreath.yamlang", version.ref = "yamlang" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 
 [libraries]
 
@@ -37,16 +38,15 @@ detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", 
 # CompileOnly Dependencies
 velocity-api = { module = "com.velocitypowered:velocity-api", version.ref = "velocity" }
 velocity-proxy = { module = "com.velocitypowered:velocity-proxy", version.ref = "velocity" }
+asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
+asm-util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
 floodgate = { module = "org.geysermc.floodgate:api", version.ref = "floodgate" }
 netty = { module = "io.netty:netty-all", version.ref = "netty" }
-fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil"}
+fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
 
 # Shade Dependencies
 kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
 kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
-enhanced-legacy-text = { module = "dev.vankka:enhancedlegacytext", version.ref = "enhanced-legacy-text" }
-asm = { module = "org.ow2.asm:asm", version.ref = "asm" }
-asm-util = { module = "org.ow2.asm:asm-util", version.ref = "asm" }
 byte-buddy-agent = { module = "net.bytebuddy:byte-buddy-agent", version.ref = "byte-buddy-agent" }
 kavaref-core = { module = "com.highcapable.kavaref:kavaref-core", version.ref = "kavaref" }
 kavaref-extension = { module = "com.highcapable.kavaref:kavaref-extension", version.ref = "kavaref" }
