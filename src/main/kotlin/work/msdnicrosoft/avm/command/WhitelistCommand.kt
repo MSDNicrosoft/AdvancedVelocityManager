@@ -9,10 +9,7 @@ import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistPlayer
 import work.msdnicrosoft.avm.util.ConfigUtil.getServersInGroup
 import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroup
-import work.msdnicrosoft.avm.util.command.isConsole
-import work.msdnicrosoft.avm.util.command.literal
-import work.msdnicrosoft.avm.util.command.register
-import work.msdnicrosoft.avm.util.command.unregister
+import work.msdnicrosoft.avm.util.command.*
 
 @RootCommand("avmwl")
 object WhitelistCommand {
@@ -50,6 +47,7 @@ object WhitelistCommand {
     val status = StatusCommand.command
 
     val command: LiteralCommandNode<CommandSource> = literal("avmwl")
+        .executes { context -> context.buildHelp(this@WhitelistCommand.javaClass) }
         .then(add)
         .then(clear)
         .then(find)
