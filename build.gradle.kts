@@ -93,11 +93,6 @@ dependencies {
     implementation(libs.bundles.kavaref)
 }
 
-yamlang {
-    targetSourceSets = listOf(sourceSets.main.get())
-    inputDir.set("lang")
-}
-
 detekt {
     parallel = true
     config.setFrom(file("config/detekt/detekt.yml"))
@@ -105,12 +100,14 @@ detekt {
     autoCorrect = true
 }
 
+yamlang {
+    targetSourceSets = listOf(sourceSets.main.get())
+    inputDir.set("lang")
+}
+
 tasks {
     build {
         dependsOn(shadowJar)
-    }
-    compileJava {
-        targetCompatibility = "17"
     }
     jar {
         archiveFileName = "${rootProject.name}-${rootProject.version}-unshaded.jar"
@@ -135,6 +132,9 @@ tasks {
         filesMatching("velocity-plugin.json") {
             expand("version" to version)
         }
+    }
+    compileJava {
+        targetCompatibility = "17"
     }
     compileKotlin {
         dependsOn(detekt)
