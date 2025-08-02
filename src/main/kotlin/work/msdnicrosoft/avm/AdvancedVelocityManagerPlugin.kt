@@ -26,7 +26,7 @@ import work.msdnicrosoft.avm.module.mapsync.XaeroMapHandler
 import work.msdnicrosoft.avm.module.reconnect.ReconnectHandler
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.patch.InstrumentationAccess
+import work.msdnicrosoft.avm.patch.Patch
 import work.msdnicrosoft.avm.util.i18n.TranslateManager
 import java.nio.file.Path
 
@@ -47,7 +47,7 @@ class AdvancedVelocityManagerPlugin {
     @Suppress("UnusedParameter")
     @Subscribe
     fun onProxyInitialization(event: ProxyInitializeEvent) {
-        InstrumentationAccess.init()
+        Patch.init()
 
         logger.debug("Nya~!")
 

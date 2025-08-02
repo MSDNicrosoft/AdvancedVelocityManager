@@ -27,25 +27,27 @@
  * SOFTWARE.
  */
 
-package work.msdnicrosoft.avm.patch
+package work.msdnicrosoft.avm.patch.transformers
 
+import com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedChatHandler
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.InsnNode
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
-import java.lang.instrument.ClassFileTransformer
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import java.security.ProtectionDomain
-import kotlin.io.path.createDirectories
-import kotlin.io.path.writeBytes
 
-object ClassTransformer : ClassFileTransformer {
+object KeyedChatHandlerTransformer : ClassTransformer {
 
     const val TARGET_CLASS_NAME = "com/velocitypowered/proxy/protocol/packet/chat/keyed/KeyedChatHandler"
     const val TARGET_METHOD_NAME = "invalidCancel"
     const val TARGET_METHOD_DESC =
         "(Lorg/apache/logging/log4j/Logger;Lcom/velocitypowered/proxy/connection/client/ConnectedPlayer;)V"
+
+    override val targetClass = KeyedChatHandler::class.java
+
+    override fun shouldTransform(): Boolean = !server.pluginManager.getPlugin("signedvelocity").isPresent
 
     override fun transform(
         loader: ClassLoader?,
@@ -60,31 +62,13 @@ object ClassTransformer : ClassFileTransformer {
             ClassReader(classfileBuffer).accept(this@apply, 0)
         }
 
-        node.methods.find { method ->
-            method.name == TARGET_METHOD_NAME && method.desc == TARGET_METHOD_DESC
-        }?.instructions?.iterator()?.add(InsnNode(Opcodes.RETURN))
+        node.methods
+            .find { method -> method.name == TARGET_METHOD_NAME && method.desc == TARGET_METHOD_DESC }
+            ?.instructions?.iterator()
+            ?.add(InsnNode(Opcodes.RETURN))
 
-        val buffer = ClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES).apply {
-            node.accept(this)
-        }.toByteArray().also { buffer -> writeClassToFile(className, buffer) }
-
-        return buffer
-    }
-
-    /**
-     * Writes the transformed class to a file.
-     *
-     * @param className the name of the class
-     * @param buffer the byte array representing the transformed class
-     */
-    private fun writeClassToFile(className: String, buffer: ByteArray) {
-        try {
-            InstrumentationAccess.TRANSFORMER_OUTPUT_PATH.resolve("$className.class").apply {
-                parent.createDirectories()
-                writeBytes(buffer)
-            }
-        } catch (e: Exception) {
-            logger.error("Failed to write transformed class $className to disk", e)
-        }
+        return ClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES)
+            .apply { node.accept(this) }
+            .toByteArray()
     }
 }
