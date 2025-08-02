@@ -65,15 +65,15 @@ class ChatMessage(private val event: PlayerChatEvent, private val config: ChatBr
      * Replace placeholders in the message with actual player and server information.
      * @return The message with placeholders replaced.
      */
-    private fun String.replacePlaceholders() = this
-        .replace("<player_name>" , playerUsername)
-        .replace("<player_uuid>" , playerUuid)
-        .replace("<player_ping>" , playerPing)
-        .replace("<player_message>" , event.message)
-        .replace("<server_name>" , serverName)
-        .replace("<server_nickname>" , serverNickname)
-        .replace("<server_online_players>" , serverOnlinePlayers)
-        .replace("<server_version>" , serverVersion)
+    private fun String.replacePlaceholders() =
+        this.replace("<player_name>", playerUsername)
+            .replace("<player_uuid>", playerUuid)
+            .replace("<player_ping>", playerPing)
+            .replace("<player_message>", event.message)
+            .replace("<server_name>", serverName)
+            .replace("<server_nickname>", serverNickname)
+            .replace("<server_online_players>", serverOnlinePlayers)
+            .replace("<server_version>", serverVersion)
 
     /**
      * Build the final chat message with all specified formats and events.
