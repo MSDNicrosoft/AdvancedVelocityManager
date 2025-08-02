@@ -43,15 +43,14 @@ object WhitelistHandler {
         if (!event.result.isAllowed || !WhitelistManager.enabled) return
 
         val username = getUsername(event.username, event.connection)
-        if (!WhitelistManager.isInWhitelist(username)) {
+        val player = WhitelistManager.getPlayer(username)
+        if (player == null) {
             event.result = PreLoginEvent.PreLoginComponentResult.denied(miniMessage.deserialize(config.message))
             PlayerCache.add(username)
         } else {
-            WhitelistManager.getPlayer(username)?.onlineMode?.let {
-                event.result = when (it) {
-                    true -> PreLoginEvent.PreLoginComponentResult.forceOnlineMode()
-                    false -> PreLoginEvent.PreLoginComponentResult.forceOfflineMode()
-                }
+            event.result = when (player.onlineMode) {
+                true -> PreLoginEvent.PreLoginComponentResult.forceOnlineMode()
+                false -> PreLoginEvent.PreLoginComponentResult.forceOfflineMode()
             }
         }
     }

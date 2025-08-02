@@ -194,10 +194,10 @@ object WhitelistManager {
      *
      * @return The result of the addition operation.
      */
-    @Suppress("UnsafeCallOnNullableType")
-    fun add(uuid: UUID, server: String, onlineMode: Boolean? = null): AddResult =
-        if (isInWhitelist(uuid)) {
-            add(getPlayer(uuid)!!.name, uuid, server, onlineMode)
+    fun add(uuid: UUID, server: String, onlineMode: Boolean? = null): AddResult {
+        val player = getPlayer(uuid)
+        return if (player != null) {
+            add(player.name, uuid, server, onlineMode)
         } else {
             when (val username = getUsername(uuid)) {
                 null -> AddResult.API_LOOKUP_REQUEST_FAILED
@@ -205,6 +205,7 @@ object WhitelistManager {
                 else -> add(username, uuid, server, onlineMode)
             }
         }
+    }
 
     /**
      * Adds a player to the whitelist with the specified username and server.
@@ -215,10 +216,10 @@ object WhitelistManager {
      *
      * @return The result of the addition operation.
      */
-    @Suppress("UnsafeCallOnNullableType")
-    fun add(username: String, server: String, onlineMode: Boolean? = null): AddResult =
-        if (isInWhitelist(username)) {
-            add(username, getPlayer(username)!!.uuid, server, onlineMode)
+    fun add(username: String, server: String, onlineMode: Boolean? = null): AddResult {
+        val player = getPlayer(username)
+        return if (player != null) {
+            add(username, player.uuid, server, onlineMode)
         } else {
             when (val uuid = getUuid(username, onlineMode)) {
                 null -> AddResult.API_LOOKUP_REQUEST_FAILED
@@ -226,6 +227,7 @@ object WhitelistManager {
                 else -> add(username, uuid.toUuid(), server, onlineMode)
             }
         }
+    }
 
     /**
      * Adds a player to the whitelist with the specified username, UUID, server, and online mode.
@@ -241,17 +243,19 @@ object WhitelistManager {
      * @return The result of the addition operation.
      */
     fun add(username: String, uuid: UUID, server: String, onlineMode: Boolean?): AddResult {
-        // Check if the player is already in the server whitelist
-        if (isInServerWhitelist(uuid, server)) return AddResult.ALREADY_EXISTS
-
-        val player = lock.read { whitelist.find { it.uuid == uuid } }
+        val player = getPlayer(uuid)
         lock.write {
             if (player == null) {
-                whitelist.add(Player(username, uuid, onlineMode ?: serverIsOnlineMode, listOf(server)))
+                whitelist.add(Player(username, uuid, onlineMode ?: serverIsOnlineMode, mutableListOf(server)))
                 uuids.add(uuid)
                 usernames.add(username)
             } else {
-                if (server !in player.serverList) player.serverList += server
+                // Check if the player is already in the server whitelist
+                if (server !in player.serverList) {
+                    player.serverList += server
+                } else {
+                    if (onlineMode == player.onlineMode) return AddResult.ALREADY_EXISTS
+                }
                 if (onlineMode != null) player.onlineMode = onlineMode
             }
         }
@@ -355,26 +359,15 @@ object WhitelistManager {
     fun getPlayer(uuid: UUID): Player? = lock.read { whitelist.find { it.uuid == uuid } }
 
     /**
-     * Checks if a player with the given identifier is in the whitelist.
-     */
-    fun isInWhitelist(uuid: UUID): Boolean = lock.read { uuid in uuids }
-
-    /**
-     * Checks if a player with the given identifier is in the whitelist.
-     */
-    fun isInWhitelist(username: String): Boolean = lock.read { username in usernames }
-
-    /**
      * Checks if a player with the given UUID is allowed to connect to a specific server.
      *
      * This function first checks if the player is in the whitelist. If not, it immediately returns false.
      * If the player is in the whitelist, it then checks if the server is in the list of allowed servers for the player.
      */
-    @Suppress("UnsafeCallOnNullableType")
     fun isInServerWhitelist(uuid: UUID, server: String): Boolean = lock.read {
-        if (!isInWhitelist(uuid)) return false
+        val player = whitelist.find { it.uuid == uuid } ?: return false
 
-        val serverList = lock.read { whitelist.find { it.uuid == uuid }!!.serverList }
+        val serverList = player.serverList
         if (server in serverList) return true
 
         return config.serverGroups.any { (group, servers) ->
