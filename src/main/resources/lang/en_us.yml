@@ -10,9 +10,9 @@ avm:
       previous: "<yellow>Click to turn to previous page"
       next: "<yellow>Click to turn to next page"
     not.found:
-     page: "<gray>This page does not exist"
-     server: "<red>Server <white><server> <red>does not exist！"
-     player: "<red>Player <white><player> <red>does not exist！"
+      page: "<gray>This page does not exist"
+      server: "<red>Server <white><server> <red>does not exist！"
+      player: "<red>Player <white><player> <red>does not exist！"
     help:
       header:
         "1":

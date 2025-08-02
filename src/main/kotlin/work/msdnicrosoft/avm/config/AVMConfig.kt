@@ -3,13 +3,7 @@ package work.msdnicrosoft.avm.config
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import work.msdnicrosoft.avm.config.data.Broadcast
-import work.msdnicrosoft.avm.config.data.ChatBridge
-import work.msdnicrosoft.avm.config.data.MapSync
-import work.msdnicrosoft.avm.config.data.Reconnect
-import work.msdnicrosoft.avm.config.data.TabSync
-import work.msdnicrosoft.avm.config.data.Utility
-import work.msdnicrosoft.avm.config.data.Whitelist
+import work.msdnicrosoft.avm.config.data.*
 
 @Serializable
 data class AVMConfig(
