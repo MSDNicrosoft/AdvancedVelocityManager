@@ -8,7 +8,10 @@ import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
-import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.command.get
+import work.msdnicrosoft.avm.util.command.literal
+import work.msdnicrosoft.avm.util.command.name
+import work.msdnicrosoft.avm.util.command.wordArgument
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
@@ -53,13 +56,13 @@ object SendAllCommand {
 
     private fun CommandSource.sendAllPlayers(serverName: String, reason: Component) {
         val registeredServer = getRegisteredServer(serverName).getOrElse {
-            sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
+            this.sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
             return
         }
         val serverNickname = getServerNickname(serverName)
 
         if (registeredServer.playersConnected.isEmpty()) {
-            sendTranslatable("avm.general.empty.server")
+            this.sendTranslatable("avm.general.empty.server")
             return
         }
 
@@ -76,7 +79,7 @@ object SendAllCommand {
                 }
             }
 
-            sendTranslatable(
+            this.sendTranslatable(
                 "avm.command.avm.sendall.executor.text",
                 Argument.numeric("player_total", toSend.size),
                 Argument.string("server", serverNickname),

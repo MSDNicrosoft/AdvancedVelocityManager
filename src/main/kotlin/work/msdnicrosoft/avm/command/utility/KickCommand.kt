@@ -6,7 +6,10 @@ import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
-import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.command.get
+import work.msdnicrosoft.avm.util.command.literal
+import work.msdnicrosoft.avm.util.command.name
+import work.msdnicrosoft.avm.util.command.wordArgument
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
@@ -47,7 +50,7 @@ object KickCommand {
 
     private fun CommandSource.kickPlayer(player: String, reason: Component) {
         val playerToKick = getPlayer(player).getOrElse {
-            sendTranslatable("avm.general.not.exist.player", Argument.string("player", player))
+            this.sendTranslatable("avm.general.not.exist.player", Argument.string("player", player))
             return
         }
         task { playerToKick.disconnect(reason) }

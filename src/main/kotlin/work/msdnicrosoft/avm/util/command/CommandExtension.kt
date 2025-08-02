@@ -83,11 +83,9 @@ fun CommandContext<CommandSource>.buildHelp(commandRoot: Class<*>, checkPermissi
                 .hoverEvent(hoverEvent)
                 .clickEvent(ClickEvent.suggestCommand("/$rootName ${commandNode.name}"))
         )
-        this.source.sendMessage(
-            ComponentUtil.miniMessage.deserialize(
-                "      <gray><desc>",
-                Placeholder.component("desc", description)
-            )
+        this.source.sendRichMessage(
+            "      <gray><desc>",
+            Placeholder.component("desc", description)
         )
     }
     return Command.SINGLE_SUCCESS

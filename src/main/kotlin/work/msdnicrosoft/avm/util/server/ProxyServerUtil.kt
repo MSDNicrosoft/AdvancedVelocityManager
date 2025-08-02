@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 package work.msdnicrosoft.avm.util.server
 
 import com.velocitypowered.api.proxy.Player
@@ -26,7 +28,6 @@ object ProxyServerUtil {
      * @param name The name of the server.
      * @return An optional containing the server if found, otherwise an empty optional.
      */
-    @Suppress("NOTHING_TO_INLINE")
     inline fun getRegisteredServer(
         name: String
     ): Optional<RegisteredServer> = AdvancedVelocityManagerPlugin.Companion.server.getServer(
@@ -39,7 +40,6 @@ object ProxyServerUtil {
      * @param name The username of the player.
      * @return An optional containing the player if found, otherwise an empty optional.
      */
-    @Suppress("NOTHING_TO_INLINE")
     inline fun getPlayer(name: String): Optional<Player> = AdvancedVelocityManagerPlugin.Companion.server.getPlayer(
         name
     )
@@ -50,7 +50,6 @@ object ProxyServerUtil {
      * @param uuid The UUID of the player.
      * @return An optional containing the player if found, otherwise an empty optional.
      */
-    @Suppress("NOTHING_TO_INLINE")
     inline fun getPlayer(uuid: UUID): Optional<Player> = AdvancedVelocityManagerPlugin.Companion.server.getPlayer(uuid)
 
     /**
@@ -59,7 +58,6 @@ object ProxyServerUtil {
      * @param name The name of the server.
      * @return Whether the server exists.
      */
-    @Suppress("NOTHING_TO_INLINE")
     inline fun isValidRegisteredServer(name: String): Boolean = getRegisteredServer(name).isPresent
 
     /**
@@ -68,7 +66,6 @@ object ProxyServerUtil {
      * @param username The username of the player.
      * @return Whether the player exists.
      */
-    @Suppress("NOTHING_TO_INLINE")
     inline fun isValidPlayer(username: String): Boolean = getPlayer(username).isPresent
 
     /**
@@ -77,7 +74,6 @@ object ProxyServerUtil {
      * @param uuid The UUID of the player.
      * @return Whether the player exists.
      */
-    @Suppress("NOTHING_TO_INLINE")
     inline fun isValidPlayer(uuid: UUID): Boolean = getPlayer(uuid).isPresent
 
     /**
@@ -86,7 +82,6 @@ object ProxyServerUtil {
      * @param reason The reason for the kick.
      * @param players The players to kick.
      */
-    @Suppress("NOTHING_TO_INLINE")
     inline fun kickPlayers(reason: String, vararg players: Player) {
         kickPlayers(reason, players.toList())
     }
@@ -97,7 +92,6 @@ object ProxyServerUtil {
      * @param reason The reason for the kick.
      * @param players The players to kick.
      */
-    @Suppress("NOTHING_TO_INLINE")
     inline fun kickPlayers(reason: String, players: Iterable<Player>) {
         players.forEach { player ->
             player.disconnect(ComponentUtil.miniMessage.deserialize(reason))
@@ -110,12 +104,6 @@ object ProxyServerUtil {
      * @param server The server to send the player to.
      * @param player The player to send.
      */
-    @Suppress("NOTHING_TO_INLINE")
     inline fun sendPlayer(server: RegisteredServer, player: Player): CompletableFuture<Boolean> =
         player.createConnectionRequest(server).connectWithIndication()
-
-    @Suppress("NOTHING_TO_INLINE")
-    inline fun Player.sendMessage(message: String) {
-        sendMessage(ComponentUtil.miniMessage.deserialize(message))
-    }
 }

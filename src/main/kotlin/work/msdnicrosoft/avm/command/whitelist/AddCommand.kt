@@ -10,8 +10,12 @@ import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.AddResult
 import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
-import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.command.boolArgument
+import work.msdnicrosoft.avm.util.command.get
+import work.msdnicrosoft.avm.util.command.literal
+import work.msdnicrosoft.avm.util.command.wordArgument
 import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.task
 import work.msdnicrosoft.avm.util.string.isUuid
 import work.msdnicrosoft.avm.util.string.toUuid
@@ -72,13 +76,13 @@ object AddCommand {
 
     private fun CommandSource.addPlayer(player: String, serverName: String, onlineMode: Boolean? = null) {
         if (!isValidServer(serverName)) {
-            sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
+            this.sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
             return
         }
 
         val isUuid = player.isUuid()
         if (isUuid && !WhitelistManager.serverIsOnlineMode) {
-            sendTranslatable("avm.command.avmwl.add.uuid.unsupported")
+            this.sendTranslatable("avm.command.avmwl.add.uuid.unsupported")
             return
         }
 
@@ -88,17 +92,18 @@ object AddCommand {
             WhitelistManager.add(player, serverName, onlineMode)
         }
 
-        when (result) {
-            AddResult.SUCCESS -> sendTranslatable(
+        val message = when (result) {
+            AddResult.SUCCESS -> tr(
                 "avm.command.avmwl.add.success",
                 Argument.string("player", player),
                 Argument.string("server", serverName)
             )
 
-            AddResult.API_LOOKUP_NOT_FOUND -> sendTranslatable("avm.command.avmwl.add.request.not.found")
-            AddResult.API_LOOKUP_REQUEST_FAILED -> sendTranslatable("avm.command.avmwl.add.request.failed")
-            AddResult.ALREADY_EXISTS -> sendTranslatable("avm.command.avmwl.add.already.exists")
-            AddResult.SAVE_FILE_FAILED -> sendTranslatable("avm.whitelist.save.failed")
+            AddResult.API_LOOKUP_NOT_FOUND -> tr("avm.command.avmwl.add.request.not.found")
+            AddResult.API_LOOKUP_REQUEST_FAILED -> tr("avm.command.avmwl.add.request.failed")
+            AddResult.ALREADY_EXISTS -> tr("avm.command.avmwl.add.already.exists")
+            AddResult.SAVE_FILE_FAILED -> tr("avm.whitelist.save.failed")
         }
+        this.sendMessage(message)
     }
 }

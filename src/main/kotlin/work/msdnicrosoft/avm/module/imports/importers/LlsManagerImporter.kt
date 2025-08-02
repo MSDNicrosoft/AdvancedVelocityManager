@@ -86,7 +86,6 @@ object LlsManagerImporter : Importer {
             false
         }
 
-    @Suppress("NestedBlockDepth")
     private fun CommandSource.importPlayerData(defaultServer: String): Boolean {
         var success = true
 

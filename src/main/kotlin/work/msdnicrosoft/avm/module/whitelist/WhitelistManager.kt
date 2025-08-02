@@ -240,7 +240,6 @@ object WhitelistManager {
      *
      * @return The result of the addition operation.
      */
-    @Suppress("UnsafeCallOnNullableType")
     fun add(username: String, uuid: UUID, server: String, onlineMode: Boolean?): AddResult {
         // Check if the player is already in the server whitelist
         if (isInServerWhitelist(uuid, server)) return AddResult.ALREADY_EXISTS
@@ -268,7 +267,7 @@ object WhitelistManager {
      * @return The result of the remove operation.
      */
     fun remove(username: String, server: String?): RemoveResult {
-        val player = getPlayer(username) ?: return RemoveResult.FAIL_NOT_FOUND // Should not be null
+        val player = getPlayer(username) ?: return RemoveResult.FAIL_NOT_FOUND
         return remove(player, server)
     }
 
@@ -281,7 +280,7 @@ object WhitelistManager {
      * @return The result of the remove operation.
      */
     fun remove(uuid: UUID, server: String?): RemoveResult {
-        val player = getPlayer(uuid) ?: return RemoveResult.FAIL_NOT_FOUND // Should not be null
+        val player = getPlayer(uuid) ?: return RemoveResult.FAIL_NOT_FOUND
         return remove(player, server)
     }
 
@@ -294,10 +293,6 @@ object WhitelistManager {
      * @return The result of the remove operation.
      */
     fun remove(player: Player, server: String?): RemoveResult {
-        lock.read {
-            // If a server is specified, check if it's in the player's server list
-            if (player !in whitelist) return RemoveResult.FAIL_NOT_FOUND
-        }
         lock.write {
             if (server != null) {
                 if (server !in player.serverList) return RemoveResult.FAIL_NOT_FOUND
@@ -343,11 +338,11 @@ object WhitelistManager {
      * @param page The page number to return.
      * @return A list of players matching the search criteria.
      */
-    fun find(keyword: String, page: Int): List<Player> {
-        val filtered = lock.read { whitelist.filter { keyword in it.name } }
-        val pages = filtered.chunked(PageTurner.ITEMS_PER_PAGE)
-        return pages.getOrNull(page - 1).orEmpty()
-    }
+    fun find(keyword: String, page: Int): List<Player> =
+        lock.read { whitelist.filter { keyword in it.name } }
+            .chunked(PageTurner.ITEMS_PER_PAGE)
+            .getOrNull(page - 1)
+            .orEmpty()
 
     /**
      * Finds a player in the whitelist by their UUID.
@@ -379,7 +374,7 @@ object WhitelistManager {
     fun isInServerWhitelist(uuid: UUID, server: String): Boolean = lock.read {
         if (!isInWhitelist(uuid)) return false
 
-        val serverList = getPlayer(uuid)!!.serverList
+        val serverList = lock.read { whitelist.find { it.uuid == uuid }!!.serverList }
         if (server in serverList) return true
 
         return config.serverGroups.any { (group, servers) ->

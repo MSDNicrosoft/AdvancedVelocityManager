@@ -53,19 +53,19 @@ object FindCommand {
         val result = WhitelistManager.find(keyword, page)
 
         if (result.isEmpty()) {
-            sendTranslatable("avm.command.avmwl.find.empty")
+            this.sendTranslatable("avm.command.avmwl.find.empty")
             return
         }
 
         val maxPage = PageTurner.getMaxPage(result.size)
         if (page > maxPage) {
-            sendTranslatable("avm.general.not.exist.page")
+            this.sendTranslatable("avm.general.not.exist.page")
             return
         }
 
-        if (page == 1) sendTranslatable("avm.command.avmwl.find.header")
+        if (page == 1) this.sendTranslatable("avm.command.avmwl.find.header")
 
-        sendWhitelistPlayers(result)
-        sendMessage(PageTurner("/avmwl find $keyword").build(page, maxPage))
+        this.sendWhitelistPlayers(result)
+        this.sendMessage(PageTurner("/avmwl find $keyword").build(page, maxPage))
     }
 }

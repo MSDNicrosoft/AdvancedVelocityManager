@@ -76,11 +76,11 @@ object WhitelistCommand {
                         "<reset>$it"
                     }
                 }
-                sendRichMessage("<gray>${player.name} <dark_gray>:<reset> $servers")
+                this.sendRichMessage("<gray>${player.name} <dark_gray>:<reset> $servers")
             }
         } else {
             players.forEach { player ->
-                sendMessage(WhitelistPlayer(player).build())
+                this.sendMessage(WhitelistPlayer(player).build())
             }
         }
     }

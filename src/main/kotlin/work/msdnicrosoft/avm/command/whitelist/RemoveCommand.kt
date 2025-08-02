@@ -7,8 +7,11 @@ import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
-import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.command.get
+import work.msdnicrosoft.avm.util.command.literal
+import work.msdnicrosoft.avm.util.command.wordArgument
 import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getPlayer
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.server.task
@@ -74,25 +77,26 @@ object RemoveCommand {
             WhitelistManager.remove(playerName, serverName)
         }
 
-        when (result) {
+        val message = when (result) {
             WhitelistManager.RemoveResult.SUCCESS -> {
                 if (serverName != null) {
-                    sendTranslatable(
+                    tr(
                         "avm.command.avmwl.remove.success.server",
                         Argument.string("server", serverName),
                         Argument.string("player", playerName)
                     )
                 } else {
-                    sendTranslatable(
+                    tr(
                         "avm.command.avmwl.remove.success.full",
                         Argument.string("player", playerName)
                     )
                 }
             }
 
-            WhitelistManager.RemoveResult.FAIL_NOT_FOUND -> sendTranslatable("avm.command.avmwl.remove.not.found")
-            WhitelistManager.RemoveResult.SAVE_FILE_FAILED -> sendTranslatable("avm.whitelist.save.failed")
+            WhitelistManager.RemoveResult.FAIL_NOT_FOUND -> tr("avm.command.avmwl.remove.not.found")
+            WhitelistManager.RemoveResult.SAVE_FILE_FAILED -> tr("avm.whitelist.save.failed")
         }
+        this.sendMessage(message)
 
         if (config.enabled) {
             task {

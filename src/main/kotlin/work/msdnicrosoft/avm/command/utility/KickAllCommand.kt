@@ -7,7 +7,10 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
-import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.command.get
+import work.msdnicrosoft.avm.util.command.literal
+import work.msdnicrosoft.avm.util.command.name
+import work.msdnicrosoft.avm.util.command.wordArgument
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
@@ -61,12 +64,12 @@ object KickAllCommand {
 
     private fun CommandSource.kickAllPlayers(serverName: String, reason: Component) {
         val server = getRegisteredServer(serverName).getOrElse {
-            sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
+            this.sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
             return
         }
 
         if (server.playersConnected.isEmpty()) {
-            sendTranslatable("avm.general.empty.server")
+            this.sendTranslatable("avm.general.empty.server")
             return
         }
 
@@ -78,7 +81,7 @@ object KickAllCommand {
             }
         }
 
-        sendTranslatable(
+        this.sendTranslatable(
             "avm.command.avm.kickall.executor.text",
             Argument.numeric("player_total", toKick.size),
             Argument.component(

@@ -7,7 +7,10 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
-import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.command.get
+import work.msdnicrosoft.avm.util.command.literal
+import work.msdnicrosoft.avm.util.command.name
+import work.msdnicrosoft.avm.util.command.wordArgument
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
@@ -63,26 +66,26 @@ object SendCommand {
 
     private fun CommandSource.sendPlayer(playerName: String, serverName: String, reason: Component) {
         val server = getRegisteredServer(serverName).getOrElse {
-            sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
+            this.sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
             return
         }
         val serverNickname = getServerNickname(serverName)
 
         val player = getPlayer(playerName).getOrElse {
-            sendTranslatable("avm.general.not.exist.player", Argument.string("player", serverName))
+            this.sendTranslatable("avm.general.not.exist.player", Argument.string("player", serverName))
             return
         }
 
         sendPlayer(server, player).thenAccept { success ->
             if (success) {
-                sendTranslatable(
+                this.sendTranslatable(
                     "avm.command.avm.send.executor.success",
                     Argument.string("player", playerName),
                     Argument.string("server", serverNickname)
                 )
                 player.sendMessage(reason)
             } else {
-                sendTranslatable(
+                this.sendTranslatable(
                     "avm.command.avm.send.executor.failed",
                     Argument.string("player", playerName),
                     Argument.string("server", serverNickname)

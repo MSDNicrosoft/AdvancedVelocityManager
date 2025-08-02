@@ -6,7 +6,10 @@ import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.command.WhitelistCommand.sendWhitelistPlayers
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.command.PageTurner
+import work.msdnicrosoft.avm.util.command.get
+import work.msdnicrosoft.avm.util.command.intArgument
+import work.msdnicrosoft.avm.util.command.literal
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 
 object ListCommand {
@@ -37,23 +40,23 @@ object ListCommand {
 
     private fun CommandSource.listWhitelist(page: Int) {
         if (WhitelistManager.isEmpty) {
-            sendTranslatable("avm.command.avmwl.list.empty")
+            this.sendTranslatable("avm.command.avmwl.list.empty")
             return
         }
         val maxPage = WhitelistManager.maxPage
         if (page > maxPage) {
-            sendTranslatable("avm.general.not.exist.page")
+            this.sendTranslatable("avm.general.not.exist.page")
             return
         }
         if (page == 1) {
-            sendTranslatable(
+            this.sendTranslatable(
                 "avm.command.avmwl.list.header",
                 Argument.numeric("player", WhitelistManager.size)
             )
         }
 
-        sendWhitelistPlayers(WhitelistManager.pageOf(page))
+        this.sendWhitelistPlayers(WhitelistManager.pageOf(page))
 
-        sendMessage(PageTurner("/avmwl list").build(page, maxPage))
+        this.sendMessage(PageTurner("/avmwl list").build(page, maxPage))
     }
 }
