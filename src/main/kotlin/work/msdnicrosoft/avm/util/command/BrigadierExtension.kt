@@ -2,6 +2,7 @@
 
 package work.msdnicrosoft.avm.util.command
 
+import com.highcapable.kavaref.extension.classOf
 import com.mojang.brigadier.arguments.*
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
@@ -29,7 +30,7 @@ inline fun greedyStringArgument(name: String): RequiredArgumentBuilder<CommandSo
 inline fun boolArgument(name: String): RequiredArgumentBuilder<CommandSource, Boolean> =
     argument(name, BoolArgumentType.bool())
 
-inline fun <reified T> CommandContext<CommandSource>.get(name: String): T = this.getArgument(name, T::class.java)
+inline fun <reified T : Any> CommandContext<CommandSource>.get(name: String): T = this.getArgument(name, classOf<T>())
 
 fun LiteralCommandNode<CommandSource>.register(vararg aliases: String) {
     val command = BrigadierCommand(this)

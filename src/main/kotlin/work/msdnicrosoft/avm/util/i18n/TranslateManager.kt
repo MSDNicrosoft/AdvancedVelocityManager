@@ -1,5 +1,6 @@
 package work.msdnicrosoft.avm.util.i18n
 
+import com.highcapable.kavaref.extension.classOf
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslator
 import net.kyori.adventure.translation.GlobalTranslator
@@ -40,7 +41,7 @@ object TranslateManager : MiniMessageTranslator() {
 
     @Suppress("NestedBlockDepth")
     private fun checkAndUpdateTranslations() {
-        val jarUrl = this::class.java.protectionDomain.codeSource?.location ?: return
+        val jarUrl = classOf<TranslateManager>().protectionDomain.codeSource?.location ?: return
         JarFile(jarUrl.path).use { jarFile ->
             jarFile.entries().asSequence()
                 .filter { it.name.startsWith("lang/") && !it.isDirectory }

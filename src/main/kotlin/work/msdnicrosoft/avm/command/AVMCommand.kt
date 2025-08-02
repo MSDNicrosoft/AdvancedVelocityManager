@@ -15,7 +15,7 @@ import work.msdnicrosoft.avm.util.command.*
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.task
-import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 
 @RootCommand("avm")
 object AVMCommand {
@@ -32,8 +32,7 @@ object AVMCommand {
     val reload: LiteralArgumentBuilder<CommandSource> = literal("reload")
         .requires { source -> source.hasPermission("avm.command.reload") }
         .executes { context ->
-            var success = false
-            val elapsed = measureTime { success = plugin.reload() }
+            val (success, elapsed) = measureTimedValue { plugin.reload() }
             if (success) {
                 context.source.sendTranslatable(
                     "avm.command.avm.reload.success",

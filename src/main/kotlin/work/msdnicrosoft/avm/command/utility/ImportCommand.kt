@@ -13,7 +13,7 @@ import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
 import work.msdnicrosoft.avm.util.command.*
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
-import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 
 object ImportCommand {
 
@@ -53,9 +53,8 @@ object ImportCommand {
                             )
 
                             CommandSessionManager.add(sessionId) {
-                                var success = false
-                                val elapsed = measureTime {
-                                    success = PluginName.of(pluginName).import(source, defaultServer)
+                                val (success, elapsed) = measureTimedValue {
+                                    PluginName.of(pluginName).import(source, defaultServer)
                                 }
 
                                 if (success) {

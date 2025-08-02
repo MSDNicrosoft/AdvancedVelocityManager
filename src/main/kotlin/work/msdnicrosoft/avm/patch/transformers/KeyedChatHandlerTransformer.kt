@@ -29,6 +29,7 @@
 
 package work.msdnicrosoft.avm.patch.transformers
 
+import com.highcapable.kavaref.extension.classOf
 import com.velocitypowered.proxy.protocol.packet.chat.keyed.KeyedChatHandler
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
@@ -45,7 +46,7 @@ object KeyedChatHandlerTransformer : ClassTransformer {
     const val TARGET_METHOD_DESC =
         "(Lorg/apache/logging/log4j/Logger;Lcom/velocitypowered/proxy/connection/client/ConnectedPlayer;)V"
 
-    override val targetClass = KeyedChatHandler::class.java
+    override val targetClass = classOf<KeyedChatHandler>()
 
     override fun shouldTransform(): Boolean = !server.pluginManager.getPlugin("signedvelocity").isPresent
 
