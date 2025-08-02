@@ -14,7 +14,6 @@ import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.packet.s2c.PlayerAbilitiesPacket
 import work.msdnicrosoft.avm.util.packet.MinecraftVersion
 import work.msdnicrosoft.avm.util.packet.Packet
-import work.msdnicrosoft.avm.util.packet.Packet.Companion.mapping
 
 object ReconnectHandler {
     private inline val config
@@ -30,37 +29,35 @@ object ReconnectHandler {
     // https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Protocol_version_numbers
     // https://minecraft.wiki/w/Java_Edition_protocol/Packets#Player_Abilities_(clientbound)
     @Suppress("MagicNumber")
-    private val MAPPINGS = listOf(
-        mapping(0x39, MinecraftVersion.MINECRAFT_1_7_2, true),
-        mapping(0x2B, MinecraftVersion.MINECRAFT_1_9, true),
-        mapping(0x2C, MinecraftVersion.MINECRAFT_1_12_1, true),
-        mapping(0x2E, MinecraftVersion.MINECRAFT_1_13, true),
-        mapping(0x31, MinecraftVersion.MINECRAFT_1_14, true),
-        mapping(0x32, MinecraftVersion.MINECRAFT_1_15, true),
-        mapping(0x31, MinecraftVersion.MINECRAFT_1_16, true),
-        mapping(0x30, MinecraftVersion.MINECRAFT_1_16_2, true),
-        mapping(0x32, MinecraftVersion.MINECRAFT_1_17, true),
-        mapping(0x2F, MinecraftVersion.MINECRAFT_1_19, true),
-        mapping(0x31, MinecraftVersion.MINECRAFT_1_19_1, true),
-        mapping(0x30, MinecraftVersion.MINECRAFT_1_19_3, true),
-        mapping(0x34, MinecraftVersion.MINECRAFT_1_19_4, true),
-        mapping(0x36, MinecraftVersion.MINECRAFT_1_20_2, true),
-        mapping(0x38, MinecraftVersion.MINECRAFT_1_20_5, true),
-        mapping(0x3A, MinecraftVersion.MINECRAFT_1_21_2, true),
-        mapping(0x39, MinecraftVersion.MINECRAFT_1_21_5, true)
-    )
+    private val packet = Packet.of(PlayerAbilitiesPacket::class)
+        .direction(Direction.CLIENTBOUND)
+        .stateRegistry(StateRegistry.PLAY)
+        .packetSupplier(::PlayerAbilitiesPacket)
+        .mapping(0x39, MinecraftVersion.MINECRAFT_1_7_2, true)
+        .mapping(0x2B, MinecraftVersion.MINECRAFT_1_9, true)
+        .mapping(0x2C, MinecraftVersion.MINECRAFT_1_12_1, true)
+        .mapping(0x2E, MinecraftVersion.MINECRAFT_1_13, true)
+        .mapping(0x31, MinecraftVersion.MINECRAFT_1_14, true)
+        .mapping(0x32, MinecraftVersion.MINECRAFT_1_15, true)
+        .mapping(0x31, MinecraftVersion.MINECRAFT_1_16, true)
+        .mapping(0x30, MinecraftVersion.MINECRAFT_1_16_2, true)
+        .mapping(0x32, MinecraftVersion.MINECRAFT_1_17, true)
+        .mapping(0x2F, MinecraftVersion.MINECRAFT_1_19, true)
+        .mapping(0x31, MinecraftVersion.MINECRAFT_1_19_1, true)
+        .mapping(0x30, MinecraftVersion.MINECRAFT_1_19_3, true)
+        .mapping(0x34, MinecraftVersion.MINECRAFT_1_19_4, true)
+        .mapping(0x36, MinecraftVersion.MINECRAFT_1_20_2, true)
+        .mapping(0x38, MinecraftVersion.MINECRAFT_1_20_5, true)
+        .mapping(0x3A, MinecraftVersion.MINECRAFT_1_21_2, true)
+        .mapping(0x39, MinecraftVersion.MINECRAFT_1_21_5, true)
 
     fun init() {
-        Packet.of(PlayerAbilitiesPacket::class)
-            .direction(Direction.CLIENTBOUND)
-            .stateRegistry(StateRegistry.PLAY)
-            .packetSupplier(::PlayerAbilitiesPacket)
-            .mappings(MAPPINGS)
-            .register()
+        packet.register()
         eventManager.register(plugin, this)
     }
 
     fun disable() {
+        packet.unregister()
         eventManager.unregisterListener(plugin, this)
     }
 

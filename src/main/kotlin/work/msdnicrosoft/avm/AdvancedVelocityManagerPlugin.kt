@@ -66,18 +66,8 @@ class AdvancedVelocityManagerPlugin {
     @Suppress("UnusedParameter")
     @Subscribe
     fun onProxyShutdown(event: ProxyShutdownEvent) {
-        WhitelistManager.disable()
-        ChatBridge.disable()
-        TabSyncHandler.disable()
-        EventBroadcast.disable()
-        WorldInfoHandler.disable()
-        ReconnectHandler.disable()
-        CommandSessionManager.disable()
-        TranslateManager.disable()
-
-        MsgCommand.disable()
-        AVMCommand.disable()
-        WhitelistCommand.disable()
+        disableModules()
+        unregisterCommands()
     }
 
     private fun initializeModules() {
@@ -92,10 +82,28 @@ class AdvancedVelocityManagerPlugin {
         Logging.init()
     }
 
+    private fun disableModules() {
+        WhitelistManager.disable()
+        ChatBridge.disable()
+        TabSyncHandler.disable()
+        EventBroadcast.disable()
+        WorldInfoHandler.disable()
+        WorldInfoHandler.disable()
+        ReconnectHandler.disable()
+        CommandSessionManager.disable()
+        TranslateManager.disable()
+    }
+
     private fun registerCommands() {
         MsgCommand.init()
         AVMCommand.init()
         WhitelistCommand.init()
+    }
+
+    private fun unregisterCommands() {
+        MsgCommand.disable()
+        AVMCommand.disable()
+        WhitelistCommand.disable()
     }
 
     fun reload(): Boolean {

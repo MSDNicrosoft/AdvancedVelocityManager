@@ -46,7 +46,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @return this builder for chaining
      */
     fun oldPacket(packet: Class<P>): Packet<P> {
-        oldPacket = packet
+        this.oldPacket = packet
         return this
     }
 
@@ -93,7 +93,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @return this builder for chaining
      */
     fun mapping(id: Int, from: MinecraftVersion, to: MinecraftVersion, encodeOnly: Boolean): Packet<P> {
-        mappings.add(Companion.mapping(id, from, to, encodeOnly))
+        this.mappings.add(Companion.mapping(id, from, to, encodeOnly))
         return this
     }
 
@@ -106,7 +106,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @return this builder for chaining
      */
     fun mapping(id: Int, from: MinecraftVersion, encodeOnly: Boolean): Packet<P> {
-        mappings.add(Companion.mapping(id, from, encodeOnly))
+        this.mappings.add(Companion.mapping(id, from, encodeOnly))
         return this
     }
 
@@ -147,9 +147,23 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * This method walks through every protocol registry that contains the old
      * packet and swaps both the numeric id → supplier map and the class → id map.
      */
-    fun replace() {
-        val packetRegistry = stateRegistry.asResolver()
-            .firstField { name = direction }
+    fun replace() = modify(Action.REPLACE)
+
+    /**
+     * Removes an **existing** packet (specified by [packet]) in all protocol versions.
+     *
+     * This method walks through every protocol registry that contains the target
+     * packet and swaps both the numeric id → supplier map and the class → id map.
+     */
+    fun unregister() = modify(Action.UNREGISTER)
+
+    @Suppress("Deprecation")
+    private fun modify(action: Action) {
+        val packetRegistry = this.stateRegistry.asResolver()
+            .firstField {
+                name = this@Packet.direction
+                superclass()
+            }
             .get<PacketRegistry>()!!
 
         val versions = packetRegistry.asResolver()
@@ -170,13 +184,25 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
                 .of(protoRegistry)
                 .get<Object2IntMap<Class<out MinecraftPacket>>>()!!
 
-            val packetId = packetClassToId.object2IntEntrySet()
-                .find { entry -> oldPacket.isAssignableFrom(entry.key) }
-                ?.intValue
-                ?: return@forEach
+            when (action) {
+                Action.REPLACE -> {
+                    val packetId = packetClassToId.object2IntEntrySet()
+                        .find { entry -> this.oldPacket.isAssignableFrom(entry.key) }
+                        ?.intValue
+                        ?: return@forEach
+                    packetIdToSupplier[packetId] = this.packetSupplier
+                    packetClassToId[packet] = packetId
+                }
 
-            packetIdToSupplier[packetId] = packetSupplier
-            packetClassToId[packet] = packetId
+                Action.UNREGISTER -> {
+                    val packetId = packetClassToId.object2IntEntrySet()
+                        .find { entry -> this.packet.isAssignableFrom(entry.key) }
+                        ?.intValue
+                        ?: return@forEach
+                    packetIdToSupplier.remove(packetId)
+                    packetClassToId.remove(this.packet)
+                }
+            }
         }
     }
 
@@ -185,6 +211,8 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
             name = "map"
             parameters(Int::class, ProtocolVersion::class, ProtocolVersion::class, Boolean::class)
         }
+
+        enum class Action { REPLACE, UNREGISTER }
 
         /**
          * Creates a new builder for the given packet class.
