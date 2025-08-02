@@ -78,7 +78,7 @@ repositories {
 }
 
 dependencies {
-    detektPlugins(libs.detekt.formatting)
+    detektPlugins(libs.detekt.formatting) { isTransitive = false }
 
     compileOnly(libs.bundles.velocity)
     compileOnly(libs.bundles.asm)
@@ -90,7 +90,7 @@ dependencies {
     implementation(libs.kaml)
     implementation(libs.kotlin.serialization.json) { isTransitive = false }
     implementation(libs.byte.buddy.agent)
-    implementation(libs.bundles.kavaref)
+    implementation(libs.bundles.kavaref) { isTransitive = false }
 }
 
 detekt {
@@ -113,7 +113,7 @@ tasks {
         archiveFileName = "${rootProject.name}-${rootProject.version}-unshaded.jar"
     }
     shadowJar {
-        minimize()
+        minimizeJar = true
         archiveClassifier = null
 
         doFirst {
