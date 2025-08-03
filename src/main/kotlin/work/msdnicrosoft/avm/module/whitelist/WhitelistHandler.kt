@@ -48,9 +48,10 @@ object WhitelistHandler {
             event.result = PreLoginEvent.PreLoginComponentResult.denied(miniMessage.deserialize(config.message))
             PlayerCache.add(username)
         } else {
-            event.result = when (player.onlineMode) {
-                true -> PreLoginEvent.PreLoginComponentResult.forceOnlineMode()
-                false -> PreLoginEvent.PreLoginComponentResult.forceOfflineMode()
+            event.result = if (player.onlineMode) {
+                PreLoginEvent.PreLoginComponentResult.forceOnlineMode()
+            } else {
+                PreLoginEvent.PreLoginComponentResult.forceOfflineMode()
             }
         }
     }

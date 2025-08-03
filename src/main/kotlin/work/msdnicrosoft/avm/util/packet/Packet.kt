@@ -31,7 +31,7 @@ import kotlin.reflect.KClass
  *
  * @param P concrete packet type that implements [MinecraftPacket]
  */
-@Suppress("unused", "UnsafeCallOnNullableType")
+@Suppress("unused")
 class Packet<P : MinecraftPacket> private constructor(private val packet: Class<P>) {
     private lateinit var oldPacket: Class<P>
     private lateinit var direction: String
@@ -45,10 +45,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @param packet the class of the packet to be substituted
      * @return this builder for chaining
      */
-    fun oldPacket(packet: Class<P>): Packet<P> {
-        this.oldPacket = packet
-        return this
-    }
+    fun oldPacket(packet: Class<P>): Packet<P> = this.apply { this.oldPacket = packet }
 
     /**
      * Supplies the factory that will create new packet instances when the registry needs them.
@@ -56,10 +53,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @param packetSupplier a [Supplier] that returns a new packet instance
      * @return this builder for chaining
      */
-    fun packetSupplier(packetSupplier: Supplier<P>): Packet<P> {
-        this.packetSupplier = packetSupplier
-        return this
-    }
+    fun packetSupplier(packetSupplier: Supplier<P>): Packet<P> = this.apply { this.packetSupplier = packetSupplier }
 
     /**
      * Declares the network direction (client-bound or server-bound) for which this packet will be registered.
@@ -67,10 +61,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @param direction the communication direction
      * @return this builder for chaining
      */
-    fun direction(direction: Direction): Packet<P> {
-        this.direction = direction.name.lowercase()
-        return this
-    }
+    fun direction(direction: Direction): Packet<P> = this.apply { this.direction = direction.name.lowercase() }
 
     /**
      * Specifies the state registry ([HANDSHAKE], [STATUS], [LOGIN] and [PLAY]) in which the packet will live.
@@ -78,10 +69,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @param stateRegistry the Velocity state registry
      * @return this builder for chaining
      */
-    fun stateRegistry(stateRegistry: StateRegistry): Packet<P> {
-        this.stateRegistry = stateRegistry
-        return this
-    }
+    fun stateRegistry(stateRegistry: StateRegistry): Packet<P> = this.apply { this.stateRegistry = stateRegistry }
 
     /**
      * Adds a version–id mapping for this packet.
@@ -92,10 +80,8 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @param encodeOnly if true this mapping is used only for encoding
      * @return this builder for chaining
      */
-    fun mapping(id: Int, from: MinecraftVersion, to: MinecraftVersion, encodeOnly: Boolean): Packet<P> {
-        this.mappings.add(Companion.mapping(id, from, to, encodeOnly))
-        return this
-    }
+    fun mapping(id: Int, from: MinecraftVersion, to: MinecraftVersion, encodeOnly: Boolean): Packet<P> =
+        this.apply { this.mappings.add(Companion.mapping(id, from, to, encodeOnly)) }
 
     /**
      * Adds a version–id mapping that applies from the given protocol version onward (no upper bound).
@@ -105,10 +91,8 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @param encodeOnly if true this mapping is used only for encoding
      * @return this builder for chaining
      */
-    fun mapping(id: Int, from: MinecraftVersion, encodeOnly: Boolean): Packet<P> {
-        this.mappings.add(Companion.mapping(id, from, encodeOnly))
-        return this
-    }
+    fun mapping(id: Int, from: MinecraftVersion, encodeOnly: Boolean): Packet<P> =
+        this.apply { this.mappings.add(Companion.mapping(id, from, encodeOnly)) }
 
     /**
      * Adds a collection of [PacketMapping] in bulk.
@@ -116,18 +100,17 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @param mappings the mappings to append
      * @return this builder for chaining
      */
-    fun mappings(mappings: Collection<PacketMapping?>): Packet<P> {
-        this.mappings.addAll(mappings)
-        return this
-    }
+    fun mappings(mappings: Collection<PacketMapping?>): Packet<P> =
+        this.apply { this.mappings.addAll(mappings) }
 
     /**
      * Registers this packet as a **new** entry in the Velocity packet registry.
      *
      * @throws IllegalStateException if no mappings have been provided
      */
+    @Suppress("UnsafeCallOnNullableType")
     fun register() {
-        check(mappings.isNotEmpty()) { "You must provide at least one packet mapping" }
+        require(mappings.isNotEmpty()) { "You must provide at least one packet mapping" }
 
         val packetRegistry = stateRegistry.asResolver()
             .firstField {
@@ -157,7 +140,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      */
     fun unregister() = modify(Action.UNREGISTER)
 
-    @Suppress("Deprecation")
+    @Suppress("UnsafeCallOnNullableType", "Deprecation")
     private fun modify(action: Action) {
         val packetRegistry = this.stateRegistry.asResolver()
             .firstField {
@@ -191,7 +174,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
                         ?.intValue
                         ?: return@forEach
                     packetIdToSupplier[packetId] = this.packetSupplier
-                    packetClassToId[packet] = packetId
+                    packetClassToId[this.packet] = packetId
                 }
 
                 Action.UNREGISTER -> {
@@ -243,6 +226,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
          * @param encodeOnly encode-only flag
          * @return a new [PacketMapping]
          */
+        @Suppress("UnsafeCallOnNullableType")
         fun mapping(id: Int, from: MinecraftVersion, to: MinecraftVersion?, encodeOnly: Boolean): PacketMapping? {
             return STATE_REGISTRY_MAP_METHOD.invoke<PacketMapping>(
                 id,
