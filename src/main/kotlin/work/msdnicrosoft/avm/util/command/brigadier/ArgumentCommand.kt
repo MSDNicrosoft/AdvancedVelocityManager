@@ -4,13 +4,13 @@ import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
-import com.mojang.brigadier.tree.CommandNode
+import com.mojang.brigadier.tree.ArgumentCommandNode
 import java.util.concurrent.CompletableFuture
 
 class ArgumentCommand<T>(root: String, type: ArgumentType<T>) : Command {
     override val node: RequiredArgumentBuilder<S, T> = RequiredArgumentBuilder.argument(root, type)
 
-    override fun build(): CommandNode<S> = node.build()
+    override fun build(): ArgumentCommandNode<S, T> = node.build()
 }
 
 fun <T> ArgumentCommand<T>.suggests(

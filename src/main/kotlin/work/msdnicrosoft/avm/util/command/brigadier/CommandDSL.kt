@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package work.msdnicrosoft.avm.util.command.brigadier
 
 import com.mojang.brigadier.arguments.*
