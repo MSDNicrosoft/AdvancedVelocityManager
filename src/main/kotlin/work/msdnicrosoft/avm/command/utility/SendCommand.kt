@@ -1,16 +1,12 @@
 package work.msdnicrosoft.avm.command.utility
 
-import com.mojang.brigadier.Command
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
-import work.msdnicrosoft.avm.util.command.get
-import work.msdnicrosoft.avm.util.command.literal
+import work.msdnicrosoft.avm.util.command.brigadier.*
 import work.msdnicrosoft.avm.util.command.name
-import work.msdnicrosoft.avm.util.command.wordArgument
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
@@ -21,48 +17,45 @@ import kotlin.jvm.optionals.getOrElse
 
 object SendCommand {
 
-    val command: LiteralArgumentBuilder<CommandSource> = literal("send")
-        .requires { source -> source.hasPermission("avm.command.send") }
-        .then(
-            wordArgument("player")
-                .suggests { context, builder ->
-                    plugin.server.allPlayers.forEach { builder.suggest(it.username) }
+    val command = literalCommand("send") {
+        requires { hasPermission("avm.command.send") }
+        wordArgument("player") {
+            suggests { builder ->
+                plugin.server.allPlayers.forEach { builder.suggest(it.username) }
+                builder.buildFuture()
+            }
+            wordArgument("server") {
+                suggests { builder ->
+                    plugin.server.allServers.forEach { builder.suggest(it.serverInfo.name) }
                     builder.buildFuture()
                 }
-                .then(
-                    wordArgument("server")
-                        .suggests { context, builder ->
-                            plugin.server.allServers.forEach { builder.suggest(it.serverInfo.name) }
-                            builder.buildFuture()
-                        }
-                        .executes { context ->
-                            val serverName = context.get<String>("server")
-                            val serverNickname = getServerNickname(serverName)
-                            context.source.sendPlayer(
-                                context.get<String>("player"),
-                                serverName,
-                                tr(
-                                    "avm.command.avm.send.target",
-                                    Argument.string("executor", context.source.name),
-                                    Argument.string("server", serverNickname)
-                                )
-                            )
-                            Command.SINGLE_SUCCESS
-                        }
-                        .then(
-                            wordArgument("reason")
-                                .executes { context ->
-                                    context.source.sendPlayer(
-                                        context.get<String>("player"),
-                                        context.get<String>("server"),
-                                        miniMessage.deserialize(context.get<String>("reason"))
-                                    )
-
-                                    Command.SINGLE_SUCCESS
-                                }
+                executes {
+                    val server: String by this
+                    val player: String by this
+                    val serverNickname = getServerNickname(server)
+                    context.source.sendPlayer(
+                        player,
+                        server,
+                        tr(
+                            "avm.command.avm.send.target",
+                            Argument.string("executor", context.source.name),
+                            Argument.string("server", serverNickname)
                         )
-                )
-        )
+                    )
+                    Command.SINGLE_SUCCESS
+                }
+                wordArgument("reason") {
+                    executes {
+                        val server: String by this
+                        val player: String by this
+                        val reason: String by this
+                        context.source.sendPlayer(player, server, miniMessage.deserialize(reason))
+                        Command.SINGLE_SUCCESS
+                    }
+                }
+            }
+        }
+    }
 
     private fun CommandSource.sendPlayer(playerName: String, serverName: String, reason: Component) {
         val server = getRegisteredServer(serverName).getOrElse {

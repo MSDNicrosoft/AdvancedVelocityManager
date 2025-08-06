@@ -1,16 +1,12 @@
 package work.msdnicrosoft.avm.command.utility
 
-import com.mojang.brigadier.Command
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
-import work.msdnicrosoft.avm.util.command.get
-import work.msdnicrosoft.avm.util.command.literal
+import work.msdnicrosoft.avm.util.command.brigadier.*
 import work.msdnicrosoft.avm.util.command.name
-import work.msdnicrosoft.avm.util.command.wordArgument
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
@@ -20,9 +16,9 @@ import kotlin.jvm.optionals.getOrElse
 
 object KickAllCommand {
 
-    val command: LiteralArgumentBuilder<CommandSource> = literal("kick")
-        .requires { source -> source.hasPermission("avm.command.kick") }
-        .executes { context ->
+    val command = literalCommand("kickall") {
+        requires { hasPermission("avm.command.kickall") }
+        executes {
             server.allPlayers.filter { !it.hasPermission("avm.kickall.bypass") }
                 .forEach {
                     it.disconnect(
@@ -34,33 +30,32 @@ object KickAllCommand {
                 }
             Command.SINGLE_SUCCESS
         }
-        .then(
-            wordArgument("server")
-                .suggests { context, builder ->
-                    server.allServers.forEach { builder.suggest(it.serverInfo.name) }
-                    builder.buildFuture()
-                }
-                .executes { context ->
-                    context.source.kickAllPlayers(
-                        context.get<String>("server"),
-                        tr(
-                            "avm.command.avm.kick.target",
-                            Argument.string("executor", context.source.name)
-                        )
+        wordArgument("server") {
+            suggests { builder ->
+                server.allServers.forEach { builder.suggest(it.serverInfo.name) }
+                builder.buildFuture()
+            }
+            executes {
+                val server: String by this
+                context.source.kickAllPlayers(
+                    server,
+                    tr(
+                        "avm.command.avm.kick.target",
+                        Argument.string("executor", context.source.name)
                     )
+                )
+                Command.SINGLE_SUCCESS
+            }
+            wordArgument("reason") {
+                executes {
+                    val server: String by this
+                    val reason: String by this
+                    context.source.kickAllPlayers(server, miniMessage.deserialize(reason))
                     Command.SINGLE_SUCCESS
                 }
-                .then(
-                    wordArgument("reason")
-                        .executes { context ->
-                            context.source.kickAllPlayers(
-                                context.get<String>("server"),
-                                miniMessage.deserialize(context.get<String>("reason"))
-                            )
-                            Command.SINGLE_SUCCESS
-                        }
-                )
-        )
+            }
+        }
+    }
 
     private fun CommandSource.kickAllPlayers(serverName: String, reason: Component) {
         val server = getRegisteredServer(serverName).getOrElse {
@@ -79,19 +74,18 @@ object KickAllCommand {
             toKick.forEach { player ->
                 player.disconnect(reason)
             }
-        }
+            this.sendTranslatable(
+                "avm.command.avm.kickall.executor.text",
+                Argument.numeric("player_total", toKick.size),
+                Argument.component(
+                    "bypass",
+                    tr(
+                        "avm.command.avm.kickall.executor.bypass.text",
+                        Argument.numeric("player_bypass", bypassed.size)
+                    ).hoverEvent(HoverEvent.showText(tr("avm.command.avm.kickall.executor.bypass.hover")))
+                )
 
-        this.sendTranslatable(
-            "avm.command.avm.kickall.executor.text",
-            Argument.numeric("player_total", toKick.size),
-            Argument.component(
-                "bypass",
-                tr(
-                    "avm.command.avm.kickall.executor.bypass.text",
-                    Argument.numeric("player_bypass", bypassed.size)
-                ).hoverEvent(HoverEvent.showText(tr("avm.command.avm.kickall.executor.bypass.hover")))
             )
-
-        )
+        }
     }
 }

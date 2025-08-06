@@ -1,45 +1,41 @@
 package work.msdnicrosoft.avm.command.whitelist
 
-import com.mojang.brigadier.Command
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.velocitypowered.api.command.CommandSource
 import work.msdnicrosoft.avm.command.WhitelistCommand.sendWhitelistPlayers
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.command.PageTurner
+import work.msdnicrosoft.avm.util.command.brigadier.*
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.server.task
 
 object FindCommand {
 
-    val command: LiteralArgumentBuilder<CommandSource> = literal("find")
-        .requires { source -> source.hasPermission("avm.command.whitelist.find") }
-        .then(
-            wordArgument("keyword")
-                .suggests { context, builder ->
-                    buildSet {
-                        addAll(WhitelistManager.usernames)
-                        addAll(PlayerCache.readOnly)
-                    }.forEach(builder::suggest)
-                    builder.buildFuture()
-                }
-                .executes { context ->
-                    context.source.listFind(1, context.get<String>("keyword"))
+    val command = literalCommand("find") {
+        requires { hasPermission("avm.command.whitelist.find") }
+        wordArgument("keyword") {
+            suggests { builder ->
+                buildSet {
+                    addAll(WhitelistManager.usernames)
+                    addAll(PlayerCache.readOnly)
+                }.forEach(builder::suggest)
+                builder.buildFuture()
+            }
+            executes {
+                val keyword: String by this
+                context.source.listFind(1, keyword)
+                Command.SINGLE_SUCCESS
+            }
+            intArgument("page", min = 1) {
+                executes {
+                    val page: Int by this
+                    val keyword: String by this
+                    task { context.source.listFind(page, keyword) }
                     Command.SINGLE_SUCCESS
                 }
-                .then(
-                    intArgument("page")
-                        .executes { context ->
-                            val page = context.get<Int>("page")
-                            if (page < 1) {
-                                context.source.sendTranslatable("avm.whitelist.page.must.larger.than.zero")
-                                return@executes Command.SINGLE_SUCCESS
-                            }
-                            task { context.source.listFind(page, context.get<String>("keyword")) }
-                            Command.SINGLE_SUCCESS
-                        }
-                )
-        )
+            }
+        }
+    }
 
     /**
      * Sends a message to the sender with the header for the whitelist find,

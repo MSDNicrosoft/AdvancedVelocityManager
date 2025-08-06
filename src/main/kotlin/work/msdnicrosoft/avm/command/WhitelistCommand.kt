@@ -1,6 +1,5 @@
 package work.msdnicrosoft.avm.command
 
-import com.mojang.brigadier.tree.LiteralCommandNode
 import com.velocitypowered.api.command.CommandSource
 import work.msdnicrosoft.avm.annotations.CommandNode
 import work.msdnicrosoft.avm.annotations.RootCommand
@@ -9,7 +8,13 @@ import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistPlayer
 import work.msdnicrosoft.avm.util.ConfigUtil.getServersInGroup
 import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroup
-import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.command.brigadier.executes
+import work.msdnicrosoft.avm.util.command.brigadier.literalCommand
+import work.msdnicrosoft.avm.util.command.brigadier.then
+import work.msdnicrosoft.avm.util.command.buildHelp
+import work.msdnicrosoft.avm.util.command.isConsole
+import work.msdnicrosoft.avm.util.command.register
+import work.msdnicrosoft.avm.util.command.unregister
 
 @RootCommand("avmwl")
 object WhitelistCommand {
@@ -46,17 +51,17 @@ object WhitelistCommand {
     @CommandNode("status")
     val status = StatusCommand.command
 
-    val command: LiteralCommandNode<CommandSource> = literal("avmwl")
-        .executes { context -> context.buildHelp(this@WhitelistCommand.javaClass) }
-        .then(add)
-        .then(clear)
-        .then(find)
-        .then(list)
-        .then(off)
-        .then(on)
-        .then(remove)
-        .then(status)
-        .build()
+    val command = literalCommand("avmwl") {
+        executes { context.buildHelp(this@WhitelistCommand.javaClass) }
+        then(add)
+        then(clear)
+        then(find)
+        then(list)
+        then(off)
+        then(on)
+        then(remove)
+        then(status)
+    }.build()
 
     /**
      * Sends a list of WhitelistManager.Players to the sender,

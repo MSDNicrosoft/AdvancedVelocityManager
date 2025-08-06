@@ -1,15 +1,11 @@
 package work.msdnicrosoft.avm.command.whitelist
 
-import com.mojang.brigadier.Command
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
-import work.msdnicrosoft.avm.util.command.get
-import work.msdnicrosoft.avm.util.command.literal
-import work.msdnicrosoft.avm.util.command.wordArgument
+import work.msdnicrosoft.avm.util.command.brigadier.*
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getPlayer
@@ -23,44 +19,45 @@ object RemoveCommand {
     private inline val config
         get() = ConfigManager.config.whitelist
 
-    val command: LiteralArgumentBuilder<CommandSource> = literal("remove")
-        .requires { source -> source.hasPermission("avm.command.whitelist.remove") }
-        .then(
-            wordArgument("player")
-                .suggests { context, builder ->
-                    WhitelistManager.usernames.forEach(builder::suggest)
+    val command = literalCommand("remove") {
+        requires { hasPermission("avm.command.whitelist.remove") }
+        wordArgument("player") {
+            suggests { builder ->
+                WhitelistManager.usernames.forEach(builder::suggest)
+                builder.buildFuture()
+            }
+            executes {
+                val player: String by this
+                context.source.removePlayer(player)
+                Command.SINGLE_SUCCESS
+            }
+            wordArgument("server") {
+                suggests { builder ->
+                    val player: String by this
+                    val serverList = if (player.isUuid()) {
+                        WhitelistManager.getPlayer(player.toUuid())
+                    } else {
+                        WhitelistManager.getPlayer(player)
+                    }?.serverList
+                    serverList?.forEach(builder::suggest)
                     builder.buildFuture()
                 }
-                .executes { context ->
-                    context.source.removePlayer(context.get<String>("player"))
+                executes {
+                    val server: String by this
+                    val player: String by this
+                    if (!isValidServer(server)) {
+                        context.source.sendTranslatable(
+                            "avm.general.not.exist.server",
+                            Argument.string("server", server)
+                        )
+                        return@executes Command.SINGLE_SUCCESS
+                    }
+                    context.source.removePlayer(player, server)
                     Command.SINGLE_SUCCESS
                 }
-                .then(
-                    wordArgument("server")
-                        .suggests { context, builder ->
-                            val player = context.get<String>("player")
-                            val serverList = if (player.isUuid()) {
-                                WhitelistManager.getPlayer(player.toUuid())
-                            } else {
-                                WhitelistManager.getPlayer(player)
-                            }?.serverList
-                            serverList?.forEach(builder::suggest)
-                            builder.buildFuture()
-                        }
-                        .executes { context ->
-                            val serverName = context.get<String>("server")
-                            if (!isValidServer(serverName)) {
-                                context.source.sendTranslatable(
-                                    "avm.general.not.exist.server",
-                                    Argument.string("server", serverName)
-                                )
-                                return@executes Command.SINGLE_SUCCESS
-                            }
-                            context.source.removePlayer(context.get<String>("player"), serverName)
-                            Command.SINGLE_SUCCESS
-                        }
-                )
-        )
+            }
+        }
+    }
 
     /**
      * Removes a player from the whitelist.

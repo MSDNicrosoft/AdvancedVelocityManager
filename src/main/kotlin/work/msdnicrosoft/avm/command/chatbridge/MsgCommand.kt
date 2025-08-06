@@ -1,7 +1,5 @@
 package work.msdnicrosoft.avm.command.chatbridge
 
-import com.mojang.brigadier.Command
-import com.mojang.brigadier.tree.LiteralCommandNode
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
@@ -13,10 +11,10 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
 import work.msdnicrosoft.avm.util.command.*
+import work.msdnicrosoft.avm.util.command.brigadier.*
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.styleOnlyMiniMessage
 import work.msdnicrosoft.avm.util.component.Format
-import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getPlayer
 import kotlin.jvm.optionals.getOrElse
 
@@ -35,9 +33,9 @@ object MsgCommand {
         command.unregister()
     }
 
-    val command: LiteralCommandNode<CommandSource> = literal("msg").then(
-        wordArgument("targets")
-            .suggests { context, builder ->
+    val command = literalCommand("msg") {
+        wordArgument("targets") {
+            suggests { builder ->
                 if (config.takeOverPrivateChat || context.source.isConsole) {
                     server.allPlayers.map { it.username }
                 } else {
@@ -45,44 +43,41 @@ object MsgCommand {
                 }.forEach(builder::suggest)
                 builder.buildFuture()
             }
-            .then(
-                wordArgument("message")
-                    .executes { context ->
-                        val source = context.source
+            wordArgument("message") {
+                executes {
+                    val targets: String by this
+                    val message: String by this
 
-                        val targets = context.get<String>("targets")
-                        val player = getPlayer(targets).getOrElse {
-                            source.sendTranslatable(
-                                "avm.general.not.exist.player",
-                                Argument.string("player", targets)
-                            )
-                            return@executes Command.SINGLE_SUCCESS
-                        }
-
-                        val message = context.get<String>("message")
-
-                        if (!source.isConsole) {
-                            source.sendMessage(config.privateChatFormat.sender.buildMessage(source, player, message))
-                        }
-                        player.sendMessage(config.privateChatFormat.receiver.buildMessage(source, player, message))
-
-                        Command.SINGLE_SUCCESS
+                    val player = getPlayer(targets).getOrElse {
+                        sendTranslatable(
+                            "avm.general.not.exist.player",
+                            Argument.string("player", targets)
+                        )
+                        return@executes Command.SINGLE_SUCCESS
                     }
-            )
-    ).build()
 
-    private fun List<Format>.buildMessage(sender: CommandSource, player: Player, message: String): Component {
+                    if (!context.source.isConsole) {
+                        sendMessage(config.privateChatFormat.sender.buildMessage(context.source, player, message))
+                    }
+                    player.sendMessage(config.privateChatFormat.receiver.buildMessage(context.source, player, message))
+                    Command.SINGLE_SUCCESS
+                }
+            }
+        }
+    }.build()
+
+    private fun List<Format>.buildMessage(source: CommandSource, player: Player, message: String): Component {
         val time = getDateTime()
         return Component.join(
             JoinConfiguration.noSeparators(),
             map { format ->
-                format.text.deserialize(sender.name, player.username, message, time)
+                format.text.deserialize(source.name, player.username, message, time)
                     .hoverEvent(
                         format.hover?.joinToString("\n")
-                            ?.deserialize(sender.name, player.username, message, time)
+                            ?.deserialize(source.name, player.username, message, time)
                             ?.let { HoverEvent.showText(it) }
                     )
-                    .clickEvent(createClickEvent(format) { replacePlaceHolders(sender.name, player.username, time) })
+                    .clickEvent(createClickEvent(format) { replacePlaceHolders(source.name, player.username, time) })
             }
         )
     }

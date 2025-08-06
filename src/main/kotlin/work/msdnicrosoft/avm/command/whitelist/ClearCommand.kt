@@ -1,8 +1,5 @@
 package work.msdnicrosoft.avm.command.whitelist
 
-import com.mojang.brigadier.Command
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
-import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.translation.Argument
@@ -10,7 +7,10 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.CommandSessionManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.command.literal
+import work.msdnicrosoft.avm.util.command.brigadier.Command
+import work.msdnicrosoft.avm.util.command.brigadier.executes
+import work.msdnicrosoft.avm.util.command.brigadier.literalCommand
+import work.msdnicrosoft.avm.util.command.brigadier.requires
 import work.msdnicrosoft.avm.util.command.name
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
@@ -22,9 +22,9 @@ object ClearCommand {
     private inline val config
         get() = ConfigManager.config.whitelist
 
-    val command: LiteralArgumentBuilder<CommandSource> = literal("clear")
-        .requires { source -> source.hasPermission("avm.command.whitelist.clear") }
-        .executes { context ->
+    val command = literalCommand("clear") {
+        requires { hasPermission("avm.command.whitelist.clear") }
+        executes {
             val sessionId =
                 CommandSessionManager.generateSessionId(
                     context.source.name,
@@ -54,4 +54,5 @@ object ClearCommand {
 
             Command.SINGLE_SUCCESS
         }
+    }
 }

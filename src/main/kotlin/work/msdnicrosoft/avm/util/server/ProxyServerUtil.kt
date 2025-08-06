@@ -6,10 +6,9 @@ import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import com.velocitypowered.api.proxy.server.ServerPing
 import net.kyori.adventure.text.Component
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.util.component.ComponentUtil
-import java.util.Optional
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 object ProxyServerUtil {
@@ -30,7 +29,7 @@ object ProxyServerUtil {
      */
     inline fun getRegisteredServer(
         name: String
-    ): Optional<RegisteredServer> = AdvancedVelocityManagerPlugin.Companion.server.getServer(
+    ): Optional<RegisteredServer> = server.getServer(
         name
     )
 
@@ -40,7 +39,7 @@ object ProxyServerUtil {
      * @param name The username of the player.
      * @return An optional containing the player if found, otherwise an empty optional.
      */
-    inline fun getPlayer(name: String): Optional<Player> = AdvancedVelocityManagerPlugin.Companion.server.getPlayer(
+    inline fun getPlayer(name: String): Optional<Player> = server.getPlayer(
         name
     )
 
@@ -50,7 +49,7 @@ object ProxyServerUtil {
      * @param uuid The UUID of the player.
      * @return An optional containing the player if found, otherwise an empty optional.
      */
-    inline fun getPlayer(uuid: UUID): Optional<Player> = AdvancedVelocityManagerPlugin.Companion.server.getPlayer(uuid)
+    inline fun getPlayer(uuid: UUID): Optional<Player> = server.getPlayer(uuid)
 
     /**
      * Checks if a server with the given name exists.

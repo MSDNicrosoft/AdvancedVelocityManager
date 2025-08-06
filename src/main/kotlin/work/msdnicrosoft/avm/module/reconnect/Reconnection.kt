@@ -3,7 +3,6 @@ package work.msdnicrosoft.avm.module.reconnect
 import com.velocitypowered.api.event.Continuation
 import com.velocitypowered.api.event.player.KickedFromServerEvent
 import com.velocitypowered.api.proxy.server.PingOptions
-import com.velocitypowered.api.proxy.server.RegisteredServer
 import com.velocitypowered.proxy.connection.client.ClientPlaySessionHandler
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer
 import com.velocitypowered.proxy.protocol.packet.BossBarPacket
@@ -16,17 +15,20 @@ import java.util.concurrent.TimeUnit
 
 @Suppress("MagicNumber")
 class Reconnection(private val event: KickedFromServerEvent, private val continuation: Continuation) {
-    private val server: RegisteredServer = event.server
     private val player: ConnectedPlayer = event.player as ConnectedPlayer
     private val scheduledExecutor = player.connection.eventLoop()
+
+    private val pingOptions = PingOptions.builder()
+        .timeout(Duration.ofMillis(config.pingTimeout))
+        .build()
 
     private val connectingTitle = Title.title(
         miniMessage.deserialize(config.message.connecting.title),
         miniMessage.deserialize(config.message.connecting.subtitle),
         Title.Times.times(
-            Duration.ofMillis(0L),
-            Duration.ofMillis(30_000L),
-            Duration.ofMillis(0L)
+            Duration.ofSeconds(0L),
+            Duration.ofSeconds(30L),
+            Duration.ofSeconds(0L)
         )
     )
 
@@ -34,9 +36,9 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
         miniMessage.deserialize(config.message.waiting.title),
         miniMessage.deserialize(config.message.waiting.subtitle),
         Title.Times.times(
-            Duration.ofMillis(0L),
-            Duration.ofMillis(30_000L),
-            Duration.ofMillis(0L)
+            Duration.ofSeconds(0L),
+            Duration.ofSeconds(30L),
+            Duration.ofSeconds(0L)
         )
     )
 
@@ -65,7 +67,7 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
 
     private fun connect() {
         if (state == State.CONNECTED) return
-        server.ping(pingOptions).whenComplete { _, throwable ->
+        event.server.ping(pingOptions).whenComplete { _, throwable ->
             if (throwable != null) {
                 scheduleConnect()
             } else {
@@ -73,7 +75,7 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
                     state = State.CONNECTING
                     scheduledExecutor.schedule({
                         player.clearTitle()
-                        event.result = KickedFromServerEvent.RedirectPlayer.create(server)
+                        event.result = KickedFromServerEvent.RedirectPlayer.create(event.server)
                         state = State.CONNECTED
                         continuation.resume()
                     }, config.reconnectDelay, TimeUnit.MILLISECONDS)
@@ -90,25 +92,20 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
     }
 
     private fun clearBossBars() {
-        (player.connection.activeSessionHandler as? ClientPlaySessionHandler)?.let { sessionHandler ->
-            sessionHandler.serverBossBars.forEach { bossBar ->
-                player.connection.delayedWrite(
-                    BossBarPacket().apply {
-                        uuid = bossBar
-                        action = BossBarPacket.REMOVE
-                    }
-                )
-            }
-            sessionHandler.serverBossBars.clear()
+        val sessionHandler = player.connection.activeSessionHandler as? ClientPlaySessionHandler
+        sessionHandler?.serverBossBars?.forEach { bossBar ->
+            player.connection.delayedWrite(
+                BossBarPacket().apply {
+                    uuid = bossBar
+                    action = BossBarPacket.REMOVE
+                }
+            )
         }
+        sessionHandler?.serverBossBars?.clear()
     }
 
     companion object {
-        enum class State { WAITING, CONNECTING, CONNECTED }
-
-        private val pingOptions = PingOptions.builder()
-            .timeout(Duration.ofMillis(config.pingTimeout))
-            .build()
+        private enum class State { WAITING, CONNECTING, CONNECTED }
 
         private inline val config
             get() = ConfigManager.config.reconnect

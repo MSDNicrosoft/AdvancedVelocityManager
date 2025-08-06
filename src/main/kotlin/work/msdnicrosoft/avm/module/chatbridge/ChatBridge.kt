@@ -9,6 +9,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.command.chatbridge.MsgCommand
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.Logging
+import work.msdnicrosoft.avm.module.chatbridge.ChatBridge.mode
 
 object ChatBridge {
 

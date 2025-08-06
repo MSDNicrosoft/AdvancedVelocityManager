@@ -33,8 +33,6 @@ avm:
         hover: "<gold>▶ <yellow>点击从白名单中移除此玩家"
       uuid:
         hover: "<gold>▶ <yellow>点击复制"
-    page:
-      must.larger.than.zero: "<red>页码必须大于零！"
     save.failed: "<red>无法保存白名单文件，请查看控制台日志！"
 
   command:

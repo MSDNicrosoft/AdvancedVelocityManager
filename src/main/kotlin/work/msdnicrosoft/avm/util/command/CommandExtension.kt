@@ -2,40 +2,60 @@
 
 package work.msdnicrosoft.avm.util.command
 
-import com.mojang.brigadier.Command
-import com.mojang.brigadier.builder.LiteralArgumentBuilder
-import com.mojang.brigadier.context.CommandContext
+import com.mojang.brigadier.tree.LiteralCommandNode
+import com.velocitypowered.api.command.BrigadierCommand
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.ConsoleCommandSource
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.ComponentLike
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.minimessage.translation.Argument
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.commandManager
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.annotations.CommandNode
 import work.msdnicrosoft.avm.annotations.RootCommand
+import work.msdnicrosoft.avm.util.command.brigadier.Command
+import work.msdnicrosoft.avm.util.command.brigadier.CommandContext
 import work.msdnicrosoft.avm.util.component.ComponentUtil
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.reflect.getAnnotationIfPresent
+import com.mojang.brigadier.context.CommandContext as BrigadierCommandContext
 
-inline val CommandSource.isConsole: Boolean
+typealias S = CommandSource
+
+inline val S.isConsole: Boolean
     get() = this is ConsoleCommandSource
 
-inline val CommandSource.isPlayer: Boolean
+inline val S.isPlayer: Boolean
     get() = this is Player
 
-inline val CommandSource.name: String
+inline val S.name: String
     get() = if (this is Player) this.username else "Console"
 
-inline fun CommandSource.toPlayer(): Player = this as Player
-inline fun CommandSource.toConsole(): ConsoleCommandSource = this as ConsoleCommandSource
-inline fun CommandSource.toConnectedPlayer(): ConnectedPlayer = this as ConnectedPlayer
+inline fun S.toPlayer(): Player = this as Player
+inline fun S.toConsole(): ConsoleCommandSource = this as ConsoleCommandSource
+inline fun S.toConnectedPlayer(): ConnectedPlayer = this as ConnectedPlayer
+
+inline fun CommandContext<S>.sendMessage(message: Component) = this.context.source.sendMessage(message)
+
+inline fun CommandContext<S>.sendPlainMessage(message: String) = this.context.source.sendPlainMessage(message)
+
+inline fun CommandContext<S>.sendRichMessage(message: String) = this.context.source.sendRichMessage(message)
+
+inline fun CommandContext<S>.sendRichMessage(message: String, vararg resolvers: TagResolver) =
+    this.context.source.sendRichMessage(message, *resolvers)
+
+inline fun CommandContext<S>.sendTranslatable(message: String, vararg args: ComponentLike) =
+    this.context.source.sendTranslatable(message, *args)
 
 @Suppress("UNCHECKED_CAST", "SameReturnValue")
-fun CommandContext<CommandSource>.buildHelp(commandRoot: Class<*>, checkPermission: Boolean = true): Int {
+fun BrigadierCommandContext<CommandSource>.buildHelp(commandRoot: Class<*>, checkPermission: Boolean = true): Int {
     val rootCommand = commandRoot.getAnnotationIfPresent<RootCommand>() ?: return Command.SINGLE_SUCCESS
     val rootName = rootCommand.name
 
@@ -59,9 +79,9 @@ fun CommandContext<CommandSource>.buildHelp(commandRoot: Class<*>, checkPermissi
 
         val commandNode = field.getAnnotationIfPresent<CommandNode>() ?: return@forEach
 
-        val command = field[commandRoot] as LiteralArgumentBuilder<CommandSource>
+        val command = field[commandRoot] as Command
 
-        if (checkPermission && !command.requirement.test(this.source)) return@forEach
+        if (checkPermission && !command.node.requirement.test(this.source)) return@forEach
 
         val arguments = commandNode.arguments.joinToString(" ") { arg ->
             when (arg.firstOrNull()) {
@@ -90,3 +110,14 @@ fun CommandContext<CommandSource>.buildHelp(commandRoot: Class<*>, checkPermissi
     }
     return Command.SINGLE_SUCCESS
 }
+
+fun LiteralCommandNode<CommandSource>.register(vararg aliases: String) {
+    val command = BrigadierCommand(this)
+    val meta = commandManager.metaBuilder(command)
+        .aliases(*aliases)
+        .plugin(plugin)
+        .build()
+    commandManager.register(meta, command)
+}
+
+fun LiteralCommandNode<CommandSource>.unregister() = commandManager.unregister(this.name)
