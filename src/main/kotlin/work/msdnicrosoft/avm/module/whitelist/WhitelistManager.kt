@@ -148,7 +148,7 @@ object WhitelistManager {
     }
 
     /**
-     * Loads the whitelist from disk.
+     * Loads the whitelist from the disk.
      *
      * @param reload If true, the whitelist will be reloaded from the disk.
      */
@@ -377,11 +377,11 @@ object WhitelistManager {
 
     /**
      * Retrieves the username associated with the given UUID.
-     * If the server is in offline mode, returns null.
+     * If the server is in offline mode, it returns null.
      * If the server is online, a query is made to the API to retrieve the username.
      *
      * @param uuid The UUID of the player.
-     * @return The username associated with the UUID, or null if the query fails.
+     * @return The username associated with the UUID or null if the query fails.
      */
     @Suppress("MagicNumber")
     private fun getUsername(uuid: UUID): String? {
@@ -415,7 +415,7 @@ object WhitelistManager {
      *
      * @param username The username to query for its UUID.
      * @param onlineMode Optional parameter to specify whether to use online mode or not. Defaults to null.
-     * @return The UUID associated with the username, or null if the query fails.
+     * @return The UUID associated with the username or null if the query fails.
      */
     @Suppress("MagicNumber")
     private fun getUuid(username: String, onlineMode: Boolean? = null): String? {
