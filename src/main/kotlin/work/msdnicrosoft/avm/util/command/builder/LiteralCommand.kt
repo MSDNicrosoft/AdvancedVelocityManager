@@ -1,10 +1,7 @@
-package work.msdnicrosoft.avm.util.command.brigadier
+package work.msdnicrosoft.avm.util.command.builder
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
-import com.velocitypowered.api.command.CommandSource
-
-typealias S = CommandSource
 
 class LiteralCommand(root: String) : Command {
     override val node: LiteralArgumentBuilder<S> = LiteralArgumentBuilder.literal(root)

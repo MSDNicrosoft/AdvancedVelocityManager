@@ -5,8 +5,8 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
-import work.msdnicrosoft.avm.util.command.brigadier.*
-import work.msdnicrosoft.avm.util.command.name
+import work.msdnicrosoft.avm.util.command.builder.*
+import work.msdnicrosoft.avm.util.command.context.name
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
@@ -32,14 +32,13 @@ object SendCommand {
                 executes {
                     val server: String by this
                     val player: String by this
-                    val serverNickname = getServerNickname(server)
                     context.source.sendPlayer(
                         player,
                         server,
                         tr(
                             "avm.command.avm.send.target",
                             Argument.string("executor", context.source.name),
-                            Argument.string("server", serverNickname)
+                            Argument.string("server", getServerNickname(server))
                         )
                     )
                     Command.SINGLE_SUCCESS

@@ -7,8 +7,8 @@ import work.msdnicrosoft.avm.annotations.RootCommand
 import work.msdnicrosoft.avm.command.utility.*
 import work.msdnicrosoft.avm.module.CommandSessionManager
 import work.msdnicrosoft.avm.module.CommandSessionManager.ExecuteResult
-import work.msdnicrosoft.avm.util.command.brigadier.*
-import work.msdnicrosoft.avm.util.command.buildHelp
+import work.msdnicrosoft.avm.util.command.builder.*
+import work.msdnicrosoft.avm.util.command.context.buildHelp
 import work.msdnicrosoft.avm.util.command.register
 import work.msdnicrosoft.avm.util.command.unregister
 import work.msdnicrosoft.avm.util.component.sendTranslatable
@@ -120,7 +120,7 @@ object AVMCommand {
 //    }
 
     val command = literalCommand("avm") {
-        executes { context.buildHelp(this@AVMCommand.javaClass) }
+        executes { buildHelp(this@AVMCommand.javaClass) }
         then(reload)
         then(info)
         then(confirm)

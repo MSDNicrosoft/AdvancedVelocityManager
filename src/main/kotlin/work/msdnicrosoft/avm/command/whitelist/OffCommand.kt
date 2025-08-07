@@ -2,10 +2,10 @@ package work.msdnicrosoft.avm.command.whitelist
 
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.command.brigadier.Command
-import work.msdnicrosoft.avm.util.command.brigadier.executes
-import work.msdnicrosoft.avm.util.command.brigadier.literalCommand
-import work.msdnicrosoft.avm.util.command.brigadier.requires
+import work.msdnicrosoft.avm.util.command.builder.Command
+import work.msdnicrosoft.avm.util.command.builder.executes
+import work.msdnicrosoft.avm.util.command.builder.literalCommand
+import work.msdnicrosoft.avm.util.command.builder.requires
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 

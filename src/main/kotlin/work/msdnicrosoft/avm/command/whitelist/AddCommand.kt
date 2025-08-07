@@ -8,7 +8,7 @@ import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.AddResult
 import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
-import work.msdnicrosoft.avm.util.command.brigadier.*
+import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.task

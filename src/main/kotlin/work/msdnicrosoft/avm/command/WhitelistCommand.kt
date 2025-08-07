@@ -8,11 +8,11 @@ import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistPlayer
 import work.msdnicrosoft.avm.util.ConfigUtil.getServersInGroup
 import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroup
-import work.msdnicrosoft.avm.util.command.brigadier.executes
-import work.msdnicrosoft.avm.util.command.brigadier.literalCommand
-import work.msdnicrosoft.avm.util.command.brigadier.then
-import work.msdnicrosoft.avm.util.command.buildHelp
-import work.msdnicrosoft.avm.util.command.isConsole
+import work.msdnicrosoft.avm.util.command.builder.executes
+import work.msdnicrosoft.avm.util.command.builder.literalCommand
+import work.msdnicrosoft.avm.util.command.builder.then
+import work.msdnicrosoft.avm.util.command.context.buildHelp
+import work.msdnicrosoft.avm.util.command.context.isConsole
 import work.msdnicrosoft.avm.util.command.register
 import work.msdnicrosoft.avm.util.command.unregister
 
@@ -52,7 +52,7 @@ object WhitelistCommand {
     val status = StatusCommand.command
 
     val command = literalCommand("avmwl") {
-        executes { context.buildHelp(this@WhitelistCommand.javaClass) }
+        executes { buildHelp(this@WhitelistCommand.javaClass) }
         then(add)
         then(clear)
         then(find)

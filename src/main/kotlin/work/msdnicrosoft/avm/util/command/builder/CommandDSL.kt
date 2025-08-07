@@ -1,8 +1,9 @@
 @file:Suppress("unused")
 
-package work.msdnicrosoft.avm.util.command.brigadier
+package work.msdnicrosoft.avm.util.command.builder
 
 import com.mojang.brigadier.arguments.*
+import work.msdnicrosoft.avm.util.command.context.CommandContext
 
 @Target(AnnotationTarget.TYPE)
 @DslMarker

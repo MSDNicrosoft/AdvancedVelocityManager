@@ -10,8 +10,10 @@ import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
-import work.msdnicrosoft.avm.util.command.*
-import work.msdnicrosoft.avm.util.command.brigadier.*
+import work.msdnicrosoft.avm.util.command.builder.*
+import work.msdnicrosoft.avm.util.command.context.*
+import work.msdnicrosoft.avm.util.command.register
+import work.msdnicrosoft.avm.util.command.unregister
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.ComponentUtil.styleOnlyMiniMessage
 import work.msdnicrosoft.avm.util.component.Format
@@ -53,7 +55,7 @@ object MsgCommand {
                             "avm.general.not.exist.player",
                             Argument.string("player", targets)
                         )
-                        return@executes Command.SINGLE_SUCCESS
+                        return@executes Command.ILLEGAL_ARGUMENT
                     }
 
                     if (!context.source.isConsole) {

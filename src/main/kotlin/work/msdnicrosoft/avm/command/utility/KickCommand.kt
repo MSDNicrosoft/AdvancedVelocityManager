@@ -4,8 +4,8 @@ import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
-import work.msdnicrosoft.avm.util.command.brigadier.*
-import work.msdnicrosoft.avm.util.command.name
+import work.msdnicrosoft.avm.util.command.builder.*
+import work.msdnicrosoft.avm.util.command.context.name
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr

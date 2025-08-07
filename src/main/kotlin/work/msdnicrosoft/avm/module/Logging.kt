@@ -9,18 +9,20 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.util.DateTimeUtil
 import work.msdnicrosoft.avm.util.server.task
+import java.io.File
 import kotlin.io.path.div
 
 object Logging {
-    private val LOG_DIR = dataDirectory / "logs"
+    private val file: File
+        get() = (dataDirectory / "logs" / "${DateTimeUtil.getDateTime("yyyy-MM-dd")}.log").toFile()
 
     private val messages = mutableListOf<String>()
 
-    private var writeTask: ScheduledTask? = null
+    private lateinit var writeTask: ScheduledTask
 
     fun init() {
         eventManager.register(plugin, this)
-        writeTask = task(repeatInMillis = 5 * 60 * 1000L, runnable = ::write)
+        writeTask = task(repeatInMillis = 5 * 60 * 1000L, runnable = this::write)
     }
 
     @Suppress("UnusedParameter")
@@ -32,21 +34,17 @@ object Logging {
     private fun write() {
         if (messages.isEmpty()) return
 
-        val file = (LOG_DIR / "${DateTimeUtil.getDateTime("yyyy-MM-dd")}.log").toFile()
-
         try {
             file.bufferedWriter().use { writer ->
                 messages.forEach { message ->
                     writer.appendLine(message)
                 }
             }
+            messages.clear()
         } catch (e: Exception) {
             logger.warn("Failed to write log file: {}", e.message)
         }
-        messages.clear()
     }
 
-    fun log(message: String) {
-        messages.add("[${DateTimeUtil.getDateTime("HH:mm:ss")}]$message")
-    }
+    fun log(message: String) = messages.add("[${DateTimeUtil.getDateTime("HH:mm:ss")}]$message")
 }

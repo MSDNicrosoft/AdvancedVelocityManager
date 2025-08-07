@@ -5,31 +5,17 @@
 
 package work.msdnicrosoft.avm.module.mapsync
 
-import com.highcapable.kavaref.KavaRef.Companion.resolve
-import com.highcapable.kavaref.extension.classOf
-import com.velocitypowered.api.network.ProtocolVersion
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
-import com.velocitypowered.proxy.connection.MinecraftSessionHandler
-import com.velocitypowered.proxy.connection.backend.BackendPlaySessionHandler
-import com.velocitypowered.proxy.connection.backend.VelocityServerConnection
-import com.velocitypowered.proxy.protocol.MinecraftPacket
 import com.velocitypowered.proxy.protocol.ProtocolUtils.Direction
 import com.velocitypowered.proxy.protocol.StateRegistry
-import io.netty.buffer.ByteBuf
-import io.netty.buffer.ByteBufUtil
-import io.netty.buffer.Unpooled
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.channelRegistrar
-import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.netty.use
-import work.msdnicrosoft.avm.util.netty.useThenApply
+import work.msdnicrosoft.avm.packet.SetDefaultSpawnPositionPacket
 import work.msdnicrosoft.avm.util.packet.MinecraftVersion
 import work.msdnicrosoft.avm.util.packet.Packet
-import java.nio.charset.StandardCharsets
-import java.util.zip.CRC32
 
 object XaeroMapHandler {
-    private val XAERO_MINI_MAP_CHANNEL = MinecraftChannelIdentifier.create("xaerominimap", "main")
-    private val XAERO_WORLD_MAP_CHANNEL = MinecraftChannelIdentifier.create("xaeroworldmap", "main")
+    val XAERO_MINI_MAP_CHANNEL: MinecraftChannelIdentifier = MinecraftChannelIdentifier.create("xaerominimap", "main")
+    val XAERO_WORLD_MAP_CHANNEL: MinecraftChannelIdentifier = MinecraftChannelIdentifier.create("xaeroworldmap", "main")
 
     // https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Protocol_version_numbers
     // https://minecraft.wiki/w/Java_Edition_protocol/Packets#Set_Default_Spawn_Position
@@ -65,55 +51,5 @@ object XaeroMapHandler {
     fun disable() {
         packet.unregister()
         channelRegistrar.unregister(XAERO_WORLD_MAP_CHANNEL, XAERO_MINI_MAP_CHANNEL)
-    }
-
-    class SetDefaultSpawnPositionPacket : MinecraftPacket {
-        private var data: ByteBuf? = null
-
-        override fun decode(buf: ByteBuf, direction: Direction?, protocolVersion: ProtocolVersion?) {
-            data = buf.readBytes(buf.readableBytes())
-        }
-
-        override fun encode(buf: ByteBuf, direction: Direction?, protocolVersion: ProtocolVersion?) {
-            data?.use { buf.writeBytes(data) }
-        }
-
-        @Suppress("UnsafeCallOnNullableType")
-        override fun handle(sessionHandler: MinecraftSessionHandler): Boolean {
-            if (!config.world && !config.mini) return true
-
-            val connection = resolver.copy()
-                .of(sessionHandler as BackendPlaySessionHandler)
-                .get<VelocityServerConnection>()!!
-
-            connection.player.connection.write(this)
-
-            val serverNameBytes = connection.serverInfo.name.toByteArray(StandardCharsets.UTF_8)
-            val worldId = CRC32().apply {
-                update(serverNameBytes)
-            }.value.toInt()
-            val array = Unpooled.buffer().useThenApply {
-                writeByte(0x00) // Packet ID
-                writeInt(worldId) // World ID
-                ByteBufUtil.getBytes(this)
-            }
-
-            if (config.world) {
-                connection.player.sendPluginMessage(XAERO_WORLD_MAP_CHANNEL, array)
-            }
-            if (config.mini) {
-                connection.player.sendPluginMessage(XAERO_MINI_MAP_CHANNEL, array)
-            }
-
-            return true
-        }
-
-        companion object {
-            private val resolver = classOf<BackendPlaySessionHandler>().resolve()
-                .firstField { name = "serverConn" }
-
-            private inline val config
-                get() = ConfigManager.config.mapSync.xaero
-        }
     }
 }
