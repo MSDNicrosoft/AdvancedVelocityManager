@@ -16,8 +16,8 @@ data class ChatBridge(
     @YamlComment(
         "Whether to allow players to use format code in chat",
         "Learn more: ",
-        "   Introduction & Basic Usage: https://minecraft.wiki/w/Formatting_codes",
-        "   Advanced Usage: https://github.com/Vankka/EnhancedLegacyText/wiki/Format"
+        "   Introduction & Usage: https://docs.advntr.dev/minimessage/index.html",
+        "   Viewer: https://webui.advntr.dev/"
     )
     @SerialName("allow-format-code")
     val allowFormatCode: Boolean = true,
