@@ -39,7 +39,7 @@ This plugin supports fast transfer of players between different servers, custom 
 ### Permissions
 
 - `avm.command.info` - View plugin information
-- `avm.command.reload` - Discard data in memory, then reload configuration, language and whitelist from files
+- `avm.command.reload` - Discard data in memory, then reload configuration, language, and whitelist from files
 - `avm.command.confirm` - Confirm actions
 - `avm.command.import` - Import data from other plugins ([lls-manager](https://github.com/plusls/lls-manager) [VelocityWhitelist](https://gitee.com/virtual-qu-an/velocity-whitelist))
 - `avm.command.kick` - Kick a specified player
@@ -63,7 +63,7 @@ The `config.yml` configuration file allows you to customize various aspects of t
 
 ## Acknowledgements
 
-The development of this plugin was inspired by other open-source projects, including but not limited to [cancellable-chat](https://github.com/ZhuRuoLing/cancellable-chat), [lls-manager](https://github.com/plusls/lls-manager), [artifex](https://github.com/InsinuateProjects/artifex), and [TrMenu](https://github.com/TrPlugins/TrMenu) .<br>
+The development of this plugin was inspired by other open-source projects, including but not limited to [cancellable-chat](https://github.com/ZhuRuoLing/cancellable-chat) and [lls-manager](https://github.com/plusls/lls-manager).<br>
 We appreciate the contributions of these projects to the open-source community.
 
 ## Support and Community

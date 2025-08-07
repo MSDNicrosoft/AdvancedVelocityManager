@@ -63,7 +63,7 @@ AdvancedVelocityManager 是一个为 Minecraft Velocity 代理服务器设计的
 
 ## 致谢
 
-本插件的开发受到其他开源项目的启发，包括但不限与 [cancellable-chat](https://github.com/ZhuRuoLing/cancellable-chat)、[lls-manager](https://github.com/plusls/lls-manager)、[artifex](https://github.com/InsinuateProjects/artifex) 和 [TrMenu](https://github.com/TrPlugins/TrMenu)。<br>
+本插件的开发受到其他开源项目的启发，包括但不限与 [cancellable-chat](https://github.com/ZhuRuoLing/cancellable-chat) 和 [lls-manager](https://github.com/plusls/lls-manager)。<br>
 我们感谢这些项目对开源社区的贡献。
 
 ## 支持与社区
