@@ -77,7 +77,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @param id         protocol-specific numeric identifier
      * @param from       inclusive protocol version this entry starts from
      * @param to         inclusive protocol version this entry ends at
-     * @param encodeOnly if true this mapping is used only for encoding
+     * @param encodeOnly if true, this mapping is used only for encoding
      * @return this builder for chaining
      */
     fun mapping(id: Int, from: MinecraftVersion, to: MinecraftVersion, encodeOnly: Boolean): Packet<P> =
@@ -88,7 +88,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      *
      * @param id         protocol-specific numeric identifier
      * @param from       inclusive protocol version this entry starts from
-     * @param encodeOnly if true this mapping is used only for encoding
+     * @param encodeOnly if true, this mapping is used only for encoding
      * @return this builder for chaining
      */
     fun mapping(id: Int, from: MinecraftVersion, encodeOnly: Boolean): Packet<P> =
@@ -140,7 +140,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      */
     fun unregister() = modify(Action.UNREGISTER)
 
-    @Suppress("UnsafeCallOnNullableType", "Deprecation")
+    @Suppress("UnsafeCallOnNullableType")
     private fun modify(action: Action) {
         val packetRegistry = this.stateRegistry.asResolver()
             .firstField {
@@ -178,12 +178,12 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
                 }
 
                 Action.UNREGISTER -> {
-                    val packetId = packetClassToId.object2IntEntrySet()
-                        .find { entry -> this.packet.isAssignableFrom(entry.key) }
-                        ?.intValue
-                        ?: return@forEach
-                    packetIdToSupplier.remove(packetId)
-                    packetClassToId.remove(this.packet)
+                    packetIdToSupplier.entries.removeIf { entry ->
+                        this.packet.isAssignableFrom(entry.value.get()::class.java)
+                    }
+                    packetClassToId.object2IntEntrySet().removeIf { entry ->
+                        this.packet.isAssignableFrom(entry.key)
+                    }
                 }
             }
         }
