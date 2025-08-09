@@ -2,7 +2,7 @@ package work.msdnicrosoft.avm.module.command
 
 import com.google.common.io.BaseEncoding
 import com.velocitypowered.api.scheduler.ScheduledTask
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 import work.msdnicrosoft.avm.util.server.task
 import java.security.MessageDigest
 import java.util.concurrent.ConcurrentHashMap
@@ -63,7 +63,7 @@ object CommandSessionManager {
     }
 
     fun reload() {
-        AdvancedVelocityManagerPlugin.Companion.logger.info("Reloading command sessions...")
+        logger.info("Reloading command sessions...")
         disable()
         sessions.clear()
         init()
@@ -95,7 +95,7 @@ object CommandSessionManager {
                 ExecuteResult.SUCCESS
             }
         } catch (e: Exception) {
-            AdvancedVelocityManagerPlugin.Companion.logger.warn("Failed to execute session command", e)
+            logger.warn("Failed to execute session command", e)
             ExecuteResult.FAILED
         }
     }
