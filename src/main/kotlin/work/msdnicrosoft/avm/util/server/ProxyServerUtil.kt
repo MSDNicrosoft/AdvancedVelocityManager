@@ -39,9 +39,7 @@ object ProxyServerUtil {
      * @param name The username of the player.
      * @return An optional containing the player if found, otherwise an empty optional.
      */
-    inline fun getPlayer(name: String): Optional<Player> = server.getPlayer(
-        name
-    )
+    inline fun getPlayer(name: String): Optional<Player> = server.getPlayer(name)
 
     /**
      * Gets a player by its UUID.

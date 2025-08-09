@@ -1,6 +1,7 @@
 package work.msdnicrosoft.avm.util.component
 
 import kotlinx.serialization.Serializable
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 
 /**
  * A data class representing a format for a component.
@@ -20,4 +21,31 @@ data class Format(
     val suggest: String? = null,
     val url: String? = null,
     val clipboard: String? = null
-)
+) {
+
+    /**
+     * Validates the format.
+     *
+     * @return True if the format is valid, false otherwise.
+     */
+    fun validate(): Boolean {
+        if (text.isEmpty()) {
+            logger.warn("Invalid format: {}", this)
+            logger.warn("Text cannot be empty or blank.")
+            return false
+        }
+
+        val conflicted = listOf(
+            !command.isNullOrEmpty(),
+            !suggest.isNullOrEmpty(),
+            !url.isNullOrEmpty(),
+            !clipboard.isNullOrEmpty(),
+        ).count { it } > 1
+        if (conflicted) {
+            logger.warn("Invalid format: {}", this)
+            logger.warn("Exactly one of 'command', 'suggest', 'url', or 'clipboard' should be provided and non-empty.")
+            return false
+        }
+        return true
+    }
+}

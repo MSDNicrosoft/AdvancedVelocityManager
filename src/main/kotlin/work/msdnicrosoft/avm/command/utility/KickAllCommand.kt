@@ -1,14 +1,13 @@
 package work.msdnicrosoft.avm.command.utility
 
-import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.util.command.builder.*
+import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.command.context.name
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
-import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getRegisteredServer
 import work.msdnicrosoft.avm.util.server.task
@@ -37,7 +36,7 @@ object KickAllCommand {
             }
             executes {
                 val server: String by this
-                context.source.kickAllPlayers(
+                kickAllPlayers(
                     server,
                     tr(
                         "avm.command.avm.kick.target",
@@ -50,14 +49,14 @@ object KickAllCommand {
                 executes {
                     val server: String by this
                     val reason: String by this
-                    context.source.kickAllPlayers(server, miniMessage.deserialize(reason))
+                    kickAllPlayers(server, miniMessage.deserialize(reason))
                     Command.SINGLE_SUCCESS
                 }
             }
         }
     }
 
-    private fun CommandSource.kickAllPlayers(serverName: String, reason: Component) {
+    private fun CommandContext.kickAllPlayers(serverName: String, reason: Component) {
         val server = getRegisteredServer(serverName).getOrElse {
             this.sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
             return

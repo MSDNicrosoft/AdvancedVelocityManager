@@ -1,15 +1,14 @@
 package work.msdnicrosoft.avm.command.utility
 
-import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.command.builder.*
+import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.command.context.name
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
-import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getRegisteredServer
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.sendPlayer
@@ -27,7 +26,7 @@ object SendAllCommand {
             }
             executes {
                 val server: String by this
-                context.source.sendAllPlayers(
+                sendAllPlayers(
                     server,
                     tr(
                         "avm.command.avm.send.target",
@@ -41,14 +40,14 @@ object SendAllCommand {
                 executes {
                     val server: String by this
                     val reason: String by this
-                    context.source.sendAllPlayers(server, miniMessage.deserialize(reason))
+                    sendAllPlayers(server, miniMessage.deserialize(reason))
                     Command.SINGLE_SUCCESS
                 }
             }
         }
     }
 
-    private fun CommandSource.sendAllPlayers(serverName: String, reason: Component) {
+    private fun CommandContext.sendAllPlayers(serverName: String, reason: Component) {
         val registeredServer = getRegisteredServer(serverName).getOrElse {
             this.sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
             return

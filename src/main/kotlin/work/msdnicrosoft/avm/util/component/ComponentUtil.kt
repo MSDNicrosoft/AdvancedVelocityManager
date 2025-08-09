@@ -4,7 +4,6 @@ import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 
 object ComponentUtil {
 
@@ -33,39 +32,11 @@ object ComponentUtil {
      */
     fun createClickEvent(format: Format, replace: String.() -> String): ClickEvent? =
         when {
-            !validateFormat(format) -> null
+            !format.validate() -> null
             !format.command.isNullOrEmpty() -> ClickEvent.runCommand(format.command.replace())
             !format.suggest.isNullOrEmpty() -> ClickEvent.suggestCommand(format.suggest.replace())
             !format.url.isNullOrEmpty() -> ClickEvent.openUrl(format.url.replace())
             !format.clipboard.isNullOrEmpty() -> ClickEvent.copyToClipboard(format.clipboard.replace())
             else -> null
         }
-
-    /**
-     * Validates a given format.
-     *
-     * @param format The format to be validated.
-     *
-     * @return True if the format is valid, false otherwise.
-     */
-    private fun validateFormat(format: Format): Boolean {
-        if (format.text.isEmpty()) {
-            logger.warn("Invalid format: {}", format)
-            logger.warn("Text cannot be empty or blank.")
-            return false
-        }
-
-        val conflicted = listOf(
-            !format.command.isNullOrEmpty(),
-            !format.suggest.isNullOrEmpty(),
-            !format.url.isNullOrEmpty(),
-            !format.clipboard.isNullOrEmpty(),
-        ).count { it } > 1
-        if (conflicted) {
-            logger.warn("Invalid format: {}", format)
-            logger.warn("Exactly one of 'command', 'suggest', 'url', or 'clipboard' should be provided and non-empty.")
-            return false
-        }
-        return true
-    }
 }

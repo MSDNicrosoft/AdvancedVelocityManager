@@ -1,14 +1,13 @@
 package work.msdnicrosoft.avm.command.utility
 
-import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.command.builder.*
+import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.command.context.name
 import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
-import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getPlayer
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getRegisteredServer
@@ -32,7 +31,7 @@ object SendCommand {
                 executes {
                     val server: String by this
                     val player: String by this
-                    context.source.sendPlayer(
+                    sendPlayer(
                         player,
                         server,
                         tr(
@@ -48,7 +47,7 @@ object SendCommand {
                         val server: String by this
                         val player: String by this
                         val reason: String by this
-                        context.source.sendPlayer(player, server, miniMessage.deserialize(reason))
+                        sendPlayer(player, server, miniMessage.deserialize(reason))
                         Command.SINGLE_SUCCESS
                     }
                 }
@@ -56,7 +55,7 @@ object SendCommand {
         }
     }
 
-    private fun CommandSource.sendPlayer(playerName: String, serverName: String, reason: Component) {
+    private fun CommandContext.sendPlayer(playerName: String, serverName: String, reason: Component) {
         val server = getRegisteredServer(serverName).getOrElse {
             this.sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
             return

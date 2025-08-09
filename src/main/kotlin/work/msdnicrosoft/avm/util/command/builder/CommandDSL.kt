@@ -9,6 +9,10 @@ import work.msdnicrosoft.avm.util.command.context.CommandContext
 @DslMarker
 annotation class CommandDSL
 
+fun Command.stringArgument(name: String, block: @CommandDSL ArgumentCommand<String>.() -> Unit) {
+    this.node.then(ArgumentCommand(name, StringArgumentType.string()).apply(block).node)
+}
+
 fun Command.wordArgument(name: String, block: @CommandDSL ArgumentCommand<String>.() -> Unit) {
     this.node.then(ArgumentCommand(name, StringArgumentType.word()).apply(block).node)
 }
@@ -61,7 +65,7 @@ fun Command.requires(requirement: @CommandDSL S.() -> Boolean) {
     this.node.requires(requirement)
 }
 
-fun Command.executes(block: @CommandDSL CommandContext<S>.() -> Int) {
+fun Command.executes(block: @CommandDSL CommandContext.() -> Int) {
     this.node.executes { CommandContext(it).block() }
 }
 

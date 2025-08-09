@@ -8,7 +8,6 @@ import work.msdnicrosoft.avm.util.command.builder.Command
 import work.msdnicrosoft.avm.util.command.builder.executes
 import work.msdnicrosoft.avm.util.command.builder.literalCommand
 import work.msdnicrosoft.avm.util.command.builder.requires
-import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 
 object StatusCommand {
@@ -20,15 +19,15 @@ object StatusCommand {
         requires { hasPermission("avm.command.whitelist.status") }
         executes {
             val state = if (WhitelistManager.enabled) "on" else "off"
-            context.source.sendTranslatable(
+            sendTranslatable(
                 "avm.command.avmwl.list.header",
                 Argument.numeric("player", WhitelistManager.size)
             )
-            context.source.sendTranslatable(
+            sendTranslatable(
                 "avm.command.avmwl.status.state",
                 Argument.component("state", tr("avm.general.$state"))
             )
-            context.source.sendTranslatable(
+            sendTranslatable(
                 "avm.command.avmwl.status.cache",
                 Argument.numeric("current", PlayerCache.readOnly.size),
                 Argument.numeric("total", config.cachePlayers.maxSize)

@@ -1,12 +1,11 @@
 package work.msdnicrosoft.avm.command.whitelist
 
-import com.velocitypowered.api.command.CommandSource
 import work.msdnicrosoft.avm.command.WhitelistCommand.sendWhitelistPlayers
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.command.PageTurner
 import work.msdnicrosoft.avm.util.command.builder.*
-import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.server.task
 
 object FindCommand {
@@ -23,14 +22,14 @@ object FindCommand {
             }
             executes {
                 val keyword: String by this
-                context.source.listFind(1, keyword)
+                listFind(1, keyword)
                 Command.SINGLE_SUCCESS
             }
             intArgument("page", min = 1) {
                 executes {
                     val page: Int by this
                     val keyword: String by this
-                    task { context.source.listFind(page, keyword) }
+                    task { listFind(page, keyword) }
                     Command.SINGLE_SUCCESS
                 }
             }
@@ -45,7 +44,7 @@ object FindCommand {
      * @param page The page number to retrieve.
      * @param keyword The keyword to search for.
      */
-    private fun CommandSource.listFind(page: Int, keyword: String) {
+    private fun CommandContext.listFind(page: Int, keyword: String) {
         val result = WhitelistManager.find(keyword, page)
 
         if (result.isEmpty()) {
@@ -61,7 +60,7 @@ object FindCommand {
 
         if (page == 1) this.sendTranslatable("avm.command.avmwl.find.header")
 
-        this.sendWhitelistPlayers(result)
+        this.context.source.sendWhitelistPlayers(result)
         this.sendMessage(PageTurner("/avmwl find $keyword").build(page, maxPage))
     }
 }

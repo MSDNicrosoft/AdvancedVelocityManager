@@ -11,7 +11,6 @@ import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.buildHelp
 import work.msdnicrosoft.avm.util.command.register
 import work.msdnicrosoft.avm.util.command.unregister
-import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.task
 import kotlin.time.measureTimedValue
@@ -33,12 +32,12 @@ object AVMCommand {
         executes {
             val (success, elapsed) = measureTimedValue { plugin.reload() }
             if (success) {
-                context.source.sendTranslatable(
+                sendTranslatable(
                     "avm.command.avm.reload.success",
                     Argument.string("elapsed", elapsed.inWholeMilliseconds.toString())
                 )
             } else {
-                context.source.sendTranslatable("avm.command.avm.reload.failed")
+                sendTranslatable("avm.command.avm.reload.failed")
             }
             Command.SINGLE_SUCCESS
         }
@@ -50,15 +49,15 @@ object AVMCommand {
         executes {
             val velocity = plugin.server.version
             // TODO Enabled & Disabled modules
-            context.source.sendTranslatable(
+            sendTranslatable(
                 "avm.command.avm.info.plugin.name",
                 Argument.component("name", tr("avm.general.plugin.name"))
             )
-            context.source.sendTranslatable(
+            sendTranslatable(
                 "avm.command.avm.info.plugin.version",
                 Argument.string("version", plugin.self.version.get())
             )
-            context.source.sendTranslatable(
+            sendTranslatable(
                 "avm.command.avm.info.server",
                 Argument.string("server", "${velocity.name} ${velocity.version}")
             )
@@ -79,7 +78,7 @@ object AVMCommand {
                         ExecuteResult.FAILED -> "avm.command.avm.confirm.failed"
                         ExecuteResult.NOT_FOUND -> "avm.command.avm.confirm.not.found"
                     }
-                    context.source.sendTranslatable(result)
+                    sendTranslatable(result)
                 }
                 Command.SINGLE_SUCCESS
             }

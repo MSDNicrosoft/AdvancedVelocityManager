@@ -8,7 +8,6 @@ import work.msdnicrosoft.avm.util.command.builder.Command
 import work.msdnicrosoft.avm.util.command.builder.executes
 import work.msdnicrosoft.avm.util.command.builder.literalCommand
 import work.msdnicrosoft.avm.util.command.builder.requires
-import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.server.task
@@ -22,7 +21,7 @@ object OnCommand {
         requires { hasPermission("avm.command.whitelist.on") }
         executes {
             WhitelistManager.enabled = true
-            context.source.sendTranslatable(
+            sendTranslatable(
                 "avm.command.avmwl.status.state",
                 Argument.component("state", tr("avm.general.on"))
             )

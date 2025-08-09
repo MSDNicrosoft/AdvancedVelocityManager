@@ -9,7 +9,7 @@ typealias S = CommandSource
 interface Command {
     val node: ArgumentBuilder<S, *>
 
-    fun build(): CommandNode<S> = node.build()
+    fun build(): CommandNode<S>
 
     companion object {
         const val SINGLE_SUCCESS = com.mojang.brigadier.Command.SINGLE_SUCCESS

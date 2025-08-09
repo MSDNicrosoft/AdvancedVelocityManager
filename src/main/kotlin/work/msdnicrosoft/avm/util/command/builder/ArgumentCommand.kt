@@ -12,12 +12,10 @@ class ArgumentCommand<T>(root: String, type: ArgumentType<T>) : Command {
     override val node: RequiredArgumentBuilder<S, T> = RequiredArgumentBuilder.argument(root, type)
 
     override fun build(): ArgumentCommandNode<S, T> = node.build()
-}
 
-fun <T> ArgumentCommand<T>.suggests(
-    block: CommandContext<S>.(builder: SuggestionsBuilder) -> CompletableFuture<Suggestions>
-) {
-    this.node.suggests { context, builder ->
-        CommandContext(context).block(builder)
+    fun suggests(block: CommandContext.(builder: SuggestionsBuilder) -> CompletableFuture<Suggestions>) {
+        node.suggests { context, builder ->
+            CommandContext(context).block(builder)
+        }
     }
 }

@@ -6,7 +6,6 @@ import work.msdnicrosoft.avm.util.command.builder.Command
 import work.msdnicrosoft.avm.util.command.builder.executes
 import work.msdnicrosoft.avm.util.command.builder.literalCommand
 import work.msdnicrosoft.avm.util.command.builder.requires
-import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 
 object OffCommand {
@@ -14,7 +13,7 @@ object OffCommand {
         requires { hasPermission("avm.command.whitelist.off") }
         executes {
             WhitelistManager.enabled = false
-            context.source.sendTranslatable(
+            sendTranslatable(
                 "avm.command.avmwl.status.state",
                 Argument.component("state", tr("avm.general.off"))
             )

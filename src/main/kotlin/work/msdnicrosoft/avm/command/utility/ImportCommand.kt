@@ -9,9 +9,6 @@ import work.msdnicrosoft.avm.module.imports.PluginName
 import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.name
-import work.msdnicrosoft.avm.util.command.context.sendMessage
-import work.msdnicrosoft.avm.util.command.context.sendTranslatable
-import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import kotlin.time.measureTimedValue
 
@@ -38,7 +35,7 @@ object ImportCommand {
                     val defaultServer: String by this
 
                     if (!isValidServer(defaultServer)) {
-                        context.source.sendTranslatable(
+                        sendTranslatable(
                             "avm.general.not.exist.server",
                             Argument.string("server", defaultServer)
                         )

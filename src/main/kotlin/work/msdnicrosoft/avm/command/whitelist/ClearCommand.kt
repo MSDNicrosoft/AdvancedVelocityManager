@@ -12,7 +12,6 @@ import work.msdnicrosoft.avm.util.command.builder.executes
 import work.msdnicrosoft.avm.util.command.builder.literalCommand
 import work.msdnicrosoft.avm.util.command.builder.requires
 import work.msdnicrosoft.avm.util.command.context.name
-import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.server.task
@@ -34,16 +33,16 @@ object ClearCommand {
 
             CommandSessionManager.add(sessionId) {
                 if (WhitelistManager.clear()) {
-                    context.source.sendTranslatable("avm.command.avmwl.clear.success")
+                    sendTranslatable("avm.command.avmwl.clear.success")
                 } else {
-                    context.source.sendTranslatable("avm.command.avmwl.clear.failed")
+                    sendTranslatable("avm.command.avmwl.clear.failed")
                 }
                 if (config.enabled) {
                     task { kickPlayers(config.message, server.allPlayers) }
                 }
             }
-            context.source.sendTranslatable("avm.command.avmwl.clear.need.confirm.1.text")
-            context.source.sendMessage(
+            sendTranslatable("avm.command.avmwl.clear.need.confirm.1.text")
+            sendMessage(
                 tr(
                     "avm.command.avmwl.clear.need.confirm.2.text",
                     Argument.string("command", "/avm confirm $sessionId")

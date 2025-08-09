@@ -1,6 +1,5 @@
 package work.msdnicrosoft.avm.command.whitelist
 
-import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
@@ -9,7 +8,7 @@ import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.AddResult
 import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
 import work.msdnicrosoft.avm.util.command.builder.*
-import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.task
 import work.msdnicrosoft.avm.util.string.isUuid
@@ -50,7 +49,7 @@ object AddCommand {
                 executes {
                     val player: String by this
                     val server: String by this
-                    context.source.addPlayer(player, server)
+                    addPlayer(player, server)
                     Command.SINGLE_SUCCESS
                 }
                 boolArgument("onlineMode") {
@@ -58,7 +57,7 @@ object AddCommand {
                         val player: String by this
                         val server: String by this
                         val onlineMode: Boolean by this
-                        task { context.source.addPlayer(player, server, onlineMode) }
+                        task { addPlayer(player, server, onlineMode) }
                         Command.SINGLE_SUCCESS
                     }
                 }
@@ -66,7 +65,7 @@ object AddCommand {
         }
     }
 
-    private fun CommandSource.addPlayer(player: String, serverName: String, onlineMode: Boolean? = null) {
+    private fun CommandContext.addPlayer(player: String, serverName: String, onlineMode: Boolean? = null) {
         if (!isValidServer(serverName)) {
             this.sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
             return

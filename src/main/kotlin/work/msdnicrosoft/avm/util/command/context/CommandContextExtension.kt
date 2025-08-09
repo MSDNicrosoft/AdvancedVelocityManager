@@ -4,36 +4,20 @@ package work.msdnicrosoft.avm.util.command.context
 
 import com.highcapable.kavaref.KavaRef.Companion.resolve
 import com.highcapable.kavaref.extension.classOf
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.ComponentLike
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.annotations.CommandNode
 import work.msdnicrosoft.avm.annotations.RootCommand
 import work.msdnicrosoft.avm.util.command.builder.Command
 import work.msdnicrosoft.avm.util.component.ComponentUtil
-import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.reflect.getAnnotationIfPresent
 
-inline fun CommandContext<S>.sendMessage(message: Component) = this.context.source.sendMessage(message)
-
-inline fun CommandContext<S>.sendPlainMessage(message: String) = this.context.source.sendPlainMessage(message)
-
-inline fun CommandContext<S>.sendRichMessage(message: String) = this.context.source.sendRichMessage(message)
-
-inline fun CommandContext<S>.sendRichMessage(message: String, vararg resolvers: TagResolver) =
-    this.context.source.sendRichMessage(message, *resolvers)
-
-inline fun CommandContext<S>.sendTranslatable(message: String, vararg args: ComponentLike) =
-    this.context.source.sendTranslatable(message, *args)
-
 @Suppress("UnsafeCallOnNullableType", "SameReturnValue")
-fun CommandContext<S>.buildHelp(commandRoot: Class<*>, checkPermission: Boolean = true): Int {
+fun CommandContext.buildHelp(commandRoot: Class<*>, checkPermission: Boolean = true): Int {
     val rootCommand = commandRoot.getAnnotationIfPresent<RootCommand>() ?: return Command.SINGLE_SUCCESS
     val rootName = rootCommand.name
 
