@@ -5,8 +5,8 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.annotations.CommandNode
 import work.msdnicrosoft.avm.annotations.RootCommand
 import work.msdnicrosoft.avm.command.utility.*
-import work.msdnicrosoft.avm.module.CommandSessionManager
-import work.msdnicrosoft.avm.module.CommandSessionManager.ExecuteResult
+import work.msdnicrosoft.avm.module.command.CommandSessionManager
+import work.msdnicrosoft.avm.module.command.CommandSessionManager.ExecuteResult
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.buildHelp
 import work.msdnicrosoft.avm.util.command.register

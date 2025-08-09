@@ -16,11 +16,11 @@ import work.msdnicrosoft.avm.command.AVMCommand
 import work.msdnicrosoft.avm.command.WhitelistCommand
 import work.msdnicrosoft.avm.command.chatbridge.MsgCommand
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.module.CommandSessionManager
 import work.msdnicrosoft.avm.module.EventBroadcast
 import work.msdnicrosoft.avm.module.Logging
 import work.msdnicrosoft.avm.module.TabSyncHandler
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
+import work.msdnicrosoft.avm.module.command.CommandSessionManager
 import work.msdnicrosoft.avm.module.mapsync.WorldInfoHandler
 import work.msdnicrosoft.avm.module.mapsync.XaeroMapHandler
 import work.msdnicrosoft.avm.module.reconnect.ReconnectHandler
@@ -88,7 +88,7 @@ class AdvancedVelocityManagerPlugin {
         TabSyncHandler.disable()
         EventBroadcast.disable()
         WorldInfoHandler.disable()
-        WorldInfoHandler.disable()
+        XaeroMapHandler.disable()
         ReconnectHandler.disable()
         CommandSessionManager.disable()
         TranslateManager.disable()

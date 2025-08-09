@@ -178,11 +178,11 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
                 }
 
                 Action.UNREGISTER -> {
-                    packetIdToSupplier.entries.removeIf { entry ->
-                        this.packet.isAssignableFrom(entry.value.get()::class.java)
+                    packetIdToSupplier.values.removeIf { supplier ->
+                        this.packet.isAssignableFrom(supplier.get()::class.java)
                     }
-                    packetClassToId.object2IntEntrySet().removeIf { entry ->
-                        this.packet.isAssignableFrom(entry.key)
+                    packetClassToId.keys.removeIf { clazz ->
+                        this.packet.isAssignableFrom(clazz)
                     }
                 }
             }

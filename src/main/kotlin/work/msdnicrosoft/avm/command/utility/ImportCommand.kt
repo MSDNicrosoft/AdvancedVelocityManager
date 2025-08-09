@@ -4,7 +4,7 @@ import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.module.CommandSessionManager
+import work.msdnicrosoft.avm.module.command.CommandSessionManager
 import work.msdnicrosoft.avm.module.imports.PluginName
 import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
 import work.msdnicrosoft.avm.util.command.builder.*
