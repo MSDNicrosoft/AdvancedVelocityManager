@@ -29,6 +29,5 @@ class CommandContext(val context: BrigadierCommandContext<S>) {
     fun sendRichMessage(message: String, vararg resolvers: TagResolver) =
         context.source.sendRichMessage(message, *resolvers)
 
-    fun sendTranslatable(message: String, vararg args: ComponentLike) =
-        context.source.sendTranslatable(message, *args)
+    fun sendTranslatable(key: String, vararg args: ComponentLike) = context.source.sendTranslatable(key, *args)
 }

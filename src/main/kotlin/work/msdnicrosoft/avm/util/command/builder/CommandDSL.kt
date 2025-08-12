@@ -45,7 +45,7 @@ fun Command.longArgument(
 
 fun Command.floatArgument(
     name: String,
-    min: Float = Float.MIN_VALUE,
+    min: Float = -Float.MAX_VALUE,
     max: Float = Float.MAX_VALUE,
     block: @CommandDSL ArgumentCommand<Float>.() -> Unit
 ) {
@@ -54,7 +54,7 @@ fun Command.floatArgument(
 
 fun Command.doubleArgument(
     name: String,
-    min: Double = Double.MIN_VALUE,
+    min: Double = -Double.MAX_VALUE,
     max: Double = Double.MAX_VALUE,
     block: @CommandDSL ArgumentCommand<Double>.() -> Unit
 ) {
