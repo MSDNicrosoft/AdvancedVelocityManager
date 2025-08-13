@@ -1,6 +1,8 @@
+import com.google.gson.Gson
 import org.ajoberstar.grgit.Commit
 import org.ajoberstar.grgit.Grgit
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.net.URI
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -106,6 +108,8 @@ yamlang {
 }
 
 tasks {
+    val runDir = file("run")
+
     build {
         dependsOn(shadowJar)
     }
@@ -141,5 +145,94 @@ tasks {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_17
         }
+    }
+    clean {
+        doLast {
+            runDir.deleteRecursively()
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    val downloadVelocity by registering {
+        description = "Downloads the latest Velocity server JAR"
+        group = "velocity"
+
+        val version = libs.versions.velocity.get()
+        val velocityJar = file("$runDir/velocity-server-$version.jar")
+        val gson = Gson()
+
+        outputs.file(velocityJar)
+
+        doLast {
+            if (!runDir.exists()) runDir.mkdirs()
+            if (velocityJar.exists() && velocityJar.length() > 0) return@doLast
+
+            val buildsUrl = URI("https://fill.papermc.io/v3/projects/velocity/versions/$version/builds").toURL()
+            val latestBuild = gson
+                .fromJson<List<Map<String, Any>>>(buildsUrl.readText(), List::class.java)
+                .first()
+
+            val downloads = latestBuild["downloads"] as Map<String, Map<String, Any>>
+            val serverDefault = downloads["server:default"]!!
+            val downloadUrl = URI(serverDefault["url"] as String).toURL()
+
+
+            println("Downloading Velocity server $version...")
+
+            try {
+                downloadUrl.openStream().use { input ->
+                    input.copyTo(velocityJar.outputStream())
+                }
+            } catch (e: Exception) {
+                println("Failed to download Velocity server: ${e.message}")
+                throw e
+            }
+        }
+    }
+
+    val runVelocity by registering(JavaExec::class) {
+        dependsOn(shadowJar, downloadVelocity)
+        group = "velocity"
+
+        val version = libs.versions.velocity.get()
+        val pluginsDir = file("run/plugins")
+        val velocityJar = file("$runDir/velocity-server-$version.jar")
+
+        standardInput = System.`in`
+        standardOutput = System.out
+        errorOutput = System.err
+
+        workingDir = runDir
+
+        doFirst {
+            if (!pluginsDir.exists()) pluginsDir.mkdirs()
+
+            val pluginJar = shadowJar.get().archiveFile.get().asFile
+            if (pluginJar.exists()) {
+                copy {
+                    from(pluginJar)
+                    into(pluginsDir)
+                }
+            }
+
+            if (!velocityJar.exists()) throw GradleException("Velocity server does not exist: ${velocityJar.absolutePath}")
+        }
+
+        mainClass = "com.velocitypowered.proxy.Velocity"
+
+        systemProperty("net.kyori.adventure.text.warnWhenLegacyFormattingDetected", true)
+        systemProperty("file.encoding", "UTF-8")
+        systemProperty("stdout.encoding", "UTF-8")
+
+        jvmArgs(
+            "-XX:+UseG1GC",
+            "-XX:G1HeapRegionSize=4M",
+            "-XX:+UnlockExperimentalVMOptions",
+            "-XX:+ParallelRefProcEnabled",
+            "-XX:+AlwaysPreTouch",
+            "-XX:MaxInlineLevel=15"
+        )
+
+        classpath = files(velocityJar)
     }
 }
