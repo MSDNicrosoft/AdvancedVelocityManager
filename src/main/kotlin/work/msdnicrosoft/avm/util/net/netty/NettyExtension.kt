@@ -37,11 +37,11 @@ inline fun <T : ByteBuf, R> T.use(block: (T) -> R): R =
  * Executes the given [block] as a receiver-style lambda on this [ByteBuf]
  * and **always** releases it afterward, even on exception.
  *
- * Unlike [kotlin.use], the buffer is **not** consumed by the block;
+ * Unlike [kotlin.use], the block **not** consumes the buffer;
  * instead, the block operates on the receiver (`this`)
  * and the original buffer is returned to the caller after release.
  *
- * This is handy when you need to perform side-effect–only operations (e.g. decoding)
+ * This is handy when you need to perform side-effect–only operations (e.g., decoding)
  * and still need the buffer reference for logging or further processing.
  *
  * Example usage:
