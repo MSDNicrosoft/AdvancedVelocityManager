@@ -45,7 +45,7 @@ object LlsManagerImporter : Importer("lls-manager") {
                 "avm.command.avm.import.config.not.exist",
                 Argument.string("plugin_name", pluginName)
             )
-            false
+            true
         }
 
         val playerDataSuccess = if (PLAYER_DATA_PATH.exists()) {
@@ -55,7 +55,7 @@ object LlsManagerImporter : Importer("lls-manager") {
                 "avm.command.avm.import.player.not.exist",
                 Argument.string("plugin_name", pluginName)
             )
-            false
+            true
         }
 
         return configSuccess && playerDataSuccess
