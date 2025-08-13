@@ -1,4 +1,4 @@
-package work.msdnicrosoft.avm.module.whitelist
+package work.msdnicrosoft.avm.module.whitelist.data
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
@@ -6,13 +6,11 @@ import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.translation.Argument
-import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.Player
-import work.msdnicrosoft.avm.util.ConfigUtil.getServersInGroup
-import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroup
-import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
+import work.msdnicrosoft.avm.util.ConfigUtil
+import work.msdnicrosoft.avm.util.component.serializer.SerializationType
 import work.msdnicrosoft.avm.util.component.tr
 
-class WhitelistPlayer(val player: Player) {
+class DisplayPlayer(val player: Player) {
     private val playerUuid = player.uuid.toString()
     private val playerUsername = player.name
 
@@ -22,26 +20,27 @@ class WhitelistPlayer(val player: Player) {
                 HoverEvent.showText(
                     Component.join(
                         JoinConfiguration.newlines(),
-                        miniMessage.deserialize("<gray>UUID: $playerUuid"),
+                        SerializationType.MINI_MESSAGE.deserialize("<gray>UUID: $playerUuid"),
                         Component.empty(),
                         tr("avm.whitelist.player.uuid.hover")
                     )
                 )
             ).clickEvent(ClickEvent.suggestCommand(playerUuid)),
-        miniMessage.deserialize("<dark_gray>[<red>x<dark_gray>]")
+        SerializationType.MINI_MESSAGE.deserialize("<dark_gray>[<red>x<dark_gray>]")
             .hoverEvent(HoverEvent.showText(tr("avm.whitelist.player.username.hover")))
             .clickEvent(ClickEvent.runCommand("/avmwl remove $playerUsername")),
-        miniMessage.deserialize("<dark_gray>:"),
+        SerializationType.MINI_MESSAGE.deserialize("<dark_gray>:"),
     )
 
     fun build(): Component = Component.join(
         JoinConfiguration.spaces(),
         components + player.serverList.map { server ->
-            val isServerGroup = isServerGroup(server)
+            val isServerGroup = ConfigUtil.isServerGroup(server)
             val hover = buildList {
                 if (isServerGroup) {
                     add(tr("avm.whitelist.player.server.hover.1"))
-                    add(miniMessage.deserialize("<reset>${getServersInGroup(server).joinToString(" ")}"))
+                    val servers = ConfigUtil.getServersInGroup(server).joinToString(" ")
+                    add(SerializationType.MINI_MESSAGE.deserialize("<reset>$servers"))
                     add(Component.empty())
                 }
                 add(
@@ -53,7 +52,7 @@ class WhitelistPlayer(val player: Player) {
                 )
             }
 
-            miniMessage.deserialize(
+            SerializationType.MINI_MESSAGE.deserialize(
                 "${if (isServerGroup) "<bold>" else ""}<server_name>",
                 Placeholder.unparsed("server_name", server)
             ).hoverEvent(HoverEvent.showText(Component.join(JoinConfiguration.newlines(), hover)))

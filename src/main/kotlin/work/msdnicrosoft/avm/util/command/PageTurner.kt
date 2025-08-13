@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
-import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
+import work.msdnicrosoft.avm.util.component.serializer.SerializationType.MINI_MESSAGE
 import work.msdnicrosoft.avm.util.component.tr
 import kotlin.math.ceil
 
@@ -22,26 +22,25 @@ class PageTurner(val command: String) {
      * @param maxPage The total number of pages.
      * @return A ComponentText representing the pagination component.
      */
-    fun build(currentPage: Int, maxPage: Int): Component {
-        return Component.join(
+    fun build(currentPage: Int, maxPage: Int): Component =
+        Component.join(
             JoinConfiguration.spaces(),
             if (currentPage == 1) {
                 navigationButton("<gray><-")
             } else {
                 navigationButton("<gold><-")
-                    .hoverEvent(HoverEvent.showText(tr("avm.general.turn.to.previous")))
+                    .hoverEvent(HoverEvent.showText(tr("avm.general.page.previous")))
                     .clickEvent(ClickEvent.runCommand("$command ${currentPage - 1}"))
             },
-            miniMessage.deserialize("<aqua>$currentPage/$maxPage"),
+            MINI_MESSAGE.deserialize("<aqua>$currentPage/$maxPage"),
             if (currentPage == maxPage) {
                 navigationButton("<gray>->")
             } else {
                 navigationButton("<gold>->")
-                    .hoverEvent(HoverEvent.showText(tr("avm.general.turn.to.next")))
+                    .hoverEvent(HoverEvent.showText(tr("avm.general.page.next")))
                     .clickEvent(ClickEvent.runCommand("$command ${currentPage + 1}"))
             }
         )
-    }
 
     companion object {
         /**
@@ -57,6 +56,6 @@ class PageTurner(val command: String) {
          */
         fun getMaxPage(page: Int): Int = ceil(page.toFloat() / ITEMS_PER_PAGE.toFloat()).toInt()
 
-        private fun navigationButton(arrow: String) = miniMessage.deserialize("<dark_gray>[$arrow<dark_gray>]")
+        private fun navigationButton(arrow: String) = MINI_MESSAGE.deserialize("<dark_gray>[$arrow<dark_gray>]")
     }
 }

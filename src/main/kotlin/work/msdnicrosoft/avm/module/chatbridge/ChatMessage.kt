@@ -9,7 +9,7 @@ import work.msdnicrosoft.avm.config.data.ChatBridge
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
-import work.msdnicrosoft.avm.util.component.ComponentUtil.styleOnlyMiniMessage
+import work.msdnicrosoft.avm.util.component.serializer.SerializationType.STYLE_ONLY_MINI_MESSAGE
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.TIMEOUT_PING_RESULT
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
@@ -23,7 +23,6 @@ import java.util.concurrent.TimeoutException
  * @param config The configuration that specifies the formats and events for the message.
  */
 class ChatMessage(private val event: PlayerChatEvent, private val config: ChatBridge) {
-
     private val server = event.player.currentServer.get()
     private val serverPing = try {
         server.server.ping().get(20, TimeUnit.MILLISECONDS)
@@ -41,10 +40,23 @@ class ChatMessage(private val event: PlayerChatEvent, private val config: ChatBr
     private val playerPing = player.ping.toString()
 
     /**
+     * Build the final chat message with all specified formats and events.
+     * @return The built chat message with all formats and events applied.
+     */
+    fun build() = Component.join(
+        JoinConfiguration.noSeparators(),
+        config.publicChatFormat.map { format ->
+            format.text.deserialize()
+                .hoverEvent(format.hover?.joinToString("\n")?.deserialize()?.let { HoverEvent.showText(it) })
+                .clickEvent(createClickEvent(format) { replacePlaceholders() })
+        }
+    )
+
+    /**
      * Deserialize the message by replacing placeholders with actual values.
      * @return The deserialized message with placeholders replaced.
      */
-    private fun String.deserialize() = styleOnlyMiniMessage.deserialize(
+    private fun String.deserialize() = STYLE_ONLY_MINI_MESSAGE.deserialize(
         this,
         Placeholder.unparsed("player_name", playerUsername),
         Placeholder.unparsed("player_uuid", playerUuid),
@@ -74,17 +86,4 @@ class ChatMessage(private val event: PlayerChatEvent, private val config: ChatBr
             .replace("<server_nickname>", serverNickname)
             .replace("<server_online_players>", serverOnlinePlayers)
             .replace("<server_version>", serverVersion)
-
-    /**
-     * Build the final chat message with all specified formats and events.
-     * @return The built chat message with all formats and events applied.
-     */
-    fun build() = Component.join(
-        JoinConfiguration.noSeparators(),
-        config.publicChatFormat.map { format ->
-            format.text.deserialize()
-                .hoverEvent(format.hover?.joinToString("\n")?.deserialize()?.let { HoverEvent.showText(it) })
-                .clickEvent(createClickEvent(format) { replacePlaceholders() })
-        }
-    )
 }

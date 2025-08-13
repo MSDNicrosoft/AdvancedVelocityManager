@@ -5,8 +5,8 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.annotations.CommandNode
 import work.msdnicrosoft.avm.annotations.RootCommand
 import work.msdnicrosoft.avm.command.utility.*
-import work.msdnicrosoft.avm.module.command.CommandSessionManager
-import work.msdnicrosoft.avm.module.command.CommandSessionManager.ExecuteResult
+import work.msdnicrosoft.avm.module.command.session.CommandSessionManager
+import work.msdnicrosoft.avm.module.command.session.ExecuteResult
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.buildHelp
 import work.msdnicrosoft.avm.util.command.register
@@ -17,14 +17,6 @@ import kotlin.time.measureTimedValue
 
 @RootCommand("avm")
 object AVMCommand {
-
-    fun init() {
-        command.register()
-    }
-
-    fun disable() {
-        command.unregister()
-    }
 
     @CommandNode("reload")
     val reload = literalCommand("reload") {
@@ -68,7 +60,7 @@ object AVMCommand {
     @CommandNode("confirm", "<session>")
     val confirm = literalCommand("confirm") {
         requires { hasPermission("avm.command.confirm") }
-        wordArgument("session") {
+        greedyStringArgument("session") {
             executes {
                 val session: String by this
                 task {
@@ -100,24 +92,6 @@ object AVMCommand {
     @CommandNode("sendall", "<server>", "[reason]")
     val sendAll = SendAllCommand.command
 
-//    @ShouldShow
-//    @CommandBody(permission = "avm.command.enable")
-//    val enable = subCommand {
-//        dynamic("feature") {
-//
-//        }
-//    }
-//
-//    @ShouldShow
-//    @CommandBody(permission = "avm.command.disable")
-//    val disable = subCommand {
-//        dynamic("feature") {
-//            suggestion<ProxyCommandSender>(uncheck = true) { sender, context ->
-//
-//            }
-//        }
-//    }
-
     val command = literalCommand("avm") {
         executes { buildHelp(this@AVMCommand.javaClass) }
         then(reload)
@@ -129,4 +103,12 @@ object AVMCommand {
         then(sendAll)
         then(send)
     }.build()
+
+    fun init() {
+        command.register()
+    }
+
+    fun disable() {
+        command.unregister()
+    }
 }

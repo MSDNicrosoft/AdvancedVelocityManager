@@ -6,6 +6,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirecto
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 import work.msdnicrosoft.avm.config.data.Version
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
+import work.msdnicrosoft.avm.module.chatbridge.PassthroughMode
 import work.msdnicrosoft.avm.util.file.FileUtil.YAML
 import work.msdnicrosoft.avm.util.file.decodeFromString
 import work.msdnicrosoft.avm.util.file.encodeToString
@@ -16,10 +17,9 @@ import java.io.IOException
 import kotlin.io.path.div
 
 object ConfigManager {
+    val DEFAULT_CONFIG by lazy { AVMConfig() }
 
     private val file = (dataDirectory / "config.yml").toFile()
-
-    val DEFAULT_CONFIG by lazy { AVMConfig() }
 
     lateinit var config: AVMConfig
 
@@ -86,11 +86,11 @@ object ConfigManager {
     private fun validate() {
         // Validate Chat-Bridge Passthrough mode name
         try {
-            ChatBridge.mode = ChatBridge.PassthroughMode.of(config.chatBridge.chatPassthrough.mode)
+            ChatBridge.mode = PassthroughMode.of(config.chatBridge.chatPassthrough.mode)
         } catch (_: IllegalArgumentException) {
             logger.warn("Invalid Chat-Passthrough mode name!")
             logger.warn("Plugin will fallback to `ALL` mode")
-            ChatBridge.mode = ChatBridge.PassthroughMode.ALL
+            ChatBridge.mode = PassthroughMode.ALL
         }
 
         // Validate UUID query API URL

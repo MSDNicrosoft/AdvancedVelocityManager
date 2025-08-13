@@ -1,4 +1,4 @@
-package work.msdnicrosoft.avm.util.netty
+package work.msdnicrosoft.avm.util.net.netty
 
 import io.netty.buffer.ByteBuf
 

@@ -13,12 +13,11 @@ typealias S = CommandSource
 
 @Suppress("unused")
 class CommandContext(val context: BrigadierCommandContext<S>) {
-    inline operator fun <reified T : Any> getValue(thisRef: Any?, property: KProperty<*>): T =
-        when (classOf<T>()) {
-            BrigadierCommandContext::class.java -> context as T
-            S::class.java -> context.source as T
-            else -> context.getArgument<T>(property.name, T::class.java)
-        }
+    inline operator fun <reified T : Any> getValue(thisRef: Any?, property: KProperty<*>): T = when (classOf<T>()) {
+        BrigadierCommandContext::class.java -> context as T
+        S::class.java -> context.source as T
+        else -> context.getArgument<T>(property.name, T::class.java)
+    }
 
     fun sendMessage(message: Component) = context.source.sendMessage(message)
 

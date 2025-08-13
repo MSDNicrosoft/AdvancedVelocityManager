@@ -4,8 +4,8 @@ import com.velocitypowered.api.command.CommandSource
 import work.msdnicrosoft.avm.annotations.CommandNode
 import work.msdnicrosoft.avm.annotations.RootCommand
 import work.msdnicrosoft.avm.command.whitelist.*
-import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.module.whitelist.WhitelistPlayer
+import work.msdnicrosoft.avm.module.whitelist.data.DisplayPlayer
+import work.msdnicrosoft.avm.module.whitelist.data.Player
 import work.msdnicrosoft.avm.util.ConfigUtil.getServersInGroup
 import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroup
 import work.msdnicrosoft.avm.util.command.builder.executes
@@ -18,14 +18,6 @@ import work.msdnicrosoft.avm.util.command.unregister
 
 @RootCommand("avmwl")
 object WhitelistCommand {
-
-    fun init() {
-        command.register()
-    }
-
-    fun disable() {
-        command.unregister()
-    }
 
     @CommandNode("add", "<player>", "<server>", "[onlineMode]")
     val add = AddCommand.command
@@ -63,13 +55,21 @@ object WhitelistCommand {
         then(status)
     }.build()
 
+    fun init() {
+        command.register()
+    }
+
+    fun disable() {
+        command.unregister()
+    }
+
     /**
      * Sends a list of WhitelistManager.Players to the sender,
      * displaying their server list with appropriate formatting.
      *
      * @param players the list of players to send
      */
-    fun CommandSource.sendWhitelistPlayers(players: List<WhitelistManager.Player>) {
+    fun CommandSource.sendWhitelistPlayers(players: List<Player>) {
         if (players.isEmpty()) return
 
         if (this.isConsole) {
@@ -85,7 +85,7 @@ object WhitelistCommand {
             }
         } else {
             players.forEach { player ->
-                this.sendMessage(WhitelistPlayer(player).build())
+                this.sendMessage(DisplayPlayer(player).build())
             }
         }
     }

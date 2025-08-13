@@ -39,6 +39,15 @@ object TranslateManager : MiniMessageTranslator() {
         registerTranslations()
     }
 
+    override fun name(): Key = name
+
+    override fun getMiniMessageString(key: String, locale: Locale): String? {
+        val currentLocale = translations[locale]
+            ?: translations[Locale.forLanguageTag(locale.language)]
+            ?: translations[defaultLocale]
+        return currentLocale?.get(key)
+    }
+
     @Suppress("NestedBlockDepth")
     private fun checkAndUpdateTranslations() {
         val jarUrl = classOf<TranslateManager>().protectionDomain.codeSource?.location ?: return
@@ -87,14 +96,5 @@ object TranslateManager : MiniMessageTranslator() {
             val currentTranslations = JSON.decodeFromString<Map<String, String>>(languageFile.readTextWithBuffer())
             translations.computeIfAbsent(locale) { ConcurrentHashMap() }.putAll(currentTranslations)
         }
-    }
-
-    override fun name(): Key = name
-
-    override fun getMiniMessageString(key: String, locale: Locale): String? {
-        val currentLocale = translations[locale]
-            ?: translations[Locale.forLanguageTag(locale.language)]
-            ?: translations[defaultLocale]
-        return currentLocale?.get(key)
     }
 }

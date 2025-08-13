@@ -15,7 +15,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.channelRegi
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.netty.useThenApply
+import work.msdnicrosoft.avm.util.net.netty.useThenApply
 import java.nio.charset.StandardCharsets
 
 object WorldInfoHandler {

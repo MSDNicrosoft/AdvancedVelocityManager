@@ -14,11 +14,10 @@ enum class PluginName {
             QuAnVelocityWhitelistImporter.import(source, defaultServer)
     };
 
+    abstract fun import(source: CommandSource, defaultServer: String): Boolean
+
     companion object {
         val plugins by lazy { entries.map { it.name.replace("_", "-").lowercase() } }
-
         fun of(name: String): PluginName = valueOf(name.replace("-", "_").uppercase())
     }
-
-    abstract fun import(source: CommandSource, defaultServer: String): Boolean
 }

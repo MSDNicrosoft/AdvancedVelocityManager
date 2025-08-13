@@ -11,7 +11,6 @@ class PlayerAbilitiesPacket(
     val flyingSpeed: Float = 0.05F,
     val fieldOfViewModifier: Float = 0.1F
 ) : MinecraftPacket {
-
     constructor() : this(EMPTY)
 
     private val flags: Int = flags.fold(0) { acc, flag -> acc or flag.value }

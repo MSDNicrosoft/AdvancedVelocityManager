@@ -13,8 +13,8 @@ import io.netty.buffer.ByteBufUtil
 import io.netty.buffer.Unpooled
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.mapsync.XaeroMapHandler
-import work.msdnicrosoft.avm.util.netty.use
-import work.msdnicrosoft.avm.util.netty.useThenApply
+import work.msdnicrosoft.avm.util.net.netty.use
+import work.msdnicrosoft.avm.util.net.netty.useThenApply
 import java.nio.charset.StandardCharsets
 import java.util.zip.CRC32
 

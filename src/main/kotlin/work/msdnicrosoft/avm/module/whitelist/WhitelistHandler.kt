@@ -18,7 +18,7 @@ import io.netty.util.AttributeKey
 import org.geysermc.floodgate.api.player.FloodgatePlayer
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
+import work.msdnicrosoft.avm.util.component.serializer.SerializationType.MINI_MESSAGE
 
 /**
  * Handles whitelist functionality for the server, including integration with Floodgate for player identification.
@@ -45,7 +45,7 @@ object WhitelistHandler {
         val username = getUsername(event.username, event.connection)
         val player = WhitelistManager.getPlayer(username)
         if (player == null) {
-            event.result = PreLoginEvent.PreLoginComponentResult.denied(miniMessage.deserialize(config.message))
+            event.result = PreLoginEvent.PreLoginComponentResult.denied(MINI_MESSAGE.deserialize(config.message))
             PlayerCache.add(username)
         } else {
             event.result = if (player.onlineMode) {
@@ -71,7 +71,7 @@ object WhitelistHandler {
 
         if (!WhitelistManager.isInServerWhitelist(player.uniqueId, serverName)) {
             event.result = ServerPreConnectEvent.ServerResult.denied()
-            val message = miniMessage.deserialize(config.message)
+            val message = MINI_MESSAGE.deserialize(config.message)
             player.sendMessage(message)
             if (event.previousServer == null) {
                 player.disconnect(message)

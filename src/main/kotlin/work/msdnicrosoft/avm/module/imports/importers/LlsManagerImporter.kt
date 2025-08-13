@@ -12,10 +12,7 @@ import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import kotlin.io.path.*
 
-object LlsManagerImporter : Importer {
-
-    override val pluginName = "lls-manager"
-
+object LlsManagerImporter : Importer("lls-manager") {
     @Serializable
     private data class Config(
         val showAllPlayerInTabList: Boolean,

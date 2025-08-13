@@ -1,5 +1,3 @@
-@file:Suppress("NOTHING_TO_INLINE")
-
 package work.msdnicrosoft.avm.util.string
 
 import com.velocitypowered.api.util.UuidUtils
@@ -18,18 +16,18 @@ operator fun String.times(n: Int): String = this.repeat(n)
  *
  * @return True if the string is a valid UUID, false otherwise.
  */
-inline fun String.isUuid(): Boolean = runCatching { this.toUuid() }.isSuccess
+fun String.isUuid(): Boolean = runCatching { this.toUuid() }.isSuccess
 
 /**
  * Converts a string to a UUID, removing any dashes.
  *
  * @return The UUID representation of the string.
  */
-inline fun String.toUuid(): UUID = UuidUtils.fromUndashed(this.replace("-", ""))
+fun String.toUuid(): UUID = UuidUtils.fromUndashed(this.replace("-", ""))
 
 /**
  * Checks if the string is a valid URL.
  *
  * @return True if the current string is a valid URL, false otherwise.
  */
-inline fun String.isValidUrl(): Boolean = StringUtil.URL_PATTERN.matches(this)
+fun String.isValidUrl(): Boolean = StringUtil.URL_PATTERN.matches(this)

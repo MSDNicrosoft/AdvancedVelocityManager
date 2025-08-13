@@ -4,17 +4,15 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
+import work.msdnicrosoft.avm.util.command.argument.ComponentArgumentType
+import work.msdnicrosoft.avm.util.command.argument.ServerArgumentType
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.command.context.name
-import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
 import work.msdnicrosoft.avm.util.component.tr
-import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getRegisteredServer
 import work.msdnicrosoft.avm.util.server.task
-import kotlin.jvm.optionals.getOrElse
 
 object KickAllCommand {
-
     val command = literalCommand("kickall") {
         requires { hasPermission("avm.command.kickall") }
         executes {
@@ -29,11 +27,7 @@ object KickAllCommand {
                 }
             Command.SINGLE_SUCCESS
         }
-        wordArgument("server") {
-            suggests { builder ->
-                server.allServers.forEach { builder.suggest(it.serverInfo.name) }
-                builder.buildFuture()
-            }
+        argument("server", ServerArgumentType.registered()) {
             executes {
                 val server: String by this
                 kickAllPlayers(
@@ -45,11 +39,11 @@ object KickAllCommand {
                 )
                 Command.SINGLE_SUCCESS
             }
-            wordArgument("reason") {
+            argument("reason", ComponentArgumentType.miniMessage()) {
                 executes {
                     val server: String by this
-                    val reason: String by this
-                    kickAllPlayers(server, miniMessage.deserialize(reason))
+                    val reason: Component by this
+                    kickAllPlayers(server, reason)
                     Command.SINGLE_SUCCESS
                 }
             }
@@ -57,17 +51,13 @@ object KickAllCommand {
     }
 
     private fun CommandContext.kickAllPlayers(serverName: String, reason: Component) {
-        val server = getRegisteredServer(serverName).getOrElse {
-            this.sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
-            return
-        }
-
-        if (server.playersConnected.isEmpty()) {
+        val registeredServer = server.getServer(serverName).get()
+        if (registeredServer.playersConnected.isEmpty()) {
             this.sendTranslatable("avm.general.empty.server")
             return
         }
 
-        val (bypassed, toKick) = server.playersConnected.partition { it.hasPermission("avm.kickall.bypass") }
+        val (bypassed, toKick) = registeredServer.playersConnected.partition { it.hasPermission("avm.kickall.bypass") }
 
         task {
             toKick.forEach { player ->
@@ -83,7 +73,6 @@ object KickAllCommand {
                         Argument.numeric("player_bypass", bypassed.size)
                     ).hoverEvent(HoverEvent.showText(tr("avm.command.avm.kickall.executor.bypass.hover")))
                 )
-
             )
         }
     }

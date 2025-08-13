@@ -1,7 +1,7 @@
 package work.msdnicrosoft.avm.util
 
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.server.ProxyServerUtil
 
 object ConfigUtil {
     /**
@@ -22,8 +22,7 @@ object ConfigUtil {
      * @param name The name of the server to check.
      * @return True if the server is valid, false otherwise.
      */
-    fun isValidServer(name: String): Boolean =
-        ProxyServerUtil.isValidRegisteredServer(name) || isServerGroup(name)
+    fun isValidServer(name: String): Boolean = server.getServer(name).isPresent || isServerGroup(name)
 
     /**
      * Checks if a server with the given name belongs to a server group.

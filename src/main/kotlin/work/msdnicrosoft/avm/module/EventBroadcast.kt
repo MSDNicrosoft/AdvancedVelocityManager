@@ -10,7 +10,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManage
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
-import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
+import work.msdnicrosoft.avm.util.component.serializer.SerializationType.MINI_MESSAGE
 import work.msdnicrosoft.avm.util.server.task
 
 object EventBroadcast {
@@ -36,7 +36,7 @@ object EventBroadcast {
         if (event.loginStatus != DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) return
 
         sendMessage(
-            miniMessage.deserialize(
+            MINI_MESSAGE.deserialize(
                 config.leave.message,
                 Placeholder.unparsed("player_name", event.player.username)
             )
@@ -63,7 +63,7 @@ object EventBroadcast {
                 val previousServerNickname = getServerNickname(previousServerName)
 
                 sendMessage(
-                    miniMessage.deserialize(
+                    MINI_MESSAGE.deserialize(
                         config.switch.message,
                         Placeholder.unparsed("player_name", username),
                         Placeholder.unparsed("previous_server_name", previousServerName),
@@ -80,7 +80,7 @@ object EventBroadcast {
                 if (!config.join.enabled) return@ifPresentOrElse
 
                 sendMessage(
-                    miniMessage.deserialize(
+                    MINI_MESSAGE.deserialize(
                         config.join.message,
                         Placeholder.unparsed("player_name", username),
                         Placeholder.unparsed("server_name", targetServerName),

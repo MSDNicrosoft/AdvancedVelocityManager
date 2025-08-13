@@ -6,37 +6,28 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
+import work.msdnicrosoft.avm.util.command.argument.PlayerArgumentType
 import work.msdnicrosoft.avm.util.command.builder.*
-import work.msdnicrosoft.avm.util.command.context.*
+import work.msdnicrosoft.avm.util.command.context.isConsole
+import work.msdnicrosoft.avm.util.command.context.name
+import work.msdnicrosoft.avm.util.command.context.toPlayer
 import work.msdnicrosoft.avm.util.command.register
 import work.msdnicrosoft.avm.util.command.unregister
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
-import work.msdnicrosoft.avm.util.component.ComponentUtil.styleOnlyMiniMessage
 import work.msdnicrosoft.avm.util.component.Format
-import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getPlayer
-import kotlin.jvm.optionals.getOrElse
+import work.msdnicrosoft.avm.util.component.serializer.SerializationType.STYLE_ONLY_MINI_MESSAGE
 
 object MsgCommand {
-
     private inline val config
         get() = ConfigManager.config.chatBridge
 
     val aliases = listOf("msg", "tell", "w")
 
-    fun init() {
-        command.register("tell", "w")
-    }
-
-    fun disable() {
-        command.unregister()
-    }
-
     val command = literalCommand("msg") {
-        wordArgument("targets") {
+        argument("targets", PlayerArgumentType.name()) {
             suggests { builder ->
                 if (config.takeOverPrivateChat || context.source.isConsole) {
                     server.allPlayers.map { it.username }
@@ -45,28 +36,30 @@ object MsgCommand {
                 }.forEach(builder::suggest)
                 builder.buildFuture()
             }
-            wordArgument("message") {
+            greedyStringArgument("message") {
                 executes {
-                    val targets: String by this
+                    val targets: Player by this
                     val message: String by this
 
-                    val player = getPlayer(targets).getOrElse {
-                        sendTranslatable(
-                            "avm.general.not.exist.player",
-                            Argument.string("player", targets)
-                        )
-                        return@executes Command.ILLEGAL_ARGUMENT
-                    }
-
                     if (!context.source.isConsole) {
-                        sendMessage(config.privateChatFormat.sender.buildMessage(context.source, player, message))
+                        sendMessage(config.privateChatFormat.sender.buildMessage(context.source, targets, message))
                     }
-                    player.sendMessage(config.privateChatFormat.receiver.buildMessage(context.source, player, message))
+                    targets.sendMessage(
+                        config.privateChatFormat.receiver.buildMessage(context.source, targets, message)
+                    )
                     Command.SINGLE_SUCCESS
                 }
             }
         }
     }.build()
+
+    fun init() {
+        command.register("tell", "w")
+    }
+
+    fun disable() {
+        command.unregister()
+    }
 
     private fun List<Format>.buildMessage(source: CommandSource, player: Player, message: String): Component {
         val time = getDateTime()
@@ -85,7 +78,7 @@ object MsgCommand {
     }
 
     private fun String.deserialize(from: String, to: String, message: String, dateTime: String): Component =
-        styleOnlyMiniMessage.deserialize(
+        STYLE_ONLY_MINI_MESSAGE.deserialize(
             this,
             Placeholder.unparsed("player_name_from", from),
             Placeholder.unparsed("player_name_to", to),

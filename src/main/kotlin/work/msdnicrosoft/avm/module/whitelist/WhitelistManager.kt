@@ -1,7 +1,6 @@
 package work.msdnicrosoft.avm.module.whitelist
 
 import com.velocitypowered.api.util.UuidUtils
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
@@ -9,12 +8,16 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.HttpUtil
+import work.msdnicrosoft.avm.module.whitelist.data.ApiResponse
+import work.msdnicrosoft.avm.module.whitelist.data.Player
+import work.msdnicrosoft.avm.module.whitelist.result.AddResult
+import work.msdnicrosoft.avm.module.whitelist.result.RemoveResult
 import work.msdnicrosoft.avm.util.command.PageTurner
-import work.msdnicrosoft.avm.util.data.UUIDSerializer
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import work.msdnicrosoft.avm.util.file.writeTextWithBuffer
+import work.msdnicrosoft.avm.util.net.http.HttpStatus
+import work.msdnicrosoft.avm.util.net.http.HttpUtil
 import work.msdnicrosoft.avm.util.server.task
 import work.msdnicrosoft.avm.util.string.toUuid
 import java.io.IOException
@@ -30,69 +33,8 @@ import kotlin.io.path.div
 
 @Suppress("TooManyFunctions")
 object WhitelistManager {
-
-    enum class AddResult {
-        SUCCESS,
-        API_LOOKUP_NOT_FOUND,
-        API_LOOKUP_REQUEST_FAILED,
-        ALREADY_EXISTS,
-        SAVE_FILE_FAILED,
-    }
-
-    enum class RemoveResult { SUCCESS, FAIL_NOT_FOUND, SAVE_FILE_FAILED }
-
-    /**
-     * Represents a player in the whitelist.
-     *
-     * @property name The name of the player.
-     * @property uuid The UUID of the player.
-     * @property onlineMode Whether the player is online mode
-     * @property serverList The list of servers the player is allowed to connect to.
-     */
-    @Serializable
-    data class Player(
-        var name: String,
-        @Serializable(with = UUIDSerializer::class)
-        val uuid: UUID,
-        var onlineMode: Boolean,
-        var serverList: List<String>
-    )
-
-    /**
-     * Represents the response from the API lookup.
-     *
-     * @property id The UUID of the player.
-     * @property name The name of the player.
-     */
-    @Serializable
-    data class ApiResponse(val id: String, val name: String)
-
-    private inline val config
-        get() = ConfigManager.config.whitelist
-
-    /**
-     * This constant is used to indicate that a player was not found.
-     */
-    private const val NOT_FOUND_RESULT = "--NOT_FOUND--"
-
-    private val lock = ReentrantReadWriteLock()
-
-    private val httpClient = HttpClient.newHttpClient()
-
-    private val file = (dataDirectory / "whitelist.json").toFile()
-
-    private val whitelist = mutableListOf<Player>()
-
     val usernames = hashSetOf<String>()
-
     val uuids = hashSetOf<UUID>()
-
-    var enabled: Boolean
-        get() = config.enabled
-        set(value) {
-            config.enabled = value
-            ConfigManager.save()
-        }
 
     val size: Int
         get() = whitelist.size
@@ -105,6 +47,24 @@ object WhitelistManager {
 
     inline val serverIsOnlineMode: Boolean
         get() = server.configuration.isOnlineMode
+
+    private inline val config
+        get() = ConfigManager.config.whitelist
+
+    private val lock = ReentrantReadWriteLock()
+
+    private val httpClient = HttpClient.newHttpClient()
+
+    private val file = (dataDirectory / "whitelist.json").toFile()
+
+    private val whitelist = mutableListOf<Player>()
+
+    var enabled: Boolean
+        get() = config.enabled
+        set(value) {
+            config.enabled = value
+            ConfigManager.save()
+        }
 
     /**
      * Called when the plugin is enabled.
@@ -119,70 +79,12 @@ object WhitelistManager {
 
     fun disable(): Boolean {
         eventManager.unregisterListener(plugin, WhitelistHandler)
-        return save()
+        return save(false)
     }
 
     fun reload() {
         eventManager.unregisterListener(plugin, WhitelistHandler)
         init(reload = true)
-    }
-
-    /**
-     * Saves the whitelist to disk.
-     *
-     * @return True if the save was successful, false otherwise.
-     */
-    private fun save(initialize: Boolean = false): Boolean {
-        if (!file.exists()) {
-            logger.info("Whitelist file does not exist{}", if (initialize) ", creating..." else "")
-        }
-
-        return try {
-            file.parentFile.mkdirs()
-            lock.read { file.writeTextWithBuffer(JSON.encodeToString(if (initialize) listOf() else whitelist)) }
-            true
-        } catch (e: IOException) {
-            logger.error("Failed to save whitelist", e)
-            false
-        }
-    }
-
-    /**
-     * Loads the whitelist from the disk.
-     *
-     * @param reload If true, the whitelist will be reloaded from the disk.
-     */
-    private fun load(reload: Boolean = false): Boolean {
-        if (!file.exists()) return save(initialize = true)
-
-        logger.info("{} whitelist...", if (reload) "Reloading" else "Loading")
-
-        return try {
-            lock.write {
-                whitelist.clear()
-                whitelist.addAll(JSON.decodeFromString<List<Player>>(file.readTextWithBuffer()))
-            }
-            true
-        } catch (e: IOException) {
-            logger.error("Failed to read whitelist file", e)
-            false
-        } catch (e: SerializationException) {
-            logger.error("Failed to decode whitelist from file", e)
-            false
-        }
-    }
-
-    /**
-     * Updates the cache of usernames and UUIDs.
-     */
-    private fun updateCache() {
-        lock.write {
-            uuids.clear()
-            uuids.addAll(whitelist.map { it.uuid })
-
-            usernames.clear()
-            usernames.addAll(whitelist.map { it.name })
-        }
     }
 
     /**
@@ -201,7 +103,7 @@ object WhitelistManager {
         } else {
             when (val username = getUsername(uuid)) {
                 null -> AddResult.API_LOOKUP_REQUEST_FAILED
-                NOT_FOUND_RESULT -> AddResult.API_LOOKUP_NOT_FOUND
+                HttpStatus.NOT_FOUND.description -> AddResult.API_LOOKUP_NOT_FOUND
                 else -> add(username, uuid, server, onlineMode)
             }
         }
@@ -223,7 +125,7 @@ object WhitelistManager {
         } else {
             when (val uuid = getUuid(username, onlineMode)) {
                 null -> AddResult.API_LOOKUP_REQUEST_FAILED
-                NOT_FOUND_RESULT -> AddResult.API_LOOKUP_NOT_FOUND
+                HttpStatus.NOT_FOUND.description -> AddResult.API_LOOKUP_NOT_FOUND
                 else -> add(username, uuid.toUuid(), server, onlineMode)
             }
         }
@@ -259,7 +161,7 @@ object WhitelistManager {
                 if (onlineMode != null) player.onlineMode = onlineMode
             }
         }
-        return if (save()) AddResult.SUCCESS else AddResult.SAVE_FILE_FAILED
+        return if (save(false)) AddResult.SUCCESS else AddResult.SAVE_FILE_FAILED
     }
 
     /**
@@ -313,7 +215,7 @@ object WhitelistManager {
             uuids.remove(player.uuid)
             usernames.remove(player.name)
         }
-        return if (save()) RemoveResult.SUCCESS else RemoveResult.SAVE_FILE_FAILED
+        return if (save(false)) RemoveResult.SUCCESS else RemoveResult.SAVE_FILE_FAILED
     }
 
     /**
@@ -332,7 +234,7 @@ object WhitelistManager {
             uuids.clear()
             usernames.clear()
         }
-        return save()
+        return save(false)
     }
 
     /**
@@ -375,6 +277,82 @@ object WhitelistManager {
         }
     }
 
+    fun updatePlayer(username: String, uuid: UUID) = task {
+        val player = lock.read { whitelist.find { it.uuid == uuid } } ?: return@task
+        lock.write { player.name = username }
+        save(false)
+        updateCache()
+    }
+
+    /**
+     * Returns a list of players on the specified page.
+     *
+     * @param page The page number to retrieve.
+     * @return A list of players on the specified page.
+     */
+    fun pageOf(page: Int): List<Player> {
+        val pages = lock.read { whitelist.chunked(PageTurner.ITEMS_PER_PAGE) }
+        return pages[page - 1]
+    }
+
+    /**
+     * Saves the whitelist to disk.
+     *
+     * @return True if the save was successful, false otherwise.
+     */
+    private fun save(initialize: Boolean): Boolean {
+        if (!file.exists()) {
+            logger.info("Whitelist file does not exist{}", if (initialize) ", creating..." else "")
+        }
+
+        return try {
+            file.parentFile.mkdirs()
+            lock.read { file.writeTextWithBuffer(JSON.encodeToString(if (initialize) listOf() else whitelist)) }
+            true
+        } catch (e: IOException) {
+            logger.error("Failed to save whitelist", e)
+            false
+        }
+    }
+
+    /**
+     * Loads the whitelist from the disk.
+     *
+     * @param reload If true, the whitelist will be reloaded from the disk.
+     */
+    private fun load(reload: Boolean = false): Boolean {
+        if (!file.exists()) return save(initialize = true)
+
+        logger.info("{} whitelist...", if (reload) "Reloading" else "Loading")
+
+        return try {
+            lock.write {
+                whitelist.clear()
+                whitelist.addAll(JSON.decodeFromString<List<Player>>(file.readTextWithBuffer()))
+            }
+            true
+        } catch (e: IOException) {
+            logger.error("Failed to read whitelist file", e)
+            false
+        } catch (e: SerializationException) {
+            logger.error("Failed to decode whitelist from file", e)
+            false
+        }
+    }
+
+    /**
+     * Updates the cache of usernames and UUIDs.
+     */
+    private fun updateCache() {
+        lock.write {
+            uuids.clear()
+            uuids.addAll(whitelist.map { it.uuid })
+
+            usernames.clear()
+            usernames.addAll(whitelist.map { it.name })
+        }
+    }
+
     /**
      * Retrieves the username associated with the given UUID.
      * If the server is in offline mode, it returns null.
@@ -383,7 +361,6 @@ object WhitelistManager {
      * @param uuid The UUID of the player.
      * @return The username associated with the UUID or null if the query fails.
      */
-    @Suppress("MagicNumber")
     private fun getUsername(uuid: UUID): String? {
         if (!serverIsOnlineMode) return null
 
@@ -394,10 +371,10 @@ object WhitelistManager {
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
             .thenApply { response ->
-                when (val statusCode = response.statusCode()) {
-                    200 -> JSON.decodeFromString<ApiResponse>(response.body()).name
-                    404, 204 -> NOT_FOUND_RESULT
-                    429 -> {
+                when (val statusCode = HttpStatus.fromValue(response.statusCode())) {
+                    HttpStatus.OK -> JSON.decodeFromString<ApiResponse>(response.body()).name
+                    HttpStatus.NOT_FOUND, HttpStatus.NO_CONTENT -> HttpStatus.NOT_FOUND.description
+                    HttpStatus.TOO_MANY_REQUESTS -> {
                         logger.warn("Exceeded to the rate limit of Profile API, please retry UUID {}", uuid)
                         null
                     }
@@ -417,7 +394,6 @@ object WhitelistManager {
      * @param onlineMode Optional parameter to specify whether to use online mode or not. Defaults to null.
      * @return The UUID associated with the username or null if the query fails.
      */
-    @Suppress("MagicNumber")
     private fun getUuid(username: String, onlineMode: Boolean? = null): String? {
         if (onlineMode == false && !serverIsOnlineMode) {
             return UuidUtils.toUndashed(UuidUtils.generateOfflinePlayerUuid(username))
@@ -430,10 +406,11 @@ object WhitelistManager {
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
             .thenApply { response ->
-                when (val statusCode = response.statusCode()) {
-                    200 -> JSON.decodeFromString<ApiResponse>(response.body()).id
-                    404 -> NOT_FOUND_RESULT
-                    429 -> {
+
+                when (val statusCode = HttpStatus.fromValue(response.statusCode())) {
+                    HttpStatus.OK -> JSON.decodeFromString<ApiResponse>(response.body()).id
+                    HttpStatus.NOT_FOUND -> HttpStatus.NOT_FOUND.description
+                    HttpStatus.TOO_MANY_REQUESTS -> {
                         logger.warn("Exceeded to the rate limit of UUID API, please retry username {}", username)
                         null
                     }
@@ -444,23 +421,5 @@ object WhitelistManager {
                     }
                 }
             }.get()
-    }
-
-    fun updatePlayer(username: String, uuid: UUID) = task {
-        val player = lock.read { whitelist.find { it.uuid == uuid } } ?: return@task
-        lock.write { player.name = username }
-        save()
-        updateCache()
-    }
-
-    /**
-     * Returns a list of players on the specified page.
-     *
-     * @param page The page number to retrieve.
-     * @return A list of players on the specified page.
-     */
-    fun pageOf(page: Int): List<Player> {
-        val pages = lock.read { whitelist.chunked(PageTurner.ITEMS_PER_PAGE) }
-        return pages[page - 1]
     }
 }

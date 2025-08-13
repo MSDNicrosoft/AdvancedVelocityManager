@@ -13,7 +13,6 @@ import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.server.task
 
 object OnCommand {
-
     private inline val config
         get() = ConfigManager.config.whitelist
 

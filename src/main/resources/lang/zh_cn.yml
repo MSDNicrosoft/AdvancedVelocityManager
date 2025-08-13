@@ -4,16 +4,17 @@ avm:
     "on": "<green>开启"
     "off": "<dark_red>关闭"
     username: "用户名"
-    uuid: "UUID"
     empty.server: "<gray>此服务器中没有玩家"
-    turn.to:
+    page:
       previous: "<yellow>点击转到上一页"
       next: "<yellow>点击转到下一页"
-    not:
-      exist:
-        page: "<gray>此页面不存在"
-        server: "<red>服务器 <white><server> <red>不存在！"
-        player: "<red>玩家 <white><player> <red>不存在！"
+    not.found:
+      page: "<gray>此页面不存在"
+      server: "<red>未找到服务器"
+      servergroup: "<red>未找到服务器组"
+      player: "<red>未找到玩家"
+    invalid:
+      uuid: "无效的 UUID"
     help:
       header:
         "1":

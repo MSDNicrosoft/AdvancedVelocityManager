@@ -33,11 +33,11 @@ import kotlin.reflect.KClass
  */
 @Suppress("unused")
 class Packet<P : MinecraftPacket> private constructor(private val packet: Class<P>) {
-    private lateinit var oldPacket: Class<P>
-    private lateinit var direction: String
+    private val mappings = mutableListOf<PacketMapping?>()
     private lateinit var packetSupplier: Supplier<P>
     private lateinit var stateRegistry: StateRegistry
-    private val mappings = mutableListOf<PacketMapping?>()
+    private lateinit var direction: String
+    private lateinit var oldPacket: Class<P>
 
     /**
      * Sets the *old* packet class that will be replaced when [replace] is called.
@@ -190,12 +190,12 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
     }
 
     companion object {
+        enum class Action { REPLACE, UNREGISTER }
+
         private val STATE_REGISTRY_MAP_METHOD = classOf<StateRegistry>().resolve().firstMethod {
             name = "map"
             parameters(Int::class, ProtocolVersion::class, ProtocolVersion::class, Boolean::class)
         }
-
-        enum class Action { REPLACE, UNREGISTER }
 
         /**
          * Creates a new builder for the given packet class.

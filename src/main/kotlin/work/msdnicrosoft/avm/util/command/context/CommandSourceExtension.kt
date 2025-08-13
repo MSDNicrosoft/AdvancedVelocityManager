@@ -1,4 +1,4 @@
-@file:Suppress("unused", "NOTHING_TO_INLINE")
+@file:Suppress("unused")
 
 package work.msdnicrosoft.avm.util.command.context
 
@@ -17,6 +17,6 @@ inline val S.isPlayer: Boolean
 inline val S.name: String
     get() = if (this is Player) this.username else "Console"
 
-inline fun S.toPlayer(): Player = this as Player
-inline fun S.toConsole(): Console = this as Console
-inline fun S.toConnectedPlayer(): ConnectedPlayer = this as ConnectedPlayer
+fun S.toPlayer(): Player = this as Player
+fun S.toConsole(): Console = this as Console
+fun S.toConnectedPlayer(): ConnectedPlayer = this as ConnectedPlayer

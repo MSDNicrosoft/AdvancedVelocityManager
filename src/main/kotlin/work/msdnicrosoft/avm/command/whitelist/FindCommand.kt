@@ -9,7 +9,6 @@ import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.server.task
 
 object FindCommand {
-
     val command = literalCommand("find") {
         requires { hasPermission("avm.command.whitelist.find") }
         wordArgument("keyword") {
@@ -54,7 +53,7 @@ object FindCommand {
 
         val maxPage = PageTurner.getMaxPage(result.size)
         if (page > maxPage) {
-            this.sendTranslatable("avm.general.not.exist.page")
+            this.sendTranslatable("avm.general.not.found.page")
             return
         }
 

@@ -5,8 +5,8 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.AddResult
-import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
+import work.msdnicrosoft.avm.module.whitelist.result.AddResult
+import work.msdnicrosoft.avm.util.command.argument.ServerArgumentType
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.component.tr
@@ -15,7 +15,6 @@ import work.msdnicrosoft.avm.util.string.isUuid
 import work.msdnicrosoft.avm.util.string.toUuid
 
 object AddCommand {
-
     private inline val config
         get() = ConfigManager.config.whitelist
 
@@ -30,7 +29,7 @@ object AddCommand {
                 }.forEach(builder::suggest)
                 builder.buildFuture()
             }
-            wordArgument("server") {
+            argument("server", ServerArgumentType.all()) {
                 suggests { builder ->
                     val player: String by this
                     val whitelistedServers = if (player.isUuid()) {
@@ -66,11 +65,6 @@ object AddCommand {
     }
 
     private fun CommandContext.addPlayer(player: String, serverName: String, onlineMode: Boolean? = null) {
-        if (!isValidServer(serverName)) {
-            this.sendTranslatable("avm.general.not.exist.server", Argument.string("server", serverName))
-            return
-        }
-
         val isUuid = player.isUuid()
         if (isUuid && !WhitelistManager.serverIsOnlineMode) {
             this.sendTranslatable("avm.command.avmwl.add.uuid.unsupported")

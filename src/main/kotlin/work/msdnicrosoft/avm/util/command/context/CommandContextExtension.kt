@@ -1,5 +1,3 @@
-@file:Suppress("unused", "NOTHING_TO_INLINE")
-
 package work.msdnicrosoft.avm.util.command.context
 
 import com.highcapable.kavaref.KavaRef.Companion.resolve
@@ -12,7 +10,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.annotations.CommandNode
 import work.msdnicrosoft.avm.annotations.RootCommand
 import work.msdnicrosoft.avm.util.command.builder.Command
-import work.msdnicrosoft.avm.util.component.ComponentUtil
+import work.msdnicrosoft.avm.util.component.serializer.SerializationType.MINI_MESSAGE
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.reflect.getAnnotationIfPresent
 
@@ -54,13 +52,13 @@ fun CommandContext.buildHelp(commandRoot: Class<*>, checkPermission: Boolean = t
 
             val description = tr("avm.command.$rootName.${commandNode.name}.description")
             val hoverEvent = HoverEvent.showText(
-                ComponentUtil.miniMessage.deserialize(
+                MINI_MESSAGE.deserialize(
                     "<white>$rootName ${commandNode.name} <dark_gray>- <gray><desc>",
                     Placeholder.component("desc", description)
                 )
             )
             sendMessage(
-                ComponentUtil.miniMessage.deserialize("    <dark_gray>- <white>${commandNode.name} $arguments")
+                MINI_MESSAGE.deserialize("    <dark_gray>- <white>${commandNode.name} $arguments")
                     .hoverEvent(hoverEvent)
                     .clickEvent(ClickEvent.suggestCommand("/$rootName ${commandNode.name}"))
             )

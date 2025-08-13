@@ -6,7 +6,6 @@ import com.charleskorn.kaml.YamlConfiguration
 import kotlinx.serialization.json.Json
 
 object FileUtil {
-
     val YAML = Yaml(
         configuration = YamlConfiguration(
             encodeDefaults = true,

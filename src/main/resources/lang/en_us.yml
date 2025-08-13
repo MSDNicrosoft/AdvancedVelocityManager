@@ -4,15 +4,17 @@ avm:
     "on": "<green>on"
     "off": "<dark_red>off"
     username: "username"
-    uuid: "UUID"
     empty.server: "<gray>There is no players in the server"
-    turn.to:
+    page:
       previous: "<yellow>Click to turn to previous page"
       next: "<yellow>Click to turn to next page"
     not.found:
       page: "<gray>This page does not exist"
-      server: "<red>Server <white><server> <red>does not exist！"
-      player: "<red>Player <white><player> <red>does not exist！"
+      server: "<red>Server not found"
+      servergroup: "<red>Server group not found"
+      player: "<red>Player not found"
+    invalid:
+      uuid: "Invalid UUID"
     help:
       header:
         "1":

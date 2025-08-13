@@ -12,11 +12,10 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil
-import work.msdnicrosoft.avm.util.component.ComponentUtil.miniMessage
+import work.msdnicrosoft.avm.util.component.serializer.SerializationType.MINI_MESSAGE
 import work.msdnicrosoft.avm.util.server.task
 
 object TabSyncHandler {
-
     private inline val config
         get() = ConfigManager.config.tabSync
 
@@ -78,7 +77,7 @@ object TabSyncHandler {
     }
 
     private inline val Player.displayName: Component
-        get() = miniMessage.deserialize(
+        get() = MINI_MESSAGE.deserialize(
             config.format,
             Placeholder.unparsed("server_name", currentServer.get().serverInfo.name),
             Placeholder.parsed("server_nickname", ConfigUtil.getServerNickname(currentServer.get().serverInfo.name)),

@@ -40,10 +40,9 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import java.security.ProtectionDomain
 
 object KeyedChatHandlerTransformer : ClassTransformer {
-
-    const val TARGET_CLASS_NAME = "com/velocitypowered/proxy/protocol/packet/chat/keyed/KeyedChatHandler"
-    const val TARGET_METHOD_NAME = "invalidCancel"
-    const val TARGET_METHOD_DESC =
+    private const val TARGET_CLASS_NAME = "com/velocitypowered/proxy/protocol/packet/chat/keyed/KeyedChatHandler"
+    private const val TARGET_METHOD_NAME = "invalidCancel"
+    private const val TARGET_METHOD_DESC =
         "(Lorg/apache/logging/log4j/Logger;Lcom/velocitypowered/proxy/connection/client/ConnectedPlayer;)V"
 
     override val targetClass = classOf<KeyedChatHandler>()

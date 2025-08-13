@@ -12,34 +12,15 @@ import work.msdnicrosoft.avm.module.Logging
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge.mode
 
 object ChatBridge {
-
     private inline val config
         get() = ConfigManager.config.chatBridge
 
     /**
-     * Represents the different modes of passthrough for chat messages.
+     * Represents the current passthrough mode for chat messages.
+     *
+     * @property mode The current passthrough mode. Defaults to [PassthroughMode.ALL].
      */
-    enum class PassthroughMode {
-        /**
-         * All chat messages will be sent to the backend server.
-         */
-        ALL,
-
-        /**
-         * No chat messages will be sent to the backend server.
-         */
-        NONE,
-
-        /**
-         * If they match one of the patterns,
-         * chat messages will be sent to the backend server.
-         */
-        PATTERN;
-
-        companion object {
-            fun of(mode: String): PassthroughMode = valueOf(mode.uppercase())
-        }
-    }
+    var mode: PassthroughMode = PassthroughMode.ALL
 
     fun init() {
         plugin.server.eventManager.register(plugin, this)
@@ -48,13 +29,6 @@ object ChatBridge {
     fun disable() {
         plugin.server.eventManager.unregisterListener(plugin, this)
     }
-
-    /**
-     * Represents the current passthrough mode for chat messages.
-     *
-     * @property mode The current passthrough mode. Defaults to [PassthroughMode.ALL].
-     */
-    var mode: PassthroughMode = PassthroughMode.ALL
 
     @Suppress("Deprecation")
     @Subscribe(order = PostOrder.FIRST)

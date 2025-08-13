@@ -2,19 +2,19 @@ package work.msdnicrosoft.avm.command.whitelist
 
 import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.minimessage.translation.Argument
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
+import work.msdnicrosoft.avm.module.whitelist.result.RemoveResult
+import work.msdnicrosoft.avm.util.command.argument.ServerArgumentType
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.component.tr
-import work.msdnicrosoft.avm.util.server.ProxyServerUtil.getPlayer
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.server.task
 import work.msdnicrosoft.avm.util.string.isUuid
 import work.msdnicrosoft.avm.util.string.toUuid
 
 object RemoveCommand {
-
     private inline val config
         get() = ConfigManager.config.whitelist
 
@@ -30,7 +30,7 @@ object RemoveCommand {
                 context.source.removePlayer(player)
                 Command.SINGLE_SUCCESS
             }
-            wordArgument("server") {
+            argument("server", ServerArgumentType.all()) {
                 suggests { builder ->
                     val player: String by this
                     val serverList = if (player.isUuid()) {
@@ -44,13 +44,6 @@ object RemoveCommand {
                 executes {
                     val server: String by this
                     val player: String by this
-                    if (!isValidServer(server)) {
-                        sendTranslatable(
-                            "avm.general.not.exist.server",
-                            Argument.string("server", server)
-                        )
-                        return@executes Command.SINGLE_SUCCESS
-                    }
                     context.source.removePlayer(player, server)
                     Command.SINGLE_SUCCESS
                 }
@@ -74,7 +67,7 @@ object RemoveCommand {
         }
 
         val message = when (result) {
-            WhitelistManager.RemoveResult.SUCCESS -> {
+            RemoveResult.SUCCESS -> {
                 if (serverName != null) {
                     tr(
                         "avm.command.avmwl.remove.success.server",
@@ -89,17 +82,17 @@ object RemoveCommand {
                 }
             }
 
-            WhitelistManager.RemoveResult.FAIL_NOT_FOUND -> tr("avm.command.avmwl.remove.not.found")
-            WhitelistManager.RemoveResult.SAVE_FILE_FAILED -> tr("avm.whitelist.save.failed")
+            RemoveResult.FAIL_NOT_FOUND -> tr("avm.command.avmwl.remove.not.found")
+            RemoveResult.SAVE_FILE_FAILED -> tr("avm.whitelist.save.failed")
         }
         this.sendMessage(message)
 
         if (config.enabled) {
             task {
                 val player = if (isUuid) {
-                    getPlayer(playerName.toUuid())
+                    server.getPlayer(playerName.toUuid())
                 } else {
-                    getPlayer(playerName)
+                    server.getPlayer(playerName)
                 }
                 player.ifPresent {
                     if (!WhitelistManager.isInServerWhitelist(it.uniqueId, it.currentServer.get().serverInfo.name)) {

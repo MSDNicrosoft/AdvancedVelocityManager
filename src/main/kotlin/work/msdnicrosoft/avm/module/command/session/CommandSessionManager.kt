@@ -1,8 +1,8 @@
-package work.msdnicrosoft.avm.module.command
+package work.msdnicrosoft.avm.module.command.session
 
 import com.google.common.io.BaseEncoding
 import com.velocitypowered.api.scheduler.ScheduledTask
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin
 import work.msdnicrosoft.avm.util.server.task
 import java.security.MessageDigest
 import java.util.concurrent.ConcurrentHashMap
@@ -14,27 +14,8 @@ import java.util.concurrent.ConcurrentHashMap
  * This class provides functionality to add, execute, and remove command sessions.
  */
 object CommandSessionManager {
-
-    /**
-     * The result of executing a command session.
-     */
-    enum class ExecuteResult { SUCCESS, EXPIRED, FAILED, NOT_FOUND }
-
-    /**
-     * Represents an action to be executed in a command session.
-     *
-     * @property executed Whether the action has been executed.
-     * @property block The block of code to be executed.
-     * @property expirationTime The time at which the action expires.
-     */
-    data class Action(var executed: Boolean = false, val block: () -> Any?, val expirationTime: Long) {
-        fun isExpired(): Boolean = System.currentTimeMillis() > expirationTime
-    }
-
     private val sha256 = MessageDigest.getInstance("SHA-256")
-
     private val base32 = BaseEncoding.base32().omitPadding()
-
     private val sessions = ConcurrentHashMap<String, Action>()
 
     /**
@@ -63,7 +44,7 @@ object CommandSessionManager {
     }
 
     fun reload() {
-        logger.info("Reloading command sessions...")
+        AdvancedVelocityManagerPlugin.Companion.logger.info("Reloading command sessions...")
         disable()
         sessions.clear()
         init()
@@ -95,7 +76,7 @@ object CommandSessionManager {
                 ExecuteResult.SUCCESS
             }
         } catch (e: Exception) {
-            logger.warn("Failed to execute session command", e)
+            AdvancedVelocityManagerPlugin.Companion.logger.warn("Failed to execute session command", e)
             ExecuteResult.FAILED
         }
     }

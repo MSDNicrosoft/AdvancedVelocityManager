@@ -9,6 +9,7 @@ data class Reconnect(
     @YamlComment("Whether to enable the reconnect feature")
     val enabled: Boolean = false,
 
+    // language=regexp
     @YamlComment("Regex pattern to match server shutdown messages triggering reconnect")
     val pattern: String = "((?i)^(server closed|server is restarting|multiplayer\\.disconnect\\.server_shutdown))+$",
 

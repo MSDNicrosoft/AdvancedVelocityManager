@@ -37,7 +37,6 @@ import java.lang.instrument.Instrumentation
 import java.lang.management.ManagementFactory
 
 object Patch {
-
     private val transformers = setOf<ClassTransformer>(
         KeyedChatHandlerTransformer,
     )

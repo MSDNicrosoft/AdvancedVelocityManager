@@ -8,7 +8,6 @@ import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.CommandContext
 
 object ListCommand {
-
     val command = literalCommand("list") {
         requires { hasPermission("avm.command.whitelist.list") }
         executes {
@@ -35,7 +34,7 @@ object ListCommand {
         }
         val maxPage = WhitelistManager.maxPage
         if (page > maxPage) {
-            this.sendTranslatable("avm.general.not.exist.page")
+            this.sendTranslatable("avm.general.not.found.page")
             return
         }
         if (page == 1) {

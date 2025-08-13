@@ -5,7 +5,7 @@ import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.module.command.CommandSessionManager
+import work.msdnicrosoft.avm.module.command.session.CommandSessionManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.command.builder.Command
 import work.msdnicrosoft.avm.util.command.builder.executes
@@ -17,7 +17,6 @@ import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.server.task
 
 object ClearCommand {
-
     private inline val config
         get() = ConfigManager.config.whitelist
 
@@ -50,7 +49,6 @@ object ClearCommand {
                     .clickEvent(ClickEvent.runCommand("/avm confirm $sessionId"))
                     .hoverEvent(HoverEvent.showText(tr("avm.command.avmwl.clear.need.confirm.2.hover")))
             )
-
             Command.SINGLE_SUCCESS
         }
     }

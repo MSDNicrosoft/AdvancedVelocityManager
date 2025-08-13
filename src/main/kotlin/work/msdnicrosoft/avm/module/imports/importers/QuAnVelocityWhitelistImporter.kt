@@ -15,10 +15,7 @@ import java.util.*
 import kotlin.io.path.div
 import kotlin.io.path.exists
 
-object QuAnVelocityWhitelistImporter : Importer {
-
-    override val pluginName = "(qu-an) VelocityWhitelist"
-
+object QuAnVelocityWhitelistImporter : Importer("(qu-an) VelocityWhitelist") {
     @Serializable
     private data class Player(
         @Serializable(with = UUIDSerializer::class)
@@ -43,7 +40,7 @@ object QuAnVelocityWhitelistImporter : Importer {
                 "avm.command.avm.import.config.not.exist",
                 Argument.string("plugin_name", pluginName)
             )
-            false
+            true
         }
 
         val whitelistSuccess = if (WHITELIST_PATH.exists()) {
@@ -53,7 +50,7 @@ object QuAnVelocityWhitelistImporter : Importer {
                 "avm.command.avm.import.whitelist.not.exist",
                 Argument.string("plugin_name", pluginName)
             )
-            false
+            true
         }
 
         return configSuccess && whitelistSuccess

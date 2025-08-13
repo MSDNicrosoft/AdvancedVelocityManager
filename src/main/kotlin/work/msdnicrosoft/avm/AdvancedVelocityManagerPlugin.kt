@@ -20,7 +20,7 @@ import work.msdnicrosoft.avm.module.EventBroadcast
 import work.msdnicrosoft.avm.module.Logging
 import work.msdnicrosoft.avm.module.TabSyncHandler
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
-import work.msdnicrosoft.avm.module.command.CommandSessionManager
+import work.msdnicrosoft.avm.module.command.session.CommandSessionManager
 import work.msdnicrosoft.avm.module.mapsync.WorldInfoHandler
 import work.msdnicrosoft.avm.module.mapsync.XaeroMapHandler
 import work.msdnicrosoft.avm.module.reconnect.ReconnectHandler
@@ -44,7 +44,7 @@ class AdvancedVelocityManagerPlugin {
         plugin = this
     }
 
-    @Suppress("UnusedParameter")
+    @Suppress("unused")
     @Subscribe
     fun onProxyInitialization(event: ProxyInitializeEvent) {
         Patch.init()
@@ -53,7 +53,7 @@ class AdvancedVelocityManagerPlugin {
 
         require(ConfigManager.load()) { "Failed to load configuration, aborting initialization" }
 
-        loadLanguage()
+        loadLanguage(false)
         initializeModules()
         registerCommands()
 
@@ -63,7 +63,7 @@ class AdvancedVelocityManagerPlugin {
         }
     }
 
-    @Suppress("UnusedParameter")
+    @Suppress("unused")
     @Subscribe
     fun onProxyShutdown(event: ProxyShutdownEvent) {
         disableModules()
@@ -112,7 +112,7 @@ class AdvancedVelocityManagerPlugin {
                 return false
             }
 
-            loadLanguage(reload = true)
+            loadLanguage(true)
             CommandSessionManager.reload()
             PlayerCache.reload()
             WhitelistManager.reload()
@@ -123,7 +123,7 @@ class AdvancedVelocityManagerPlugin {
         }
     }
 
-    private fun loadLanguage(reload: Boolean = false) {
+    private fun loadLanguage(reload: Boolean) {
         if (reload) {
             logger.info("Reloading language...")
             TranslateManager.reload()

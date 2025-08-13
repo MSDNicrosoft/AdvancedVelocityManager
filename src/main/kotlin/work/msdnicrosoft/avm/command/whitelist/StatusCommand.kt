@@ -11,7 +11,6 @@ import work.msdnicrosoft.avm.util.command.builder.requires
 import work.msdnicrosoft.avm.util.component.tr
 
 object StatusCommand {
-
     private inline val config
         get() = ConfigManager.config.whitelist
 
