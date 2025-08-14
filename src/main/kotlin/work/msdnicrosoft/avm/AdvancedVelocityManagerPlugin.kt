@@ -24,7 +24,6 @@ import work.msdnicrosoft.avm.module.command.session.CommandSessionManager
 import work.msdnicrosoft.avm.module.i18n.TranslateManager
 import work.msdnicrosoft.avm.module.mapsync.WorldInfoHandler
 import work.msdnicrosoft.avm.module.mapsync.XaeroMapHandler
-import work.msdnicrosoft.avm.module.packet.PacketHandler
 import work.msdnicrosoft.avm.module.reconnect.ReconnectHandler
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
