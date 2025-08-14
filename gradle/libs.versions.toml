@@ -1,7 +1,7 @@
 [versions]
 
 # Gradle Plugins
-kotlin = "2.2.0"
+kotlin = "2.2.10"
 detekt = "1.23.8"
 grgit = "5.3.2"
 yamlang = "1.4.1"
