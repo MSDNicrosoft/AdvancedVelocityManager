@@ -10,7 +10,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.annotations.CommandNode
 import work.msdnicrosoft.avm.annotations.RootCommand
 import work.msdnicrosoft.avm.util.command.builder.Command
-import work.msdnicrosoft.avm.util.component.serializer.SerializationType.MINI_MESSAGE
+import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.reflect.getAnnotationIfPresent
 

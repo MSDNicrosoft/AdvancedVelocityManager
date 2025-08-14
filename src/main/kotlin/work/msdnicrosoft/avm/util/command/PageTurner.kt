@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
-import work.msdnicrosoft.avm.util.component.serializer.SerializationType.MINI_MESSAGE
+import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
 import work.msdnicrosoft.avm.util.component.tr
 import kotlin.math.ceil
 

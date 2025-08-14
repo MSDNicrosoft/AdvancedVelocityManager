@@ -18,7 +18,7 @@ import io.netty.util.AttributeKey
 import org.geysermc.floodgate.api.player.FloodgatePlayer
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.component.serializer.SerializationType.MINI_MESSAGE
+import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
 
 /**
  * Handles whitelist functionality for the server, including integration with Floodgate for player identification.
@@ -26,7 +26,6 @@ import work.msdnicrosoft.avm.util.component.serializer.SerializationType.MINI_ME
  * to enforce whitelist restrictions.
  */
 object WhitelistHandler {
-
     private inline val config
         get() = ConfigManager.config.whitelist
 

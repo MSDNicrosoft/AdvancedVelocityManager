@@ -1,4 +1,4 @@
-package work.msdnicrosoft.avm.util.i18n
+package work.msdnicrosoft.avm.module.i18n
 
 import com.highcapable.kavaref.extension.classOf
 import net.kyori.adventure.key.Key

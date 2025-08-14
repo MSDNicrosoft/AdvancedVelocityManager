@@ -9,13 +9,13 @@ import com.velocitypowered.proxy.protocol.packet.BossBarPacket
 import net.kyori.adventure.title.Title
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.packet.s2c.PlayerAbilitiesPacket
-import work.msdnicrosoft.avm.util.component.serializer.SerializationType.MINI_MESSAGE
+import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 @Suppress("MagicNumber")
 class Reconnection(private val event: KickedFromServerEvent, private val continuation: Continuation) {
-    private val player: ConnectedPlayer = event.player as ConnectedPlayer
+    private val player = event.player as ConnectedPlayer
     private val scheduledExecutor = player.connection.eventLoop()
 
     private val pingOptions = PingOptions.builder()

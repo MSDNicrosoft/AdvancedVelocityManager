@@ -2,14 +2,14 @@ package work.msdnicrosoft.avm.config
 
 import com.charleskorn.kaml.YamlException
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 import work.msdnicrosoft.avm.config.data.Version
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
 import work.msdnicrosoft.avm.module.chatbridge.PassthroughMode
 import work.msdnicrosoft.avm.util.file.FileUtil.YAML
-import work.msdnicrosoft.avm.util.file.decodeFromString
-import work.msdnicrosoft.avm.util.file.encodeToString
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import work.msdnicrosoft.avm.util.file.writeTextWithBuffer
 import work.msdnicrosoft.avm.util.string.isValidUrl
@@ -17,11 +17,11 @@ import java.io.IOException
 import kotlin.io.path.div
 
 object ConfigManager {
-    val DEFAULT_CONFIG by lazy { AVMConfig() }
+    lateinit var config: AVMConfig
 
     private val file = (dataDirectory / "config.yml").toFile()
 
-    lateinit var config: AVMConfig
+    private val DEFAULT_CONFIG by lazy { AVMConfig() }
 
     /**
      * Loads the configuration from the file.

@@ -10,11 +10,10 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManage
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
-import work.msdnicrosoft.avm.util.component.serializer.SerializationType.MINI_MESSAGE
+import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
 import work.msdnicrosoft.avm.util.server.task
 
 object EventBroadcast {
-
     private inline val config
         get() = ConfigManager.config.broadcast
 

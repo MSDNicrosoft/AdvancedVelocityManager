@@ -16,15 +16,14 @@ object KickAllCommand {
     val command = literalCommand("kickall") {
         requires { hasPermission("avm.command.kickall") }
         executes {
-            server.allPlayers.filter { !it.hasPermission("avm.kickall.bypass") }
-                .forEach {
-                    it.disconnect(
-                        tr(
-                            "avm.command.avm.kick.target",
-                            Argument.string("executor", context.source.name)
-                        )
+            server.allPlayers.filter { !it.hasPermission("avm.kickall.bypass") }.forEach {
+                it.disconnect(
+                    tr(
+                        "avm.command.avm.kick.target",
+                        Argument.string("executor", context.source.name)
                     )
-                }
+                )
+            }
             Command.SINGLE_SUCCESS
         }
         argument("server", ServerArgumentType.registered()) {
@@ -57,7 +56,8 @@ object KickAllCommand {
             return
         }
 
-        val (bypassed, toKick) = registeredServer.playersConnected.partition { it.hasPermission("avm.kickall.bypass") }
+        val (bypassed, toKick) = registeredServer.playersConnected
+            .partition { it.hasPermission("avm.kickall.bypass") }
 
         task {
             toKick.forEach { player ->

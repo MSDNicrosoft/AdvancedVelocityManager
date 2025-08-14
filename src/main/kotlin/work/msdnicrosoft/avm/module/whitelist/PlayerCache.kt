@@ -9,7 +9,6 @@ import work.msdnicrosoft.avm.config.ConfigManager
  * manages a cache of players based on the server configuration.
  */
 object PlayerCache {
-
     private inline val config
         get() = ConfigManager.config.whitelist.cachePlayers
 

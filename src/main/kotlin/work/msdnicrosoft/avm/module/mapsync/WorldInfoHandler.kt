@@ -36,16 +36,18 @@ object WorldInfoHandler {
 
     @Subscribe
     fun onPluginMessage(event: PluginMessageEvent) {
-        val player = event.source as? Player ?: return
+        if (!config.modern && !config.legacy) return
         if (event.identifier != WORLD_INFO_CHANNEL) return
 
+        val player = event.source as? Player ?: return
+
         player.currentServer.ifPresent { connection ->
-            val serverName = connection.serverInfo.name
+            val serverNameBytes = connection.serverInfo.name.toByteArray(StandardCharsets.UTF_8)
             if (config.modern) {
-                player.sendPluginMessage(WORLD_INFO_CHANNEL, createArray(serverName, true))
+                player.sendPluginMessage(WORLD_INFO_CHANNEL, createArray(serverNameBytes, true))
             }
             if (config.legacy) {
-                player.sendPluginMessage(WORLD_INFO_CHANNEL, createArray(serverName, false))
+                player.sendPluginMessage(WORLD_INFO_CHANNEL, createArray(serverNameBytes, false))
             }
         }
 
@@ -55,14 +57,12 @@ object WorldInfoHandler {
     }
 
     @Suppress("MagicNumber")
-    private fun createArray(serverName: String, modern: Boolean): ByteArray {
-        val serverNameBytes = serverName.toByteArray(StandardCharsets.UTF_8)
-        return Unpooled.buffer().useThenApply {
+    private fun createArray(serverNameBytes: ByteArray, modern: Boolean): ByteArray =
+        Unpooled.buffer().useThenApply {
             writeByte(0x00) // Packet ID
             if (modern) writeByte(0x2A) // New packet
             writeByte(serverNameBytes.size)
             writeBytes(serverNameBytes)
             ByteBufUtil.getBytes(this)
         }
-    }
 }

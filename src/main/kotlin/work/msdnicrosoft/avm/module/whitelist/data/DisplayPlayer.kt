@@ -7,7 +7,7 @@ import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.util.ConfigUtil
-import work.msdnicrosoft.avm.util.component.serializer.SerializationType
+import work.msdnicrosoft.avm.util.component.ComponentSerializer
 import work.msdnicrosoft.avm.util.component.tr
 
 class DisplayPlayer(val player: Player) {
@@ -20,16 +20,16 @@ class DisplayPlayer(val player: Player) {
                 HoverEvent.showText(
                     Component.join(
                         JoinConfiguration.newlines(),
-                        SerializationType.MINI_MESSAGE.deserialize("<gray>UUID: $playerUuid"),
+                        ComponentSerializer.MINI_MESSAGE.deserialize("<gray>UUID: $playerUuid"),
                         Component.empty(),
                         tr("avm.whitelist.player.uuid.hover")
                     )
                 )
             ).clickEvent(ClickEvent.suggestCommand(playerUuid)),
-        SerializationType.MINI_MESSAGE.deserialize("<dark_gray>[<red>x<dark_gray>]")
+        ComponentSerializer.MINI_MESSAGE.deserialize("<dark_gray>[<red>x<dark_gray>]")
             .hoverEvent(HoverEvent.showText(tr("avm.whitelist.player.username.hover")))
             .clickEvent(ClickEvent.runCommand("/avmwl remove $playerUsername")),
-        SerializationType.MINI_MESSAGE.deserialize("<dark_gray>:"),
+        ComponentSerializer.MINI_MESSAGE.deserialize("<dark_gray>:"),
     )
 
     fun build(): Component = Component.join(
@@ -40,7 +40,7 @@ class DisplayPlayer(val player: Player) {
                 if (isServerGroup) {
                     add(tr("avm.whitelist.player.server.hover.1"))
                     val servers = ConfigUtil.getServersInGroup(server).joinToString(" ")
-                    add(SerializationType.MINI_MESSAGE.deserialize("<reset>$servers"))
+                    add(ComponentSerializer.MINI_MESSAGE.deserialize("<reset>$servers"))
                     add(Component.empty())
                 }
                 add(
@@ -52,7 +52,7 @@ class DisplayPlayer(val player: Player) {
                 )
             }
 
-            SerializationType.MINI_MESSAGE.deserialize(
+            ComponentSerializer.MINI_MESSAGE.deserialize(
                 "${if (isServerGroup) "<bold>" else ""}<server_name>",
                 Placeholder.unparsed("server_name", server)
             ).hoverEvent(HoverEvent.showText(Component.join(JoinConfiguration.newlines(), hover)))

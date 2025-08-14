@@ -21,13 +21,14 @@ import work.msdnicrosoft.avm.module.Logging
 import work.msdnicrosoft.avm.module.TabSyncHandler
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
 import work.msdnicrosoft.avm.module.command.session.CommandSessionManager
+import work.msdnicrosoft.avm.module.i18n.TranslateManager
 import work.msdnicrosoft.avm.module.mapsync.WorldInfoHandler
 import work.msdnicrosoft.avm.module.mapsync.XaeroMapHandler
+import work.msdnicrosoft.avm.module.packet.PacketHandler
 import work.msdnicrosoft.avm.module.reconnect.ReconnectHandler
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.patch.Patch
-import work.msdnicrosoft.avm.util.i18n.TranslateManager
 import java.nio.file.Path
 
 class AdvancedVelocityManagerPlugin {

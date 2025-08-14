@@ -16,20 +16,26 @@ import work.msdnicrosoft.avm.util.command.context.name
 import work.msdnicrosoft.avm.util.command.context.toPlayer
 import work.msdnicrosoft.avm.util.command.register
 import work.msdnicrosoft.avm.util.command.unregister
+import work.msdnicrosoft.avm.util.component.ComponentSerializer.STYLE_ONLY_MINI_MESSAGE
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.Format
-import work.msdnicrosoft.avm.util.component.serializer.SerializationType.STYLE_ONLY_MINI_MESSAGE
 
 object MsgCommand {
-    private inline val config
-        get() = ConfigManager.config.chatBridge
+    private inline val chatFormat
+        get() = ConfigManager.config.chatBridge.privateChatFormat
+
+    private inline val takeOverPrivateChat: Boolean
+        get() = ConfigManager.config.chatBridge.takeOverPrivateChat
+
+    private inline val allowFormatCode: Boolean
+        get() = ConfigManager.config.chatBridge.allowFormatCode
 
     val aliases = listOf("msg", "tell", "w")
 
     val command = literalCommand("msg") {
         argument("targets", PlayerArgumentType.name()) {
             suggests { builder ->
-                if (config.takeOverPrivateChat || context.source.isConsole) {
+                if (takeOverPrivateChat || context.source.isConsole) {
                     server.allPlayers.map { it.username }
                 } else {
                     context.source.toPlayer().currentServer.get().server.playersConnected.map { it.username }
@@ -42,11 +48,9 @@ object MsgCommand {
                     val message: String by this
 
                     if (!context.source.isConsole) {
-                        sendMessage(config.privateChatFormat.sender.buildMessage(context.source, targets, message))
+                        sendMessage(chatFormat.sender.buildMessage(context.source, targets, message))
                     }
-                    targets.sendMessage(
-                        config.privateChatFormat.receiver.buildMessage(context.source, targets, message)
-                    )
+                    targets.sendMessage(chatFormat.receiver.buildMessage(context.source, targets, message))
                     Command.SINGLE_SUCCESS
                 }
             }
@@ -82,7 +86,7 @@ object MsgCommand {
             this,
             Placeholder.unparsed("player_name_from", from),
             Placeholder.unparsed("player_name_to", to),
-            if (config.allowFormatCode) {
+            if (allowFormatCode) {
                 Placeholder.parsed("player_message", message)
             } else {
                 Placeholder.unparsed("player_message", message)

@@ -35,7 +35,7 @@ object ChatBridge {
     fun onPlayerChatChat(event: PlayerChatEvent) {
         if (!config.enabled) return
 
-        val message = ChatMessage(event, config).build()
+        val message = ChatMessage(event.player, event.message).build()
         val serverName = event.player.currentServer.get().serverInfo.name
 
         when (mode) {

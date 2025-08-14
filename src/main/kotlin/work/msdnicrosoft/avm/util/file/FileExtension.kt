@@ -1,17 +1,9 @@
 package work.msdnicrosoft.avm.util.file
 
-import com.charleskorn.kaml.Yaml
-import kotlinx.serialization.serializer
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.bufferedReader
 import kotlin.io.path.bufferedWriter
-
-inline fun <reified T> Yaml.decodeFromString(string: String): T =
-    decodeFromString(serializersModule.serializer(), string)
-
-inline fun <reified T> Yaml.encodeToString(value: T): String =
-    encodeToString(serializersModule.serializer(), value)
 
 fun Path.readTextWithBuffer(): String = this.bufferedReader().use { it.readText() }
 fun File.readTextWithBuffer(): String = this.bufferedReader().use { it.readText() }

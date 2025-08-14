@@ -6,22 +6,17 @@ import com.velocitypowered.api.event.player.KickedFromServerEvent
 import com.velocitypowered.proxy.protocol.ProtocolUtils.Direction
 import com.velocitypowered.proxy.protocol.StateRegistry
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.flattener.ComponentFlattener
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.packet.s2c.PlayerAbilitiesPacket
+import work.msdnicrosoft.avm.util.component.ComponentSerializer.BASIC_PLAIN_TEXT
 import work.msdnicrosoft.avm.util.packet.MinecraftVersion
 import work.msdnicrosoft.avm.util.packet.Packet
 
 object ReconnectHandler {
     private inline val config
         get() = ConfigManager.config.reconnect
-
-    private val serializer = PlainTextComponentSerializer.builder()
-        .flattener(ComponentFlattener.basic())
-        .build()
 
     private inline val regex
         get() = Regex(config.pattern)
@@ -65,9 +60,10 @@ object ReconnectHandler {
     fun onKickedFromServer(event: KickedFromServerEvent): EventTask? {
         if (event.kickedDuringServerConnect()) return null
 
-        val reason = event.serverKickReason
-            .orElse(Component.empty())
-            .plainText
+        val reason = BASIC_PLAIN_TEXT.serialize(
+            event.serverKickReason
+                .orElse(Component.empty())
+        )
 
         if (!regex.matches(reason)) return null
 
@@ -75,7 +71,4 @@ object ReconnectHandler {
             Reconnection(event, continuation).reconnect()
         }
     }
-
-    private inline val Component.plainText: String
-        get() = serializer.serialize(this)
 }

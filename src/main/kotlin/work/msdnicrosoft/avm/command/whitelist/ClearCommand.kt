@@ -23,12 +23,11 @@ object ClearCommand {
     val command = literalCommand("clear") {
         requires { hasPermission("avm.command.whitelist.clear") }
         executes {
-            val sessionId =
-                CommandSessionManager.generateSessionId(
-                    context.source.name,
-                    System.currentTimeMillis(),
-                    context.arguments.values.joinToString(" ")
-                )
+            val sessionId = CommandSessionManager.generateSessionId(
+                context.source.name,
+                System.currentTimeMillis(),
+                context.arguments.values.joinToString(" ")
+            )
 
             CommandSessionManager.add(sessionId) {
                 if (WhitelistManager.clear()) {

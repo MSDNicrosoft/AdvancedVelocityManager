@@ -3,7 +3,7 @@ package work.msdnicrosoft.avm.util.server
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.ServerPing
 import net.kyori.adventure.text.Component
-import work.msdnicrosoft.avm.util.component.serializer.SerializationType.MINI_MESSAGE
+import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
 
 object ProxyServerUtil {
     /**
