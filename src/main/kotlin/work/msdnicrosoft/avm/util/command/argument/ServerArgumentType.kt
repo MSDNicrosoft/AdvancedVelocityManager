@@ -10,7 +10,6 @@ import com.velocitypowered.api.command.VelocityBrigadierMessage
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroup
-import work.msdnicrosoft.avm.util.ConfigUtil.isValidServer
 import work.msdnicrosoft.avm.util.component.tr
 import java.util.concurrent.CompletableFuture
 
@@ -51,24 +50,28 @@ class ServerArgumentType private constructor(private val serverType: ServerType)
 
         private fun parseRegistered(reader: StringReader): String {
             val serverName = reader.readUnquotedString()
-            if (!isValidServer(serverName)) throw SERVER_NOT_FOUND.createWithContext(reader)
+            if (server.getServer(serverName).isEmpty) {
+                throw SERVER_NOT_FOUND.createWithContext(reader)
+            }
 
             return serverName
         }
 
         private fun parseGroup(reader: StringReader): String {
             val groupName = reader.readUnquotedString()
-            if (!isServerGroup(groupName)) throw SERVER_GROUP_NOT_FOUND.createWithContext(reader)
+            if (!isServerGroup(groupName)) {
+                throw SERVER_GROUP_NOT_FOUND.createWithContext(reader)
+            }
 
             return groupName
         }
 
         private fun parseAll(reader: StringReader): String {
             val name = reader.readUnquotedString()
-            return when {
-                isServerGroup(name) -> name
-                isValidServer(name) -> name
-                else -> throw SERVER_NOT_FOUND.createWithContext(reader)
+            return if (isServerGroup(name) || server.getServer(name).isPresent) {
+                name
+            } else {
+                throw SERVER_NOT_FOUND.createWithContext(reader)
             }
         }
 
