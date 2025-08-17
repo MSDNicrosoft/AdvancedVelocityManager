@@ -61,9 +61,7 @@ object ChatBridge {
         }
 
         if (config.logging) {
-            Logging.log(
-                "[$serverName]<${event.player.username}> ${event.message}"
-            )
+            Logging.log("[$serverName]<${event.player.username}> ${event.message}")
         }
     }
 
@@ -80,8 +78,8 @@ object ChatBridge {
             .split(" ")
             .first()
             .replace("/", "")
-        val isPrivateChat = MsgCommand.aliases.any { eventCommand.startsWith(it) }
 
+        val isPrivateChat = MsgCommand.aliases.any { eventCommand.startsWith(it) }
         if (!isPrivateChat) return
 
         if (!config.takeOverPrivateChat) {

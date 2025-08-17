@@ -100,8 +100,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @param mappings the mappings to append
      * @return this builder for chaining
      */
-    fun mappings(mappings: Collection<PacketMapping?>): Packet<P> =
-        this.apply { this.mappings.addAll(mappings) }
+    fun mappings(mappings: Collection<PacketMapping?>): Packet<P> = this.apply { this.mappings.addAll(mappings) }
 
     /**
      * Registers this packet as a **new** entry in the Velocity packet registry.
@@ -146,8 +145,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
             .firstField {
                 name = this@Packet.direction
                 superclass()
-            }
-            .get<PacketRegistry>()!!
+            }.get<PacketRegistry>()!!
 
         val versions = packetRegistry.asResolver()
             .firstField { name = "versions" }

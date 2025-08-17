@@ -29,7 +29,7 @@ object WhitelistHandler {
     private inline val config
         get() = ConfigManager.config.whitelist
 
-    private val resolver by lazy {
+    private val delegateFieldResolver by lazy {
         classOf<InboundConnection>().resolve()
             .firstField { name = "delegate" }
     }
@@ -90,7 +90,7 @@ object WhitelistHandler {
     private fun getUsername(username: String, connection: InboundConnection): String {
         // Compatible with Floodgate
         if (hasFloodgate) {
-            val channel = resolver.copy()
+            val channel = delegateFieldResolver.copy()
                 .of(connection)
                 .get<InitialInboundConnection>()!!.connection.channel
             val player: FloodgatePlayer? = channel

@@ -47,7 +47,7 @@ object KeyedChatHandlerTransformer : ClassTransformer {
 
     override val targetClass = classOf<KeyedChatHandler>()
 
-    override fun shouldTransform(): Boolean = !server.pluginManager.getPlugin("signedvelocity").isPresent
+    override fun shouldTransform(): Boolean = server.pluginManager.getPlugin("signedvelocity").isEmpty
 
     override fun transform(
         loader: ClassLoader?,

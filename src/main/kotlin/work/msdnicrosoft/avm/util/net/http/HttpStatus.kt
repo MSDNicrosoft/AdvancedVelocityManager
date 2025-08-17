@@ -76,8 +76,8 @@ enum class HttpStatus(val value: Int, val description: String) {
     fun isSuccess(): Boolean = this.value in 200..299
 
     companion object {
-        private val statusCodesMap = entries.associateBy { it.value }
+        private val statusCodesMap: Map<Int, HttpStatus> = entries.associateBy { it.value }
 
-        fun fromValue(value: Int) = statusCodesMap[value] ?: error("Unknown HTTP status code: $value")
+        fun fromValue(value: Int): HttpStatus = statusCodesMap[value] ?: error("Unknown HTTP status code: $value")
     }
 }
