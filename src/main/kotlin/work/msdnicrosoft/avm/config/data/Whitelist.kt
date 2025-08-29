@@ -40,7 +40,7 @@ data class Whitelist(
         @YamlComment(
             "The API URL to query UUID by username",
             "",
-            "Default: https://api.mojang.com/users/profiles/minecraft/",
+            "Default: https://api.minecraftservices.com/minecraft/profile/lookup/name/",
             "",
             "Learn more: https://minecraft.wiki/w/Mojang_API#Query_player's_UUID"
         )
