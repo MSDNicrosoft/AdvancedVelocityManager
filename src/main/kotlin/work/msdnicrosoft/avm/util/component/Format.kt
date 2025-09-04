@@ -29,17 +29,17 @@ data class Format(
      * @return True if the format is valid, false otherwise.
      */
     fun validate(): Boolean {
-        if (text.isEmpty()) {
+        if (this.text.isEmpty()) {
             logger.warn("Invalid format: {}", this)
             logger.warn("Text cannot be empty or blank.")
             return false
         }
 
-        val conflicted = listOf(
-            !command.isNullOrEmpty(),
-            !suggest.isNullOrEmpty(),
-            !url.isNullOrEmpty(),
-            !clipboard.isNullOrEmpty(),
+        val conflicted: Boolean = listOf(
+            !this.command.isNullOrEmpty(),
+            !this.suggest.isNullOrEmpty(),
+            !this.url.isNullOrEmpty(),
+            !this.clipboard.isNullOrEmpty(),
         ).count { it } > 1
         if (conflicted) {
             logger.warn("Invalid format: {}", this)

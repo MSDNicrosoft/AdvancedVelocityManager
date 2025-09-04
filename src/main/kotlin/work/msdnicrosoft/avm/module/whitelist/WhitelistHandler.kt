@@ -7,6 +7,7 @@ package work.msdnicrosoft.avm.module.whitelist
 
 import com.highcapable.kavaref.KavaRef.Companion.resolve
 import com.highcapable.kavaref.extension.classOf
+import com.highcapable.kavaref.resolver.FieldResolver
 import com.velocitypowered.api.event.PostOrder
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.LoginEvent
@@ -14,7 +15,9 @@ import com.velocitypowered.api.event.connection.PreLoginEvent
 import com.velocitypowered.api.event.player.ServerPreConnectEvent
 import com.velocitypowered.api.proxy.InboundConnection
 import com.velocitypowered.proxy.connection.client.InitialInboundConnection
+import io.netty.channel.Channel
 import io.netty.util.AttributeKey
+import net.kyori.adventure.text.Component
 import org.geysermc.floodgate.api.player.FloodgatePlayer
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
@@ -26,22 +29,20 @@ import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
  * to enforce whitelist restrictions.
  */
 object WhitelistHandler {
-    private inline val config
-        get() = ConfigManager.config.whitelist
+    private inline val config get() = ConfigManager.config.whitelist
 
-    private val delegateFieldResolver by lazy {
-        classOf<InboundConnection>().resolve()
-            .firstField { name = "delegate" }
+    private val delegateFieldResolver: FieldResolver<InboundConnection> by lazy {
+        classOf<InboundConnection>().resolve().firstField { name = "delegate" }
     }
 
-    private val hasFloodgate by lazy { plugin.server.pluginManager.getPlugin("floodgate").isPresent }
+    private val hasFloodgate: Boolean by lazy { plugin.server.pluginManager.getPlugin("floodgate").isPresent }
 
     @Subscribe(order = PostOrder.EARLY)
     fun onPreLogin(event: PreLoginEvent) {
         // Blocked by other plugins or whitelist is off
         if (!event.result.isAllowed || !WhitelistManager.enabled) return
 
-        val username = getUsername(event.username, event.connection)
+        val username: String = this.getUsername(event.username, event.connection)
         val player = WhitelistManager.getPlayer(username)
         if (player == null) {
             event.result = PreLoginEvent.PreLoginComponentResult.denied(MINI_MESSAGE.deserialize(config.message))
@@ -65,12 +66,12 @@ object WhitelistHandler {
         // Blocked by other plugins or whitelist is off
         if (event.result.server.isEmpty || !WhitelistManager.enabled) return
 
-        val serverName = event.originalServer.serverInfo.name
+        val serverName: String = event.originalServer.serverInfo.name
         val player = event.player
 
         if (!WhitelistManager.isInServerWhitelist(player.uniqueId, serverName)) {
             event.result = ServerPreConnectEvent.ServerResult.denied()
-            val message = MINI_MESSAGE.deserialize(config.message)
+            val message: Component = MINI_MESSAGE.deserialize(config.message)
             player.sendMessage(message)
             if (event.previousServer == null) {
                 player.disconnect(message)
@@ -89,8 +90,8 @@ object WhitelistHandler {
     @Suppress("UnsafeCallOnNullableType")
     private fun getUsername(username: String, connection: InboundConnection): String {
         // Compatible with Floodgate
-        if (hasFloodgate) {
-            val channel = delegateFieldResolver.copy()
+        if (this.hasFloodgate) {
+            val channel: Channel = this.delegateFieldResolver.copy()
                 .of(connection)
                 .get<InitialInboundConnection>()!!.connection.channel
             val player: FloodgatePlayer? = channel

@@ -1,7 +1,5 @@
 package work.msdnicrosoft.avm.command.whitelist
 
-import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
@@ -12,18 +10,19 @@ import work.msdnicrosoft.avm.util.command.builder.executes
 import work.msdnicrosoft.avm.util.command.builder.literalCommand
 import work.msdnicrosoft.avm.util.command.builder.requires
 import work.msdnicrosoft.avm.util.command.context.name
+import work.msdnicrosoft.avm.util.component.clickToRunCommand
+import work.msdnicrosoft.avm.util.component.hoverText
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.server.task
 
 object ClearCommand {
-    private inline val config
-        get() = ConfigManager.config.whitelist
+    private inline val config get() = ConfigManager.config.whitelist
 
     val command = literalCommand("clear") {
         requires { hasPermission("avm.command.whitelist.clear") }
         executes {
-            val sessionId = CommandSessionManager.generateSessionId(
+            val sessionId: String = CommandSessionManager.generateSessionId(
                 context.source.name,
                 System.currentTimeMillis(),
                 context.arguments.values.joinToString(" ")
@@ -44,9 +43,8 @@ object ClearCommand {
                 tr(
                     "avm.command.avmwl.clear.need.confirm.2.text",
                     Argument.string("command", "/avm confirm $sessionId")
-                )
-                    .clickEvent(ClickEvent.runCommand("/avm confirm $sessionId"))
-                    .hoverEvent(HoverEvent.showText(tr("avm.command.avmwl.clear.need.confirm.2.hover")))
+                ).clickToRunCommand("/avm confirm $sessionId")
+                    .hoverText(tr("avm.command.avmwl.clear.need.confirm.2.hover"))
             )
             Command.SINGLE_SUCCESS
         }

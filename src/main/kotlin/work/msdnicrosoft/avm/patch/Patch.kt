@@ -37,7 +37,7 @@ import java.lang.instrument.Instrumentation
 import java.lang.management.ManagementFactory
 
 object Patch {
-    private val transformers = setOf<ClassTransformer>(
+    private val transformers: Set<ClassTransformer> = setOf(
         KeyedChatHandlerTransformer,
     )
 
@@ -52,16 +52,16 @@ object Patch {
      */
     fun init() {
         try {
-            val needTransform = transformers.filter { it.shouldTransform() }
+            val toTransform: List<ClassTransformer> = this.transformers.filter { it.shouldTransform() }
 
-            if (needTransform.isEmpty()) return
+            if (toTransform.isEmpty()) return
 
-            instrumentation = ByteBuddyAgent.install()
-            warnIfDynamicAgentDisabled()
+            this.instrumentation = ByteBuddyAgent.install()
+            this.warnIfDynamicAgentDisabled()
 
-            needTransform.forEach { transformer ->
-                instrumentation.addTransformer(transformer, true)
-                instrumentation.retransformClasses(transformer.targetClass)
+            toTransform.forEach { transformer ->
+                this.instrumentation.addTransformer(transformer, true)
+                this.instrumentation.retransformClasses(transformer.targetClass)
             }
         } catch (e: Exception) {
             logger.error("Failed to initialize Patch", e)

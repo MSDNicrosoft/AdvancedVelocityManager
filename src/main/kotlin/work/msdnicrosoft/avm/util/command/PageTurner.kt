@@ -2,9 +2,9 @@ package work.msdnicrosoft.avm.util.command
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
-import net.kyori.adventure.text.event.ClickEvent
-import net.kyori.adventure.text.event.HoverEvent
 import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
+import work.msdnicrosoft.avm.util.component.clickToRunCommand
+import work.msdnicrosoft.avm.util.component.hoverText
 import work.msdnicrosoft.avm.util.component.tr
 import kotlin.math.ceil
 
@@ -29,16 +29,16 @@ class PageTurner(val command: String) {
                 navigationButton("<gray><-")
             } else {
                 navigationButton("<gold><-")
-                    .hoverEvent(HoverEvent.showText(tr("avm.general.page.previous")))
-                    .clickEvent(ClickEvent.runCommand("$command ${currentPage - 1}"))
+                    .hoverText(tr("avm.general.page.previous"))
+                    .clickToRunCommand("${this.command} ${currentPage - 1}")
             },
             MINI_MESSAGE.deserialize("<aqua>$currentPage/$maxPage"),
             if (currentPage == maxPage) {
                 navigationButton("<gray>->")
             } else {
                 navigationButton("<gold>->")
-                    .hoverEvent(HoverEvent.showText(tr("avm.general.page.next")))
-                    .clickEvent(ClickEvent.runCommand("$command ${currentPage + 1}"))
+                    .hoverText(tr("avm.general.page.next"))
+                    .clickToRunCommand("${this.command} ${currentPage + 1}")
             }
         )
 
@@ -54,8 +54,9 @@ class PageTurner(val command: String) {
          * @param page The number of items.
          * @return The maximum number of pages.
          */
-        fun getMaxPage(page: Int): Int = ceil(page.toFloat() / ITEMS_PER_PAGE.toFloat()).toInt()
+        fun getMaxPage(page: Int): Int = ceil(page.toFloat() / this.ITEMS_PER_PAGE.toFloat()).toInt()
 
-        private fun navigationButton(arrow: String) = MINI_MESSAGE.deserialize("<dark_gray>[$arrow<dark_gray>]")
+        private fun navigationButton(arrow: String): Component =
+            MINI_MESSAGE.deserialize("<dark_gray>[$arrow<dark_gray>]")
     }
 }

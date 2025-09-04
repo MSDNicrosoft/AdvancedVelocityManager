@@ -14,13 +14,16 @@ import work.msdnicrosoft.avm.util.packet.MinecraftVersion
 import work.msdnicrosoft.avm.util.packet.Packet
 
 object XaeroMapHandler {
-    val XAERO_MINI_MAP_CHANNEL: MinecraftChannelIdentifier = MinecraftChannelIdentifier.create("xaerominimap", "main")
-    val XAERO_WORLD_MAP_CHANNEL: MinecraftChannelIdentifier = MinecraftChannelIdentifier.create("xaeroworldmap", "main")
+    val XAERO_MINI_MAP_CHANNEL: MinecraftChannelIdentifier =
+        MinecraftChannelIdentifier.create("xaerominimap", "main")
+
+    val XAERO_WORLD_MAP_CHANNEL: MinecraftChannelIdentifier =
+        MinecraftChannelIdentifier.create("xaeroworldmap", "main")
 
     // https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Protocol_version_numbers
     // https://minecraft.wiki/w/Java_Edition_protocol/Packets#Set_Default_Spawn_Position
     @Suppress("MagicNumber")
-    private val packet = Packet.of(SetDefaultSpawnPositionPacket::class)
+    private val PACKET: Packet<SetDefaultSpawnPositionPacket> = Packet.of(SetDefaultSpawnPositionPacket::class)
         .direction(Direction.CLIENTBOUND)
         .stateRegistry(StateRegistry.PLAY)
         .packetSupplier(::SetDefaultSpawnPositionPacket)
@@ -44,12 +47,12 @@ object XaeroMapHandler {
         .mapping(0x5A, MinecraftVersion.MINECRAFT_1_21_5, false)
 
     fun init() {
-        packet.register()
-        channelRegistrar.register(XAERO_WORLD_MAP_CHANNEL, XAERO_MINI_MAP_CHANNEL)
+        this.PACKET.register()
+        channelRegistrar.register(this.XAERO_WORLD_MAP_CHANNEL, this.XAERO_MINI_MAP_CHANNEL)
     }
 
     fun disable() {
-        packet.unregister()
-        channelRegistrar.unregister(XAERO_WORLD_MAP_CHANNEL, XAERO_MINI_MAP_CHANNEL)
+        this.PACKET.unregister()
+        channelRegistrar.unregister(this.XAERO_WORLD_MAP_CHANNEL, this.XAERO_MINI_MAP_CHANNEL)
     }
 }

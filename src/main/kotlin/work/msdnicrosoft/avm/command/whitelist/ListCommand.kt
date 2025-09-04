@@ -16,7 +16,7 @@ object ListCommand {
         }
         intArgument("page", min = 1) {
             suggests { builder ->
-                for (page in 1..WhitelistManager.maxPage) builder.suggest(page)
+                for (page: Int in 1..WhitelistManager.maxPage) builder.suggest(page)
                 builder.buildFuture()
             }
             executes {
@@ -29,23 +29,23 @@ object ListCommand {
 
     private fun CommandContext.listWhitelist(page: Int) {
         if (WhitelistManager.isEmpty) {
-            this.sendTranslatable("avm.command.avmwl.list.empty")
+            sendTranslatable("avm.command.avmwl.list.empty")
             return
         }
-        val maxPage = WhitelistManager.maxPage
+        val maxPage: Int = WhitelistManager.maxPage
         if (page > maxPage) {
-            this.sendTranslatable("avm.general.not.found.page")
+            sendTranslatable("avm.general.not.found.page")
             return
         }
         if (page == 1) {
-            this.sendTranslatable(
+            sendTranslatable(
                 "avm.command.avmwl.list.header",
                 Argument.numeric("player", WhitelistManager.size)
             )
         }
 
-        this.context.source.sendWhitelistPlayers(WhitelistManager.pageOf(page))
+        context.source.sendWhitelistPlayers(WhitelistManager.pageOf(page))
 
-        this.sendMessage(PageTurner("/avmwl list").build(page, maxPage))
+        sendMessage(PageTurner("/avmwl list").build(page, maxPage))
     }
 }

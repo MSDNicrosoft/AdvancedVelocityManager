@@ -14,9 +14,10 @@ import java.util.concurrent.ConcurrentHashMap
  * This class provides functionality to add, execute, and remove command sessions.
  */
 object CommandSessionManager {
-    private val sha256 = MessageDigest.getInstance("SHA-256")
-    private val base32 = BaseEncoding.base32().omitPadding()
-    private val sessions = ConcurrentHashMap<String, Action>()
+    private val SHA256: MessageDigest = MessageDigest.getInstance("SHA-256")
+    private val BASE32: BaseEncoding = BaseEncoding.base32().omitPadding()
+
+    private val sessions: ConcurrentHashMap<String, Action<*>> = ConcurrentHashMap()
 
     /**
      * The task responsible for removing expired command sessions.
@@ -29,8 +30,8 @@ object CommandSessionManager {
      * This function starts a task that removes expired command sessions every 20 minutes.
      */
     fun init() {
-        removalTask = task(repeatInMillis = 20 * 60 * 1000L) {
-            sessions.entries.removeIf { it.value.isExpired() }
+        this.removalTask = task(repeatInMillis = 20 * 60 * 1000L) {
+            this.sessions.entries.removeIf { it.value.isExpired() }
         }
     }
 
@@ -40,14 +41,14 @@ object CommandSessionManager {
      * This function cancels the removal task.
      */
     fun disable() {
-        removalTask.cancel()
+        this.removalTask.cancel()
     }
 
     fun reload() {
         logger.info("Reloading command sessions...")
-        disable()
-        sessions.clear()
-        init()
+        this.disable()
+        this.sessions.clear()
+        this.init()
     }
 
     /**
@@ -56,7 +57,7 @@ object CommandSessionManager {
      * @param sessionId The ID of the command session.
      * @param block The block of code to be executed.
      */
-    fun add(sessionId: String, block: () -> Any?) {
+    fun <T> add(sessionId: String, block: () -> T) {
         sessions[sessionId] = Action(block = block, expirationTime = System.currentTimeMillis() + 60_000L)
     }
 
@@ -90,7 +91,7 @@ object CommandSessionManager {
      * @return The generated session ID.
      */
     fun generateSessionId(name: String, time: Long, command: String): String {
-        val digest = sha256.digest("$name$time$command".toByteArray())
-        return base32.encode(digest)
+        val digest: ByteArray = SHA256.digest("$name$time$command".toByteArray())
+        return BASE32.encode(digest)
     }
 }

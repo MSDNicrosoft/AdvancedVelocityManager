@@ -11,12 +11,13 @@ object ComponentUtil {
      *
      * @return A ClickEvent representing the action to be performed when clicked, or null if the format is invalid.
      */
-    fun createClickEvent(format: Format, replace: String.() -> String): ClickEvent? = when {
-        !format.validate() -> null
-        !format.command.isNullOrEmpty() -> ClickEvent.runCommand(format.command.replace())
-        !format.suggest.isNullOrEmpty() -> ClickEvent.suggestCommand(format.suggest.replace())
-        !format.url.isNullOrEmpty() -> ClickEvent.openUrl(format.url.replace())
-        !format.clipboard.isNullOrEmpty() -> ClickEvent.copyToClipboard(format.clipboard.replace())
-        else -> null
-    }
+    fun createClickEvent(format: Format, replace: String.() -> String): ClickEvent? =
+        when {
+            !format.validate() -> null
+            !format.command.isNullOrEmpty() -> ClickEvent.runCommand(format.command.replace())
+            !format.suggest.isNullOrEmpty() -> ClickEvent.suggestCommand(format.suggest.replace())
+            !format.url.isNullOrEmpty() -> ClickEvent.openUrl(format.url.replace())
+            !format.clipboard.isNullOrEmpty() -> ClickEvent.copyToClipboard(format.clipboard.replace())
+            else -> null
+        }
 }

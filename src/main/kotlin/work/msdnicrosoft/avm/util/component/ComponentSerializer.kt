@@ -17,28 +17,28 @@ enum class ComponentSerializer {
         override val serializer: JSONComponentSerializer by lazy { JSONComponentSerializer.json() }
 
         // language=json
-        override val examples = setOf("""{"color":"red","text":"Hello World!"}""")
+        override val examples: Collection<String> = setOf("""{"color":"red","text": "Hello World!"}""")
     },
     GSON {
         override val serializer: GsonComponentSerializer by lazy { GsonComponentSerializer.gson() }
 
         // language=json
-        override val examples = setOf("""{"color":"red","text":"Hello World!"}""")
+        override val examples: Collection<String> = setOf("""{"color":"red","text": "Hello World!"}""")
     },
     LEGACY_SECTION {
         override val serializer: LegacyComponentSerializer by lazy { LegacyComponentSerializer.legacySection() }
-        override val examples = setOf("§aHello World!")
+        override val examples: Collection<String> = setOf("§aHello World!")
     },
     LEGACY_AMPERSAND {
         override val serializer: LegacyComponentSerializer by lazy { LegacyComponentSerializer.legacyAmpersand() }
-        override val examples = setOf("&aHello World!")
+        override val examples: Collection<String> = setOf("&aHello World!")
     },
     MINI_MESSAGE {
         override val serializer: MiniMessage by lazy { MiniMessage.miniMessage() }
-        override val examples = setOf("<red>Hello World!")
+        override val examples: Collection<String> = setOf("<red>Hello World!")
 
         override fun deserialize(text: String, vararg tagResolver: TagResolver): Component =
-            serializer.deserialize(text, *tagResolver)
+            this.serializer.deserialize(text, *tagResolver)
     },
     STYLE_ONLY_MINI_MESSAGE {
         override val serializer: MiniMessage by lazy {
@@ -56,10 +56,10 @@ enum class ComponentSerializer {
                 ).build()
         }
 
-        override val examples = setOf("<red>Hello World!")
+        override val examples: Collection<String> = setOf("<red>Hello World!")
 
         override fun deserialize(text: String, vararg tagResolver: TagResolver): Component =
-            serializer.deserialize(text, *tagResolver)
+            this.serializer.deserialize(text, *tagResolver)
     },
     PLAIN_TEXT {
         override val serializer: PlainTextComponentSerializer by lazy { PlainTextComponentSerializer.plainText() }
@@ -78,12 +78,12 @@ enum class ComponentSerializer {
 
     open fun deserialize(text: String, vararg tagResolver: TagResolver): Component {
         logger.warn("The MiniMessage tag resolver is not supported in this serialization type.")
-        return serializer.deserialize(text)
+        return this.serializer.deserialize(text)
     }
 
-    open fun deserialize(text: String): Component = serializer.deserialize(text)
-    open fun deserializeOrNull(text: String?): Component? = serializer.deserializeOrNull(text)
+    open fun deserialize(text: String): Component = this.serializer.deserialize(text)
+    open fun deserializeOrNull(text: String?): Component? = this.serializer.deserializeOrNull(text)
 
-    open fun serialize(component: Component): String = serializer.serialize(component)
-    open fun serializeOrNull(component: Component?): String? = serializer.serializeOrNull(component)
+    open fun serialize(component: Component): String = this.serializer.serialize(component)
+    open fun serializeOrNull(component: Component?): String? = this.serializer.serializeOrNull(component)
 }

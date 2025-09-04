@@ -69,4 +69,19 @@ data class Whitelist(
         @SerialName("max-size")
         var maxSize: Int = 20
     )
+
+    /**
+     * Checks if a server with the given name belongs to a server group.
+     *
+     * @param name The name of the server to check.
+     * @return True if the server belongs to a server group, false otherwise.
+     */
+    fun isServerGroup(name: String): Boolean = name in this.serverGroups.keys
+
+    /**
+     * Retrieves a list of servers that belong to the specified group.
+     *
+     * @param groupName The name of the server group to retrieve servers for.
+     */
+    fun getServersInGroup(groupName: String): List<String> = this.serverGroups[groupName].orEmpty()
 }

@@ -1,5 +1,6 @@
 package work.msdnicrosoft.avm.command.whitelist
 
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
@@ -15,8 +16,7 @@ import work.msdnicrosoft.avm.util.string.isUuid
 import work.msdnicrosoft.avm.util.string.toUuid
 
 object AddCommand {
-    private inline val config
-        get() = ConfigManager.config.whitelist
+    private inline val config get() = ConfigManager.config.whitelist
 
     val command = literalCommand("add") {
         requires { hasPermission("avm.command.whitelist.add") }
@@ -65,19 +65,19 @@ object AddCommand {
     }
 
     private fun CommandContext.addPlayer(player: String, serverName: String, onlineMode: Boolean? = null) {
-        val isUuid = player.isUuid()
+        val isUuid: Boolean = player.isUuid()
         if (isUuid && !WhitelistManager.serverIsOnlineMode) {
-            this.sendTranslatable("avm.command.avmwl.add.uuid.unsupported")
+            sendTranslatable("avm.command.avmwl.add.uuid.unsupported")
             return
         }
 
-        val result = if (isUuid) {
+        val result: AddResult = if (isUuid) {
             WhitelistManager.add(player.toUuid(), serverName, onlineMode)
         } else {
             WhitelistManager.add(player, serverName, onlineMode)
         }
 
-        val message = when (result) {
+        val message: Component = when (result) {
             AddResult.SUCCESS -> tr(
                 "avm.command.avmwl.add.success",
                 Argument.string("player", player),
@@ -89,6 +89,6 @@ object AddCommand {
             AddResult.ALREADY_EXISTS -> tr("avm.command.avmwl.add.already.exists")
             AddResult.SAVE_FILE_FAILED -> tr("avm.whitelist.save.failed")
         }
-        this.sendMessage(message)
+        sendMessage(message)
     }
 }

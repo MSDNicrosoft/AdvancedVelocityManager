@@ -10,9 +10,10 @@ import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
+import java.nio.file.Path
 import kotlin.io.path.*
 
-object LlsManagerImporter : Importer("lls-manager") {
+object LlsManagerImporter : Importer(pluginName = "lls-manager") {
     @Serializable
     private data class Config(
         val showAllPlayerInTabList: Boolean,
@@ -33,27 +34,27 @@ object LlsManagerImporter : Importer("lls-manager") {
         val onlineMode: Boolean
     )
 
-    private val PATH = dataDirectory.parent / "lls-manager"
-    private val CONFIG_PATH = PATH / "config.json"
-    private val PLAYER_DATA_PATH = PATH / "player"
+    private val PATH: Path = dataDirectory.parent / "lls-manager"
+    private val CONFIG_PATH: Path = PATH / "config.json"
+    private val PLAYER_DATA_PATH: Path = PATH / "player"
 
     override fun import(source: CommandSource, defaultServer: String): Boolean {
-        val configSuccess = if (CONFIG_PATH.exists()) {
-            source.importConfig()
+        val configSuccess: Boolean = if (this.CONFIG_PATH.exists()) {
+            this.importConfig(source)
         } else {
             source.sendTranslatable(
                 "avm.command.avm.import.config.not.exist",
-                Argument.string("plugin_name", pluginName)
+                Argument.string("plugin_name", this.pluginName)
             )
             true
         }
 
-        val playerDataSuccess = if (PLAYER_DATA_PATH.exists()) {
-            source.importPlayerData(defaultServer)
+        val playerDataSuccess: Boolean = if (this.PLAYER_DATA_PATH.exists()) {
+            this.importPlayerData(defaultServer, source)
         } else {
             source.sendTranslatable(
                 "avm.command.avm.import.player.not.exist",
-                Argument.string("plugin_name", pluginName)
+                Argument.string("plugin_name", this.pluginName)
             )
             true
         }
@@ -61,9 +62,9 @@ object LlsManagerImporter : Importer("lls-manager") {
         return configSuccess && playerDataSuccess
     }
 
-    private fun CommandSource.importConfig(): Boolean =
+    private fun importConfig(source: CommandSource): Boolean =
         try {
-            val config = JSON.decodeFromString<Config>(CONFIG_PATH.readTextWithBuffer())
+            val config = JSON.decodeFromString<Config>(this.CONFIG_PATH.readTextWithBuffer())
 
             ConfigManager.config.apply {
                 tabSync.enabled = config.showAllPlayerInTabList
@@ -75,38 +76,37 @@ object LlsManagerImporter : Importer("lls-manager") {
             }
             ConfigManager.save()
         } catch (e: Exception) {
-            sendTranslatable(
+            source.sendTranslatable(
                 "avm.command.avm.import.config.failed",
-                Argument.string("plugin_name", QuAnVelocityWhitelistImporter.pluginName),
+                Argument.string("plugin_name", this.pluginName),
                 Argument.string("reason", e.message.orEmpty())
             )
             false
         }
 
-    private fun CommandSource.importPlayerData(defaultServer: String): Boolean {
+    private fun importPlayerData(defaultServer: String, source: CommandSource): Boolean {
         var success = true
 
-        PLAYER_DATA_PATH.listDirectoryEntries()
-            .asSequence()
-            .filter { it.extension.equals("json", ignoreCase = true) && it.isRegularFile() }
-            .forEach { file ->
-                val username = file.nameWithoutExtension
-                try {
-                    val llsPlayer = JSON.decodeFromString<PlayerData>(file.readTextWithBuffer())
-                    val servers = llsPlayer.serverList.ifEmpty { listOf(defaultServer) }
-                    servers.forEach { server ->
-                        WhitelistManager.add(username, server, llsPlayer.onlineMode)
-                    }
-                } catch (e: Exception) {
-                    sendTranslatable(
-                        "avm.command.avm.import.player.failed",
-                        Argument.string("player", username),
-                        Argument.string("plugin_name", QuAnVelocityWhitelistImporter.pluginName),
-                        Argument.string("reason", e.message.orEmpty())
-                    )
-                    success = false
+        this.PLAYER_DATA_PATH.listDirectoryEntries().asSequence().filter { file ->
+            file.extension.equals("json", ignoreCase = true) && file.isRegularFile()
+        }.forEach { file ->
+            val username: String = file.nameWithoutExtension
+            try {
+                val llsPlayer = JSON.decodeFromString<PlayerData>(file.readTextWithBuffer())
+                val servers: List<String> = llsPlayer.serverList.ifEmpty { listOf(defaultServer) }
+                servers.forEach { server ->
+                    WhitelistManager.add(username, server, llsPlayer.onlineMode)
                 }
+            } catch (e: Exception) {
+                source.sendTranslatable(
+                    "avm.command.avm.import.player.failed",
+                    Argument.string("player", username),
+                    Argument.string("plugin_name", this.pluginName),
+                    Argument.string("reason", e.message.orEmpty())
+                )
+                success = false
             }
+        }
         return success
     }
 }

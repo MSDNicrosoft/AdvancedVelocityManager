@@ -6,23 +6,25 @@ import com.velocitypowered.api.proxy.server.PingOptions
 import com.velocitypowered.proxy.connection.client.ClientPlaySessionHandler
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer
 import com.velocitypowered.proxy.protocol.packet.BossBarPacket
+import io.netty.channel.EventLoop
 import net.kyori.adventure.title.Title
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.packet.s2c.PlayerAbilitiesPacket
 import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
 import java.time.Duration
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @Suppress("MagicNumber")
 class Reconnection(private val event: KickedFromServerEvent, private val continuation: Continuation) {
     private val player = event.player as ConnectedPlayer
-    private val scheduledExecutor = player.connection.eventLoop()
+    private val scheduledExecutor: EventLoop = player.connection.eventLoop()
 
-    private val pingOptions = PingOptions.builder()
+    private val pingOptions: PingOptions = PingOptions.builder()
         .timeout(Duration.ofMillis(config.pingTimeout))
         .build()
 
-    private val connectingTitle = Title.title(
+    private val connectingTitle: Title = Title.title(
         MINI_MESSAGE.deserialize(config.message.connecting.title),
         MINI_MESSAGE.deserialize(config.message.connecting.subtitle),
         Title.Times.times(
@@ -32,7 +34,7 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
         )
     )
 
-    private val waitingTitle = Title.title(
+    private val waitingTitle: Title = Title.title(
         MINI_MESSAGE.deserialize(config.message.waiting.title),
         MINI_MESSAGE.deserialize(config.message.waiting.subtitle),
         Title.Times.times(
@@ -42,13 +44,13 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
         )
     )
 
-    private var state = State.WAITING
+    private var state: State = State.WAITING
 
     init {
-        // Prevent player to be kicked by no-falling
-        player.connection.write(PlayerAbilitiesPacket(PlayerAbilitiesPacket.NO_FALLING))
+        // Prevent player to be kicked by no-flight
+        this.player.connection.write(PlayerAbilitiesPacket(PlayerAbilitiesPacket.NO_FALLING))
 
-        player.tabList.clearAll()
+        this.player.tabList.clearAll()
         clearBossBars()
     }
 
@@ -58,26 +60,26 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
     }
 
     private fun scheduleConnect() {
-        scheduledExecutor.schedule(this::connect, config.pingInterval, TimeUnit.MILLISECONDS)
+        this.scheduledExecutor.schedule(this::connect, config.pingInterval, TimeUnit.MILLISECONDS)
     }
 
     private fun scheduleSendMessage() {
-        scheduledExecutor.schedule(this::sendMessage, config.messageInterval, TimeUnit.MILLISECONDS)
+        this.scheduledExecutor.schedule(this::sendMessage, config.messageInterval, TimeUnit.MILLISECONDS)
     }
 
     private fun connect() {
-        if (state == State.CONNECTED) return
-        event.server.ping(pingOptions).whenComplete { _, throwable ->
+        if (this.state == State.CONNECTED) return
+        this.event.server.ping(this.pingOptions).whenComplete { _, throwable ->
             if (throwable != null) {
-                scheduleConnect()
+                this.scheduleConnect()
             } else {
-                scheduledExecutor.execute {
-                    state = State.CONNECTING
-                    scheduledExecutor.schedule({
-                        player.clearTitle()
-                        event.result = KickedFromServerEvent.RedirectPlayer.create(event.server)
-                        state = State.CONNECTED
-                        continuation.resume()
+                this.scheduledExecutor.execute {
+                    this.state = State.CONNECTING
+                    this.scheduledExecutor.schedule({
+                        this.player.clearTitle()
+                        this.event.result = KickedFromServerEvent.RedirectPlayer.create(this.event.server)
+                        this.state = State.CONNECTED
+                        this.continuation.resume()
                     }, config.reconnectDelay, TimeUnit.MILLISECONDS)
                 }
             }
@@ -85,29 +87,29 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
     }
 
     private fun sendMessage() {
-        if (state == State.CONNECTED) return
+        if (this.state == State.CONNECTED) return
 
-        player.showTitle(if (state == State.CONNECTING) connectingTitle else waitingTitle)
+        this.player.showTitle(if (this.state == State.CONNECTING) this.connectingTitle else this.waitingTitle)
         scheduleSendMessage()
     }
 
     private fun clearBossBars() {
-        val sessionHandler = player.connection.activeSessionHandler as? ClientPlaySessionHandler
-        sessionHandler?.serverBossBars?.forEach { bossBar ->
-            player.connection.delayedWrite(
+        val sessionHandler = this.player.connection.activeSessionHandler as? ClientPlaySessionHandler ?: return
+
+        sessionHandler.serverBossBars.forEach { bossBar: UUID ->
+            this.player.connection.delayedWrite(
                 BossBarPacket().apply {
                     uuid = bossBar
                     action = BossBarPacket.REMOVE
                 }
             )
         }
-        sessionHandler?.serverBossBars?.clear()
+        sessionHandler.serverBossBars.clear()
     }
 
     companion object {
         private enum class State { WAITING, CONNECTING, CONNECTED }
 
-        private inline val config
-            get() = ConfigManager.config.reconnect
+        private inline val config get() = ConfigManager.config.reconnect
     }
 }

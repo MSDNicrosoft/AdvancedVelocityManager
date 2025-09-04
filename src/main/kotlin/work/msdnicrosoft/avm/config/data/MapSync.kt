@@ -6,9 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MapSync(
-    @YamlComment(
-        "Xaero's Minimap and World Map sync settings.",
-    )
+    @YamlComment("Xaero's Minimap and World Map sync settings.",)
     val xaero: Xaero = Xaero(),
 
     @YamlComment(

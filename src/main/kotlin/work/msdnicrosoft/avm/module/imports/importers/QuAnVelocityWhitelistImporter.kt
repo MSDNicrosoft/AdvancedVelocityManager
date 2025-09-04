@@ -10,12 +10,14 @@ import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.util.component.sendTranslatable
 import work.msdnicrosoft.avm.util.data.UUIDSerializer
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
+import work.msdnicrosoft.avm.util.file.FileUtil.TOML
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
+import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.div
 import kotlin.io.path.exists
 
-object QuAnVelocityWhitelistImporter : Importer("(qu-an) VelocityWhitelist") {
+object QuAnVelocityWhitelistImporter : Importer(pluginName = "(qu-an) VelocityWhitelist") {
     @Serializable
     private data class Player(
         @Serializable(with = UUIDSerializer::class)
@@ -23,32 +25,32 @@ object QuAnVelocityWhitelistImporter : Importer("(qu-an) VelocityWhitelist") {
         val name: String
     )
 
-    private val PATH = dataDirectory.parent / "VelocityWhitelist"
-    private val CONFIG_PATH = PATH / "config.toml"
-    private val WHITELIST_PATH =
+    private val PATH: Path = dataDirectory.parent / "VelocityWhitelist"
+    private val CONFIG_PATH: Path = this.PATH / "config.toml"
+    private val WHITELIST_PATH: Path =
         if (WhitelistManager.serverIsOnlineMode) {
-            PATH / "whitelist.json"
+            this.PATH / "whitelist.json"
         } else {
-            PATH / "whitelist_offline.json"
+            this.PATH / "whitelist_offline.json"
         }
 
     override fun import(source: CommandSource, defaultServer: String): Boolean {
-        val configSuccess = if (CONFIG_PATH.exists()) {
-            source.importConfig()
+        val configSuccess: Boolean = if (this.CONFIG_PATH.exists()) {
+            importConfig(source)
         } else {
             source.sendTranslatable(
                 "avm.command.avm.import.config.not.exist",
-                Argument.string("plugin_name", pluginName)
+                Argument.string("plugin_name", this.pluginName)
             )
             true
         }
 
-        val whitelistSuccess = if (WHITELIST_PATH.exists()) {
-            source.importWhitelist(defaultServer)
+        val whitelistSuccess: Boolean = if (this.WHITELIST_PATH.exists()) {
+            importWhitelist(defaultServer, source)
         } else {
             source.sendTranslatable(
                 "avm.command.avm.import.whitelist.not.exist",
-                Argument.string("plugin_name", pluginName)
+                Argument.string("plugin_name", this.pluginName)
             )
             true
         }
@@ -56,9 +58,9 @@ object QuAnVelocityWhitelistImporter : Importer("(qu-an) VelocityWhitelist") {
         return configSuccess && whitelistSuccess
     }
 
-    private fun CommandSource.importConfig(): Boolean =
+    private fun importConfig(source: CommandSource): Boolean =
         try {
-            val config = Toml().read(CONFIG_PATH.readTextWithBuffer())
+            val config: Toml = TOML.read(this.CONFIG_PATH.readTextWithBuffer())
             ConfigManager.config.run {
                 whitelist.enabled = config.getBoolean("enable_whitelist")
                 whitelist.queryApi.uuid = config.getString("uuid_api")
@@ -66,28 +68,27 @@ object QuAnVelocityWhitelistImporter : Importer("(qu-an) VelocityWhitelist") {
             }
             ConfigManager.save()
         } catch (e: Exception) {
-            sendTranslatable(
+            source.sendTranslatable(
                 "avm.command.avm.import.config.failed",
-                Argument.string("plugin_name", pluginName),
+                Argument.string("plugin_name", this.pluginName),
                 Argument.string("reason", e.message.orEmpty())
             )
             false
         }
 
-    private fun CommandSource.importWhitelist(defaultServer: String): Boolean =
+    private fun importWhitelist(defaultServer: String, source: CommandSource): Boolean =
         try {
-            val whitelist = JSON.decodeFromString<List<Player>>(WHITELIST_PATH.readTextWithBuffer())
-
-            val onlineMode = WhitelistManager.serverIsOnlineMode
+            val whitelist: List<Player> = JSON.decodeFromString<List<Player>>(this.WHITELIST_PATH.readTextWithBuffer())
+            val onlineMode: Boolean = WhitelistManager.serverIsOnlineMode
 
             whitelist.forEach { player ->
                 WhitelistManager.add(player.name, player.uuid, defaultServer, onlineMode)
             }
             true
         } catch (e: Exception) {
-            sendTranslatable(
+            source.sendTranslatable(
                 "avm.command.avm.import.whitelist.failed",
-                Argument.string("plugin_name", pluginName),
+                Argument.string("plugin_name", this.pluginName),
                 Argument.string("reason", e.message.orEmpty())
             )
             false

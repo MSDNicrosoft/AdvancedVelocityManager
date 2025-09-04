@@ -13,15 +13,15 @@ import work.msdnicrosoft.avm.util.file.FileUtil.YAML
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import work.msdnicrosoft.avm.util.file.writeTextWithBuffer
 import work.msdnicrosoft.avm.util.string.isValidUrl
+import java.io.File
 import java.io.IOException
 import kotlin.io.path.div
 
 object ConfigManager {
     lateinit var config: AVMConfig
 
-    private val file = (dataDirectory / "config.yml").toFile()
-
-    private val DEFAULT_CONFIG by lazy { AVMConfig() }
+    private val FILE: File = (dataDirectory / "config.yml").toFile()
+    private val DEFAULT_CONFIG: AVMConfig by lazy { AVMConfig() }
 
     /**
      * Loads the configuration from the file.
@@ -30,14 +30,14 @@ object ConfigManager {
      * @return True if the configuration is loaded successfully, false otherwise.
      */
     fun load(reload: Boolean = false): Boolean {
-        if (!file.exists() && !save(initialize = true)) return false
+        if (!this.FILE.exists() && !this.save(initialize = true)) return false
 
         logger.info("{} configuration...", if (reload) "Reloading" else "Loading")
 
         return try {
-            migrate()
-            config = YAML.decodeFromString<AVMConfig>(file.readTextWithBuffer())
-            validate()
+            this.migrate()
+            this.config = YAML.decodeFromString<AVMConfig>(this.FILE.readTextWithBuffer())
+            this.validate()
             true
         } catch (e: IOException) {
             logger.error("Failed to read configuration file", e)
@@ -61,7 +61,7 @@ object ConfigManager {
      * @return True if the configuration is saved successfully, false otherwise.
      */
     fun save(initialize: Boolean = false): Boolean {
-        if (!file.exists()) {
+        if (!this.FILE.exists()) {
             logger.info(
                 "Configuration file does not exist{}",
                 if (initialize) ", generating default configuration..." else ""
@@ -69,8 +69,8 @@ object ConfigManager {
         }
 
         return try {
-            file.parentFile.mkdirs()
-            file.writeTextWithBuffer(YAML.encodeToString(if (!initialize) config else DEFAULT_CONFIG))
+            this.FILE.parentFile.mkdirs()
+            this.FILE.writeTextWithBuffer(YAML.encodeToString(if (!initialize) this.config else this.DEFAULT_CONFIG))
             true
         } catch (e: IOException) {
             logger.error("Failed to save configuration to file", e)
@@ -116,10 +116,10 @@ object ConfigManager {
     }
 
     private fun migrate() {
-        val currentVersion = YAML.decodeFromString<Version>(file.readTextWithBuffer()).version
-        if (currentVersion == DEFAULT_CONFIG.version) return
+        val currentVersion = YAML.decodeFromString<Version>(this.FILE.readTextWithBuffer()).version
+        if (currentVersion == this.DEFAULT_CONFIG.version) return
         when (currentVersion) {
-            1 if DEFAULT_CONFIG.version == 2 -> {
+            1 if this.DEFAULT_CONFIG.version == 2 -> {
                 logger.warn("Detected old config version, please migrate config:")
                 logger.warn("1. Move your config file to another place and execute `/avm reload` to regenerate config")
                 logger.warn("2. Manually compare and migrate configurations")

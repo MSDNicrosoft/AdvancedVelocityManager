@@ -4,7 +4,6 @@ import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
-import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
@@ -19,23 +18,19 @@ import work.msdnicrosoft.avm.util.command.unregister
 import work.msdnicrosoft.avm.util.component.ComponentSerializer.STYLE_ONLY_MINI_MESSAGE
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.Format
+import work.msdnicrosoft.avm.util.component.hoverText
 
 object MsgCommand {
-    private inline val chatFormat
-        get() = ConfigManager.config.chatBridge.privateChatFormat
+    private inline val chatFormat get() = ConfigManager.config.chatBridge.privateChatFormat
+    private inline val shouldTakeOverPrivateChat: Boolean get() = ConfigManager.config.chatBridge.takeOverPrivateChat
+    private inline val allowFormatCode: Boolean get() = ConfigManager.config.chatBridge.allowFormatCode
 
-    private inline val takeOverPrivateChat: Boolean
-        get() = ConfigManager.config.chatBridge.takeOverPrivateChat
-
-    private inline val allowFormatCode: Boolean
-        get() = ConfigManager.config.chatBridge.allowFormatCode
-
-    val aliases = listOf("msg", "tell", "w")
+    val aliases: List<String> = listOf("msg", "tell", "w")
 
     val command = literalCommand("msg") {
         argument("targets", PlayerArgumentType.name()) {
             suggests { builder ->
-                if (takeOverPrivateChat || context.source.isConsole) {
+                if (shouldTakeOverPrivateChat || context.source.isConsole) {
                     server.allPlayers.map { it.username }
                 } else {
                     context.source.toPlayer().currentServer.get().server.playersConnected.map { it.username }
@@ -58,25 +53,23 @@ object MsgCommand {
     }.build()
 
     fun init() {
-        command.register("tell", "w")
+        this.command.register("tell", "w")
     }
 
     fun disable() {
-        command.unregister()
+        this.command.unregister()
     }
 
     private fun List<Format>.buildMessage(source: CommandSource, player: Player, message: String): Component {
-        val time = getDateTime()
+        val time: String = getDateTime()
         return Component.join(
             JoinConfiguration.noSeparators(),
-            map { format ->
+            this.map { format ->
                 format.text.deserialize(source.name, player.username, message, time)
-                    .hoverEvent(
+                    .hoverText(
                         format.hover?.joinToString("\n")
                             ?.deserialize(source.name, player.username, message, time)
-                            ?.let { HoverEvent.showText(it) }
-                    )
-                    .clickEvent(createClickEvent(format) { replacePlaceHolders(source.name, player.username, time) })
+                    ).clickEvent(createClickEvent(format) { replacePlaceHolders(source.name, player.username, time) })
             }
         )
     }

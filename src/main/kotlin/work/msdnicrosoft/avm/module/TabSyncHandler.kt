@@ -11,13 +11,11 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManage
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.ConfigUtil
 import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
 import work.msdnicrosoft.avm.util.server.task
 
 object TabSyncHandler {
-    private inline val config
-        get() = ConfigManager.config.tabSync
+    private inline val config get() = ConfigManager.config.tabSync
 
     fun init() {
         eventManager.register(plugin, this)
@@ -60,7 +58,7 @@ object TabSyncHandler {
      * @param entry The player whose display name is being used for the update.
      */
     private fun update(target: Player, entry: Player) {
-        val displayName = entry.displayName
+        val displayName: Component = entry.displayName
         target.tabList.getEntry(entry.uniqueId).ifPresentOrElse(
             { it.setDisplayName(displayName) },
             {
@@ -80,7 +78,10 @@ object TabSyncHandler {
         get() = MINI_MESSAGE.deserialize(
             config.format,
             Placeholder.unparsed("server_name", currentServer.get().serverInfo.name),
-            Placeholder.parsed("server_nickname", ConfigUtil.getServerNickname(currentServer.get().serverInfo.name)),
+            Placeholder.parsed(
+                "server_nickname",
+                ConfigManager.config.getServerNickName(currentServer.get().serverInfo.name)
+            ),
             Placeholder.unparsed("player_name", username)
         )
 }

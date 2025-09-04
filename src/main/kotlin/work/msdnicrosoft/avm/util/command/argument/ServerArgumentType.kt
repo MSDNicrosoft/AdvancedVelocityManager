@@ -9,22 +9,47 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.velocitypowered.api.command.VelocityBrigadierMessage
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroup
 import work.msdnicrosoft.avm.util.component.tr
 import java.util.concurrent.CompletableFuture
 
 class ServerArgumentType private constructor(private val serverType: ServerType) : ArgumentType<String> {
 
+    override fun parse(reader: StringReader): String =
+        when (this.serverType) {
+            ServerType.REGISTERED -> parseRegistered(reader)
+            ServerType.GROUP -> parseGroup(reader)
+            ServerType.ALL -> parseAll(reader)
+        }
+
+    override fun <S : Any> listSuggestions(
+        context: CommandContext<S>,
+        builder: SuggestionsBuilder
+    ): CompletableFuture<Suggestions> {
+        val suggestions: Collection<String> = when (this.serverType) {
+            ServerType.REGISTERED -> getRegisteredServerNames()
+            ServerType.GROUP -> getServerGroupNames().toList()
+            ServerType.ALL -> {
+                val serverNames: Set<String> = getRegisteredServerNames()
+                val groupNames: Set<String> = getServerGroupNames()
+                serverNames + groupNames
+            }
+        }
+
+        val input: String = builder.remaining.lowercase()
+        suggestions.filter { it.lowercase().startsWith(input) }
+            .forEach(builder::suggest)
+
+        return builder.buildFuture()
+    }
+
     @Suppress("unused")
     companion object {
         private enum class ServerType {
             REGISTERED {
-                override val examples
-                    get() = getRegisteredServerNames()
+                override val examples: Collection<String> get() = getRegisteredServerNames()
             },
             GROUP {
-                override val examples
-                    get() = getServerGroupNames()
+                override val examples: Collection<String> get() = getServerGroupNames()
             },
             ALL {
                 override val examples: Collection<String> = REGISTERED.examples + GROUP.examples
@@ -49,7 +74,7 @@ class ServerArgumentType private constructor(private val serverType: ServerType)
         fun all() = ServerArgumentType(ServerType.ALL)
 
         private fun parseRegistered(reader: StringReader): String {
-            val serverName = reader.readUnquotedString()
+            val serverName: String = reader.readUnquotedString()
             if (server.getServer(serverName).isEmpty) {
                 throw SERVER_NOT_FOUND.createWithContext(reader)
             }
@@ -58,8 +83,8 @@ class ServerArgumentType private constructor(private val serverType: ServerType)
         }
 
         private fun parseGroup(reader: StringReader): String {
-            val groupName = reader.readUnquotedString()
-            if (!isServerGroup(groupName)) {
+            val groupName: String = reader.readUnquotedString()
+            if (!ConfigManager.config.whitelist.isServerGroup(groupName)) {
                 throw SERVER_GROUP_NOT_FOUND.createWithContext(reader)
             }
 
@@ -67,8 +92,8 @@ class ServerArgumentType private constructor(private val serverType: ServerType)
         }
 
         private fun parseAll(reader: StringReader): String {
-            val name = reader.readUnquotedString()
-            return if (isServerGroup(name) || server.getServer(name).isPresent) {
+            val name: String = reader.readUnquotedString()
+            return if (ConfigManager.config.whitelist.isServerGroup(name) || server.getServer(name).isPresent) {
                 name
             } else {
                 throw SERVER_NOT_FOUND.createWithContext(reader)
@@ -78,32 +103,5 @@ class ServerArgumentType private constructor(private val serverType: ServerType)
         private fun getRegisteredServerNames(): Set<String> = server.allServers.map { it.serverInfo.name }.toSet()
 
         private fun getServerGroupNames(): Set<String> = ConfigManager.config.whitelist.serverGroups.keys
-    }
-
-    override fun parse(reader: StringReader): String = when (serverType) {
-        ServerType.REGISTERED -> parseRegistered(reader)
-        ServerType.GROUP -> parseGroup(reader)
-        ServerType.ALL -> parseAll(reader)
-    }
-
-    override fun <S : Any> listSuggestions(
-        context: CommandContext<S>,
-        builder: SuggestionsBuilder
-    ): CompletableFuture<Suggestions> {
-        val suggestions = when (serverType) {
-            ServerType.REGISTERED -> getRegisteredServerNames()
-            ServerType.GROUP -> getServerGroupNames().toList()
-            ServerType.ALL -> {
-                val serverNames = getRegisteredServerNames()
-                val groupNames = getServerGroupNames()
-                serverNames + groupNames
-            }
-        }
-
-        val input = builder.remaining.lowercase()
-        suggestions.filter { it.lowercase().startsWith(input) }
-            .forEach(builder::suggest)
-
-        return builder.buildFuture()
     }
 }

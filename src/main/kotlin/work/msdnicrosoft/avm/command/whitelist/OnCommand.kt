@@ -13,8 +13,7 @@ import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.server.task
 
 object OnCommand {
-    private inline val config
-        get() = ConfigManager.config.whitelist
+    private inline val config get() = ConfigManager.config.whitelist
 
     val command = literalCommand("on") {
         requires { hasPermission("avm.command.whitelist.on") }

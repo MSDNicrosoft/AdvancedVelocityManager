@@ -8,6 +8,8 @@ package work.msdnicrosoft.avm.util.packet
 import com.highcapable.kavaref.KavaRef.Companion.asResolver
 import com.highcapable.kavaref.KavaRef.Companion.resolve
 import com.highcapable.kavaref.extension.classOf
+import com.highcapable.kavaref.resolver.FieldResolver
+import com.highcapable.kavaref.resolver.MethodResolver
 import com.velocitypowered.api.network.ProtocolVersion
 import com.velocitypowered.proxy.protocol.MinecraftPacket
 import com.velocitypowered.proxy.protocol.ProtocolUtils.Direction
@@ -33,7 +35,7 @@ import kotlin.reflect.KClass
  */
 @Suppress("unused")
 class Packet<P : MinecraftPacket> private constructor(private val packet: Class<P>) {
-    private val mappings = mutableListOf<PacketMapping?>()
+    private val mappings: MutableList<PacketMapping?> = mutableListOf()
     private lateinit var packetSupplier: Supplier<P>
     private lateinit var stateRegistry: StateRegistry
     private lateinit var direction: String
@@ -109,17 +111,17 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      */
     @Suppress("UnsafeCallOnNullableType")
     fun register() {
-        require(mappings.isNotEmpty()) { "You must provide at least one packet mapping" }
+        require(this.mappings.isNotEmpty()) { "You must provide at least one packet mapping" }
 
-        val packetRegistry = stateRegistry.asResolver()
+        val packetRegistry: PacketRegistry = this.stateRegistry.asResolver()
             .firstField {
-                name = direction
+                name = this@Packet.direction
                 superclass()
             }.get<PacketRegistry>()!!
 
         packetRegistry.asResolver()
             .firstMethod { name = "register" }
-            .invoke(packet, packetSupplier, mappings.filterNotNull().toTypedArray())
+            .invoke(this.packet, this.packetSupplier, this.mappings.filterNotNull().toTypedArray())
     }
 
     /**
@@ -141,33 +143,35 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
 
     @Suppress("UnsafeCallOnNullableType")
     private fun modify(action: Action) {
-        val packetRegistry = this.stateRegistry.asResolver()
+        val packetRegistry: PacketRegistry = this.stateRegistry.asResolver()
             .firstField {
                 name = this@Packet.direction
                 superclass()
             }.get<PacketRegistry>()!!
 
-        val versions = packetRegistry.asResolver()
+        val versions: Map<ProtocolVersion, PacketRegistry.ProtocolRegistry> = packetRegistry.asResolver()
             .firstField { name = "versions" }
             .get<Map<ProtocolVersion, PacketRegistry.ProtocolRegistry>>()!!
 
-        val packetIdToSupplierResolver = classOf<PacketRegistry.ProtocolRegistry>().resolve()
-            .firstField { name = "packetIdToSupplier" }
-        val packetClassToIdResolver = classOf<PacketRegistry.ProtocolRegistry>().resolve()
-            .firstField { name = "packetClassToId" }
+        val packetIdToSupplierResolver: FieldResolver<PacketRegistry.ProtocolRegistry> =
+            classOf<PacketRegistry.ProtocolRegistry>().resolve()
+                .firstField { name = "packetIdToSupplier" }
+        val packetClassToIdResolver: FieldResolver<PacketRegistry.ProtocolRegistry> =
+            classOf<PacketRegistry.ProtocolRegistry>().resolve()
+                .firstField { name = "packetClassToId" }
 
         versions.values.forEach { protoRegistry ->
-            val packetIdToSupplier = packetIdToSupplierResolver.copy()
+            val packetIdToSupplier: IntObjectMap<Supplier<out MinecraftPacket>> = packetIdToSupplierResolver.copy()
                 .of(protoRegistry)
                 .get<IntObjectMap<Supplier<out MinecraftPacket>>>()!!
 
-            val packetClassToId = packetClassToIdResolver.copy()
+            val packetClassToId: Object2IntMap<Class<out MinecraftPacket>> = packetClassToIdResolver.copy()
                 .of(protoRegistry)
                 .get<Object2IntMap<Class<out MinecraftPacket>>>()!!
 
             when (action) {
                 Action.REPLACE -> {
-                    val packetId = packetClassToId.object2IntEntrySet()
+                    val packetId: Int = packetClassToId.object2IntEntrySet()
                         .find { entry -> this.oldPacket.isAssignableFrom(entry.key) }
                         ?.intValue
                         ?: return@forEach
@@ -176,10 +180,10 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
                 }
 
                 Action.UNREGISTER -> {
-                    packetIdToSupplier.values.removeIf { supplier ->
+                    packetIdToSupplier.entries.removeIf { (_, supplier) ->
                         this.packet.isAssignableFrom(supplier.get()::class.java)
                     }
-                    packetClassToId.keys.removeIf { clazz ->
+                    packetClassToId.object2IntEntrySet().removeIf { (clazz, _) ->
                         this.packet.isAssignableFrom(clazz)
                     }
                 }
@@ -190,10 +194,11 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
     companion object {
         enum class Action { REPLACE, UNREGISTER }
 
-        private val STATE_REGISTRY_MAP_METHOD = classOf<StateRegistry>().resolve().firstMethod {
-            name = "map"
-            parameters(Int::class, ProtocolVersion::class, ProtocolVersion::class, Boolean::class)
-        }
+        private val STATE_REGISTRY_MAP_METHOD: MethodResolver<StateRegistry> = classOf<StateRegistry>().resolve()
+            .firstMethod {
+                name = "map"
+                parameters(Int::class, ProtocolVersion::class, ProtocolVersion::class, Boolean::class)
+            }
 
         /**
          * Creates a new builder for the given packet class.
@@ -226,7 +231,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
          */
         @Suppress("UnsafeCallOnNullableType")
         fun mapping(id: Int, from: MinecraftVersion, to: MinecraftVersion?, encodeOnly: Boolean): PacketMapping? {
-            return STATE_REGISTRY_MAP_METHOD.invoke<PacketMapping>(
+            return this.STATE_REGISTRY_MAP_METHOD.invoke<PacketMapping>(
                 id,
                 from.toProtocolVersion() ?: return null,
                 to?.toProtocolVersion(),

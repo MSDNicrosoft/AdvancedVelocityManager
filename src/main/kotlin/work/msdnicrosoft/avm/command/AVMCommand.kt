@@ -1,5 +1,6 @@
 package work.msdnicrosoft.avm.command
 
+import com.velocitypowered.api.util.ProxyVersion
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.annotations.CommandNode
@@ -13,6 +14,7 @@ import work.msdnicrosoft.avm.util.command.register
 import work.msdnicrosoft.avm.util.command.unregister
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.task
+import kotlin.time.Duration
 import kotlin.time.measureTimedValue
 
 @RootCommand("avm")
@@ -22,7 +24,7 @@ object AVMCommand {
     val reload = literalCommand("reload") {
         requires { hasPermission("avm.command.reload") }
         executes {
-            val (success, elapsed) = measureTimedValue { plugin.reload() }
+            val (success: Boolean, elapsed: Duration) = measureTimedValue { plugin.reload() }
             if (success) {
                 sendTranslatable(
                     "avm.command.avm.reload.success",
@@ -39,8 +41,7 @@ object AVMCommand {
     val info = literalCommand("info") {
         requires { hasPermission("avm.command.info") }
         executes {
-            val velocity = plugin.server.version
-            // TODO Enabled & Disabled modules
+            val velocity: ProxyVersion = plugin.server.version
             sendTranslatable(
                 "avm.command.avm.info.plugin.name",
                 Argument.component("name", tr("avm.general.plugin.name"))
@@ -64,7 +65,7 @@ object AVMCommand {
             executes {
                 val session: String by this
                 task {
-                    val result = when (CommandSessionManager.executeAction(session)) {
+                    val result: String = when (CommandSessionManager.executeAction(session)) {
                         ExecuteResult.SUCCESS -> return@task
                         ExecuteResult.EXPIRED -> "avm.command.avm.confirm.expired"
                         ExecuteResult.FAILED -> "avm.command.avm.confirm.failed"
@@ -105,10 +106,10 @@ object AVMCommand {
     }.build()
 
     fun init() {
-        command.register()
+        this.command.register()
     }
 
     fun disable() {
-        command.unregister()
+        this.command.unregister()
     }
 }

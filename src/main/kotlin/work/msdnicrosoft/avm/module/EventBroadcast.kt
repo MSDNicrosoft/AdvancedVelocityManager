@@ -4,18 +4,17 @@ import com.velocitypowered.api.event.PostOrder
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.ServerConnectedEvent
+import com.velocitypowered.api.proxy.server.RegisteredServer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
 import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
 import work.msdnicrosoft.avm.util.server.task
 
 object EventBroadcast {
-    private inline val config
-        get() = ConfigManager.config.broadcast
+    private inline val config get() = ConfigManager.config.broadcast
 
     fun init() {
         eventManager.register(plugin, this)
@@ -48,20 +47,20 @@ object EventBroadcast {
 
     @Subscribe(order = PostOrder.FIRST)
     fun onPlayerConnected(event: ServerConnectedEvent) {
-        val username = event.player.username
-        val targetServerName = event.server.serverInfo.name
-        val targetServerNickname = getServerNickname(targetServerName)
+        val username: String = event.player.username
+        val targetServerName: String = event.server.serverInfo.name
+        val targetServerNickname: String = ConfigManager.config.getServerNickName(targetServerName)
 
         event.previousServer.ifPresentOrElse(
-            { previousServer ->
+            { previousServer: RegisteredServer ->
                 if (!config.switch.enabled) return@ifPresentOrElse
 
                 if (previousServer == event.server) return@ifPresentOrElse
 
-                val previousServerName = previousServer.serverInfo.name
-                val previousServerNickname = getServerNickname(previousServerName)
+                val previousServerName: String = previousServer.serverInfo.name
+                val previousServerNickname: String = ConfigManager.config.getServerNickName(previousServerName)
 
-                sendMessage(
+                this.sendMessage(
                     MINI_MESSAGE.deserialize(
                         config.switch.message,
                         Placeholder.unparsed("player_name", username),
@@ -78,7 +77,7 @@ object EventBroadcast {
             {
                 if (!config.join.enabled) return@ifPresentOrElse
 
-                sendMessage(
+                this.sendMessage(
                     MINI_MESSAGE.deserialize(
                         config.join.message,
                         Placeholder.unparsed("player_name", username),

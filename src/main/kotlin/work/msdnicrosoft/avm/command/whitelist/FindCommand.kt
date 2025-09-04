@@ -3,6 +3,7 @@ package work.msdnicrosoft.avm.command.whitelist
 import work.msdnicrosoft.avm.command.WhitelistCommand.sendWhitelistPlayers
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
+import work.msdnicrosoft.avm.module.whitelist.data.Player
 import work.msdnicrosoft.avm.util.command.PageTurner
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.CommandContext
@@ -44,22 +45,22 @@ object FindCommand {
      * @param keyword The keyword to search for.
      */
     private fun CommandContext.listFind(page: Int, keyword: String) {
-        val result = WhitelistManager.find(keyword, page)
+        val result: List<Player> = WhitelistManager.find(keyword, page)
 
         if (result.isEmpty()) {
-            this.sendTranslatable("avm.command.avmwl.find.empty")
+            sendTranslatable("avm.command.avmwl.find.empty")
             return
         }
 
-        val maxPage = PageTurner.getMaxPage(result.size)
+        val maxPage: Int = PageTurner.getMaxPage(result.size)
         if (page > maxPage) {
-            this.sendTranslatable("avm.general.not.found.page")
+            sendTranslatable("avm.general.not.found.page")
             return
         }
 
-        if (page == 1) this.sendTranslatable("avm.command.avmwl.find.header")
+        if (page == 1) sendTranslatable("avm.command.avmwl.find.header")
 
-        this.context.source.sendWhitelistPlayers(result)
-        this.sendMessage(PageTurner("/avmwl find $keyword").build(page, maxPage))
+        context.source.sendWhitelistPlayers(result)
+        sendMessage(PageTurner("/avmwl find $keyword").build(page, maxPage))
     }
 }

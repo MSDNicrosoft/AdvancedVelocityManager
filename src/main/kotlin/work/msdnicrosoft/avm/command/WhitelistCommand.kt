@@ -4,10 +4,9 @@ import com.velocitypowered.api.command.CommandSource
 import work.msdnicrosoft.avm.annotations.CommandNode
 import work.msdnicrosoft.avm.annotations.RootCommand
 import work.msdnicrosoft.avm.command.whitelist.*
+import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.data.DisplayPlayer
 import work.msdnicrosoft.avm.module.whitelist.data.Player
-import work.msdnicrosoft.avm.util.ConfigUtil.getServersInGroup
-import work.msdnicrosoft.avm.util.ConfigUtil.isServerGroup
 import work.msdnicrosoft.avm.util.command.builder.executes
 import work.msdnicrosoft.avm.util.command.builder.literalCommand
 import work.msdnicrosoft.avm.util.command.builder.then
@@ -43,6 +42,8 @@ object WhitelistCommand {
     @CommandNode("status")
     val status = StatusCommand.command
 
+    private inline val config get() = ConfigManager.config.whitelist
+
     val command = literalCommand("avmwl") {
         executes { buildHelp(this@WhitelistCommand.javaClass) }
         then(add)
@@ -56,11 +57,11 @@ object WhitelistCommand {
     }.build()
 
     fun init() {
-        command.register()
+        this.command.register()
     }
 
     fun disable() {
-        command.unregister()
+        this.command.unregister()
     }
 
     /**
@@ -74,11 +75,11 @@ object WhitelistCommand {
 
         if (this.isConsole) {
             players.forEach { player ->
-                val servers = player.serverList.joinToString(" ") {
-                    if (isServerGroup(it)) {
-                        "<bold>$it<reset>(${getServersInGroup(it).joinToString(" ")}<reset>)"
+                val servers: String = player.serverList.joinToString(" ") { server ->
+                    if (config.isServerGroup(server)) {
+                        "<bold>$server<reset>(${config.getServersInGroup(server).joinToString(" ")}<reset>)"
                     } else {
-                        "<reset>$it"
+                        "<reset>$server"
                     }
                 }
                 this.sendRichMessage("<gray>${player.name} <dark_gray>:<reset> $servers")

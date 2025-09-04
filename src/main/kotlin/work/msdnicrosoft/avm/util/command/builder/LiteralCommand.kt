@@ -5,7 +5,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode
 
 class LiteralCommand(root: String) : Command {
     override val node: LiteralArgumentBuilder<S> = LiteralArgumentBuilder.literal(root)
-    override fun build(): LiteralCommandNode<S> = node.build()
+    override fun build(): LiteralCommandNode<S> = this.node.build()
 }
 
 fun literalCommand(literal: String, block: LiteralCommand.() -> Unit) = LiteralCommand(literal).apply(block)

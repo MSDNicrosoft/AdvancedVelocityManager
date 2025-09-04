@@ -12,7 +12,7 @@ interface Command {
     fun build(): CommandNode<S>
 
     companion object {
-        const val SINGLE_SUCCESS = com.mojang.brigadier.Command.SINGLE_SUCCESS
-        const val ILLEGAL_ARGUMENT = -2
+        const val SINGLE_SUCCESS: Int = com.mojang.brigadier.Command.SINGLE_SUCCESS
+        const val ILLEGAL_ARGUMENT: Int = -2
     }
 }

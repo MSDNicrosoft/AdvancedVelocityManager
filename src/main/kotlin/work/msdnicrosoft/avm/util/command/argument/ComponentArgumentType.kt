@@ -7,6 +7,10 @@ import work.msdnicrosoft.avm.util.component.ComponentSerializer
 
 class ComponentArgumentType private constructor(private val type: ComponentSerializer) : ArgumentType<Component> {
 
+    override fun parse(reader: StringReader): Component = this.type.serializer.deserialize(reader.readUnquotedString())
+
+    override fun getExamples(): Collection<String> = this.type.examples
+
     @Suppress("unused")
     companion object {
         /** Creates an argument type for JSON format components */
@@ -33,7 +37,4 @@ class ComponentArgumentType private constructor(private val type: ComponentSeria
         /** Creates an argument type for basic plain text components */
         fun basicPlainText() = ComponentArgumentType(ComponentSerializer.BASIC_PLAIN_TEXT)
     }
-
-    override fun parse(reader: StringReader): Component = type.serializer.deserialize(reader.readUnquotedString())
-    override fun getExamples(): Collection<String> = type.examples
 }

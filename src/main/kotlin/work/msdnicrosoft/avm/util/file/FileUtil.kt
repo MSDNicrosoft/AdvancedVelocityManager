@@ -3,6 +3,7 @@ package work.msdnicrosoft.avm.util.file
 import com.charleskorn.kaml.AmbiguousQuoteStyle
 import com.charleskorn.kaml.Yaml
 import com.charleskorn.kaml.YamlConfiguration
+import com.moandjiezana.toml.Toml
 import kotlinx.serialization.json.Json
 
 object FileUtil {
@@ -18,4 +19,6 @@ object FileUtil {
         ignoreUnknownKeys = true
         prettyPrint = true
     }
+
+    val TOML = Toml()
 }

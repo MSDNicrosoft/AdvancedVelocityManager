@@ -1,13 +1,14 @@
 package work.msdnicrosoft.avm.command.utility
 
-import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.module.command.session.CommandSessionManager
 import work.msdnicrosoft.avm.module.imports.PluginName
 import work.msdnicrosoft.avm.util.command.argument.ServerArgumentType
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.name
+import work.msdnicrosoft.avm.util.component.hoverText
 import work.msdnicrosoft.avm.util.component.tr
+import kotlin.time.Duration
 import kotlin.time.measureTimedValue
 
 object ImportCommand {
@@ -15,7 +16,7 @@ object ImportCommand {
         requires { hasPermission("avm.command.import") }
         wordArgument("pluginName") {
             suggests { builder ->
-                PluginName.plugins.forEach(builder::suggest)
+                PluginName.PLUGINS.forEach(builder::suggest)
                 builder.buildFuture()
             }
             argument("defaultServer", ServerArgumentType.all()) {
@@ -23,14 +24,14 @@ object ImportCommand {
                     val pluginName: String by this
                     val defaultServer: String by this
 
-                    val sessionId = CommandSessionManager.generateSessionId(
+                    val sessionId: String = CommandSessionManager.generateSessionId(
                         context.source.name,
                         System.currentTimeMillis(),
                         context.arguments.values.joinToString(" ")
                     )
 
                     CommandSessionManager.add(sessionId) {
-                        val (success, elapsed) = measureTimedValue {
+                        val (success: Boolean, elapsed: Duration) = measureTimedValue {
                             PluginName.of(pluginName).import(context.source, defaultServer)
                         }
 
@@ -52,7 +53,7 @@ object ImportCommand {
                         tr(
                             "avm.command.avm.import.need.confirm.2.text",
                             Argument.string("command", "/avm confirm $sessionId")
-                        ).hoverEvent(HoverEvent.showText(tr("avm.command.avm.import.need.confirm.2.hover")))
+                        ).hoverText(tr("avm.command.avm.import.need.confirm.2.hover"))
                     )
                     Command.SINGLE_SUCCESS
                 }

@@ -13,15 +13,15 @@ class PlayerAbilitiesPacket(
 ) : MinecraftPacket {
     constructor() : this(EMPTY)
 
-    private val flags: Int = flags.fold(0) { acc, flag -> acc or flag.value }
+    private val flags: Int = flags.fold(0) { acc: Int, flag: Flag -> acc or flag.value }
 
     override fun decode(buf: ByteBuf, direction: ProtocolUtils.Direction, protocolVersion: ProtocolVersion) =
         error("PlayerAbilitiesPacket should not be decoded.")
 
     override fun encode(buf: ByteBuf, direction: ProtocolUtils.Direction, protocolVersion: ProtocolVersion) {
-        buf.writeByte(flags)
-        buf.writeFloat(flyingSpeed)
-        buf.writeFloat(fieldOfViewModifier)
+        buf.writeByte(this.flags)
+        buf.writeFloat(this.flyingSpeed)
+        buf.writeFloat(this.fieldOfViewModifier)
     }
 
     override fun handle(sessionHandler: MinecraftSessionHandler?): Boolean = true
@@ -36,7 +36,7 @@ class PlayerAbilitiesPacket(
             CREATIVE_MODE(0x08)
         }
 
-        val NO_FALLING = listOf(Flag.FLYING, Flag.ALLOW_FLYING)
-        val EMPTY = listOf(Flag.EMPTY)
+        val NO_FALLING: List<Flag> = listOf(Flag.FLYING, Flag.ALLOW_FLYING)
+        val EMPTY: List<Flag> = listOf(Flag.EMPTY)
     }
 }

@@ -1,6 +1,8 @@
 package work.msdnicrosoft.avm.command.whitelist
 
 import com.velocitypowered.api.command.CommandSource
+import com.velocitypowered.api.proxy.Player
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
@@ -13,10 +15,10 @@ import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.server.task
 import work.msdnicrosoft.avm.util.string.isUuid
 import work.msdnicrosoft.avm.util.string.toUuid
+import java.util.Optional
 
 object RemoveCommand {
-    private inline val config
-        get() = ConfigManager.config.whitelist
+    private inline val config get() = ConfigManager.config.whitelist
 
     val command = literalCommand("remove") {
         requires { hasPermission("avm.command.whitelist.remove") }
@@ -59,14 +61,14 @@ object RemoveCommand {
      * If null, the player will be removed from all servers.
      */
     private fun CommandSource.removePlayer(playerName: String, serverName: String? = null) {
-        val isUuid = playerName.isUuid()
-        val result = if (isUuid) {
+        val isUuid: Boolean = playerName.isUuid()
+        val result: RemoveResult = if (isUuid) {
             WhitelistManager.remove(playerName.toUuid(), serverName)
         } else {
             WhitelistManager.remove(playerName, serverName)
         }
 
-        val message = when (result) {
+        val message: Component = when (result) {
             RemoveResult.SUCCESS -> {
                 if (serverName != null) {
                     tr(
@@ -89,7 +91,7 @@ object RemoveCommand {
 
         if (config.enabled) {
             task {
-                val player = if (isUuid) {
+                val player: Optional<Player> = if (isUuid) {
                     server.getPlayer(playerName.toUuid())
                 } else {
                     server.getPlayer(playerName)

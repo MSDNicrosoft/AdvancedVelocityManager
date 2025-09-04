@@ -2,6 +2,7 @@ package work.msdnicrosoft.avm.packet
 
 import com.highcapable.kavaref.KavaRef.Companion.resolve
 import com.highcapable.kavaref.extension.classOf
+import com.highcapable.kavaref.resolver.FieldResolver
 import com.velocitypowered.api.network.ProtocolVersion
 import com.velocitypowered.proxy.connection.MinecraftSessionHandler
 import com.velocitypowered.proxy.connection.backend.BackendPlaySessionHandler
@@ -22,28 +23,28 @@ class SetDefaultSpawnPositionPacket : MinecraftPacket {
     private var data: ByteBuf? = null
 
     override fun decode(buf: ByteBuf, direction: ProtocolUtils.Direction?, protocolVersion: ProtocolVersion?) {
-        data = buf.readBytes(buf.readableBytes())
+        this.data = buf.readBytes(buf.readableBytes())
     }
 
     override fun encode(buf: ByteBuf, direction: ProtocolUtils.Direction?, protocolVersion: ProtocolVersion?) {
-        data?.use { buf.writeBytes(data) }
+        this.data?.use { buf.writeBytes(this.data) }
     }
 
     @Suppress("UnsafeCallOnNullableType")
     override fun handle(sessionHandler: MinecraftSessionHandler): Boolean {
         if (!config.world && !config.mini) return true
 
-        val connection = resolver.copy()
+        val connection: VelocityServerConnection = resolver.copy()
             .of(sessionHandler as BackendPlaySessionHandler)
             .get<VelocityServerConnection>()!!
 
         connection.player.connection.write(this)
 
-        val serverNameBytes = connection.serverInfo.name.toByteArray(StandardCharsets.UTF_8)
-        val worldId = CRC32().apply {
+        val serverNameBytes: ByteArray = connection.serverInfo.name.toByteArray(StandardCharsets.UTF_8)
+        val worldId: Int = CRC32().apply {
             update(serverNameBytes)
         }.value.toInt()
-        val array = Unpooled.buffer().useThenApply {
+        val array: ByteArray = Unpooled.buffer().useThenApply {
             writeByte(0x00) // Packet ID
             writeInt(worldId) // World ID
             ByteBufUtil.getBytes(this)
@@ -60,10 +61,9 @@ class SetDefaultSpawnPositionPacket : MinecraftPacket {
     }
 
     companion object {
-        private val resolver = classOf<BackendPlaySessionHandler>().resolve()
+        private val resolver: FieldResolver<BackendPlaySessionHandler> = classOf<BackendPlaySessionHandler>().resolve()
             .firstField { name = "serverConn" }
 
-        private inline val config
-            get() = ConfigManager.config.mapSync.xaero
+        private inline val config get() = ConfigManager.config.mapSync.xaero
     }
 }

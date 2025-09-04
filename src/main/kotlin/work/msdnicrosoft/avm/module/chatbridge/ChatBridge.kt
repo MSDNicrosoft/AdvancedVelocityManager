@@ -12,8 +12,7 @@ import work.msdnicrosoft.avm.module.Logging
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge.mode
 
 object ChatBridge {
-    private inline val config
-        get() = ConfigManager.config.chatBridge
+    private inline val config get() = ConfigManager.config.chatBridge
 
     /**
      * Represents the current passthrough mode for chat messages.
@@ -35,14 +34,14 @@ object ChatBridge {
     fun onPlayerChatChat(event: PlayerChatEvent) {
         if (!config.enabled) return
 
-        val message = ChatMessage(event.player, event.message).build()
-        val serverName = event.player.currentServer.get().serverInfo.name
+        val message: Component = ChatMessage(event.player, event.message).build()
+        val serverName: String = event.player.currentServer.get().serverInfo.name
 
-        when (mode) {
-            PassthroughMode.ALL -> sendMessage(message, serverName)
+        when (this.mode) {
+            PassthroughMode.ALL -> this.sendMessage(message, serverName)
             PassthroughMode.NONE -> {
                 event.result = PlayerChatEvent.ChatResult.denied()
-                sendMessage(message)
+                this.sendMessage(message)
             }
 
             PassthroughMode.PATTERN -> {
@@ -52,10 +51,10 @@ object ChatBridge {
                     patterns.startswith.any { playerMessage.startsWith(it) } ||
                     patterns.endswith.any { playerMessage.endsWith(it) }
                 if (matched) {
-                    sendMessage(message, serverName)
+                    this.sendMessage(message, serverName)
                 } else {
                     event.result = PlayerChatEvent.ChatResult.denied()
-                    sendMessage(message)
+                    this.sendMessage(message)
                 }
             }
         }
@@ -74,12 +73,12 @@ object ChatBridge {
      */
     @Subscribe
     fun onCommandExecute(event: CommandExecuteEvent) {
-        val eventCommand = event.command
+        val eventCommand: String = event.command
             .split(" ")
             .first()
             .replace("/", "")
 
-        val isPrivateChat = MsgCommand.aliases.any { eventCommand.startsWith(it) }
+        val isPrivateChat: Boolean = MsgCommand.aliases.any { eventCommand.startsWith(it) }
         if (!isPrivateChat) return
 
         if (!config.takeOverPrivateChat) {
@@ -90,7 +89,7 @@ object ChatBridge {
     private fun sendMessage(message: Component, vararg ignoredServer: String) {
         plugin.server.allServers
             .parallelStream()
-            .filter { it.serverInfo.name !in ignoredServer }
+            .filter { server -> server.serverInfo.name !in ignoredServer }
             .forEach { server ->
                 server.playersConnected.forEach { player ->
                     player.sendMessage(message)

@@ -36,6 +36,7 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.ClassNode
 import org.objectweb.asm.tree.InsnNode
+import org.objectweb.asm.tree.MethodNode
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import java.security.ProtectionDomain
 
@@ -45,7 +46,7 @@ object KeyedChatHandlerTransformer : ClassTransformer {
     private const val TARGET_METHOD_DESC =
         "(Lorg/apache/logging/log4j/Logger;Lcom/velocitypowered/proxy/connection/client/ConnectedPlayer;)V"
 
-    override val targetClass = classOf<KeyedChatHandler>()
+    override val targetClass: Class<KeyedChatHandler> = classOf<KeyedChatHandler>()
 
     override fun shouldTransform(): Boolean = server.pluginManager.getPlugin("signedvelocity").isEmpty
 
@@ -56,16 +57,15 @@ object KeyedChatHandlerTransformer : ClassTransformer {
         protectionDomain: ProtectionDomain,
         classfileBuffer: ByteArray
     ): ByteArray? {
-        if (className != TARGET_CLASS_NAME) return null
+        if (className != this.TARGET_CLASS_NAME) return null
 
-        val node = ClassNode().apply {
+        val node: ClassNode = ClassNode().apply {
             ClassReader(classfileBuffer).accept(this@apply, 0)
         }
 
-        node.methods
-            .find { method -> method.name == TARGET_METHOD_NAME && method.desc == TARGET_METHOD_DESC }
-            ?.instructions?.iterator()
-            ?.add(InsnNode(Opcodes.RETURN))
+        node.methods.find { method: MethodNode ->
+            method.name == this.TARGET_METHOD_NAME && method.desc == this.TARGET_METHOD_DESC
+        }?.instructions?.iterator()?.add(InsnNode(Opcodes.RETURN))
 
         return ClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES)
             .apply { node.accept(this) }

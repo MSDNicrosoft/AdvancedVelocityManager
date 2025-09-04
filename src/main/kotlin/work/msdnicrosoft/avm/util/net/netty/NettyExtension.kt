@@ -30,7 +30,7 @@ inline fun <T : ByteBuf, R> T.use(block: (T) -> R): R =
     try {
         block(this)
     } finally {
-        release()
+        this.release()
     }
 
 /**
@@ -61,10 +61,10 @@ inline fun <T : ByteBuf, R> T.use(block: (T) -> R): R =
  */
 inline fun <T : ByteBuf, R> T.useApply(block: T.() -> R): T =
     try {
-        block()
+        this.block()
         this
     } finally {
-        release()
+        this.release()
     }
 
 /**
@@ -94,7 +94,7 @@ inline fun <T : ByteBuf, R> T.useApply(block: T.() -> R): T =
  */
 inline fun <T : ByteBuf, R> T.useThenApply(block: T.() -> R): R =
     try {
-        block()
+        this.block()
     } finally {
-        release()
+        this.release()
     }

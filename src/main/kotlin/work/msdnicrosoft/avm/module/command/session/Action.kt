@@ -7,6 +7,6 @@ package work.msdnicrosoft.avm.module.command.session
  * @property block The block of code to be executed.
  * @property expirationTime The time at which the action expires.
  */
-data class Action(var executed: Boolean = false, val block: () -> Any?, val expirationTime: Long) {
-    fun isExpired(): Boolean = System.currentTimeMillis() > expirationTime
+data class Action<T>(var executed: Boolean = false, val block: () -> T, val expirationTime: Long) {
+    fun isExpired(): Boolean = System.currentTimeMillis() > this.expirationTime
 }

@@ -10,10 +10,10 @@ import java.util.concurrent.CompletableFuture
 
 class ArgumentCommand<T>(root: String, type: ArgumentType<T>) : Command {
     override val node: RequiredArgumentBuilder<S, T> = RequiredArgumentBuilder.argument(root, type)
-    override fun build(): ArgumentCommandNode<S, T> = node.build()
+    override fun build(): ArgumentCommandNode<S, T> = this.node.build()
 
     fun suggests(block: CommandContext.(builder: SuggestionsBuilder) -> CompletableFuture<Suggestions>) {
-        node.suggests { context, builder ->
+        this.node.suggests { context, builder ->
             CommandContext(context).block(builder)
         }
     }

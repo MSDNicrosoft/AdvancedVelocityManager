@@ -9,24 +9,22 @@ import work.msdnicrosoft.avm.config.ConfigManager
  * manages a cache of players based on the server configuration.
  */
 object PlayerCache {
-    private inline val config
-        get() = ConfigManager.config.whitelist.cachePlayers
+    private inline val config get() = ConfigManager.config.whitelist.cachePlayers
 
-    private val players = mutableSetOf<String>()
+    private val players: MutableSet<String> = mutableSetOf()
 
-    val readOnly: List<String>
-        get() = players.toList()
+    val readOnly: List<String> get() = this.players.toList()
 
     fun reload() {
-        if (config.enabled) players.clear()
+        if (config.enabled) this.players.clear()
     }
 
     fun add(player: String) {
         if (!config.enabled) return
 
-        if (players.size >= config.maxSize) {
-            players.remove(players.last())
+        if (this.players.size >= config.maxSize) {
+            this.players.remove(this.players.last())
         }
-        players.add(player)
+        this.players.add(player)
     }
 }

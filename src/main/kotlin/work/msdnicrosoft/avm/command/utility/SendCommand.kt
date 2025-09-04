@@ -1,10 +1,11 @@
 package work.msdnicrosoft.avm.command.utility
 
 import com.velocitypowered.api.proxy.Player
+import com.velocitypowered.api.proxy.server.RegisteredServer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
-import work.msdnicrosoft.avm.util.ConfigUtil.getServerNickname
+import work.msdnicrosoft.avm.config.ConfigManager.config
 import work.msdnicrosoft.avm.util.command.argument.ComponentArgumentType
 import work.msdnicrosoft.avm.util.command.argument.PlayerArgumentType
 import work.msdnicrosoft.avm.util.command.argument.ServerArgumentType
@@ -28,7 +29,7 @@ object SendCommand {
                         tr(
                             "avm.command.avm.send.target",
                             Argument.string("executor", context.source.name),
-                            Argument.string("server", getServerNickname(server))
+                            Argument.string("server", config.getServerNickName(server))
                         )
                     )
                     Command.SINGLE_SUCCESS
@@ -47,10 +48,10 @@ object SendCommand {
     }
 
     private fun CommandContext.sendPlayer(player: Player, serverName: String, reason: Component) {
-        val registeredServer = server.getServer(serverName).get()
-        val serverNickname = getServerNickname(serverName)
+        val registeredServer: RegisteredServer = server.getServer(serverName).get()
+        val serverNickname: String = config.getServerNickName(serverName)
 
-        player.sendToServer(registeredServer).thenAccept { success ->
+        player.sendToServer(registeredServer).thenAccept { success: Boolean ->
             if (success) {
                 this.sendTranslatable(
                     "avm.command.avm.send.executor.success",

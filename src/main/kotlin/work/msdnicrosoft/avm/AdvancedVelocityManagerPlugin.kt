@@ -16,12 +16,12 @@ import work.msdnicrosoft.avm.command.AVMCommand
 import work.msdnicrosoft.avm.command.WhitelistCommand
 import work.msdnicrosoft.avm.command.chatbridge.MsgCommand
 import work.msdnicrosoft.avm.config.ConfigManager
+import work.msdnicrosoft.avm.i18n.TranslateManager
 import work.msdnicrosoft.avm.module.EventBroadcast
 import work.msdnicrosoft.avm.module.Logging
 import work.msdnicrosoft.avm.module.TabSyncHandler
 import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
 import work.msdnicrosoft.avm.module.command.session.CommandSessionManager
-import work.msdnicrosoft.avm.module.i18n.TranslateManager
 import work.msdnicrosoft.avm.module.mapsync.WorldInfoHandler
 import work.msdnicrosoft.avm.module.mapsync.XaeroMapHandler
 import work.msdnicrosoft.avm.module.reconnect.ReconnectHandler
@@ -34,7 +34,7 @@ class AdvancedVelocityManagerPlugin {
     val server: ProxyServer
     val dataDirectory: Path
     val self: PluginDescription by lazy {
-        server.pluginManager.getPlugin("advancedvelocitymanager").get().description
+        this.server.pluginManager.getPlugin("advancedvelocitymanager").get().description
     }
 
     @Inject
@@ -53,11 +53,11 @@ class AdvancedVelocityManagerPlugin {
 
         require(ConfigManager.load()) { "Failed to load configuration, aborting initialization" }
 
-        loadLanguage(false)
-        initializeModules()
-        registerCommands()
+        this.loadLanguage(false)
+        this.initializeModules()
+        this.registerCommands()
 
-        self.version.get().let { version ->
+        this.self.version.get().let { version ->
             if (version.contains("DEV")) logger.warn("You are using the development version of this plugin.")
             if (version.contains("SNAPSHOT")) logger.warn("You are using the snapshot version of this plugin.")
         }
@@ -66,8 +66,8 @@ class AdvancedVelocityManagerPlugin {
     @Suppress("unused")
     @Subscribe
     fun onProxyShutdown(event: ProxyShutdownEvent) {
-        disableModules()
-        unregisterCommands()
+        this.disableModules()
+        this.unregisterCommands()
     }
 
     private fun initializeModules() {
@@ -112,7 +112,7 @@ class AdvancedVelocityManagerPlugin {
                 return false
             }
 
-            loadLanguage(true)
+            this.loadLanguage(true)
             CommandSessionManager.reload()
             PlayerCache.reload()
             WhitelistManager.reload()
@@ -140,21 +140,21 @@ class AdvancedVelocityManagerPlugin {
         val logger: ComponentLogger = ComponentLogger.logger("AdvancedVelocityManager")
 
         inline val server: ProxyServer
-            get() = plugin.server
+            get() = this.plugin.server
 
         inline val scheduler: Scheduler
-            get() = server.scheduler
+            get() = this.server.scheduler
 
         inline val dataDirectory: Path
-            get() = plugin.dataDirectory
+            get() = this.plugin.dataDirectory
 
         inline val commandManager: CommandManager
-            get() = server.commandManager
+            get() = this.server.commandManager
 
         inline val eventManager: EventManager
-            get() = server.eventManager
+            get() = this.server.eventManager
 
         inline val channelRegistrar: ChannelRegistrar
-            get() = server.channelRegistrar
+            get() = this.server.channelRegistrar
     }
 }
