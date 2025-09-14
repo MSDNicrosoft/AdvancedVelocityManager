@@ -11,6 +11,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManage
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
+import work.msdnicrosoft.avm.util.server.nickname
 import work.msdnicrosoft.avm.util.server.task
 
 object EventBroadcast {
@@ -49,7 +50,7 @@ object EventBroadcast {
     fun onPlayerConnected(event: ServerConnectedEvent) {
         val username: String = event.player.username
         val targetServerName: String = event.server.serverInfo.name
-        val targetServerNickname: String = ConfigManager.config.getServerNickName(targetServerName)
+        val targetServerNickname: String = event.server.serverInfo.nickname
 
         event.previousServer.ifPresentOrElse(
             { previousServer: RegisteredServer ->
@@ -58,7 +59,7 @@ object EventBroadcast {
                 if (previousServer == event.server) return@ifPresentOrElse
 
                 val previousServerName: String = previousServer.serverInfo.name
-                val previousServerNickname: String = ConfigManager.config.getServerNickName(previousServerName)
+                val previousServerNickname: String = previousServer.serverInfo.nickname
 
                 this.sendMessage(
                     MINI_MESSAGE.deserialize(

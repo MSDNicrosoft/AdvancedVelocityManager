@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e3e0fe25-809f-4947-a49e-aee5d8275d53" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/discord.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/kotlinc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/command/CommandAliasesManager.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/packet/PacketHandler.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/packet/event/PacketEvent.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/packet/event/ReceivePacketEvent.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/packet/event/SendPacketEvent.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/packet/handler/PlayerPacketHandler.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/util/packet/data/Position.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/project.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/libs.versions.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/AdvancedVelocityManagerPlugin.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/AdvancedVelocityManagerPlugin.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/chatbridge/MsgCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/chatbridge/MsgCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/utility/ImportCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/utility/ImportCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/utility/KickAllCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/utility/KickAllCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/utility/KickCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/utility/KickCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/utility/SendAllCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/utility/SendAllCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/utility/SendCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/utility/SendCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/whitelist/AddCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/whitelist/AddCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/whitelist/RemoveCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/command/whitelist/RemoveCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/config/ConfigManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/config/ConfigManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/i18n/TranslateManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/i18n/TranslateManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/EventBroadcast.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/EventBroadcast.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/TabSyncHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/TabSyncHandler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/chatbridge/ChatMessage.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/chatbridge/ChatMessage.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/imports/importers/QuAnVelocityWhitelistImporter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/imports/importers/QuAnVelocityWhitelistImporter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/whitelist/WhitelistManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/module/whitelist/WhitelistManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/util/command/argument/ComponentArgumentType.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/util/command/argument/PlayerArgumentType.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/util/command/argument/ServerArgumentType.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/util/command/context/CommandContext.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/util/command/context/CommandContext.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/util/command/context/CommandContextExtension.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/util/command/context/CommandContextExtension.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/util/command/context/CommandSourceExtension.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/util/command/context/CommandSourceExtension.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/util/component/ComponentSerializer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/util/component/ComponentSerializer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/util/server/ProxyServerExtension.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/work/msdnicrosoft/avm/util/server/ProxyServerExtension.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/lang/en_us.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/lang/en_us.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/lang/zh_cn.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/lang/zh_cn.yml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="AdvancedVelocityManager" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="AdvancedVelocityManager" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="AdvancedVelocityManager" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="AdvancedVelocityManager" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="verification" type="c8890929:TasksNode$1" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Object" />
+        <option value="Kotlin Data Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="MSDNicrosoft &lt;i@msdnicrosoft.work&gt;" />
+      </list>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SIGN_OFF_COMMIT" value="true" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;MSDNicrosoft&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:MSDNicrosoft/AdvancedVelocityManager.git&quot;,
+    &quot;accountId&quot;: &quot;487e826a-0d61-40d2-8357-d5499a5de009&quot;
+  }
+}</component>
+  <component name="GradleScriptDefinitionsStorage" workingDir="$PROJECT_DIR$" gradleHome="C:\Users\MSDNicrosoft\.gradle\wrapper\dists\gradle-9.0.0-bin\d6wjpkvcgsg3oed0qlfss3wgl\gradle-9.0.0" javaHome="D:\Path\Zulu\21" gradleVersion="9.0.0" />
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="AISelfReview" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="31H6ihTA4AJTbk10jfiv02iBdUb" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.AdvancedVelocityManager [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.AdvancedVelocityManager [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.AdvancedVelocityManager [detektMain].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.AdvancedVelocityManager [ideaSyncTask].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.下载源代码.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;F:/Code/Java/mythbase&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.editor&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="K2MoveDeclarationsDialog.RECENT_PACKAGE_KEY">
+      <recent name="work.msdnicrosoft.avm.util.command.context" />
+      <recent name="work.msdnicrosoft.avm.util.command.data.server" />
+      <recent name="work.msdnicrosoft.avm.i18n" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="gradle build --stacktrace" />
+      <command value="gradle build --warning-mode all" />
+      <command value="gradle ideaSyncTask --warning-mode all" />
+    </option>
+  </component>
+  <component name="RunManager" selected="Gradle.AdvancedVelocityManager [detektMain]">
+    <configuration name="AdvancedVelocityManager [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--stacktrace" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="build" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="AdvancedVelocityManager [clean]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="clean" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="AdvancedVelocityManager [detektMain]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="detektMain" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <configuration name="AdvancedVelocityManager [ideaSyncTask]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--warning-mode all" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="ideaSyncTask" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.AdvancedVelocityManager [detektMain]" />
+        <item itemvalue="Gradle.AdvancedVelocityManager [build]" />
+        <item itemvalue="Gradle.AdvancedVelocityManager [clean]" />
+        <item itemvalue="Gradle.AdvancedVelocityManager [ideaSyncTask]" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26199.74" />
+        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-IU-252.26199.74" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="e3e0fe25-809f-4947-a49e-aee5d8275d53" name="更改" comment="" />
+      <created>1755168783583</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1755168783583</updated>
+      <workItem from="1755168785382" duration="2894000" />
+      <workItem from="1755223288040" duration="212000" />
+      <workItem from="1755278265190" duration="269000" />
+      <workItem from="1755278543578" duration="5000" />
+      <workItem from="1755312231392" duration="93000" />
+      <workItem from="1755342444269" duration="2382000" />
+      <workItem from="1755367610721" duration="22000" />
+      <workItem from="1755428950465" duration="423000" />
+      <workItem from="1755429384921" duration="26000" />
+      <workItem from="1755435239728" duration="6903000" />
+      <workItem from="1755446968617" duration="756000" />
+      <workItem from="1755486248750" duration="889000" />
+      <workItem from="1755508954459" duration="3000" />
+      <workItem from="1755517352124" duration="713000" />
+      <workItem from="1755518077309" duration="68000" />
+      <workItem from="1755518170373" duration="102000" />
+      <workItem from="1755518294181" duration="295000" />
+      <workItem from="1755522925161" duration="24000" />
+      <workItem from="1755757121241" duration="130000" />
+      <workItem from="1755797169598" duration="31000" />
+      <workItem from="1755797217276" duration="17000" />
+      <workItem from="1755797244309" duration="38000" />
+      <workItem from="1755885562259" duration="1392000" />
+      <workItem from="1756002781317" duration="404000" />
+      <workItem from="1756003200039" duration="125000" />
+      <workItem from="1756003634228" duration="2000" />
+      <workItem from="1756012252879" duration="205000" />
+      <workItem from="1756019922392" duration="284000" />
+      <workItem from="1756104703471" duration="997000" />
+      <workItem from="1756188680503" duration="6740000" />
+      <workItem from="1756203873104" duration="8000" />
+      <workItem from="1756262339791" duration="156000" />
+      <workItem from="1756270185263" duration="8639000" />
+      <workItem from="1756385376280" duration="43000" />
+      <workItem from="1756385558065" duration="1338000" />
+      <workItem from="1756396151078" duration="1443000" />
+      <workItem from="1756433974167" duration="993000" />
+      <workItem from="1756434984201" duration="253000" />
+      <workItem from="1756435250269" duration="1280000" />
+      <workItem from="1756440487409" duration="9467000" />
+      <workItem from="1756460438156" duration="6475000" />
+      <workItem from="1756474323439" duration="94000" />
+      <workItem from="1756482693629" duration="599000" />
+      <workItem from="1756636770277" duration="993000" />
+      <workItem from="1756637776557" duration="258000" />
+      <workItem from="1756638047238" duration="13746000" />
+      <workItem from="1756829065404" duration="116000" />
+      <workItem from="1756829196766" duration="1045000" />
+      <workItem from="1756832257042" duration="669000" />
+      <workItem from="1756875674930" duration="3000" />
+      <workItem from="1756898432577" duration="4043000" />
+      <workItem from="1756914401592" duration="1952000" />
+      <workItem from="1756955663202" duration="2000" />
+      <workItem from="1756956320098" duration="14000" />
+      <workItem from="1756956340329" duration="1038000" />
+      <workItem from="1756957994540" duration="11189000" />
+      <workItem from="1756969351431" duration="236000" />
+      <workItem from="1756969606127" duration="2890000" />
+      <workItem from="1757038806904" duration="12000" />
+      <workItem from="1757061935074" duration="86000" />
+      <workItem from="1757062029456" duration="3209000" />
+      <workItem from="1757090498433" duration="87000" />
+      <workItem from="1757130125501" duration="355000" />
+      <workItem from="1757255880331" duration="4221000" />
+      <workItem from="1757303227791" duration="3000" />
+      <workItem from="1757424829833" duration="3483000" />
+      <workItem from="1757477109043" duration="1878000" />
+      <workItem from="1757496442652" duration="625000" />
+      <workItem from="1757506497557" duration="973000" />
+      <workItem from="1757512398053" duration="11000" />
+      <workItem from="1757662057548" duration="1190000" />
+      <workItem from="1757663397158" duration="558000" />
+      <workItem from="1757678601659" duration="1450000" />
+      <workItem from="1757730430059" duration="3210000" />
+      <workItem from="1757736498336" duration="2775000" />
+      <workItem from="1757740395683" duration="14191000" />
+      <workItem from="1757766076796" duration="1945000" />
+      <workItem from="1757773927673" duration="5122000" />
+      <workItem from="1757779123320" duration="35000" />
+      <workItem from="1757817599948" duration="2888000" />
+    </task>
+    <task id="LOCAL-00001" summary="fix(command): Simplify server validation logic in ServerArgumentType">
+      <option name="closed" value="true" />
+      <created>1755438863490</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1755438863490</updated>
+    </task>
+    <task id="LOCAL-00002" summary="fix(deps): update dependency com.charleskorn.kaml:kaml to v0.92.0">
+      <option name="closed" value="true" />
+      <created>1755447389630</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1755447389630</updated>
+    </task>
+    <task id="LOCAL-00003" summary="style: Reformat code">
+      <option name="closed" value="true" />
+      <created>1755447464568</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1755447464568</updated>
+    </task>
+    <task id="LOCAL-00004" summary="fix(config): Default Query API URL in comment">
+      <option name="closed" value="true" />
+      <created>1756434063818</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1756434063818</updated>
+    </task>
+    <task id="LOCAL-00005" summary="refactor: Restructure codebase for consistency and clarity&#10;&#10;* Standardize property access with explicit `this` usage&#10;* Update naming conventions for constants&#10;* Simplify logic in various functions&#10;* Reformat code for improved readability&#10;* Avoid unnecessary server ping (Chat-Bridge)">
+      <option name="closed" value="true" />
+      <created>1756969926874</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1756969926874</updated>
+    </task>
+    <task id="LOCAL-00006" summary="refactor: Restructure codebase for consistency and clarity&#10;&#10;* Standardize property access with explicit `this` usage&#10;* Update naming conventions for constants&#10;* Simplify logic in various functions&#10;* Reformat code for improved readability&#10;* Avoid unnecessary server ping (Chat-Bridge)&#10;&#10;Signed-off-by: MSDNicrosoft &lt;i@msdnicrosoft.work&gt;">
+      <option name="closed" value="true" />
+      <created>1756969954974</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1756969954974</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="fix(command): Simplify server validation logic in ServerArgumentType" />
+    <MESSAGE value="fix(deps): update dependency com.charleskorn.kaml:kaml to v0.92.0" />
+    <MESSAGE value="style: Reformat code" />
+    <MESSAGE value="fix(config): Default Query API URL in comment" />
+    <MESSAGE value="refactor(plugin): Enhance code readability and structure&#10;&#10;- Replace implicit references with `this` for improved clarity.&#10;- Remove unused utility classes (`ConfigUtil`, `TranslateManager`) for a leaner codebase.&#10;- Encapsulate constants and variables with explicit types.&#10;- Simplify conditional expressions and remove redundant checks.&#10;- Reorganize functions for better manageability and consistency.&#10;&#10;Signed-off-by: MSDNicrosoft &lt;i@msdnicrosoft.work&gt;" />
+    <MESSAGE value="refactor: Apply various code optimizations and remove unused utilities&#10;&#10;- Remove unused utilities: `ConfigUtil` and `TranslateManager`&#10;- Replace redundant properties with direct initialization (`inline val`)&#10;- Consolidate logic with `this` qualifier for improved clarity&#10;- Simplify and refine logic in whitelist and utility modules&#10;- Update affected imports and references accordingly for all changes" />
+    <MESSAGE value="refactor(core): Replace ConfigUtil and modularize TranslateManager&#10;&#10;* Remove ConfigUtil and move logic to ConfigManager&#10;* Replace local `loadLanguage` calls with `this` for consistency&#10;* Modularize TranslateManager and centralize i18n logic&#10;* Adopt `this` qualifiers for member references throughout&#10;* Inline configuration and server-specific methods for clarity&#10;&#10;Signed-off-by: MSDNicrosoft &lt;i@msdnicrosoft.work&gt;" />
+    <MESSAGE value="refactor: Restructure codebase for consistency and clarity&#10;&#10;* Standardize property access with explicit `this` usage&#10;* Update naming conventions for constants&#10;* Simplify logic in various functions&#10;* Reformat code for improved readability&#10;* Avoid unnecessary server ping (Chat-Bridge)" />
+    <MESSAGE value="refactor: Restructure codebase for consistency and clarity&#10;&#10;* Standardize property access with explicit `this` usage&#10;* Update naming conventions for constants&#10;* Simplify logic in various functions&#10;* Reformat code for improved readability&#10;* Avoid unnecessary server ping (Chat-Bridge)&#10;&#10;Signed-off-by: MSDNicrosoft &lt;i@msdnicrosoft.work&gt;" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: Restructure codebase for consistency and clarity&#10;&#10;* Standardize property access with explicit `this` usage&#10;* Update naming conventions for constants&#10;* Simplify logic in various functions&#10;* Reformat code for improved readability&#10;* Avoid unnecessary server ping (Chat-Bridge)&#10;&#10;Signed-off-by: MSDNicrosoft &lt;i@msdnicrosoft.work&gt;" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

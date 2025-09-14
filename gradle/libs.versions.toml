@@ -20,8 +20,8 @@ kotlin-serialization = "1.9.0"
 byte-buddy-agent = "1.17.7"
 kavaref = "1.0.1"
 
-[plugins]
 
+[plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
@@ -30,8 +30,8 @@ grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
 yamlang = { id = "me.fallenbreath.yamlang", version.ref = "yamlang" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 
-[libraries]
 
+[libraries]
 # Detekt Plugins
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
@@ -50,6 +50,7 @@ kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serializat
 byte-buddy-agent = { module = "net.bytebuddy:byte-buddy-agent", version.ref = "byte-buddy-agent" }
 kavaref-core = { module = "com.highcapable.kavaref:kavaref-core", version.ref = "kavaref" }
 kavaref-extension = { module = "com.highcapable.kavaref:kavaref-extension", version.ref = "kavaref" }
+
 
 [bundles]
 asm = ["asm", "asm-util"]

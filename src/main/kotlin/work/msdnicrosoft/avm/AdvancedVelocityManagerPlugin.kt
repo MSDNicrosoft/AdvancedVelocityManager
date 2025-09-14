@@ -138,23 +138,11 @@ class AdvancedVelocityManagerPlugin {
             private set
 
         val logger: ComponentLogger = ComponentLogger.logger("AdvancedVelocityManager")
-
-        inline val server: ProxyServer
-            get() = this.plugin.server
-
-        inline val scheduler: Scheduler
-            get() = this.server.scheduler
-
-        inline val dataDirectory: Path
-            get() = this.plugin.dataDirectory
-
-        inline val commandManager: CommandManager
-            get() = this.server.commandManager
-
-        inline val eventManager: EventManager
-            get() = this.server.eventManager
-
-        inline val channelRegistrar: ChannelRegistrar
-            get() = this.server.channelRegistrar
+        inline val server: ProxyServer get() = this.plugin.server
+        inline val scheduler: Scheduler get() = this.server.scheduler
+        inline val dataDirectory: Path get() = this.plugin.dataDirectory
+        inline val commandManager: CommandManager get() = this.server.commandManager
+        inline val eventManager: EventManager get() = this.server.eventManager
+        inline val channelRegistrar: ChannelRegistrar get() = this.server.channelRegistrar
     }
 }

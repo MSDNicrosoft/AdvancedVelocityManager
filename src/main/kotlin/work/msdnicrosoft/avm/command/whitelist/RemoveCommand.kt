@@ -8,8 +8,8 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.module.whitelist.result.RemoveResult
-import work.msdnicrosoft.avm.util.command.argument.ServerArgumentType
 import work.msdnicrosoft.avm.util.command.builder.*
+import work.msdnicrosoft.avm.util.command.data.server.Server
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.server.task
@@ -32,7 +32,7 @@ object RemoveCommand {
                 context.source.removePlayer(player)
                 Command.SINGLE_SUCCESS
             }
-            argument("server", ServerArgumentType.all()) {
+            wordArgument("server") {
                 suggests { builder ->
                     val player: String by this
                     val serverList = if (player.isUuid()) {
@@ -44,9 +44,9 @@ object RemoveCommand {
                     builder.buildFuture()
                 }
                 executes {
-                    val server: String by this
+                    val server: Server by this
                     val player: String by this
-                    context.source.removePlayer(player, server)
+                    context.source.removePlayer(player, server.name)
                     Command.SINGLE_SUCCESS
                 }
             }

@@ -7,9 +7,9 @@ import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.module.whitelist.result.AddResult
-import work.msdnicrosoft.avm.util.command.argument.ServerArgumentType
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.CommandContext
+import work.msdnicrosoft.avm.util.command.data.server.Server
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.server.task
 import work.msdnicrosoft.avm.util.string.isUuid
@@ -29,7 +29,7 @@ object AddCommand {
                 }.forEach(builder::suggest)
                 builder.buildFuture()
             }
-            argument("server", ServerArgumentType.all()) {
+            wordArgument("server") {
                 suggests { builder ->
                     val player: String by this
                     val whitelistedServers = if (player.isUuid()) {
@@ -47,16 +47,16 @@ object AddCommand {
                 }
                 executes {
                     val player: String by this
-                    val server: String by this
-                    addPlayer(player, server)
+                    val server: Server by this
+                    addPlayer(player, server.name)
                     Command.SINGLE_SUCCESS
                 }
                 boolArgument("onlineMode") {
                     executes {
                         val player: String by this
-                        val server: String by this
+                        val server: Server by this
                         val onlineMode: Boolean by this
-                        task { addPlayer(player, server, onlineMode) }
+                        task { addPlayer(player, server.name, onlineMode) }
                         Command.SINGLE_SUCCESS
                     }
                 }

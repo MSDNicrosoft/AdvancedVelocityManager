@@ -36,7 +36,7 @@ object ConfigManager {
 
         return try {
             this.migrate()
-            this.config = YAML.decodeFromString<AVMConfig>(this.FILE.readTextWithBuffer())
+            this.config = YAML.decodeFromString(this.FILE.readTextWithBuffer())
             this.validate()
             true
         } catch (e: IOException) {
@@ -116,7 +116,7 @@ object ConfigManager {
     }
 
     private fun migrate() {
-        val currentVersion = YAML.decodeFromString<Version>(this.FILE.readTextWithBuffer()).version
+        val currentVersion: Int = YAML.decodeFromString<Version>(this.FILE.readTextWithBuffer()).version
         if (currentVersion == this.DEFAULT_CONFIG.version) return
         when (currentVersion) {
             1 if this.DEFAULT_CONFIG.version == 2 -> {

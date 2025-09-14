@@ -12,6 +12,7 @@ import work.msdnicrosoft.avm.util.component.ComponentSerializer.STYLE_ONLY_MINI_
 import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.hoverText
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.TIMEOUT_PING_RESULT
+import work.msdnicrosoft.avm.util.server.nickname
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
@@ -26,7 +27,7 @@ import java.util.concurrent.TimeoutException
 class ChatMessage(player: Player, private val message: String) {
     private val server: ServerConnection = player.currentServer.get()
     private val serverName: String = server.serverInfo.name
-    private val serverNickname: String = ConfigManager.config.getServerNickName(serverName)
+    private val serverNickname: String = server.serverInfo.nickname
     private val serverOnlinePlayers: String = server.server.playersConnected.size.toString()
 
     private val playerUsername: String = player.username

@@ -2,6 +2,9 @@ package work.msdnicrosoft.avm.util.command.context
 
 import com.highcapable.kavaref.KavaRef.Companion.resolve
 import com.highcapable.kavaref.extension.classOf
+import com.mojang.brigadier.exceptions.CommandSyntaxException
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
+import com.velocitypowered.api.command.VelocityBrigadierMessage
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.translation.Argument
@@ -14,6 +17,10 @@ import work.msdnicrosoft.avm.util.component.clickToSuggestCommand
 import work.msdnicrosoft.avm.util.component.hoverText
 import work.msdnicrosoft.avm.util.component.tr
 import work.msdnicrosoft.avm.util.reflect.getAnnotationIfPresent
+
+@Throws(CommandSyntaxException::class)
+fun throwCommandException(message: Component): Nothing =
+    throw SimpleCommandExceptionType(VelocityBrigadierMessage.tooltip(message)).create()
 
 @Suppress("UnsafeCallOnNullableType", "SameReturnValue")
 fun CommandContext.buildHelp(commandRoot: Class<*>, checkPermission: Boolean = true): Int {

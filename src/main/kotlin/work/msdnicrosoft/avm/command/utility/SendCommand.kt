@@ -5,23 +5,25 @@ import com.velocitypowered.api.proxy.server.RegisteredServer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
-import work.msdnicrosoft.avm.config.ConfigManager.config
-import work.msdnicrosoft.avm.util.command.argument.ComponentArgumentType
-import work.msdnicrosoft.avm.util.command.argument.PlayerArgumentType
-import work.msdnicrosoft.avm.util.command.argument.ServerArgumentType
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.command.context.name
+import work.msdnicrosoft.avm.util.command.data.component.MiniMessage
 import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.server.nickname
 import work.msdnicrosoft.avm.util.server.sendToServer
 
 object SendCommand {
     val command = literalCommand("send") {
         requires { hasPermission("avm.command.send") }
-        argument("player", PlayerArgumentType.name()) {
-            argument("server", ServerArgumentType.registered()) {
+        wordArgument("player") {
+            suggests { builder ->
+                server.allPlayers.forEach { builder.suggest(it.username) }
+                builder.buildFuture()
+            }
+            wordArgument("server") {
                 executes {
-                    val server: String by this
+                    val server: RegisteredServer by this
                     val player: Player by this
                     sendPlayer(
                         player,
@@ -29,17 +31,17 @@ object SendCommand {
                         tr(
                             "avm.command.avm.send.target",
                             Argument.string("executor", context.source.name),
-                            Argument.string("server", config.getServerNickName(server))
+                            Argument.string("server", server.serverInfo.nickname)
                         )
                     )
                     Command.SINGLE_SUCCESS
                 }
-                argument("reason", ComponentArgumentType.miniMessage()) {
+                stringArgument("reason") {
                     executes {
-                        val server: String by this
+                        val server: RegisteredServer by this
                         val player: Player by this
-                        val reason: Component by this
-                        sendPlayer(player, server, reason)
+                        val reason: MiniMessage by this
+                        sendPlayer(player, server, reason.component)
                         Command.SINGLE_SUCCESS
                     }
                 }
@@ -47,11 +49,10 @@ object SendCommand {
         }
     }
 
-    private fun CommandContext.sendPlayer(player: Player, serverName: String, reason: Component) {
-        val registeredServer: RegisteredServer = server.getServer(serverName).get()
-        val serverNickname: String = config.getServerNickName(serverName)
+    private fun CommandContext.sendPlayer(player: Player, registeredServer: RegisteredServer, reason: Component) {
+        val serverNickname: String = registeredServer.serverInfo.nickname
 
-        player.sendToServer(registeredServer).thenAccept { success: Boolean ->
+        player.sendToServer(registeredServer).thenAcceptAsync { success: Boolean ->
             if (success) {
                 this.sendTranslatable(
                     "avm.command.avm.send.executor.success",

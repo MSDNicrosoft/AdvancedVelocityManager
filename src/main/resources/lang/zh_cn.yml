@@ -10,9 +10,9 @@ avm:
       next: "<yellow>点击转到下一页"
     not.found:
       page: "<gray>此页面不存在"
-      server: "<red>未找到服务器"
-      servergroup: "<red>未找到服务器组"
-      player: "<red>未找到玩家"
+      server: "<red>未找到服务器 <server>"
+      servergroup: "<red>未找到服务器组 <server_group>"
+      player: "<red>未找到玩家 <player>"
     invalid:
       uuid: "无效的 UUID"
     help:

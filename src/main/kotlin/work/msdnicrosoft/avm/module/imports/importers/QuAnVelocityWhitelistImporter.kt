@@ -78,7 +78,7 @@ object QuAnVelocityWhitelistImporter : Importer(pluginName = "(qu-an) VelocityWh
 
     private fun importWhitelist(defaultServer: String, source: CommandSource): Boolean =
         try {
-            val whitelist: List<Player> = JSON.decodeFromString<List<Player>>(this.WHITELIST_PATH.readTextWithBuffer())
+            val whitelist: List<Player> = JSON.decodeFromString(this.WHITELIST_PATH.readTextWithBuffer())
             val onlineMode: Boolean = WhitelistManager.serverIsOnlineMode
 
             whitelist.forEach { player ->

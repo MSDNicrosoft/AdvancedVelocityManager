@@ -304,9 +304,7 @@ object WhitelistManager {
         return try {
             this.FILE.parentFile.mkdirs()
             this.lock.read {
-                this.FILE.writeTextWithBuffer(
-                    JSON.encodeToString(if (initialize) listOf() else this.whitelist)
-                )
+                this.FILE.writeTextWithBuffer(JSON.encodeToString(if (initialize) listOf() else this.whitelist))
             }
             true
         } catch (e: IOException) {

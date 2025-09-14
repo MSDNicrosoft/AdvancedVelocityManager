@@ -12,6 +12,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 
+@Suppress("unused")
 enum class ComponentSerializer {
     JSON {
         override val serializer: JSONComponentSerializer by lazy { JSONComponentSerializer.json() }

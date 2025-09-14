@@ -5,47 +5,48 @@ import com.velocitypowered.api.proxy.server.RegisteredServer
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
-import work.msdnicrosoft.avm.config.ConfigManager.config
-import work.msdnicrosoft.avm.util.command.argument.ComponentArgumentType
-import work.msdnicrosoft.avm.util.command.argument.ServerArgumentType
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.command.context.name
+import work.msdnicrosoft.avm.util.command.data.component.MiniMessage
 import work.msdnicrosoft.avm.util.component.hoverText
 import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.server.nickname
 import work.msdnicrosoft.avm.util.server.sendToServer
 import work.msdnicrosoft.avm.util.server.task
 
 object SendAllCommand {
     val command = literalCommand("sendall") {
         requires { hasPermission("avm.command.sendall") }
-        argument("server", ServerArgumentType.registered()) {
+        wordArgument("server") {
+            suggests { builder ->
+                server.allPlayers.forEach { builder.suggest(it.username) }
+                builder.buildFuture()
+            }
             executes {
-                val server: String by this
+                val server: RegisteredServer by this
                 sendAllPlayers(
                     server,
                     tr(
                         "avm.command.avm.send.target",
                         Argument.string("executor", context.source.name),
-                        Argument.string("server", config.getServerNickName(server))
+                        Argument.string("server", server.serverInfo.nickname)
                     )
                 )
                 Command.SINGLE_SUCCESS
             }
-            argument("reason", ComponentArgumentType.miniMessage()) {
+            stringArgument("reason") {
                 executes {
-                    val server: String by this
-                    val reason: Component by this
-                    sendAllPlayers(server, reason)
+                    val server: RegisteredServer by this
+                    val reason: MiniMessage by this
+                    sendAllPlayers(server, reason.component)
                     Command.SINGLE_SUCCESS
                 }
             }
         }
     }
 
-    private fun CommandContext.sendAllPlayers(serverName: String, reason: Component) {
-        val registeredServer: RegisteredServer = server.getServer(serverName).get()
-
+    private fun CommandContext.sendAllPlayers(registeredServer: RegisteredServer, reason: Component) {
         if (registeredServer.playersConnected.isEmpty()) {
             this.sendTranslatable("avm.general.empty.server")
             return
@@ -53,7 +54,7 @@ object SendAllCommand {
 
         task {
             val allPlayers: List<Player> = server.allPlayers.filterNot { player ->
-                player.currentServer.get().serverInfo.name == serverName
+                player.currentServer.get() == registeredServer
             }
             val toSend: List<Player> = allPlayers.filterNot { player ->
                 player.hasPermission("avm.sendall.bypass")
@@ -68,7 +69,7 @@ object SendAllCommand {
             this.sendTranslatable(
                 "avm.command.avm.sendall.executor.text",
                 Argument.numeric("player_total", toSend.size),
-                Argument.string("server", config.getServerNickName(serverName)),
+                Argument.string("server", registeredServer.serverInfo.nickname),
                 Argument.component(
                     "bypass",
                     tr(

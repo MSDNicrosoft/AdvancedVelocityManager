@@ -8,7 +8,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
-import work.msdnicrosoft.avm.util.command.argument.PlayerArgumentType
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.isConsole
 import work.msdnicrosoft.avm.util.command.context.name
@@ -28,13 +27,14 @@ object MsgCommand {
     val aliases: List<String> = listOf("msg", "tell", "w")
 
     val command = literalCommand("msg") {
-        argument("targets", PlayerArgumentType.name()) {
+        stringArgument("targets") {
             suggests { builder ->
-                if (shouldTakeOverPrivateChat || context.source.isConsole) {
+                val players: List<String> = if (shouldTakeOverPrivateChat || context.source.isConsole) {
                     server.allPlayers.map { it.username }
                 } else {
                     context.source.toPlayer().currentServer.get().server.playersConnected.map { it.username }
-                }.forEach(builder::suggest)
+                }
+                players.forEach(builder::suggest)
                 builder.buildFuture()
             }
             greedyStringArgument("message") {

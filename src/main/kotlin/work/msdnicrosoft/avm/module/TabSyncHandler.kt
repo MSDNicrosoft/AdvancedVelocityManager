@@ -5,6 +5,7 @@ import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.ServerPostConnectEvent
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.player.TabListEntry
+import com.velocitypowered.api.proxy.server.ServerInfo
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
@@ -12,6 +13,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
+import work.msdnicrosoft.avm.util.server.nickname
 import work.msdnicrosoft.avm.util.server.task
 
 object TabSyncHandler {
@@ -75,13 +77,13 @@ object TabSyncHandler {
     }
 
     private inline val Player.displayName: Component
-        get() = MINI_MESSAGE.deserialize(
-            config.format,
-            Placeholder.unparsed("server_name", currentServer.get().serverInfo.name),
-            Placeholder.parsed(
-                "server_nickname",
-                ConfigManager.config.getServerNickName(currentServer.get().serverInfo.name)
-            ),
-            Placeholder.unparsed("player_name", username)
-        )
+        get() {
+            val serverInfo: ServerInfo = currentServer.get().serverInfo
+            return MINI_MESSAGE.deserialize(
+                config.format,
+                Placeholder.unparsed("server_name", serverInfo.name),
+                Placeholder.parsed("server_nickname", serverInfo.nickname),
+                Placeholder.unparsed("player_name", username)
+            )
+        }
 }

@@ -10,9 +10,9 @@ avm:
       next: "<yellow>Click to turn to next page"
     not.found:
       page: "<gray>This page does not exist"
-      server: "<red>Server not found"
-      servergroup: "<red>Server group not found"
-      player: "<red>Player not found"
+      server: "<red>Server <server> not found"
+      servergroup: "<red>Server group <server_group> not found"
+      player: "<red>Player <player> not found"
     invalid:
       uuid: "Invalid UUID"
     help:

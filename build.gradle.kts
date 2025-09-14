@@ -3,6 +3,7 @@ import org.ajoberstar.grgit.Commit
 import org.ajoberstar.grgit.Grgit
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.net.URI
+import java.net.URL
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -104,11 +105,11 @@ detekt {
 
 yamlang {
     targetSourceSets = listOf(sourceSets.main.get())
-    inputDir.set("lang")
+    inputDir = "lang"
 }
 
 tasks {
-    val runDir = file("run")
+    val runDir: File = file("run")
 
     build {
         dependsOn(shadowJar)
@@ -157,8 +158,8 @@ tasks {
         description = "Downloads the latest Velocity server JAR"
         group = "velocity"
 
-        val version = libs.versions.velocity.get()
-        val velocityJar = file("$runDir/velocity-server-$version.jar")
+        val version: String = libs.versions.velocity.get()
+        val velocityJar: File = file("$runDir/velocity-server-$version.jar")
         val gson = Gson()
 
         outputs.file(velocityJar)
@@ -167,21 +168,23 @@ tasks {
             if (!runDir.exists()) runDir.mkdirs()
             if (velocityJar.exists() && velocityJar.length() > 0) return@doLast
 
-            val buildsUrl = URI("https://fill.papermc.io/v3/projects/velocity/versions/$version/builds").toURL()
-            val latestBuild = gson
+            val buildsUrl: URL = URI("https://fill.papermc.io/v3/projects/velocity/versions/$version/builds").toURL()
+            val latestBuild: Map<String, Any> = gson
                 .fromJson<List<Map<String, Any>>>(buildsUrl.readText(), List::class.java)
                 .first()
 
-            val downloads = latestBuild["downloads"] as Map<String, Map<String, Any>>
-            val serverDefault = downloads["server:default"]!!
-            val downloadUrl = URI(serverDefault["url"] as String).toURL()
+            val downloads: Map<String, Map<String, Any>> = latestBuild["downloads"] as Map<String, Map<String, Any>>
+            val serverDefault: Map<String, Any> = downloads["server:default"]!!
+            val downloadUrl: URL = URI(serverDefault["url"] as String).toURL()
 
 
             println("Downloading Velocity server $version...")
 
             try {
                 downloadUrl.openStream().use { input ->
-                    input.copyTo(velocityJar.outputStream())
+                    velocityJar.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
                 }
             } catch (e: Exception) {
                 println("Failed to download Velocity server: ${e.message}")
@@ -194,9 +197,9 @@ tasks {
         dependsOn(shadowJar, downloadVelocity)
         group = "velocity"
 
-        val version = libs.versions.velocity.get()
-        val pluginsDir = file("run/plugins")
-        val velocityJar = file("$runDir/velocity-server-$version.jar")
+        val version: String = libs.versions.velocity.get()
+        val pluginsDir: File = file("run/plugins")
+        val velocityJar: File = file("$runDir/velocity-server-$version.jar")
 
         standardInput = System.`in`
         standardOutput = System.out
@@ -207,7 +210,7 @@ tasks {
         doFirst {
             if (!pluginsDir.exists()) pluginsDir.mkdirs()
 
-            val pluginJar = shadowJar.get().archiveFile.get().asFile
+            val pluginJar: File = shadowJar.get().archiveFile.get().asFile
             if (pluginJar.exists()) {
                 copy {
                     from(pluginJar)

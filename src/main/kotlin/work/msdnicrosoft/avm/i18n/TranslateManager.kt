@@ -89,9 +89,9 @@ object TranslateManager : MiniMessageTranslator() {
             this.checkAndUpdateTranslations()
         }
 
-        for (languageFile in this.getLanguageFiles()) {
-            val locale = Locale.forLanguageTag(languageFile.nameWithoutExtension)
-            val currentTranslations = JSON.decodeFromString<Map<String, String>>(languageFile.readTextWithBuffer())
+        this.getLanguageFiles().forEach { file ->
+            val locale = Locale.forLanguageTag(file.nameWithoutExtension)
+            val currentTranslations: Map<String, String> = JSON.decodeFromString(file.readTextWithBuffer())
             this.translations.computeIfAbsent(locale) { ConcurrentHashMap() }.putAll(currentTranslations)
         }
     }
