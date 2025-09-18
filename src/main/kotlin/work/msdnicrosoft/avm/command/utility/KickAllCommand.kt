@@ -31,7 +31,7 @@ object KickAllCommand {
         }
         wordArgument("server") {
             suggests { builder ->
-                server.allPlayers.forEach { builder.suggest(it.username) }
+                server.allServers.forEach { builder.suggest(it.serverInfo.name) }
                 builder.buildFuture()
             }
             executes {

@@ -22,6 +22,10 @@ object SendCommand {
                 builder.buildFuture()
             }
             wordArgument("server") {
+                suggests { builder ->
+                    server.allServers.forEach { builder.suggest(it.serverInfo.name) }
+                    builder.buildFuture()
+                }
                 executes {
                     val server: RegisteredServer by this
                     val player: Player by this

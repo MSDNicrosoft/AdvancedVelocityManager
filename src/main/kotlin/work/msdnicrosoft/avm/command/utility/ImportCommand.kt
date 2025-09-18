@@ -8,6 +8,7 @@ import work.msdnicrosoft.avm.module.imports.PluginName
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.name
 import work.msdnicrosoft.avm.util.command.data.server.Server
+import work.msdnicrosoft.avm.util.component.clickToRunCommand
 import work.msdnicrosoft.avm.util.component.hoverText
 import work.msdnicrosoft.avm.util.component.tr
 import kotlin.time.Duration
@@ -61,6 +62,7 @@ object ImportCommand {
                             "avm.command.avm.import.need.confirm.2.text",
                             Argument.string("command", "/avm confirm $sessionId")
                         ).hoverText(tr("avm.command.avm.import.need.confirm.2.hover"))
+                            .clickToRunCommand("/avm confirm $sessionId")
                     )
                     Command.SINGLE_SUCCESS
                 }
