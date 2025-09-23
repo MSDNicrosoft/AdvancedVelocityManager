@@ -18,7 +18,8 @@ fastutil = "8.5.16"
 kaml = "0.96.0"
 kotlin-serialization = "1.9.0"
 byte-buddy-agent = "1.17.7"
-kavaref = "1.0.1"
+kavaref = "1.0.2"
+kavaref-extension = "1.0.1"
 
 
 [plugins]
@@ -49,7 +50,7 @@ kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
 kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
 byte-buddy-agent = { module = "net.bytebuddy:byte-buddy-agent", version.ref = "byte-buddy-agent" }
 kavaref-core = { module = "com.highcapable.kavaref:kavaref-core", version.ref = "kavaref" }
-kavaref-extension = { module = "com.highcapable.kavaref:kavaref-extension", version.ref = "kavaref" }
+kavaref-extension = { module = "com.highcapable.kavaref:kavaref-extension", version.ref = "kavaref-extension" }
 
 
 [bundles]
