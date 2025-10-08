@@ -12,7 +12,7 @@ velocity = "3.4.0-SNAPSHOT"
 asm = "9.9"
 floodgate = "2.2.4-SNAPSHOT"
 netty = "4.2.6.Final"
-fastutil = "8.5.17"
+fastutil = "8.5.18"
 
 # Shade Dependencies
 kaml = "0.98.0"
