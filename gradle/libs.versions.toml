@@ -17,7 +17,7 @@ fastutil = "8.5.18"
 # Shade Dependencies
 kaml = "0.98.0"
 kotlin-serialization = "1.9.0"
-byte-buddy-agent = "1.17.7"
+byte-buddy-agent = "1.17.8"
 kavaref = "1.0.2"
 kavaref-extension = "1.0.1"
 
