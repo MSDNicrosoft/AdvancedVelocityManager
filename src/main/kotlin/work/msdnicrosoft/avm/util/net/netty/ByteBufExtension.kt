@@ -73,3 +73,5 @@ inline fun <T : ByteBuf, R> T.useThenApply(block: T.() -> R): R =
     } finally {
         this.release()
     }
+
+inline fun <reified T: ByteBuf> T.toByteArray(): ByteArray = ByteBufUtil.getBytes(this)

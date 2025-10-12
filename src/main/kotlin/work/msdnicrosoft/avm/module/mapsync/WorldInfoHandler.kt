@@ -10,13 +10,13 @@ import com.velocitypowered.api.event.connection.PluginMessageEvent
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ServerConnection
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
-import io.netty.buffer.ByteBufUtil
 import io.netty.buffer.Unpooled
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.channelRegistrar
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.net.netty.useThenApply
+import work.msdnicrosoft.avm.util.net.netty.toByteArray
+import work.msdnicrosoft.avm.util.net.netty.useApply
 import java.nio.charset.StandardCharsets
 
 object WorldInfoHandler {
@@ -59,11 +59,10 @@ object WorldInfoHandler {
 
     @Suppress("MagicNumber")
     private fun createArray(serverNameBytes: ByteArray, modern: Boolean): ByteArray =
-        Unpooled.buffer().useThenApply {
+        Unpooled.buffer().useApply {
             writeByte(0x00) // Packet ID
             if (modern) writeByte(0x2A) // New packet
             writeByte(serverNameBytes.size)
             writeBytes(serverNameBytes)
-            ByteBufUtil.getBytes(this)
-        }
+        }.toByteArray()
 }

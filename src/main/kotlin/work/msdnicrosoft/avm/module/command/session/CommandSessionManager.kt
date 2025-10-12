@@ -49,12 +49,12 @@ object CommandSessionManager {
      * @return The result of executing the command session.
      */
     fun executeAction(sessionId: String): ExecuteResult {
-        val session = sessions.remove(sessionId) ?: return ExecuteResult.NOT_FOUND
+        val action = sessions.remove(sessionId) ?: return ExecuteResult.NOT_FOUND
         return try {
-            if (session.isExpired()) {
+            if (action.isExpired()) {
                 ExecuteResult.EXPIRED
             } else {
-                session.block.invoke()
+                action.execute()
                 ExecuteResult.SUCCESS
             }
         } catch (e: Exception) {

@@ -13,7 +13,7 @@ import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import java.nio.file.Path
 import kotlin.io.path.*
 
-object LlsManagerImporter : Importer(pluginName = "lls-manager") {
+object LlsManagerImporter : Importer {
     @Serializable
     private data class Config(
         val showAllPlayerInTabList: Boolean,
@@ -37,6 +37,8 @@ object LlsManagerImporter : Importer(pluginName = "lls-manager") {
     private val PATH: Path = dataDirectory.parent / "lls-manager"
     private val CONFIG_PATH: Path = PATH / "config.json"
     private val PLAYER_DATA_PATH: Path = PATH / "player"
+
+    override val pluginName: String = "lls-manager"
 
     override fun import(source: CommandSource, defaultServer: String): Boolean {
         val configSuccess: Boolean = if (this.CONFIG_PATH.exists()) {

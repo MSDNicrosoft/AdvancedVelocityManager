@@ -37,7 +37,7 @@ object WhitelistHandler {
         // Blocked by other plugins or whitelist is off
         if (!event.result.isAllowed || !WhitelistManager.enabled) return
 
-        val username: String = this.getUsername(event.username, event.connection)
+        val username: String = event.connection.getJavaUsernameOrDefault(event.username)
         val player = WhitelistManager.getPlayer(username)
         if (player == null) {
             event.result = PreLoginEvent.PreLoginComponentResult.denied(MINI_MESSAGE.deserialize(config.message))
@@ -75,19 +75,15 @@ object WhitelistHandler {
     }
 
     /**
-     * Retrieves the username for the player attempting to connect.
-     * This method supports Floodgate integration to get the correct username for linked accounts.
-     *
-     * @param username The username of the player attempting to connect.
-     * @param connection The InboundConnection associated with the player's connection.
-     * @return The username or linked username if available.
+     * Retrieves the Java username associated with the connection when Floodgate is enabled and the user is linked.
+     * If Floodgate is not enabled or the user is not linked, returns the provided default [username].
      */
     @Suppress("UnsafeCallOnNullableType")
-    private fun getUsername(username: String, connection: InboundConnection): String {
+    private fun InboundConnection.getJavaUsernameOrDefault(username: String): String {
         // Compatible with Floodgate
-        if (this.hasFloodgate) {
-            val channel: Channel = this.delegateFieldResolver.copy()
-                .of(connection)
+        if (this@WhitelistHandler.hasFloodgate) {
+            val channel: Channel = this@WhitelistHandler.delegateFieldResolver.copy()
+                .of(this)
                 .get<InitialInboundConnection>()!!.connection.channel
             val player: FloodgatePlayer? = channel
                 .attr(AttributeKey.valueOf<FloodgatePlayer>("floodgate-player"))

@@ -2,10 +2,9 @@ package work.msdnicrosoft.avm.module.imports.importers
 
 import com.velocitypowered.api.command.CommandSource
 
-/**
- * Importer interface for importing whitelist data from other plugins
- */
-abstract class Importer(val pluginName: String) {
+interface Importer {
+
+    val pluginName: String
 
     /**
      * Import data from other plugins
@@ -13,5 +12,5 @@ abstract class Importer(val pluginName: String) {
      * @param defaultServer The default server to send players to if they are not online
      * @return Whether the import was successful
      */
-    abstract fun import(source: CommandSource, defaultServer: String): Boolean
+    fun import(source: CommandSource, defaultServer: String): Boolean
 }

@@ -17,7 +17,7 @@ import java.util.*
 import kotlin.io.path.div
 import kotlin.io.path.exists
 
-object QuAnVelocityWhitelistImporter : Importer(pluginName = "(qu-an) VelocityWhitelist") {
+object QuAnVelocityWhitelistImporter : Importer {
     @Serializable
     private data class Player(
         @Serializable(with = UUIDSerializer::class)
@@ -33,6 +33,8 @@ object QuAnVelocityWhitelistImporter : Importer(pluginName = "(qu-an) VelocityWh
         } else {
             this.PATH / "whitelist_offline.json"
         }
+
+    override val pluginName: String = "(qu-an) VelocityWhitelist"
 
     override fun import(source: CommandSource, defaultServer: String): Boolean {
         val configSuccess: Boolean = if (this.CONFIG_PATH.exists()) {
