@@ -23,11 +23,6 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
 
-/**
- * Handles whitelist functionality for the server, including integration with Floodgate for player identification.
- * This object is specific to the Velocity platform and listens for pre-login and server pre-connect events
- * to enforce whitelist restrictions.
- */
 object WhitelistHandler {
     private inline val config get() = ConfigManager.config.whitelist
 

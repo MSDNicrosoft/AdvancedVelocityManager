@@ -3,10 +3,7 @@ package work.msdnicrosoft.avm.module.whitelist
 import work.msdnicrosoft.avm.config.ConfigManager
 
 /**
- * Handles caching of players for whitelist functionality within the Advanced Velocity Manager.
- * This object is used to provide a completion source for the `whitelist add` command by caching
- * player information. It interacts with the WhitelistManager to check if players are whitelisted and
- * manages a cache of players based on the server configuration.
+ * This object is used to provide a completion source for the `/avmwl add` command by caching player information.
  */
 object PlayerCache {
     private inline val config get() = ConfigManager.config.whitelist.cachePlayers

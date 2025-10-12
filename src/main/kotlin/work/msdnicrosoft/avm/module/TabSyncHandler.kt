@@ -54,10 +54,7 @@ object TabSyncHandler {
     }
 
     /**
-     * Updates the tab list entry of the target player with the display name of the entry player.
-     *
-     * @param target The player whose tab list is being updated.
-     * @param entry The player whose display name is being used for the update.
+     * Updates the tab list entry of the [target] player with the display name of the [entry] player.
      */
     private fun update(target: Player, entry: Player) {
         val displayName: Component = entry.displayName

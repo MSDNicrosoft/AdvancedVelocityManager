@@ -7,12 +7,6 @@ import work.msdnicrosoft.avm.util.server.task
 import java.security.MessageDigest
 import java.util.concurrent.ConcurrentHashMap
 
-/**
- * A manager for command sessions.
- *
- * Command sessions are used to execute commands.
- * This class provides functionality to add, execute, and remove command sessions.
- */
 object CommandSessionManager {
     private val SHA256: MessageDigest = MessageDigest.getInstance("SHA-256")
     private val BASE32: BaseEncoding = BaseEncoding.base32().omitPadding()
@@ -24,22 +18,13 @@ object CommandSessionManager {
      */
     private lateinit var removalTask: ScheduledTask
 
-    /**
-     * Initializes the command session manager.
-     *
-     * This function starts a task that removes expired command sessions every 20 minutes.
-     */
     fun init() {
+        // Every 20 minutes, remove all expired sessions
         this.removalTask = task(repeatInMillis = 20 * 60 * 1000L) {
             this.sessions.entries.removeIf { it.value.isExpired() }
         }
     }
 
-    /**
-     * Disables the command session manager.
-     *
-     * This function cancels the removal task.
-     */
     fun disable() {
         this.removalTask.cancel()
     }
@@ -52,19 +37,15 @@ object CommandSessionManager {
     }
 
     /**
-     * Adds a command session to the manager.
-     *
-     * @param sessionId The ID of the command session.
-     * @param block The block of code to be executed.
+     * Adds a command session with [sessionId] and [block] to be executed to the manager.
      */
     fun <T> add(sessionId: String, block: () -> T) {
         sessions[sessionId] = Action(block = block, expirationTime = System.currentTimeMillis() + 60_000L)
     }
 
     /**
-     * Executes a command session.
+     * Executes a specified [sessionId] command session.
      *
-     * @param sessionId The ID of the command session.
      * @return The result of executing the command session.
      */
     fun executeAction(sessionId: String): ExecuteResult {
@@ -83,12 +64,7 @@ object CommandSessionManager {
     }
 
     /**
-     * Generates a session ID based on the given parameters.
-     *
-     * @param name The name used to generate the session ID.
-     * @param time The time used to generate the session ID.
-     * @param command The command used to generate the session ID.
-     * @return The generated session ID.
+     * Generates a session ID based on the provided [name], [time], and [command].
      */
     fun generateSessionId(name: String, time: Long, command: String): String {
         val digest: ByteArray = SHA256.digest("$name$time$command".toByteArray())

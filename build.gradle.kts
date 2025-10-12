@@ -195,6 +195,7 @@ tasks {
 
     val runVelocity by registering(JavaExec::class) {
         dependsOn(shadowJar, downloadVelocity)
+        description = "Runs the velocity server."
         group = "velocity"
 
         val version: String = libs.versions.velocity.get()

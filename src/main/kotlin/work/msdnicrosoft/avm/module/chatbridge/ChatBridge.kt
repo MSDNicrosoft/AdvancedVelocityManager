@@ -9,15 +9,13 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.command.chatbridge.MsgCommand
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.Logging
-import work.msdnicrosoft.avm.module.chatbridge.ChatBridge.mode
 
 object ChatBridge {
     private inline val config get() = ConfigManager.config.chatBridge
 
     /**
-     * Represents the current passthrough mode for chat messages.
-     *
-     * @property mode The current passthrough mode. Defaults to [PassthroughMode.ALL].
+     * The current passthrough mode for chat messages.
+     * Defaults to [PassthroughMode.ALL].
      */
     var mode: PassthroughMode = PassthroughMode.ALL
 
@@ -64,13 +62,6 @@ object ChatBridge {
         }
     }
 
-    /**
-     * This event listener is triggered when a command is executed.
-     * It checks if the command is related to private chat
-     * and if the configuration does not allow for taking over private chat.
-     *
-     * If the conditions are met, the command is forwarded to the server.
-     */
     @Subscribe
     fun onCommandExecute(event: CommandExecuteEvent) {
         val eventCommand: String = event.command
@@ -78,6 +69,7 @@ object ChatBridge {
             .first()
             .replace("/", "")
 
+        // Check if the executed command is related to private chat
         val isPrivateChat: Boolean = MsgCommand.aliases.any { eventCommand.startsWith(it) }
         if (!isPrivateChat) return
 

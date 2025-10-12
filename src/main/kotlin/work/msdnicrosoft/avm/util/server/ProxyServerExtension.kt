@@ -12,6 +12,9 @@ import java.util.concurrent.TimeUnit
 
 inline val ServerInfo.nickname: String get() = ConfigManager.config.getServerNickName(this.name)
 
+/**
+ * Creates a scheduled [task][runnable] with optional [delay][delayInMillis] and [repeat intervals][repeatInMillis].
+ */
 fun task(delayInMillis: Long = 0L, repeatInMillis: Long = 0L, runnable: Runnable): ScheduledTask {
     val taskBuilder = scheduler.buildTask(plugin, runnable)
 
@@ -27,10 +30,7 @@ fun task(delayInMillis: Long = 0L, repeatInMillis: Long = 0L, runnable: Runnable
 }
 
 /**
- * Sends a player to a specific server.
- *
- * @param server The server to send the player to.
- * @receiver The player to send.
+ * Sends a player to a specific [server].
  */
 fun Player.sendToServer(server: RegisteredServer): CompletableFuture<Boolean> =
     this.createConnectionRequest(server).connectWithIndication()

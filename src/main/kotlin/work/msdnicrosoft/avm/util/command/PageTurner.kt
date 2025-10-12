@@ -16,11 +16,7 @@ import kotlin.math.ceil
 class PageTurner(val command: String) {
 
     /**
-     * Builds a pagination component with navigation buttons and a page indicator.
-     *
-     * @param currentPage The current page number.
-     * @param maxPage The total number of pages.
-     * @return A ComponentText representing the pagination component.
+     * Builds navigation buttons and a page indicator with [currentPage] and [maxPage].
      */
     fun build(currentPage: Int, maxPage: Int): Component =
         Component.join(
@@ -49,12 +45,9 @@ class PageTurner(val command: String) {
         const val ITEMS_PER_PAGE = 10
 
         /**
-         * Calculates the maximum number of pages for the given number of items.
-         *
-         * @param page The number of items.
-         * @return The maximum number of pages.
+         * Calculates the maximum number of pages for the given [size].
          */
-        fun getMaxPage(page: Int): Int = ceil(page.toFloat() / this.ITEMS_PER_PAGE.toFloat()).toInt()
+        fun getMaxPage(size: Int): Int = ceil(size.toFloat() / this.ITEMS_PER_PAGE.toFloat()).toInt()
 
         private fun navigationButton(arrow: String): Component =
             MINI_MESSAGE.deserialize("<dark_gray>[$arrow<dark_gray>]")

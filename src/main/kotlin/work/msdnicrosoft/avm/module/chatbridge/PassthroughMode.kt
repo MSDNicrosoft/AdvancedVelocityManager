@@ -1,16 +1,16 @@
 package work.msdnicrosoft.avm.module.chatbridge
 
 /**
- * Represents the different modes of passthrough for chat messages.
+ * The modes of passthrough for chat messages.
  */
 enum class PassthroughMode {
     /**
-     * All chat messages will be sent to the backend server.
+     * All chat messages will be sent to the backend servers.
      */
     ALL,
 
     /**
-     * No chat messages will be sent to the backend server.
+     * No chat messages will be sent to the backend servers.
      */
     NONE,
 

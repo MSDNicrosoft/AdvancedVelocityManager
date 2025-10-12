@@ -16,14 +16,6 @@ import work.msdnicrosoft.avm.util.server.nickname
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
-/**
- * Represents a chat message sent by a player. This class is used to format
- * the message based on the configuration specified in the `chat-bridge` section
- * of the main configuration file.
- *
- * @param player The player who sent the message.
- * @param message The message content.
- */
 class ChatMessage(player: Player, private val message: String) {
     private val server: ServerConnection = player.currentServer.get()
     private val serverName: String = server.serverInfo.name
@@ -45,10 +37,6 @@ class ChatMessage(player: Player, private val message: String) {
         serverPing.version.name
     }
 
-    /**
-     * Build the final chat message with all specified formats and events.
-     * @return The built chat message with all formats and events applied.
-     */
     fun build(): Component = Component.join(
         JoinConfiguration.noSeparators(),
         config.publicChatFormat.map { format ->
@@ -58,10 +46,6 @@ class ChatMessage(player: Player, private val message: String) {
         }
     )
 
-    /**
-     * Deserialize the message by replacing placeholders with actual values.
-     * @return The deserialized message with placeholders replaced.
-     */
     private fun String.deserialize(): Component =
         if ("<server_version>" in this) {
             STYLE_ONLY_MINI_MESSAGE.deserialize(

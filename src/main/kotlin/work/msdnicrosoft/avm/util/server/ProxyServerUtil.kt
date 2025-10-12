@@ -15,20 +15,14 @@ object ProxyServerUtil {
         .build()
 
     /**
-     * Kicks a list of players from the server.
-     *
-     * @param reason The reason for the kick.
-     * @param players The players to kick.
+     * Kicks a list of [players] from the server with a specified [reason].
      */
     fun kickPlayers(reason: String, vararg players: Player) {
         kickPlayers(reason, players.toList())
     }
 
     /**
-     * Kicks a list of players from the server.
-     *
-     * @param reason The reason for the kick.
-     * @param players The players to kick.
+     * Kicks a list of [players] from the server with a specified [reason].
      */
     fun kickPlayers(reason: String, players: Iterable<Player>) {
         players.forEach { player ->

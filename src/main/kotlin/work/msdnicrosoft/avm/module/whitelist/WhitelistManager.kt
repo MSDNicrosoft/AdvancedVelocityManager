@@ -62,11 +62,6 @@ object WhitelistManager {
             ConfigManager.save()
         }
 
-    /**
-     * Called when the plugin is enabled.
-     *
-     * @param reload If true, the whitelist will be reloaded from the disk.
-     */
     fun init(reload: Boolean = false) {
         this.load(reload)
         this.updateCache()
@@ -84,12 +79,7 @@ object WhitelistManager {
     }
 
     /**
-     * Adds a player to the whitelist with the specified UUID, server, and online mode.
-     *
-     * @param uuid The UUID of the player to add.
-     * @param server The server to which the player will be added.
-     * @param onlineMode The online mode of the player, or null if not specified.
-     *
+     * Adds a player to the whitelist with the specified [uuid], [server], and [onlineMode].
      * @return The result of the addition operation.
      */
     fun add(uuid: UUID, server: String, onlineMode: Boolean? = null): AddResult {
@@ -106,11 +96,7 @@ object WhitelistManager {
     }
 
     /**
-     * Adds a player to the whitelist with the specified username and server.
-     *
-     * @param username The username of the player to add.
-     * @param server The server to which the player will be added.
-     * @param onlineMode The online mode of the player, or null if not specified.
+     * Adds a player to the whitelist with the specified [username], [server], and [onlineMode].
      *
      * @return The result of the addition operation.
      */
@@ -128,15 +114,7 @@ object WhitelistManager {
     }
 
     /**
-     * Adds a player to the whitelist with the specified username, UUID, server, and online mode.
-     *
-     * If the player is not already in the global whitelist, they are added with the specified server.
-     * If the player is already in the global whitelist, the specified server is added to their server list.
-     *
-     * @param username The username of the player to add.
-     * @param uuid The UUID of the player to add.
-     * @param server The server to which the player will be added.
-     * @param onlineMode The online mode of the player, or null if not specified.
+     * Adds a player to the whitelist with the specified [username], [uuid], [server], and [onlineMode].
      *
      * @return The result of the addition operation.
      */
@@ -161,11 +139,9 @@ object WhitelistManager {
     }
 
     /**
-     * Removes a player from the whitelist for a specific server.
+     * Removes a player [username] from the whitelist
+     * for a specific [server] (If null, the player will be removed from the global whitelist).
      *
-     * @param username The username of the player to remove.
-     * @param server The name of the server from which to remove the player.
-     * If null, the player will be removed from the global whitelist.
      * @return The result of the remove operation.
      */
     fun remove(username: String, server: String?): RemoveResult {
@@ -174,11 +150,9 @@ object WhitelistManager {
     }
 
     /**
-     * Removes a player from the whitelist.
+     * Removes a player [uuid] from the whitelist
+     * for a specific [server] (If null, the player will be removed from the global whitelist).
      *
-     * @param uuid The UUID of the player to remove.
-     * @param server The name of the server from which to remove the player.
-     * If null, the player will be removed from the global whitelist.
      * @return The result of the remove operation.
      */
     fun remove(uuid: UUID, server: String?): RemoveResult {
@@ -187,11 +161,9 @@ object WhitelistManager {
     }
 
     /**
-     * Removes a player from the whitelist for a specific server.
+     * Removes a [player] from the whitelist
+     * for a specific [server]  (If null, the player will be removed from the global whitelist).
      *
-     * @param player The player to remove from the whitelist.
-     * @param server The name of the server from which to remove the player.
-     * If null, the player will be removed from the global whitelist.
      * @return The result of the remove operation.
      */
     fun remove(player: Player, server: String?): RemoveResult {
@@ -217,11 +189,6 @@ object WhitelistManager {
     /**
      * Clears the whitelist by removing all players from it.
      *
-     * This function acquires a lock to ensure thread safety.
-     * It then clears the whitelist by removing all players from it.
-     * After that, it updates the cache to reflect the changes.
-     * Finally, it saves the whitelist to disk and returns the result.
-     *
      * @return `true` if the whitelist was successfully cleared and saved, `false` otherwise.
      */
     fun clear(): Boolean {
@@ -234,11 +201,7 @@ object WhitelistManager {
     }
 
     /**
-     * Finds players in the whitelist by their username and returns them in pages.
-     *
-     * @param keyword The keyword to search for.
-     * @param page The page number to return.
-     * @return A list of players matching the search criteria.
+     * Finds players in the whitelist by [keyword] and returns them in specified [page].
      */
     fun find(keyword: String, page: Int): List<Player> =
         this.lock.read { this.whitelist.filter { keyword in it.name } }
@@ -247,24 +210,23 @@ object WhitelistManager {
             .orEmpty()
 
     /**
-     * Finds a player in the whitelist by their UUID.
+     * Finds a player in the whitelist by their [username].
      */
     fun getPlayer(username: String): Player? = this.lock.read { this.whitelist.find { it.name == username } }
 
     /**
-     * Finds a player in the whitelist by their UUID.
+     * Finds a player in the whitelist by their [uuid].
      */
     fun getPlayer(uuid: UUID): Player? = this.lock.read { this.whitelist.find { it.uuid == uuid } }
 
     /**
-     * Checks if a player with the given UUID is allowed to connect to a specific server.
-     *
-     * This function first checks if the player is in the whitelist. If not, it immediately returns false.
-     * If the player is in the whitelist, it then checks if the server is in the list of allowed servers for the player.
+     * Checks if a player with the given [uuid] is allowed to connect to a specific [server].
      */
     fun isInServerWhitelist(uuid: UUID, server: String): Boolean = lock.read {
+        // Check if the player is in the whitelist
         val player: Player = this.whitelist.find { it.uuid == uuid } ?: return false
 
+        // Check if the player is in the server whitelist
         val serverList: List<String> = player.serverList
         if (server in serverList) return true
 
@@ -281,10 +243,7 @@ object WhitelistManager {
     }
 
     /**
-     * Returns a list of players on the specified page.
-     *
-     * @param page The page number to retrieve.
-     * @return A list of players on the specified page.
+     * Returns a list of whitelist players on the specified [page].
      */
     fun pageOf(page: Int): List<Player> {
         val pages: List<List<Player>> = this.lock.read { this.whitelist.chunked(PageTurner.ITEMS_PER_PAGE) }
@@ -352,12 +311,9 @@ object WhitelistManager {
     }
 
     /**
-     * Retrieves the username associated with the given UUID.
+     * Retrieves the username associated with the given [uuid].
      * If the server is in offline mode, it returns null.
      * If the server is online, a query is made to the API to retrieve the username.
-     *
-     * @param uuid The UUID of the player.
-     * @return The username associated with the UUID or null if the query fails.
      */
     private fun getUsername(uuid: UUID): String? {
         if (!this.serverIsOnlineMode) return null
@@ -386,11 +342,9 @@ object WhitelistManager {
     }
 
     /**
-     * Retrieves the UUID associated with the given username.
+     * Retrieves the UUID associated with the given [username].
      *
-     * @param username The username to query for its UUID.
      * @param onlineMode Optional parameter to specify whether to use online mode or not. Defaults to null.
-     * @return The UUID associated with the username or null if the query fails.
      */
     private fun getUuid(username: String, onlineMode: Boolean? = null): String? {
         if (onlineMode == false && !this.serverIsOnlineMode) {

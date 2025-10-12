@@ -1,12 +1,12 @@
 package work.msdnicrosoft.avm.module.command.session
 
 /**
- * Represents an action to be executed in a command session.
+ * An action [block] to be executed in a command session.
  *
- * @property executed Whether the action has been executed.
- * @property block The block of code to be executed.
- * @property expirationTime The time at which the action expires.
+ * The action expires after a specified [expirationTime].
  */
-data class Action<T>(var executed: Boolean = false, val block: () -> T, val expirationTime: Long) {
+data class Action<T>(private val block: () -> T, val expirationTime: Long) {
     fun isExpired(): Boolean = System.currentTimeMillis() > this.expirationTime
+
+    fun execute(): T = block.invoke()
 }

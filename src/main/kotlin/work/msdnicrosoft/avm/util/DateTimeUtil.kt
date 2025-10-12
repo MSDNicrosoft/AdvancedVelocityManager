@@ -7,12 +7,7 @@ import java.time.format.DateTimeFormatter
 object DateTimeUtil {
 
     /**
-     * Returns a string representation of the current date and time in the specified format and time zone.
-     *
-     * @param format The format of the date and time string. Defaults to "yyyy-MM-dd HH:mm:ss".
-     * @param zoneId The time zone to use. Defaults to the system default time zone.
-     *
-     * @return A string representation of the current date and time in the specified format and time zone.
+     * Gets the current date and time as a formatted string based on the specified [format] and [time zone][zoneId].
      */
     fun getDateTime(format: String = "yyyy-MM-dd HH:mm:ss", zoneId: ZoneId = ZoneId.systemDefault()): String =
         LocalDateTime.now(zoneId).format(DateTimeFormatter.ofPattern(format))

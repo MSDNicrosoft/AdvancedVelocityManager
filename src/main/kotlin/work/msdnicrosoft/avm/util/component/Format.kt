@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 
 /**
- * A data class representing a format for a component.
+ * A format for a component.
  *
  * @property text The text of the component.
  * @property hover The hover text of the component.

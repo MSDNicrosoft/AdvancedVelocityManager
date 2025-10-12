@@ -8,7 +8,7 @@ import com.velocitypowered.api.command.CommandSource
 abstract class Importer(val pluginName: String) {
 
     /**
-     * Import whitelist data from other plugins
+     * Import data from other plugins
      *
      * @param defaultServer The default server to send players to if they are not online
      * @return Whether the import was successful

@@ -5,7 +5,7 @@ import work.msdnicrosoft.avm.util.data.UUIDSerializer
 import java.util.UUID
 
 /**
- * Represents a player in the whitelist.
+ * A player in the whitelist.
  *
  * @property name The name of the player.
  * @property uuid The UUID of the player.

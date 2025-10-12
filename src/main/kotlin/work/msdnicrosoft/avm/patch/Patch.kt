@@ -43,13 +43,6 @@ object Patch {
 
     private lateinit var instrumentation: Instrumentation
 
-    /**
-     * Initializes the instrumentation object and adds a transformer to the JVM.
-     *
-     * This function should be called once at startup to initialize the instrumentation object and add
-     * a transformer to the JVM.
-     *
-     */
     fun init() {
         try {
             val toTransform: List<ClassTransformer> = this.transformers.filter { it.shouldTransform() }
