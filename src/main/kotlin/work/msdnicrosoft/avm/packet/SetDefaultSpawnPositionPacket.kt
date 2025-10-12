@@ -34,7 +34,7 @@ class SetDefaultSpawnPositionPacket : MinecraftPacket {
     override fun handle(sessionHandler: MinecraftSessionHandler): Boolean {
         if (!config.world && !config.mini) return true
 
-        val connection: VelocityServerConnection = SERVER_CONN_FIELD_RESOLVER.copy()
+        val connection: VelocityServerConnection = SERVER_CONN_RESOLVER.copy()
             .of(sessionHandler as BackendPlaySessionHandler)
             .get<VelocityServerConnection>()!!
 
@@ -60,8 +60,10 @@ class SetDefaultSpawnPositionPacket : MinecraftPacket {
     }
 
     companion object {
-        private val SERVER_CONN_FIELD_RESOLVER: FieldResolver<BackendPlaySessionHandler> = classOf<BackendPlaySessionHandler>().resolve()
-            .firstField { name = "serverConn" }
+        private val SERVER_CONN_RESOLVER: FieldResolver<BackendPlaySessionHandler> by lazy {
+            classOf<BackendPlaySessionHandler>().resolve()
+                .firstField { name = "serverConn" }
+        }
 
         private inline val config get() = ConfigManager.config.mapSync.xaero
     }
