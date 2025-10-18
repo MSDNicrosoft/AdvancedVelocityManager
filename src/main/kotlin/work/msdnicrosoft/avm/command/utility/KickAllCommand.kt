@@ -17,16 +17,16 @@ object KickAllCommand {
     val command = literalCommand("kickall") {
         requires { hasPermission("avm.command.kickall") }
         executes {
-            server.allPlayers.filterNot { player ->
-                player.hasPermission("avm.kickall.bypass")
-            }.forEach { player ->
-                player.disconnect(
-                    tr(
-                        "avm.command.avm.kick.target",
-                        Argument.string("executor", context.source.name)
+            server.allPlayers
+                .filterNot { player -> player.hasPermission("avm.kickall.bypass") }
+                .forEach { player ->
+                    player.disconnect(
+                        tr(
+                            "avm.command.avm.kick.target",
+                            Argument.string("executor", context.source.name)
+                        )
                     )
-                )
-            }
+                }
             Command.SINGLE_SUCCESS
         }
         wordArgument("server") {

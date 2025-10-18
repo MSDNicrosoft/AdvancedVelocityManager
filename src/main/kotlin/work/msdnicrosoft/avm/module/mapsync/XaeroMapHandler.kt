@@ -23,7 +23,7 @@ object XaeroMapHandler {
     // https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Protocol_version_numbers
     // https://minecraft.wiki/w/Java_Edition_protocol/Packets#Set_Default_Spawn_Position
     @Suppress("MagicNumber")
-    private val PACKET: Packet<SetDefaultSpawnPositionPacket> = Packet.of(SetDefaultSpawnPositionPacket::class)
+    private val packet: Packet<SetDefaultSpawnPositionPacket> = Packet.of(SetDefaultSpawnPositionPacket::class)
         .direction(Direction.CLIENTBOUND)
         .stateRegistry(StateRegistry.PLAY)
         .packetSupplier(::SetDefaultSpawnPositionPacket)
@@ -47,12 +47,12 @@ object XaeroMapHandler {
         .mapping(0x5A, MinecraftVersion.MINECRAFT_1_21_5, false)
 
     fun init() {
-        this.PACKET.register()
+        this.packet.register()
         channelRegistrar.register(this.XAERO_WORLD_MAP_CHANNEL, this.XAERO_MINI_MAP_CHANNEL)
     }
 
     fun disable() {
-        this.PACKET.unregister()
+        this.packet.unregister()
         channelRegistrar.unregister(this.XAERO_WORLD_MAP_CHANNEL, this.XAERO_MINI_MAP_CHANNEL)
     }
 }

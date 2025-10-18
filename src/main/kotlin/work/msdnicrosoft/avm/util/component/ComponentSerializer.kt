@@ -16,27 +16,18 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 enum class ComponentSerializer {
     JSON {
         override val serializer: JSONComponentSerializer by lazy { JSONComponentSerializer.json() }
-
-        // language=json
-        override val examples: Collection<String> = setOf("""{"color":"red","text": "Hello World!"}""")
     },
     GSON {
         override val serializer: GsonComponentSerializer by lazy { GsonComponentSerializer.gson() }
-
-        // language=json
-        override val examples: Collection<String> = setOf("""{"color":"red","text": "Hello World!"}""")
     },
     LEGACY_SECTION {
         override val serializer: LegacyComponentSerializer by lazy { LegacyComponentSerializer.legacySection() }
-        override val examples: Collection<String> = setOf("§aHello World!")
     },
     LEGACY_AMPERSAND {
         override val serializer: LegacyComponentSerializer by lazy { LegacyComponentSerializer.legacyAmpersand() }
-        override val examples: Collection<String> = setOf("&aHello World!")
     },
     MINI_MESSAGE {
         override val serializer: MiniMessage by lazy { MiniMessage.miniMessage() }
-        override val examples: Collection<String> = setOf("<red>Hello World!")
 
         override fun deserialize(text: String, vararg tagResolver: TagResolver): Component =
             this.serializer.deserialize(text, *tagResolver)
@@ -57,8 +48,6 @@ enum class ComponentSerializer {
                 ).build()
         }
 
-        override val examples: Collection<String> = setOf("<red>Hello World!")
-
         override fun deserialize(text: String, vararg tagResolver: TagResolver): Component =
             this.serializer.deserialize(text, *tagResolver)
     },
@@ -74,8 +63,6 @@ enum class ComponentSerializer {
     };
 
     abstract val serializer: ComponentSerializer<Component, *, String>
-
-    open val examples: Collection<String> = setOf("Hello World!")
 
     open fun deserialize(text: String, vararg tagResolver: TagResolver): Component {
         logger.warn("The MiniMessage tag resolver is not supported in this serialization type.")

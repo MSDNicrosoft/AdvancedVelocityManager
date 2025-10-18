@@ -34,26 +34,23 @@ import kotlin.io.path.div
 
 @Suppress("TooManyFunctions")
 object WhitelistManager {
+    private inline val config get() = ConfigManager.config.whitelist
+
+    private val file: File = (dataDirectory / "whitelist.json").toFile()
+
+    private val whitelist: MutableList<Player> = mutableListOf()
+
     val usernames: HashSet<String> = hashSetOf()
     val uuids: HashSet<UUID> = hashSetOf()
 
     val size: Int get() = this.whitelist.size
-
     val isEmpty: Boolean get() = this.whitelist.isEmpty()
 
     val maxPage: Int get() = PageTurner.getMaxPage(this.whitelist.size)
-
     inline val serverIsOnlineMode: Boolean get() = server.configuration.isOnlineMode
 
-    private inline val config get() = ConfigManager.config.whitelist
-
-    private val FILE: File = (dataDirectory / "whitelist.json").toFile()
-
-    private val lock = ReentrantReadWriteLock()
-
+    private val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
     private val httpClient: HttpClient = HttpClient.newHttpClient()
-
-    private val whitelist: MutableList<Player> = mutableListOf()
 
     var enabled: Boolean
         get() = config.enabled
@@ -256,14 +253,14 @@ object WhitelistManager {
      * @return True if the save was successful, false otherwise.
      */
     private fun save(initialize: Boolean): Boolean {
-        if (!this.FILE.exists()) {
+        if (!this.file.exists()) {
             logger.info("Whitelist file does not exist{}", if (initialize) ", creating..." else "")
         }
 
         return try {
-            this.FILE.parentFile.mkdirs()
+            this.file.parentFile.mkdirs()
             this.lock.read {
-                this.FILE.writeTextWithBuffer(JSON.encodeToString(if (initialize) listOf() else this.whitelist))
+                this.file.writeTextWithBuffer(JSON.encodeToString(if (initialize) listOf() else this.whitelist))
             }
             true
         } catch (e: IOException) {
@@ -278,14 +275,14 @@ object WhitelistManager {
      * @param reload If true, the whitelist will be reloaded from the disk.
      */
     private fun load(reload: Boolean = false): Boolean {
-        if (!this.FILE.exists()) return save(initialize = true)
+        if (!this.file.exists()) return save(initialize = true)
 
         logger.info("{} whitelist...", if (reload) "Reloading" else "Loading")
 
         return try {
             this.lock.write {
                 this.whitelist.clear()
-                this.whitelist.addAll(JSON.decodeFromString<List<Player>>(this.FILE.readTextWithBuffer()))
+                this.whitelist.addAll(JSON.decodeFromString<List<Player>>(this.file.readTextWithBuffer()))
             }
             true
         } catch (e: IOException) {

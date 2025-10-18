@@ -7,7 +7,7 @@ import com.moandjiezana.toml.Toml
 import kotlinx.serialization.json.Json
 
 object FileUtil {
-    val YAML = Yaml(
+    val YAML: Yaml = Yaml(
         configuration = YamlConfiguration(
             encodeDefaults = true,
             strictMode = false,
@@ -15,10 +15,10 @@ object FileUtil {
         )
     )
 
-    val JSON = Json {
+    val JSON: Json = Json {
         ignoreUnknownKeys = true
         prettyPrint = true
     }
 
-    val TOML = Toml()
+    val TOML: Toml = Toml()
 }

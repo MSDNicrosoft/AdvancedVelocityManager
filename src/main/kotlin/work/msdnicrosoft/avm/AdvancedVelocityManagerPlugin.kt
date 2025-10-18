@@ -53,7 +53,7 @@ class AdvancedVelocityManagerPlugin {
 
         require(ConfigManager.load()) { "Failed to load configuration, aborting initialization" }
 
-        this.loadLanguage(false)
+        TranslateManager.init()
         this.initializeModules()
         this.registerCommands()
 
@@ -112,7 +112,7 @@ class AdvancedVelocityManagerPlugin {
                 return false
             }
 
-            this.loadLanguage(true)
+            TranslateManager.reload()
             CommandSessionManager.reload()
             PlayerCache.reload()
             WhitelistManager.reload()
@@ -120,16 +120,6 @@ class AdvancedVelocityManagerPlugin {
         } catch (e: Exception) {
             logger.error("Failed to reload plugin", e)
             return false
-        }
-    }
-
-    private fun loadLanguage(reload: Boolean) {
-        if (reload) {
-            logger.info("Reloading language...")
-            TranslateManager.reload()
-        } else {
-            logger.info("Loading language...")
-            TranslateManager.init()
         }
     }
 

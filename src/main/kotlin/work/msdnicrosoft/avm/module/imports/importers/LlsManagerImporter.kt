@@ -89,26 +89,26 @@ object LlsManagerImporter : Importer {
     private fun importPlayerData(defaultServer: String, source: CommandSource): Boolean {
         var success = true
 
-        this.PLAYER_DATA_PATH.listDirectoryEntries().asSequence().filter { file ->
-            file.extension.equals("json", ignoreCase = true) && file.isRegularFile()
-        }.forEach { file ->
-            val username: String = file.nameWithoutExtension
-            try {
-                val llsPlayer = JSON.decodeFromString<PlayerData>(file.readTextWithBuffer())
-                val servers: List<String> = llsPlayer.serverList.ifEmpty { listOf(defaultServer) }
-                servers.forEach { server ->
-                    WhitelistManager.add(username, server, llsPlayer.onlineMode)
+        this.PLAYER_DATA_PATH.listDirectoryEntries().asSequence()
+            .filter { file -> file.extension.equals("json", ignoreCase = true) && file.isRegularFile() }
+            .forEach { file ->
+                val username: String = file.nameWithoutExtension
+                try {
+                    val llsPlayer = JSON.decodeFromString<PlayerData>(file.readTextWithBuffer())
+                    val servers: List<String> = llsPlayer.serverList.ifEmpty { listOf(defaultServer) }
+                    servers.forEach { server ->
+                        WhitelistManager.add(username, server, llsPlayer.onlineMode)
+                    }
+                } catch (e: Exception) {
+                    source.sendTranslatable(
+                        "avm.command.avm.import.player.failed",
+                        Argument.string("player", username),
+                        Argument.string("plugin_name", this.pluginName),
+                        Argument.string("reason", e.message.orEmpty())
+                    )
+                    success = false
                 }
-            } catch (e: Exception) {
-                source.sendTranslatable(
-                    "avm.command.avm.import.player.failed",
-                    Argument.string("player", username),
-                    Argument.string("plugin_name", this.pluginName),
-                    Argument.string("reason", e.message.orEmpty())
-                )
-                success = false
             }
-        }
         return success
     }
 }

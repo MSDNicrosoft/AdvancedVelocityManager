@@ -133,7 +133,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
             when (action) {
                 Action.REPLACE -> {
                     val packetId: Int = packetClassToId.object2IntEntrySet()
-                        .find { entry -> this.oldPacket.isAssignableFrom(entry.key) }
+                        .find { (clazz, _) -> this.oldPacket.isAssignableFrom(clazz) }
                         ?.intValue
                         ?: return@forEach
                     packetIdToSupplier[packetId] = this.packetSupplier

@@ -20,7 +20,7 @@ import kotlin.io.path.div
 object ConfigManager {
     lateinit var config: AVMConfig
 
-    private val FILE: File = (dataDirectory / "config.yml").toFile()
+    private val file: File = (dataDirectory / "config.yml").toFile()
     private val DEFAULT_CONFIG: AVMConfig by lazy { AVMConfig() }
 
     /**
@@ -30,13 +30,13 @@ object ConfigManager {
      * @return True if the configuration is loaded successfully, false otherwise.
      */
     fun load(reload: Boolean = false): Boolean {
-        if (!this.FILE.exists() && !this.save(initialize = true)) return false
+        if (!this.file.exists() && !this.save(initialize = true)) return false
 
         logger.info("{} configuration...", if (reload) "Reloading" else "Loading")
 
         return try {
             this.migrate()
-            this.config = YAML.decodeFromString(this.FILE.readTextWithBuffer())
+            this.config = YAML.decodeFromString(this.file.readTextWithBuffer())
             this.validate()
             true
         } catch (e: IOException) {
@@ -61,7 +61,7 @@ object ConfigManager {
      * @return True if the configuration is saved successfully, false otherwise.
      */
     fun save(initialize: Boolean = false): Boolean {
-        if (!this.FILE.exists()) {
+        if (!this.file.exists()) {
             logger.info(
                 "Configuration file does not exist{}",
                 if (initialize) ", generating default configuration..." else ""
@@ -69,8 +69,8 @@ object ConfigManager {
         }
 
         return try {
-            this.FILE.parentFile.mkdirs()
-            this.FILE.writeTextWithBuffer(YAML.encodeToString(if (!initialize) this.config else this.DEFAULT_CONFIG))
+            this.file.parentFile.mkdirs()
+            this.file.writeTextWithBuffer(YAML.encodeToString(if (!initialize) this.config else this.DEFAULT_CONFIG))
             true
         } catch (e: IOException) {
             logger.error("Failed to save configuration to file", e)
@@ -116,7 +116,7 @@ object ConfigManager {
     }
 
     private fun migrate() {
-        val currentVersion: Int = YAML.decodeFromString<Version>(this.FILE.readTextWithBuffer()).version
+        val currentVersion: Int = YAML.decodeFromString<Version>(this.file.readTextWithBuffer()).version
         if (currentVersion == this.DEFAULT_CONFIG.version) return
         when (currentVersion) {
             1 if this.DEFAULT_CONFIG.version == 2 -> {

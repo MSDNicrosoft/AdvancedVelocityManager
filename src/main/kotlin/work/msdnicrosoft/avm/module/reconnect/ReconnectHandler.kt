@@ -22,7 +22,7 @@ object ReconnectHandler {
     // https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Protocol_version_numbers
     // https://minecraft.wiki/w/Java_Edition_protocol/Packets#Player_Abilities_(clientbound)
     @Suppress("MagicNumber")
-    private val PACKET: Packet<PlayerAbilitiesPacket> = Packet.of(PlayerAbilitiesPacket::class)
+    private val packet: Packet<PlayerAbilitiesPacket> = Packet.of(PlayerAbilitiesPacket::class)
         .direction(Direction.CLIENTBOUND)
         .stateRegistry(StateRegistry.PLAY)
         .packetSupplier(::PlayerAbilitiesPacket)
@@ -45,12 +45,12 @@ object ReconnectHandler {
         .mapping(0x39, MinecraftVersion.MINECRAFT_1_21_5, true)
 
     fun init() {
-        this.PACKET.register()
+        this.packet.register()
         eventManager.register(plugin, this)
     }
 
     fun disable() {
-        this.PACKET.unregister()
+        this.packet.unregister()
         eventManager.unregisterListener(plugin, this)
     }
 
@@ -58,10 +58,7 @@ object ReconnectHandler {
     fun onKickedFromServer(event: KickedFromServerEvent): EventTask? {
         if (event.kickedDuringServerConnect()) return null
 
-        val reason: String = BASIC_PLAIN_TEXT.serialize(
-            event.serverKickReason
-                .orElse(Component.empty())
-        )
+        val reason: String = BASIC_PLAIN_TEXT.serialize(event.serverKickReason.orElse(Component.empty()))
 
         if (!this.regex.matches(reason)) return null
 

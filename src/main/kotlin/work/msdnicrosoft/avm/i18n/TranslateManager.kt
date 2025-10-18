@@ -5,6 +5,7 @@ import net.kyori.adventure.key.Key
 import net.kyori.adventure.text.minimessage.translation.MiniMessageTranslator
 import net.kyori.adventure.translation.GlobalTranslator
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import java.io.FileOutputStream
@@ -17,21 +18,24 @@ import kotlin.io.path.*
 object TranslateManager : MiniMessageTranslator() {
     private val NAME: Key = Key.key("avm")
     private val DEFAULT_LOCALE: Locale = Locale.forLanguageTag("en_US")
-    private val GLOBAL_TRANSLATOR: GlobalTranslator = GlobalTranslator.translator()
-    private val LANGUAGE_FILE_PATH: Path = dataDirectory / "lang"
+
+    private val globalTranslator: GlobalTranslator = GlobalTranslator.translator()
+    private val languageFileDirectory: Path = dataDirectory / "lang"
 
     private val translations: MutableMap<Locale, ConcurrentHashMap<String, String>> = mutableMapOf()
 
     fun init() {
+        logger.info("Loading language...")
         this.registerTranslations()
-        this.GLOBAL_TRANSLATOR.addSource(this)
+        this.globalTranslator.addSource(this)
     }
 
     fun disable() {
-        this.GLOBAL_TRANSLATOR.removeSource(this)
+        this.globalTranslator.removeSource(this)
     }
 
     fun reload() {
+        logger.info("Reloading language...")
         this.translations.clear()
         this.registerTranslations()
     }
@@ -49,37 +53,37 @@ object TranslateManager : MiniMessageTranslator() {
     private fun checkAndUpdateTranslations() {
         val jarUrl = classOf<TranslateManager>().protectionDomain.codeSource?.location ?: return
         JarFile(jarUrl.path).use { jarFile ->
-            jarFile.entries().asSequence().filter { entry ->
-                entry.name.startsWith("lang/") && !entry.isDirectory
-            }.forEach { entry ->
-                val outPath = (this.LANGUAGE_FILE_PATH / entry.name.removePrefix("lang/")).toFile()
-                outPath.parentFile.mkdirs()
+            jarFile.entries().asSequence()
+                .filter { entry -> entry.name.startsWith("lang/") && !entry.isDirectory }
+                .forEach { entry ->
+                    val outPath = (this.languageFileDirectory / entry.name.removePrefix("lang/")).toFile()
+                    outPath.parentFile.mkdirs()
 
-                val fileExists = outPath.exists()
-                val fileContentChanged = if (fileExists) {
-                    val localContent = outPath.readTextWithBuffer()
-                    val jarContent = jarFile.getInputStream(entry).bufferedReader().use { it.readText() }
-                    localContent != jarContent
-                } else {
-                    true
-                }
+                    val fileExists = outPath.exists()
+                    val fileContentChanged = if (fileExists) {
+                        val localContent = outPath.readTextWithBuffer()
+                        val jarContent = jarFile.getInputStream(entry).bufferedReader().use { it.readText() }
+                        localContent != jarContent
+                    } else {
+                        true
+                    }
 
-                if (fileExists && !fileContentChanged) {
-                    return@forEach
-                }
+                    if (fileExists && !fileContentChanged) {
+                        return@forEach
+                    }
 
-                jarFile.getInputStream(entry).use { input ->
-                    FileOutputStream(outPath).use { output ->
-                        input.copyTo(output)
+                    jarFile.getInputStream(entry).use { input ->
+                        FileOutputStream(outPath).use { output ->
+                            input.copyTo(output)
+                        }
                     }
                 }
-            }
         }
     }
 
     private fun getLanguageFiles(): List<Path> {
-        this.LANGUAGE_FILE_PATH.toFile().mkdirs()
-        return this.LANGUAGE_FILE_PATH.listDirectoryEntries().filter { entry ->
+        this.languageFileDirectory.toFile().mkdirs()
+        return this.languageFileDirectory.listDirectoryEntries().filter { entry ->
             entry.extension.equals("json", ignoreCase = true) && entry.isRegularFile()
         }
     }

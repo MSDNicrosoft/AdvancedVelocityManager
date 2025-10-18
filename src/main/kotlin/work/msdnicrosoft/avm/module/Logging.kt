@@ -13,7 +13,7 @@ import java.io.File
 import kotlin.io.path.div
 
 object Logging {
-    private val FILE: File get() = (dataDirectory / "logs" / "${DateTimeUtil.getDateTime("yyyy-MM-dd")}.log").toFile()
+    private val file: File get() = (dataDirectory / "logs" / "${DateTimeUtil.getDateTime("yyyy-MM-dd")}.log").toFile()
 
     private val messages: MutableList<String> = mutableListOf()
 
@@ -34,7 +34,7 @@ object Logging {
         if (this.messages.isEmpty()) return
 
         try {
-            this.FILE.bufferedWriter().use { writer ->
+            this.file.bufferedWriter().use { writer ->
                 this.messages.forEach { message ->
                     writer.appendLine(message)
                 }
