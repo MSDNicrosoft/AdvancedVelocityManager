@@ -6,6 +6,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 import work.msdnicrosoft.avm.util.server.task
 import java.security.MessageDigest
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.time.Duration.Companion.minutes
 
 object CommandSessionManager {
     private val SHA256: MessageDigest = MessageDigest.getInstance("SHA-256")
@@ -20,7 +21,7 @@ object CommandSessionManager {
 
     fun init() {
         // Every 20 minutes, remove all expired sessions
-        this.removalTask = task(repeatInMillis = 20 * 60 * 1000L) {
+        this.removalTask = task(repeat = 20L.minutes) {
             this.sessions.entries.removeIf { it.value.isExpired() }
         }
     }

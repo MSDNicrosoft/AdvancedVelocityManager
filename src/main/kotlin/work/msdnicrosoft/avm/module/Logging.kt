@@ -11,6 +11,7 @@ import work.msdnicrosoft.avm.util.DateTimeUtil
 import work.msdnicrosoft.avm.util.server.task
 import java.io.File
 import kotlin.io.path.div
+import kotlin.time.Duration.Companion.minutes
 
 object Logging {
     private val file: File get() = (dataDirectory / "logs" / "${DateTimeUtil.getDateTime("yyyy-MM-dd")}.log").toFile()
@@ -21,7 +22,7 @@ object Logging {
 
     fun init() {
         eventManager.register(plugin, this)
-        this.writeTask = task(repeatInMillis = 5 * 60 * 1000L, runnable = this::write)
+        this.writeTask = task(repeat = 5.minutes, runnable = this::write)
     }
 
     @Suppress("UnusedParameter")

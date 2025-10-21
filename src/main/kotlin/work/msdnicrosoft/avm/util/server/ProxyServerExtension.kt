@@ -8,22 +8,23 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.scheduler
 import work.msdnicrosoft.avm.config.ConfigManager
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
+import kotlin.time.toJavaDuration
 
 inline val ServerInfo.nickname: String get() = ConfigManager.config.getServerNickName(this.name)
 
 /**
- * Creates a scheduled [task][runnable] with optional [delay][delayInMillis] and [repeat intervals][repeatInMillis].
+ * Creates a scheduled [task][runnable] with optional [delay] and [repeat] intervals.
  */
-fun task(delayInMillis: Long = 0L, repeatInMillis: Long = 0L, runnable: Runnable): ScheduledTask {
+fun task(delay: Duration = Duration.ZERO, repeat: Duration = Duration.ZERO, runnable: Runnable): ScheduledTask {
     val taskBuilder = scheduler.buildTask(plugin, runnable)
 
-    if (delayInMillis > 0) {
-        taskBuilder.delay(delayInMillis, TimeUnit.MILLISECONDS)
+    if (delay > Duration.ZERO) {
+        taskBuilder.delay(delay.toJavaDuration())
     }
 
-    if (repeatInMillis > 0) {
-        taskBuilder.repeat(repeatInMillis, TimeUnit.MILLISECONDS)
+    if (repeat > Duration.ZERO) {
+        taskBuilder.repeat(delay.toJavaDuration())
     }
 
     return taskBuilder.schedule()
