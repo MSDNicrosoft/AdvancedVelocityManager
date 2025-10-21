@@ -47,7 +47,7 @@ object ArgumentParser {
     }
 
     fun parseServer(argument: String): Server {
-        if (!ConfigManager.config.whitelist.isServerGroup(argument) || server.getServer(argument).isEmpty) {
+        if (!ConfigManager.config.whitelist.isServerGroup(argument) && server.getServer(argument).isEmpty) {
             throwCommandException(tr("avm.general.not.found.server", Argument.string("server", argument)))
         }
 
