@@ -15,7 +15,7 @@ netty = "4.2.7.Final"
 fastutil = "8.5.18"
 
 # Shade Dependencies
-kaml = "0.101.0"
+kaml = "0.102.0"
 kotlin-serialization = "1.9.0"
 byte-buddy-agent = "1.17.8"
 kavaref = "1.0.2"
