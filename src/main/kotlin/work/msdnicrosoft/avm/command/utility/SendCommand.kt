@@ -3,13 +3,12 @@ package work.msdnicrosoft.avm.command.utility
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.command.context.name
 import work.msdnicrosoft.avm.util.command.data.component.MiniMessage
-import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.tr
 import work.msdnicrosoft.avm.util.server.nickname
 import work.msdnicrosoft.avm.util.server.sendToServer
 
@@ -32,11 +31,12 @@ object SendCommand {
                     sendPlayer(
                         player,
                         server,
-                        tr(
-                            "avm.command.avm.send.target",
-                            Argument.string("executor", context.source.name),
-                            Argument.string("server", server.serverInfo.nickname)
-                        )
+                        tr("avm.command.avm.send.target") {
+                            args {
+                                string("executor", context.source.name)
+                                string("server", server.serverInfo.nickname)
+                            }
+                        }
                     )
                     Command.SINGLE_SUCCESS
                 }
@@ -58,18 +58,20 @@ object SendCommand {
 
         player.sendToServer(registeredServer).thenAcceptAsync { success: Boolean ->
             if (success) {
-                this.sendTranslatable(
-                    "avm.command.avm.send.executor.success",
-                    Argument.string("player", player.name),
-                    Argument.string("server", serverNickname)
-                )
+                this.sendTranslatable("avm.command.avm.send.executor.success") {
+                    args {
+                        string("player", player.name)
+                        string("server", serverNickname)
+                    }
+                }
                 player.sendMessage(reason)
             } else {
-                this.sendTranslatable(
-                    "avm.command.avm.send.executor.failed",
-                    Argument.string("player", player.name),
-                    Argument.string("server", serverNickname)
-                )
+                this.sendTranslatable("avm.command.avm.send.executor.failed") {
+                    args {
+                        string("player", player.name)
+                        string("server", serverNickname)
+                    }
+                }
             }
         }
     }

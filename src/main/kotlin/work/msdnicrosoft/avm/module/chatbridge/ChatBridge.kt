@@ -32,7 +32,7 @@ object ChatBridge {
     fun onPlayerChatChat(event: PlayerChatEvent) {
         if (!config.enabled) return
 
-        val message: Component = ChatMessage(event.player, event.message).build()
+        val message: Component = ChatMessage(event.player, event.message).toComponent()
         val serverName: String = event.player.currentServer.get().serverInfo.name
 
         when (this.mode) {
@@ -79,8 +79,7 @@ object ChatBridge {
     }
 
     private fun sendMessage(message: Component, vararg ignoredServer: String) {
-        plugin.server.allServers
-            .parallelStream()
+        plugin.server.allServers.parallelStream()
             .filter { server -> server.serverInfo.name !in ignoredServer }
             .forEach { server ->
                 server.playersConnected.forEach { player ->

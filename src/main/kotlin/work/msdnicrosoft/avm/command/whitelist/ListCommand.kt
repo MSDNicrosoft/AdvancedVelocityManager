@@ -1,11 +1,10 @@
 package work.msdnicrosoft.avm.command.whitelist
 
-import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.command.WhitelistCommand.sendWhitelistPlayers
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.command.PageTurner
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.CommandContext
+import work.msdnicrosoft.avm.util.component.widget.Paginator
 
 object ListCommand {
     val command = literalCommand("list") {
@@ -34,18 +33,17 @@ object ListCommand {
         }
         val maxPage: Int = WhitelistManager.maxPage
         if (page > maxPage) {
-            sendTranslatable("avm.general.not.found.page")
+            sendTranslatable("avm.general.not_found.page")
             return
         }
         if (page == 1) {
-            sendTranslatable(
-                "avm.command.avmwl.list.header",
-                Argument.numeric("player", WhitelistManager.size)
-            )
+            sendTranslatable("avm.command.avmwl.list.header") {
+                args { numeric("player", WhitelistManager.size) }
+            }
         }
 
         context.source.sendWhitelistPlayers(WhitelistManager.pageOf(page))
 
-        sendMessage(PageTurner("/avmwl list").build(page, maxPage))
+        sendMessage(Paginator("/avmwl list").toComponent(page, maxPage))
     }
 }

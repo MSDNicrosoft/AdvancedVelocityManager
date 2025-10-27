@@ -6,11 +6,10 @@ import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.ServerConnectedEvent
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
+import work.msdnicrosoft.avm.util.component.builder.minimessage.miniMessage
 import work.msdnicrosoft.avm.util.server.nickname
 import work.msdnicrosoft.avm.util.server.task
 
@@ -35,10 +34,9 @@ object EventBroadcast {
         if (event.loginStatus != DisconnectEvent.LoginStatus.SUCCESSFUL_LOGIN) return
 
         sendMessage(
-            MINI_MESSAGE.deserialize(
-                config.leave.message,
-                Placeholder.unparsed("player_name", event.player.username)
-            )
+            miniMessage(config.leave.message) {
+                placeholders { unparsed("player_name", event.player.username) }
+            }
         )
 
         if (config.leave.logging) {
@@ -62,13 +60,14 @@ object EventBroadcast {
                 val previousServerNickname: String = previousServer.serverInfo.nickname
 
                 this.sendMessage(
-                    MINI_MESSAGE.deserialize(
-                        config.switch.message,
-                        Placeholder.unparsed("player_name", username),
-                        Placeholder.unparsed("previous_server_name", previousServerName),
-                        Placeholder.unparsed("previous_server_nickname", previousServerNickname),
-                        Placeholder.unparsed("target_server_nickname", targetServerNickname),
-                    )
+                    miniMessage(config.switch.message) {
+                        placeholders {
+                            unparsed("player_name", username)
+                            unparsed("previous_server_name", previousServerName)
+                            unparsed("previous_server_nickname", previousServerNickname)
+                            unparsed("target_server_nickname", targetServerNickname)
+                        }
+                    }
                 )
 
                 if (config.switch.logging) {
@@ -79,12 +78,13 @@ object EventBroadcast {
                 if (!config.join.enabled) return@ifPresentOrElse
 
                 this.sendMessage(
-                    MINI_MESSAGE.deserialize(
-                        config.join.message,
-                        Placeholder.unparsed("player_name", username),
-                        Placeholder.unparsed("server_name", targetServerName),
-                        Placeholder.unparsed("server_nickname", targetServerNickname)
-                    )
+                    miniMessage(config.join.message) {
+                        placeholders {
+                            unparsed("player_name", username)
+                            unparsed("server_name", targetServerName)
+                            unparsed("server_nickname", targetServerNickname)
+                        }
+                    }
                 )
 
                 if (config.join.logging) {
@@ -95,8 +95,7 @@ object EventBroadcast {
     }
 
     private fun sendMessage(message: Component) = task {
-        plugin.server.allPlayers
-            .parallelStream()
+        plugin.server.allPlayers.parallelStream()
             .forEach { player -> player.sendMessage(message) }
     }
 }

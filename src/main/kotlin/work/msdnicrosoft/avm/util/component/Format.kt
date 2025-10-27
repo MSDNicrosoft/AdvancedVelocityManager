@@ -23,8 +23,19 @@ data class Format(
 ) {
     init {
         require(this.text.isNotBlank()) { "Text cannot be empty or blank." }
-        require(listOfNotNull(this.command, this.suggest, this.url, this.clipboard).size <= 1) {
-            "Cannot specify multiple actions for a format."
-        }
+
+        val click: List<String> = listOfNotNull(this.command, this.suggest, this.url, this.clipboard)
+
+        require(click.size <= 1) { "Cannot specify multiple actions for a format." }
+        require(click.all { it.isNotBlank() }) { "Cannot specify empty or blank actions for a format." }
     }
+
+    fun applyReplace(replacer: String.() -> String): Format = Format(
+        this.text.replacer(),
+        this.hover?.map { it.replacer() },
+        this.command?.replacer(),
+        this.suggest?.replacer(),
+        this.url?.replacer(),
+        this.clipboard?.replacer()
+    )
 }

@@ -1,6 +1,5 @@
 package work.msdnicrosoft.avm.command.whitelist
 
-import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.command.session.CommandSessionManager
@@ -10,9 +9,8 @@ import work.msdnicrosoft.avm.util.command.builder.executes
 import work.msdnicrosoft.avm.util.command.builder.literalCommand
 import work.msdnicrosoft.avm.util.command.builder.requires
 import work.msdnicrosoft.avm.util.command.context.name
-import work.msdnicrosoft.avm.util.component.clickToRunCommand
-import work.msdnicrosoft.avm.util.component.hoverText
-import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.tr
+import work.msdnicrosoft.avm.util.component.builder.style.styled
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.server.task
 
@@ -38,13 +36,14 @@ object ClearCommand {
                     task { kickPlayers(config.message, server.allPlayers) }
                 }
             }
-            sendTranslatable("avm.command.avmwl.clear.need.confirm.1.text")
+            sendTranslatable("avm.command.avmwl.clear.need_confirm.1.text")
             sendMessage(
-                tr(
-                    "avm.command.avmwl.clear.need.confirm.2.text",
-                    Argument.string("command", "/avm confirm $sessionId")
-                ).clickToRunCommand("/avm confirm $sessionId")
-                    .hoverText(tr("avm.command.avmwl.clear.need.confirm.2.hover"))
+                tr("avm.command.avmwl.clear.need_confirm.2.text") {
+                    args { string("command", "/avm confirm $sessionId") }
+                } styled {
+                    hoverText { tr("avm.command.avmwl.clear.need_confirm.2.hover") }
+                    click { runCommand("/avm confirm $sessionId") }
+                }
             )
             Command.SINGLE_SUCCESS
         }

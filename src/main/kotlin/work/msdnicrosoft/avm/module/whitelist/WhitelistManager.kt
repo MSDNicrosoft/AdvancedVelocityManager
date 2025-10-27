@@ -1,5 +1,6 @@
 package work.msdnicrosoft.avm.module.whitelist
 
+import com.velocitypowered.api.scheduler.ScheduledTask
 import com.velocitypowered.api.util.UuidUtils
 import kotlinx.serialization.SerializationException
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
@@ -12,7 +13,7 @@ import work.msdnicrosoft.avm.module.whitelist.data.ApiResponse
 import work.msdnicrosoft.avm.module.whitelist.data.Player
 import work.msdnicrosoft.avm.module.whitelist.result.AddResult
 import work.msdnicrosoft.avm.module.whitelist.result.RemoveResult
-import work.msdnicrosoft.avm.util.command.PageTurner
+import work.msdnicrosoft.avm.util.component.widget.Paginator
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import work.msdnicrosoft.avm.util.file.writeTextWithBuffer
@@ -39,14 +40,12 @@ object WhitelistManager {
     private val file: File = (dataDirectory / "whitelist.json").toFile()
 
     private val whitelist: MutableList<Player> = mutableListOf()
-
     val usernames: HashSet<String> = hashSetOf()
     val uuids: HashSet<UUID> = hashSetOf()
 
     val size: Int get() = this.whitelist.size
     val isEmpty: Boolean get() = this.whitelist.isEmpty()
-
-    val maxPage: Int get() = PageTurner.getMaxPage(this.whitelist.size)
+    val maxPage: Int get() = Paginator.getMaxPage(this.whitelist.size)
     inline val serverIsOnlineMode: Boolean get() = server.configuration.isOnlineMode
 
     private val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
@@ -202,7 +201,7 @@ object WhitelistManager {
      */
     fun find(keyword: String, page: Int): List<Player> =
         this.lock.read { this.whitelist.filter { keyword in it.name } }
-            .chunked(PageTurner.ITEMS_PER_PAGE)
+            .chunked(Paginator.ITEMS_PER_PAGE)
             .getOrNull(page - 1)
             .orEmpty()
 
@@ -232,7 +231,7 @@ object WhitelistManager {
         }
     }
 
-    fun updatePlayer(username: String, uuid: UUID) = task {
+    fun updatePlayer(username: String, uuid: UUID): ScheduledTask = task {
         val player: Player = this.lock.read { this.whitelist.find { it.uuid == uuid } } ?: return@task
         this.lock.write { player.name = username }
         this.save(false)
@@ -243,7 +242,7 @@ object WhitelistManager {
      * Returns a list of whitelist players on the specified [page].
      */
     fun pageOf(page: Int): List<Player> {
-        val pages: List<List<Player>> = this.lock.read { this.whitelist.chunked(PageTurner.ITEMS_PER_PAGE) }
+        val pages: List<List<Player>> = this.lock.read { this.whitelist.chunked(Paginator.ITEMS_PER_PAGE) }
         return pages[page - 1]
     }
 

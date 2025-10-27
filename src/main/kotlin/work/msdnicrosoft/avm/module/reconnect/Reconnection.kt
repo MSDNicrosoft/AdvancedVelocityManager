@@ -10,10 +10,11 @@ import io.netty.channel.EventLoop
 import net.kyori.adventure.title.Title
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.packet.s2c.PlayerAbilitiesPacket
-import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
+import work.msdnicrosoft.avm.util.component.builder.title
 import java.time.Duration
 import java.util.UUID
 import java.util.concurrent.TimeUnit
+import kotlin.time.Duration.Companion.seconds
 
 @Suppress("MagicNumber")
 class Reconnection(private val event: KickedFromServerEvent, private val continuation: Continuation) {
@@ -24,25 +25,21 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
         .timeout(Duration.ofMillis(config.pingTimeout))
         .build()
 
-    private val connectingTitle: Title = Title.title(
-        MINI_MESSAGE.deserialize(config.message.connecting.title),
-        MINI_MESSAGE.deserialize(config.message.connecting.subtitle),
-        Title.Times.times(
-            Duration.ofSeconds(0L),
-            Duration.ofSeconds(30L),
-            Duration.ofSeconds(0L)
-        )
-    )
+    private val connectingTitle: Title = title {
+        mainTitle { mini(config.message.connecting.title) }
+        subTitle { mini(config.message.connecting.subtitle) }
+        fadeIn(1L.seconds)
+        stay(30L.seconds)
+        fadeOut(1L.seconds)
+    }
 
-    private val waitingTitle: Title = Title.title(
-        MINI_MESSAGE.deserialize(config.message.waiting.title),
-        MINI_MESSAGE.deserialize(config.message.waiting.subtitle),
-        Title.Times.times(
-            Duration.ofSeconds(0L),
-            Duration.ofSeconds(30L),
-            Duration.ofSeconds(0L)
-        )
-    )
+    private val waitingTitle: Title = title {
+        mainTitle { mini(config.message.waiting.title) }
+        subTitle { mini(config.message.waiting.subtitle) }
+        fadeIn(1L.seconds)
+        stay(30L.seconds)
+        fadeOut(1L.seconds)
+    }
 
     private var state: State = State.WAITING
 

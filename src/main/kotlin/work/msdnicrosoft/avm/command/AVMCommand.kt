@@ -1,7 +1,6 @@
 package work.msdnicrosoft.avm.command
 
 import com.velocitypowered.api.util.ProxyVersion
-import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.annotations.CommandNode
 import work.msdnicrosoft.avm.annotations.RootCommand
@@ -12,7 +11,7 @@ import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.buildHelp
 import work.msdnicrosoft.avm.util.command.register
 import work.msdnicrosoft.avm.util.command.unregister
-import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.tr
 import work.msdnicrosoft.avm.util.server.task
 import kotlin.time.Duration
 import kotlin.time.measureTimedValue
@@ -26,10 +25,9 @@ object AVMCommand {
         executes {
             val (success: Boolean, elapsed: Duration) = measureTimedValue { plugin.reload() }
             if (success) {
-                sendTranslatable(
-                    "avm.command.avm.reload.success",
-                    Argument.string("elapsed", elapsed.inWholeMilliseconds.toString())
-                )
+                sendTranslatable("avm.command.avm.reload.success") {
+                    args { numeric("elapsed", elapsed.inWholeMilliseconds) }
+                }
             } else {
                 sendTranslatable("avm.command.avm.reload.failed")
             }
@@ -42,18 +40,15 @@ object AVMCommand {
         requires { hasPermission("avm.command.info") }
         executes {
             val velocity: ProxyVersion = plugin.server.version
-            sendTranslatable(
-                "avm.command.avm.info.plugin.name",
-                Argument.component("name", tr("avm.general.plugin.name"))
-            )
-            sendTranslatable(
-                "avm.command.avm.info.plugin.version",
-                Argument.string("version", plugin.self.version.get())
-            )
-            sendTranslatable(
-                "avm.command.avm.info.server",
-                Argument.string("server", "${velocity.name} ${velocity.version}")
-            )
+            sendTranslatable("avm.command.avm.info.plugin.name") {
+                args { component("name", tr("avm.general.plugin.name")) }
+            }
+            sendTranslatable("avm.command.avm.info.plugin.version") {
+                args { string("version", plugin.self.version.get()) }
+            }
+            sendTranslatable("avm.command.avm.info.server") {
+                args { string("server", "${velocity.name} ${velocity.version}") }
+            }
             Command.SINGLE_SUCCESS
         }
     }
@@ -69,7 +64,7 @@ object AVMCommand {
                         ExecuteResult.SUCCESS -> return@task
                         ExecuteResult.EXPIRED -> "avm.command.avm.confirm.expired"
                         ExecuteResult.FAILED -> "avm.command.avm.confirm.failed"
-                        ExecuteResult.NOT_FOUND -> "avm.command.avm.confirm.not.found"
+                        ExecuteResult.NOT_FOUND -> "avm.command.avm.confirm.not_found"
                     }
                     sendTranslatable(result)
                 }

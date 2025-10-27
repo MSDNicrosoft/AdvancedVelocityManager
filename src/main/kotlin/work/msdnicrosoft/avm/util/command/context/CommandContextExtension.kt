@@ -6,16 +6,15 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType
 import com.velocitypowered.api.command.VelocityBrigadierMessage
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import net.kyori.adventure.text.minimessage.translation.Argument
+import net.kyori.adventure.text.JoinConfiguration
+import net.kyori.adventure.text.format.NamedTextColor
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.annotations.CommandNode
 import work.msdnicrosoft.avm.annotations.RootCommand
 import work.msdnicrosoft.avm.util.command.builder.Command
-import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
-import work.msdnicrosoft.avm.util.component.clickToSuggestCommand
-import work.msdnicrosoft.avm.util.component.hoverText
-import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.tr
+import work.msdnicrosoft.avm.util.component.builder.style.styled
+import work.msdnicrosoft.avm.util.component.builder.text.component
 import work.msdnicrosoft.avm.util.reflect.getAnnotationIfPresent
 
 @Throws(CommandSyntaxException::class)
@@ -27,19 +26,20 @@ fun CommandContext.buildHelp(commandRoot: Class<*>, checkPermission: Boolean = t
     val rootCommand: RootCommand = commandRoot.getAnnotationIfPresent<RootCommand>() ?: return Command.SINGLE_SUCCESS
     val rootName: String = rootCommand.name
 
-    sendTranslatable(
-        "avm.general.help.header.1.text",
-        Argument.component(
-            "name",
-            tr("avm.general.plugin.name")
-                .hoverText(tr("avm.general.help.header.1.name.hover"))
-        ),
-        Argument.string("version", plugin.self.version.get()),
-    )
-    sendTranslatable(
-        "avm.general.help.header.2.text",
-        Argument.string("root_command", rootName)
-    )
+    sendTranslatable("avm.general.help.header.1.text") {
+        args {
+            component(
+                "name",
+                tr("avm.general.plugin.name") styled {
+                    hoverText { tr("avm.general.help.header.1.name.hover") }
+                }
+            )
+            string("version", plugin.self.version.get())
+        }
+    }
+    sendTranslatable("avm.general.help.header.2.text") {
+        args { string("root_command", rootName) }
+    }
     sendTranslatable("avm.general.help.header.subcommands")
 
     commandRoot.resolve()
@@ -60,17 +60,24 @@ fun CommandContext.buildHelp(commandRoot: Class<*>, checkPermission: Boolean = t
 
             val description: Component = tr("avm.command.$rootName.${commandNode.name}.description")
 
-            sendMessage(
-                MINI_MESSAGE.deserialize("    <dark_gray>- <white>${commandNode.name} $arguments")
-                    .hoverText(
-                        MINI_MESSAGE.deserialize(
-                            "<white>$rootName ${commandNode.name} <dark_gray>- <gray><desc>",
-                            Placeholder.component("desc", description)
-                        )
-                    )
-                    .clickToSuggestCommand("/$rootName ${commandNode.name}")
-            )
-            sendRichMessage("      <gray><desc>", Placeholder.component("desc", description))
+            sendMessage(JoinConfiguration.spaces()) {
+                text("    -") styled { color(NamedTextColor.DARK_GRAY) }
+                mini("${commandNode.name} $arguments") styled {
+                    color(NamedTextColor.WHITE)
+                    hoverText {
+                        component(JoinConfiguration.spaces()) {
+                            text("$rootName ${commandNode.name}") styled { color(NamedTextColor.WHITE) }
+                            text("-") styled { color(NamedTextColor.DARK_GRAY) }
+                            componentLike(description) styled { color(NamedTextColor.GRAY) }
+                        }
+                    }
+                    click { suggestCommand("/$rootName ${commandNode.name} $arguments") }
+                }
+            }
+            sendMessage {
+                text("      ")
+                componentLike(description) styled { color(NamedTextColor.GRAY) }
+            }
         }
     return Command.SINGLE_SUCCESS
 }

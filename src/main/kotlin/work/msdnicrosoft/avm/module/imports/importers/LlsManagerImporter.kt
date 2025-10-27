@@ -1,13 +1,11 @@
 package work.msdnicrosoft.avm.module.imports.importers
 
-import com.velocitypowered.api.command.CommandSource
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import java.nio.file.Path
@@ -40,33 +38,31 @@ object LlsManagerImporter : Importer {
 
     override val pluginName: String = "lls-manager"
 
-    override fun import(source: CommandSource, defaultServer: String): Boolean {
+    override fun import(context: CommandContext, defaultServer: String): Boolean {
         val configSuccess: Boolean = if (this.CONFIG_PATH.exists()) {
-            this.importConfig(source)
+            context.importConfig()
         } else {
-            source.sendTranslatable(
-                "avm.command.avm.import.config.not.exist",
-                Argument.string("plugin_name", this.pluginName)
-            )
+            context.sendTranslatable("avm.command.avm.import.config.not_exist") {
+                args { string("plugin_name", pluginName) }
+            }
             true
         }
 
-        val playerDataSuccess: Boolean = if (this.PLAYER_DATA_PATH.exists()) {
-            this.importPlayerData(defaultServer, source)
+        val playerDataSuccess: Boolean = if (PLAYER_DATA_PATH.exists()) {
+            context.importPlayerData(defaultServer)
         } else {
-            source.sendTranslatable(
-                "avm.command.avm.import.player.not.exist",
-                Argument.string("plugin_name", this.pluginName)
-            )
+            context.sendTranslatable("avm.command.avm.import.player.not_exist") {
+                args { string("plugin_name", pluginName) }
+            }
             true
         }
 
         return configSuccess && playerDataSuccess
     }
 
-    private fun importConfig(source: CommandSource): Boolean =
+    private fun CommandContext.importConfig(): Boolean =
         try {
-            val config = JSON.decodeFromString<Config>(this.CONFIG_PATH.readTextWithBuffer())
+            val config = JSON.decodeFromString<Config>(CONFIG_PATH.readTextWithBuffer())
 
             ConfigManager.config.apply {
                 tabSync.enabled = config.showAllPlayerInTabList
@@ -78,18 +74,19 @@ object LlsManagerImporter : Importer {
             }
             ConfigManager.save()
         } catch (e: Exception) {
-            source.sendTranslatable(
-                "avm.command.avm.import.config.failed",
-                Argument.string("plugin_name", this.pluginName),
-                Argument.string("reason", e.message.orEmpty())
-            )
+            sendTranslatable("avm.command.avm.import.config.failed") {
+                args {
+                    string("plugin_name", pluginName)
+                    string("reason", e.message.orEmpty())
+                }
+            }
             false
         }
 
-    private fun importPlayerData(defaultServer: String, source: CommandSource): Boolean {
+    private fun CommandContext.importPlayerData(defaultServer: String): Boolean {
         var success = true
 
-        this.PLAYER_DATA_PATH.listDirectoryEntries().asSequence()
+        PLAYER_DATA_PATH.listDirectoryEntries().asSequence()
             .filter { file -> file.extension.equals("json", ignoreCase = true) && file.isRegularFile() }
             .forEach { file ->
                 val username: String = file.nameWithoutExtension
@@ -100,12 +97,13 @@ object LlsManagerImporter : Importer {
                         WhitelistManager.add(username, server, llsPlayer.onlineMode)
                     }
                 } catch (e: Exception) {
-                    source.sendTranslatable(
-                        "avm.command.avm.import.player.failed",
-                        Argument.string("player", username),
-                        Argument.string("plugin_name", this.pluginName),
-                        Argument.string("reason", e.message.orEmpty())
-                    )
+                    sendTranslatable("avm.command.avm.import.player.failed") {
+                        args {
+                            string("player", username)
+                            string("plugin_name", pluginName)
+                            string("reason", e.message.orEmpty())
+                        }
+                    }
                     success = false
                 }
             }

@@ -1,13 +1,11 @@
 package work.msdnicrosoft.avm.module.imports.importers
 
 import com.moandjiezana.toml.Toml
-import com.velocitypowered.api.command.CommandSource
 import kotlinx.serialization.Serializable
-import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.data.UUIDSerializer
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.FileUtil.TOML
@@ -36,31 +34,29 @@ object QuAnVelocityWhitelistImporter : Importer {
 
     override val pluginName: String = "(qu-an) VelocityWhitelist"
 
-    override fun import(source: CommandSource, defaultServer: String): Boolean {
+    override fun import(context: CommandContext, defaultServer: String): Boolean {
         val configSuccess: Boolean = if (this.CONFIG_PATH.exists()) {
-            importConfig(source)
+            importConfig(context)
         } else {
-            source.sendTranslatable(
-                "avm.command.avm.import.config.not.exist",
-                Argument.string("plugin_name", this.pluginName)
-            )
+            context.sendTranslatable("avm.command.avm.import.config.not_exist") {
+                args { string("plugin_name", pluginName) }
+            }
             true
         }
 
         val whitelistSuccess: Boolean = if (this.WHITELIST_PATH.exists()) {
-            importWhitelist(defaultServer, source)
+            importWhitelist(defaultServer, context)
         } else {
-            source.sendTranslatable(
-                "avm.command.avm.import.whitelist.not.exist",
-                Argument.string("plugin_name", this.pluginName)
-            )
+            context.sendTranslatable("avm.command.avm.import.whitelist.not_exist") {
+                args { string("plugin_name", pluginName) }
+            }
             true
         }
 
         return configSuccess && whitelistSuccess
     }
 
-    private fun importConfig(source: CommandSource): Boolean =
+    private fun importConfig(context: CommandContext): Boolean =
         try {
             val config: Toml = TOML.read(this.CONFIG_PATH.readTextWithBuffer())
             ConfigManager.config.run {
@@ -70,15 +66,16 @@ object QuAnVelocityWhitelistImporter : Importer {
             }
             ConfigManager.save()
         } catch (e: Exception) {
-            source.sendTranslatable(
-                "avm.command.avm.import.config.failed",
-                Argument.string("plugin_name", this.pluginName),
-                Argument.string("reason", e.message.orEmpty())
-            )
+            context.sendTranslatable("avm.command.avm.import.config.failed") {
+                args {
+                    string("plugin_name", pluginName)
+                    string("reason", e.message.orEmpty())
+                }
+            }
             false
         }
 
-    private fun importWhitelist(defaultServer: String, source: CommandSource): Boolean =
+    private fun importWhitelist(defaultServer: String, context: CommandContext): Boolean =
         try {
             val whitelist: List<Player> = JSON.decodeFromString(this.WHITELIST_PATH.readTextWithBuffer())
             val onlineMode: Boolean = WhitelistManager.serverIsOnlineMode
@@ -88,11 +85,12 @@ object QuAnVelocityWhitelistImporter : Importer {
             }
             true
         } catch (e: Exception) {
-            source.sendTranslatable(
-                "avm.command.avm.import.whitelist.failed",
-                Argument.string("plugin_name", this.pluginName),
-                Argument.string("reason", e.message.orEmpty())
-            )
+            context.sendTranslatable("avm.command.avm.import.whitelist.failed") {
+                args {
+                    string("plugin_name", pluginName)
+                    string("reason", e.message.orEmpty())
+                }
+            }
             false
         }
 }

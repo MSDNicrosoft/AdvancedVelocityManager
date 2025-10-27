@@ -4,8 +4,8 @@ import com.highcapable.kavaref.extension.classOf
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.RegisteredServer
-import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.ComponentLike
+import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import work.msdnicrosoft.avm.util.command.context.ArgumentParser.parseMiniMessage
 import work.msdnicrosoft.avm.util.command.context.ArgumentParser.parsePlayer
@@ -18,7 +18,10 @@ import work.msdnicrosoft.avm.util.command.data.PlayerByUUID
 import work.msdnicrosoft.avm.util.command.data.component.MiniMessage
 import work.msdnicrosoft.avm.util.command.data.server.Server
 import work.msdnicrosoft.avm.util.command.data.server.ServerGroup
-import work.msdnicrosoft.avm.util.component.sendTranslatable
+import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.TranslatableBuilder
+import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.tr
+import work.msdnicrosoft.avm.util.component.builder.text.ComponentBuilder
+import work.msdnicrosoft.avm.util.component.builder.text.component
 import java.util.*
 import kotlin.reflect.KProperty
 import com.mojang.brigadier.context.CommandContext as BrigadierCommandContext
@@ -41,16 +44,19 @@ class CommandContext(val context: BrigadierCommandContext<S>) {
             else -> this.context.getArgument(property.name, T::class.java)
         } as T
 
-    fun sendMessage(message: Component) = this.context.source.sendMessage(message)
+    fun sendMessage(message: ComponentLike) = this.context.source.sendMessage(message)
+
+    inline fun sendMessage(
+        joinConfiguration: JoinConfiguration = JoinConfiguration.spaces(),
+        componentBuilder: ComponentBuilder.() -> Unit
+    ) = this.sendMessage(component(joinConfiguration, componentBuilder))
 
     fun sendPlainMessage(message: String) = this.context.source.sendPlainMessage(message)
-
-    fun sendRichMessage(message: String) = this.context.source.sendRichMessage(message)
 
     fun sendRichMessage(message: String, vararg resolvers: TagResolver) =
         this.context.source.sendRichMessage(message, *resolvers)
 
-    fun sendTranslatable(key: String, vararg args: ComponentLike) = this.context.source.sendTranslatable(key, *args)
+    fun sendTranslatable(key: String, builder: TranslatableBuilder.() -> Unit = {}) = this.sendMessage(tr(key, builder))
 
     fun getStringArgument(name: String): String = this.context.getArgument(name, String::class.java)
 }

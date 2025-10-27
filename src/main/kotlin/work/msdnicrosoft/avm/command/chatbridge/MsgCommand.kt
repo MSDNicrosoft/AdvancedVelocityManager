@@ -4,7 +4,7 @@ import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.DateTimeUtil.getDateTime
@@ -15,9 +15,10 @@ import work.msdnicrosoft.avm.util.command.context.toPlayer
 import work.msdnicrosoft.avm.util.command.register
 import work.msdnicrosoft.avm.util.command.unregister
 import work.msdnicrosoft.avm.util.component.ComponentSerializer.STYLE_ONLY_MINI_MESSAGE
-import work.msdnicrosoft.avm.util.component.ComponentUtil.createClickEvent
 import work.msdnicrosoft.avm.util.component.Format
-import work.msdnicrosoft.avm.util.component.hoverText
+import work.msdnicrosoft.avm.util.component.builder.minimessage.miniMessage
+import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.placeholders
+import work.msdnicrosoft.avm.util.component.builder.style.styled
 
 object MsgCommand {
     private inline val chatFormat get() = ConfigManager.config.chatBridge.privateChatFormat
@@ -29,12 +30,12 @@ object MsgCommand {
     val command = literalCommand("msg") {
         stringArgument("targets") {
             suggests { builder ->
-                val players: List<String> = if (shouldTakeOverPrivateChat || context.source.isConsole) {
-                    server.allPlayers.map { it.username }
+                val players: Collection<Player> = if (shouldTakeOverPrivateChat || context.source.isConsole) {
+                    server.allPlayers
                 } else {
-                    context.source.toPlayer().currentServer.get().server.playersConnected.map { it.username }
+                    context.source.toPlayer().currentServer.get().server.playersConnected
                 }
-                players.forEach(builder::suggest)
+                players.forEach { builder.suggest(it.username) }
                 builder.buildFuture()
             }
             greedyStringArgument("message") {
@@ -62,33 +63,35 @@ object MsgCommand {
 
     private fun List<Format>.buildMessage(source: CommandSource, player: Player, message: String): Component {
         val time: String = getDateTime()
+        val tagResolvers: List<TagResolver> = placeholders {
+            unparsed("player_name_from", source.name)
+            unparsed("player_name_to", player.username)
+            if (allowFormatCode) {
+                parsed("player_message", message)
+            } else {
+                unparsed("player_message", message)
+            }
+            unparsed("player_message_sent_time", time)
+        }
         return Component.join(
             JoinConfiguration.noSeparators(),
             this.map { format ->
-                format.text.deserialize(source.name, player.username, message, time)
-                    .hoverText(
-                        format.hover?.joinToString("\n")
-                            ?.deserialize(source.name, player.username, message, time)
-                    ).clickEvent(createClickEvent(format) { replacePlaceHolders(source.name, player.username, time) })
+                miniMessage(format.text, provider = STYLE_ONLY_MINI_MESSAGE) {
+                    placeholders { tagResolvers(tagResolvers) }
+                } styled {
+                    hoverText {
+                        miniMessage(format.hover?.joinToString("\n").orEmpty()) {
+                            placeholders { tagResolvers(tagResolvers) }
+                        }
+                    }
+                    click(format.applyReplace { replacePlaceHolders(source.name, player.username, time) })
+                }
             }
         )
     }
 
-    private fun String.deserialize(from: String, to: String, message: String, dateTime: String): Component =
-        STYLE_ONLY_MINI_MESSAGE.deserialize(
-            this,
-            Placeholder.unparsed("player_name_from", from),
-            Placeholder.unparsed("player_name_to", to),
-            if (allowFormatCode) {
-                Placeholder.parsed("player_message", message)
-            } else {
-                Placeholder.unparsed("player_message", message)
-            },
-            Placeholder.unparsed("player_message_sent_time", dateTime),
-        )
-
-    private fun String.replacePlaceHolders(from: String, to: String, dateTime: String): String = this
+    private fun String.replacePlaceHolders(from: String, to: String, time: String): String = this
         .replace("<player_name_from>", from)
         .replace("<player_name_to>", to)
-        .replace("<player_message_sent_time>", dateTime)
+        .replace("<player_message_sent_time>", time)
 }

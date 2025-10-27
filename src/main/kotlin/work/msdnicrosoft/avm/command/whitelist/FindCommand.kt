@@ -4,9 +4,9 @@ import work.msdnicrosoft.avm.command.WhitelistCommand.sendWhitelistPlayers
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.module.whitelist.data.Player
-import work.msdnicrosoft.avm.util.command.PageTurner
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.CommandContext
+import work.msdnicrosoft.avm.util.component.widget.Paginator
 import work.msdnicrosoft.avm.util.server.task
 
 object FindCommand {
@@ -14,10 +14,8 @@ object FindCommand {
         requires { hasPermission("avm.command.whitelist.find") }
         wordArgument("keyword") {
             suggests { builder ->
-                buildSet {
-                    addAll(WhitelistManager.usernames)
-                    addAll(PlayerCache.readOnly)
-                }.forEach(builder::suggest)
+                WhitelistManager.usernames.forEach(builder::suggest)
+                PlayerCache.readOnly.forEach(builder::suggest)
                 builder.buildFuture()
             }
             executes {
@@ -52,15 +50,15 @@ object FindCommand {
             return
         }
 
-        val maxPage: Int = PageTurner.getMaxPage(result.size)
+        val maxPage: Int = Paginator.getMaxPage(result.size)
         if (page > maxPage) {
-            sendTranslatable("avm.general.not.found.page")
+            sendTranslatable("avm.general.not_found.page")
             return
         }
 
         if (page == 1) sendTranslatable("avm.command.avmwl.find.header")
 
         context.source.sendWhitelistPlayers(result)
-        sendMessage(PageTurner("/avmwl find $keyword").build(page, maxPage))
+        sendMessage(Paginator("/avmwl find $keyword").toComponent(page, maxPage))
     }
 }

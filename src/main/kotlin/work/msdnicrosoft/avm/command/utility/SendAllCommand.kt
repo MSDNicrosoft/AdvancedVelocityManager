@@ -3,14 +3,13 @@ package work.msdnicrosoft.avm.command.utility
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.command.context.name
 import work.msdnicrosoft.avm.util.command.data.component.MiniMessage
-import work.msdnicrosoft.avm.util.component.hoverText
-import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.tr
+import work.msdnicrosoft.avm.util.component.builder.style.styled
 import work.msdnicrosoft.avm.util.server.nickname
 import work.msdnicrosoft.avm.util.server.sendToServer
 import work.msdnicrosoft.avm.util.server.task
@@ -27,11 +26,12 @@ object SendAllCommand {
                 val server: RegisteredServer by this
                 sendAllPlayers(
                     server,
-                    tr(
-                        "avm.command.avm.send.target",
-                        Argument.string("executor", context.source.name),
-                        Argument.string("server", server.serverInfo.nickname)
-                    )
+                    tr("avm.command.avm.send.target") {
+                        args {
+                            string("executor", context.source.name)
+                            string("server", server.serverInfo.nickname)
+                        }
+                    }
                 )
                 Command.SINGLE_SUCCESS
             }
@@ -66,18 +66,18 @@ object SendAllCommand {
                 }
             }
 
-            this.sendTranslatable(
-                "avm.command.avm.sendall.executor.text",
-                Argument.numeric("player_total", toSend.size),
-                Argument.string("server", registeredServer.serverInfo.nickname),
-                Argument.component(
-                    "bypass",
-                    tr(
-                        "avm.command.avm.sendall.executor.bypass.text",
-                        Argument.numeric("player_bypass", allPlayers.size - toSend.size)
-                    ).hoverText(tr("avm.command.avm.sendall.executor.bypass.hover"))
-                )
-            )
+            this.sendTranslatable("avm.command.avm.sendall.executor.text") {
+                args {
+                    numeric("player_total", toSend.size)
+                    string("server", registeredServer.serverInfo.nickname)
+                    component(
+                        "bypass",
+                        tr("avm.command.avm.sendall.executor.bypass.text") {
+                            args { numeric("player_bypass", allPlayers.size - toSend.size) }
+                        } styled { hoverText { tr("avm.command.avm.sendall.executor.bypass.hover") } }
+                    )
+                }
+            }
         }
     }
 }

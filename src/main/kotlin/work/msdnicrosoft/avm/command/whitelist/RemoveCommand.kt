@@ -3,14 +3,13 @@ package work.msdnicrosoft.avm.command.whitelist
 import com.velocitypowered.api.command.CommandSource
 import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.translation.Argument
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.module.whitelist.result.RemoveResult
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.data.server.Server
-import work.msdnicrosoft.avm.util.component.tr
+import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.tr
 import work.msdnicrosoft.avm.util.server.ProxyServerUtil.kickPlayers
 import work.msdnicrosoft.avm.util.server.task
 import work.msdnicrosoft.avm.util.string.isUuid
@@ -71,20 +70,20 @@ object RemoveCommand {
         val message: Component = when (result) {
             RemoveResult.SUCCESS -> {
                 if (serverName != null) {
-                    tr(
-                        "avm.command.avmwl.remove.success.server",
-                        Argument.string("server", serverName),
-                        Argument.string("player", playerName)
-                    )
+                    tr("avm.command.avmwl.remove.success.server") {
+                        args {
+                            string("server", serverName)
+                            string("player", playerName)
+                        }
+                    }
                 } else {
-                    tr(
-                        "avm.command.avmwl.remove.success.full",
-                        Argument.string("player", playerName)
-                    )
+                    tr("avm.command.avmwl.remove.success.full") {
+                        args { string("player", playerName) }
+                    }
                 }
             }
 
-            RemoveResult.FAIL_NOT_FOUND -> tr("avm.command.avmwl.remove.not.found")
+            RemoveResult.FAIL_NOT_FOUND -> tr("avm.command.avmwl.remove.not_found")
             RemoveResult.SAVE_FILE_FAILED -> tr("avm.whitelist.save.failed")
         }
         this.sendMessage(message)

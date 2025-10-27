@@ -8,10 +8,10 @@ avm:
     page:
       previous: "<yellow>Click to turn to previous page"
       next: "<yellow>Click to turn to next page"
-    not.found:
+    not_found:
       page: "<gray>This page does not exist"
       server: "<red>Server <server> not found"
-      servergroup: "<red>Server group <server_group> not found"
+      server_group: "<red>Server group <server_group> not found"
       player: "<red>Player <player> not found"
     invalid:
       uuid: "Invalid UUID"
@@ -48,25 +48,25 @@ avm:
         description: "<gray>Confirm actions"
         expired: "<light_purple>This session command has expired"
         failed: "<red>Failed to execute this session command"
-        not.found: "<light_purple>Unknown session command"
+        not_found: "<light_purple>Unknown session command"
       import:
         description: "<gray>Import data from other plugins"
         success: "<gray>Imported data from <plugin_name> successfully! <dark_gray>Took: <elapsed>"
         failed: "<red>Failed to import data from <plugin_name>, please check console log"
-        need.confirm:
+        need_confirm:
           "1":
             text: "<yellow><bold>Warning: This action will override the existing configuration and data!"
           "2":
             text: "<gray>Click this message or execute command <white><command> <gray>to confirm the action!"
             hover: "<gray>Confirm the action"
         config:
-          not.exist: "<dark_gray>The configuration file of <plugin_name> does not exist, skipping..."
+          not_exist: "<dark_gray>The configuration file of <plugin_name> does not exist, skipping..."
           failed: "<red>Failed to import configuration from <plugin_name>: <reason>"
         whitelist:
-          not.exist: "<dark_gray>The whitelist file of <plugin_name> does not exist, skipping..."
+          not_exist: "<dark_gray>The whitelist file of <plugin_name> does not exist, skipping..."
           failed: "<red>Failed to import whitelist from <plugin_name>: <reason>"
         player:
-          not.exist: "<dark_gray>The player data folder of <plugin_name> does not exist, skipping..."
+          not_exist: "<dark_gray>The player data folder of <plugin_name> does not exist, skipping..."
           failed: "<red>Failed to import player <player> from <plugin_name>: <reason>"
       send:
         description: "<gray>Send a specified player from one server to another"
@@ -101,19 +101,19 @@ avm:
         description: "<gray>Add a player to the whitelist by username or UUID"
         success: "<dark_green>Added <player> to the whitelist"
         request:
-          not.found: "<light_purple>Failed: The player does not exist"
+          not_found: "<light_purple>Failed: The player does not exist"
           failed: "<red>Failed: An error occurred while querying the player"
-        already.exists: "<gold>The player has been already in the whitelist"
-        uuid.unsupported: "<light_purple>Failed: Adding a whitelist with UUID in offline mode is not supported"
+        already_exists: "<gold>The player has been already in the whitelist"
+        uuid_unsupported: "<light_purple>Failed: Adding a whitelist with UUID in offline mode is not supported"
       remove:
         description: "<gray>Remove a player from the whitelist"
         success:
           full: "<dark_green>Removed <player> from the whitelist"
           server: "<dark_green>Removed <player> from the whitelist server list of <server>"
-        not.found: "<light_purple>The player is not in the whitelist"
+        not_found: "<light_purple>The player is not in the whitelist"
       clear:
         description: "<gray>Clear the whitelist"
-        need.confirm:
+        need_confirm:
           "1":
             text: "<yellow><bold>Warning: This action will clear the whitelist!"
           "2":

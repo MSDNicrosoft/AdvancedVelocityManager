@@ -5,12 +5,12 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.player.KickedFromServerEvent
 import com.velocitypowered.proxy.protocol.ProtocolUtils.Direction
 import com.velocitypowered.proxy.protocol.StateRegistry
-import net.kyori.adventure.text.Component
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.packet.s2c.PlayerAbilitiesPacket
 import work.msdnicrosoft.avm.util.component.ComponentSerializer.BASIC_PLAIN_TEXT
+import work.msdnicrosoft.avm.util.component.orEmpty
 import work.msdnicrosoft.avm.util.packet.MinecraftVersion
 import work.msdnicrosoft.avm.util.packet.Packet
 
@@ -58,7 +58,7 @@ object ReconnectHandler {
     fun onKickedFromServer(event: KickedFromServerEvent): EventTask? {
         if (event.kickedDuringServerConnect()) return null
 
-        val reason: String = BASIC_PLAIN_TEXT.serialize(event.serverKickReason.orElse(Component.empty()))
+        val reason: String = BASIC_PLAIN_TEXT.serialize(event.serverKickReason.orEmpty())
 
         if (!this.regex.matches(reason)) return null
 

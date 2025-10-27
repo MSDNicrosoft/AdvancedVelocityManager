@@ -8,10 +8,10 @@ avm:
     page:
       previous: "<yellow>点击转到上一页"
       next: "<yellow>点击转到下一页"
-    not.found:
+    not_found:
       page: "<gray>此页面不存在"
       server: "<red>未找到服务器 <server>"
-      servergroup: "<red>未找到服务器组 <server_group>"
+      server_group: "<red>未找到服务器组 <server_group>"
       player: "<red>未找到玩家 <player>"
     invalid:
       uuid: "无效的 UUID"
@@ -48,25 +48,25 @@ avm:
         description: "<gray>确认操作"
         expired: "<light_purple>该会话命令已过期"
         failed: "<red>无法执行此会话命令"
-        not.found: "<light_purple>未知会话命令"
+        not_found: "<light_purple>未知会话命令"
       import:
         description: "<gray>从其它插件导入数据"
         success: "<gray>从 <plugin_name> 导入数据成功！<dark_gray>耗费: <elapsed>"
         failed: "<red>从 <plugin_name> 导入数据失败，请查看控制台日志！"
-        need.confirm:
+        need_confirm:
           "1":
             text: "<yellow><bold>警告：此操作将覆盖现有配置和数据！"
           "2":
             text: "<gray>点击此消息或执行命令 <white><command> <gray>以确认操作!"
             hover: "<gray>确认操作"
         config:
-          not.exist: "<dark_gray><plugin_name> 的配置文件不存在，跳过..."
+          not_exist: "<dark_gray><plugin_name> 的配置文件不存在，跳过..."
           failed: "<red>无法从 <plugin_name> 导入配置: <reason>"
         whitelist:
-          not.exist: "<dark_gray><plugin_name> 的白名单文件不存在，跳过..."
+          not_exist: "<dark_gray><plugin_name> 的白名单文件不存在，跳过..."
           failed: "<red>无法从 <plugin_name> 导入白名单: <reason>"
         player:
-          not.exist: "<dark_gray> 的玩家数据文件夹不存在，跳过..."
+          not_exist: "<dark_gray> 的玩家数据文件夹不存在，跳过..."
           failed: "<red>无法从 <plugin_name> 导入玩家 <player> : <reason>"
       send:
         description: "<gray>将单个玩家从一个服务器发送到另一个服务器"
@@ -101,19 +101,19 @@ avm:
         description: "<gray>通过用户名或 UUID 将玩家添加到白名单"
         success: "<dark_green>已将 <player> 添加到 <server> 的白名单服务器列表中"
         request:
-          not.found: "<light_purple>失败: 此玩家不存在"
+          not_found: "<light_purple>失败: 此玩家不存在"
           failed: "<red>失败: 查询玩家时出错"
-        already.exists: "<gold>此玩家已在白名单中"
-        uuid.unsupported: "<light_purple>失败: 不支持在离线模式下通过 UUID 添加白名单"
+        already_exists: "<gold>此玩家已在白名单中"
+        uuid_unsupported: "<light_purple>失败: 不支持在离线模式下通过 UUID 添加白名单"
       remove:
         description: "<gray>从白名单中移除玩家"
         success:
           full: "<dark_green>已将 <player> 从白名单中移除"
           server: "<dark_green>已将 <player> 从 <server> 的白名单服务器列表中移除"
-        not.found: "<light_purple>此玩家不在白名单中"
+        not_found: "<light_purple>此玩家不在白名单中"
       clear:
         description: "<gray>清空白名单"
-        need.confirm:
+        need_confirm:
           "1":
             text: "<yellow><bold>警告: 此操作将清空白名单！"
           "2":
