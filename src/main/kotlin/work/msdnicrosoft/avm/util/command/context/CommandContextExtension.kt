@@ -9,8 +9,8 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.format.NamedTextColor
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
-import work.msdnicrosoft.avm.annotations.CommandNode
-import work.msdnicrosoft.avm.annotations.RootCommand
+import work.msdnicrosoft.avm.annotations.command.CommandNode
+import work.msdnicrosoft.avm.annotations.command.RootCommand
 import work.msdnicrosoft.avm.util.command.builder.Command
 import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.tr
 import work.msdnicrosoft.avm.util.component.builder.style.styled

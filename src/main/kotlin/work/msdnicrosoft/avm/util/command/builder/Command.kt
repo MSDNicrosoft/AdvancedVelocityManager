@@ -4,12 +4,10 @@ import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.tree.CommandNode
 import com.velocitypowered.api.command.CommandSource
 
-typealias S = CommandSource
-
 interface Command {
-    val node: ArgumentBuilder<S, *>
+    val node: ArgumentBuilder<CommandSource, *>
 
-    fun build(): CommandNode<S>
+    fun build(): CommandNode<CommandSource>
 
     companion object {
         const val SINGLE_SUCCESS: Int = com.mojang.brigadier.Command.SINGLE_SUCCESS

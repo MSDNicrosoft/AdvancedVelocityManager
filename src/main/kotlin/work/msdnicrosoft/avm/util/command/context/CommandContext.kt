@@ -26,14 +26,12 @@ import java.util.*
 import kotlin.reflect.KProperty
 import com.mojang.brigadier.context.CommandContext as BrigadierCommandContext
 
-typealias S = CommandSource
-
 @Suppress("unused")
-class CommandContext(val context: BrigadierCommandContext<S>) {
+class CommandContext(val context: BrigadierCommandContext<CommandSource>) {
     inline operator fun <reified T : Any> getValue(thisRef: Any?, property: KProperty<*>): T =
         when (classOf<T>()) {
             BrigadierCommandContext::class.java -> this.context
-            S::class.java -> this.context.source
+            CommandSource::class.java -> this.context.source
             UUID::class.java -> parseUuid(getStringArgument(property.name))
             Player::class.java -> parsePlayer(getStringArgument(property.name))
             PlayerByUUID::class.java -> parsePlayerByUuid(getStringArgument(property.name))

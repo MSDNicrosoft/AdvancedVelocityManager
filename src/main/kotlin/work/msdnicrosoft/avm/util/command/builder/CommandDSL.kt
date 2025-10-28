@@ -3,11 +3,9 @@
 package work.msdnicrosoft.avm.util.command.builder
 
 import com.mojang.brigadier.arguments.*
+import com.velocitypowered.api.command.CommandSource
+import work.msdnicrosoft.avm.annotations.dsl.CommandDSL
 import work.msdnicrosoft.avm.util.command.context.CommandContext
-
-@Target(AnnotationTarget.TYPE)
-@DslMarker
-annotation class CommandDSL
 
 fun Command.stringArgument(name: String, block: @CommandDSL ArgumentCommand<String>.() -> Unit) {
     this.node.then(ArgumentCommand(name, StringArgumentType.string()).apply(block).node)
@@ -61,7 +59,7 @@ fun Command.doubleArgument(
     this.node.then(ArgumentCommand(name, DoubleArgumentType.doubleArg(min, max)).apply(block).node)
 }
 
-fun Command.requires(requirement: @CommandDSL S.() -> Boolean) {
+fun Command.requires(requirement: @CommandDSL CommandSource.() -> Boolean) {
     this.node.requires(requirement)
 }
 

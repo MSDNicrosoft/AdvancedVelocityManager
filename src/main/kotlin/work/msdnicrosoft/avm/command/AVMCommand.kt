@@ -2,8 +2,8 @@ package work.msdnicrosoft.avm.command
 
 import com.velocitypowered.api.util.ProxyVersion
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
-import work.msdnicrosoft.avm.annotations.CommandNode
-import work.msdnicrosoft.avm.annotations.RootCommand
+import work.msdnicrosoft.avm.annotations.command.CommandNode
+import work.msdnicrosoft.avm.annotations.command.RootCommand
 import work.msdnicrosoft.avm.command.utility.*
 import work.msdnicrosoft.avm.module.command.session.CommandSessionManager
 import work.msdnicrosoft.avm.module.command.session.ExecuteResult

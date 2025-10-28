@@ -3,8 +3,8 @@ package work.msdnicrosoft.avm.command
 import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.format.NamedTextColor
-import work.msdnicrosoft.avm.annotations.CommandNode
-import work.msdnicrosoft.avm.annotations.RootCommand
+import work.msdnicrosoft.avm.annotations.command.CommandNode
+import work.msdnicrosoft.avm.annotations.command.RootCommand
 import work.msdnicrosoft.avm.command.whitelist.*
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.data.Player
