@@ -113,7 +113,7 @@ object WhitelistCommand {
                             component(JoinConfiguration.newlines()) {
                                 if (isServerGroup) {
                                     translatable("avm.whitelist.player.server.hover.1")
-                                    config.getServersInGroup(server).forEach(this::text)
+                                    text(config.getServersInGroup(server).joinToString(" "))
                                     empty()
                                 }
                                 translatable("avm.whitelist.player.server.hover.2") {
@@ -128,8 +128,9 @@ object WhitelistCommand {
                     }
                     if (this@sendWhitelistPlayers.isConsole && isServerGroup) {
                         text("(")
-                        config.getServersInGroup(server).forEach(this::text)
+                        text(config.getServersInGroup(server).joinToString(" "))
                         text(")")
+                        space()
                     }
                 }
             }
