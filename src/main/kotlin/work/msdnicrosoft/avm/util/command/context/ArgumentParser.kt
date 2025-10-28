@@ -12,67 +12,77 @@ import work.msdnicrosoft.avm.util.component.ComponentSerializer
 import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.tr
 import work.msdnicrosoft.avm.util.string.isUuid
 import work.msdnicrosoft.avm.util.string.toUuid
-import java.util.*
+import java.util.Optional
+import java.util.UUID
+import kotlin.reflect.KClass
 
-object ArgumentParser {
+fun interface ArgumentParser<T> {
+    fun parse(argument: String): T
 
-    fun parseUuid(argument: String): UUID {
-        if (!argument.isUuid()) {
-            throwCommandException(tr("avm.general.invalid.uuid") { args { string("uuid", argument) } })
+    companion object {
+        private val UUIDParser = ArgumentParser<UUID> { argument ->
+            if (!argument.isUuid()) {
+                throwCommandException(tr("avm.general.invalid.uuid") { args { string("uuid", argument) } })
+            }
+            argument.toUuid()
         }
 
-        return argument.toUuid()
-    }
-
-    fun parsePlayer(argument: String): Player {
-        val player: Optional<Player> = server.getPlayer(argument)
-
-        if (player.isEmpty) {
-            throwCommandException(tr("avm.general.not_found.player") { args { string("player", argument) } })
+        private val PlayerParser = ArgumentParser<Player> { argument ->
+            val player: Optional<Player> = server.getPlayer(argument)
+            if (player.isEmpty) {
+                throwCommandException(tr("avm.general.not_found.player") { args { string("player", argument) } })
+            }
+            player.get()
         }
 
-        return player.get()
-    }
-
-    fun parsePlayerByUuid(argument: String): PlayerByUUID {
-        val uuid: UUID = parseUuid(argument)
-
-        val player: Optional<Player> = server.getPlayer(uuid)
-
-        if (player.isEmpty) {
-            throwCommandException(tr("avm.general.not_found.player") { args { string("player", argument) } })
-        }
-        return PlayerByUUID(uuid, player.get())
-    }
-
-    fun parseServer(argument: String): Server {
-        if (!ConfigManager.config.whitelist.isServerGroup(argument) && server.getServer(argument).isEmpty) {
-            throwCommandException(tr("avm.general.not_found.server") { args { string("server", argument) } })
+        private val PlayerByUUIDParser = ArgumentParser<PlayerByUUID> { argument ->
+            val uuid: UUID = UUIDParser.parse(argument)
+            val player: Optional<Player> = server.getPlayer(uuid)
+            if (player.isEmpty) {
+                throwCommandException(tr("avm.general.not_found.player") { args { string("player", argument) } })
+            }
+            PlayerByUUID(player.get())
         }
 
-        return Server(argument)
-    }
-
-    fun parseRegisteredServer(argument: String): RegisteredServer {
-        val registeredServer: Optional<RegisteredServer> = server.getServer(argument)
-
-        if (registeredServer.isEmpty) {
-            throwCommandException(tr("avm.general.not_found.server") { args { string("server", argument) } })
+        private val ServerParser = ArgumentParser<Server> { argument ->
+            if (!ConfigManager.config.whitelist.isServerGroup(argument) && server.getServer(argument).isEmpty) {
+                throwCommandException(tr("avm.general.not_found.server") { args { string("server", argument) } })
+            }
+            Server(argument)
         }
 
-        return registeredServer.get()
-    }
-
-    fun parseServerGroup(argument: String): ServerGroup {
-        if (!ConfigManager.config.whitelist.isServerGroup(argument)) {
-            throwCommandException(
-                tr("avm.general.not_found.server_group") { args { string("server_group", argument) } }
-            )
+        private val RegisteredServerParser = ArgumentParser<RegisteredServer> { argument ->
+            val server: Optional<RegisteredServer> = server.getServer(argument)
+            if (server.isEmpty) {
+                throwCommandException(tr("avm.general.not_found.server") { args { string("server", argument) } })
+            }
+            server.get()
         }
 
-        return ServerGroup(argument)
-    }
+        private val ServerGroupParser = ArgumentParser<ServerGroup> { argument ->
+            if (!ConfigManager.config.whitelist.isServerGroup(argument)) {
+                throwCommandException(
+                    tr("avm.general.not_found.server_group") { args { string("server_group", argument) } }
+                )
+            }
+            ServerGroup(argument)
+        }
 
-    fun parseMiniMessage(argument: String): MiniMessage =
-        MiniMessage(ComponentSerializer.MINI_MESSAGE.deserialize(argument))
+        private val MiniMessageParser = ArgumentParser<MiniMessage> { argument ->
+            MiniMessage(ComponentSerializer.MINI_MESSAGE.deserialize(argument))
+        }
+
+        val parsers: Map<KClass<*>, ArgumentParser<*>> = mapOf(
+            UUID::class to UUIDParser,
+            Player::class to PlayerParser,
+            PlayerByUUID::class to PlayerByUUIDParser,
+            Server::class to ServerParser,
+            RegisteredServer::class to RegisteredServerParser,
+            ServerGroup::class to ServerGroupParser,
+            MiniMessage::class to MiniMessageParser,
+        )
+
+        @Suppress("UNCHECKED_CAST")
+        inline fun <reified T> of(): ArgumentParser<T>? = this.parsers[T::class] as? ArgumentParser<T>
+    }
 }
