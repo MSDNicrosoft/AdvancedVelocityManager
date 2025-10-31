@@ -5,5 +5,5 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 
 object HttpUtil {
     val USER_AGENT =
-        "AdvancedVelocityManager/${plugin.self.version} (${server.version.name}/${server.version.version})"
+        "AdvancedVelocityManager/${plugin.self.version.get()} (${server.version.name}/${server.version.version})"
 }
