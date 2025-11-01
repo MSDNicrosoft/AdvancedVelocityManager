@@ -1,5 +1,4 @@
 [versions]
-
 # Gradle Plugins
 kotlin = "2.2.21"
 detekt = "1.23.8"
@@ -10,7 +9,7 @@ shadow = "9.2.2"
 # CompileOnly Dependencies
 velocity = "3.4.0-SNAPSHOT"
 asm = "9.9"
-floodgate = "2.2.4-SNAPSHOT"
+floodgate = "2.2.5-SNAPSHOT"
 netty = "4.2.7.Final"
 fastutil = "8.5.18"
 
@@ -46,8 +45,8 @@ netty = { module = "io.netty:netty-all", version.ref = "netty" }
 fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
 
 # Shade Dependencies
-kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
-kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
+kaml = { module = "com.charleskorn.kaml:kaml-jvm", version.ref = "kaml" }
+kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm", version.ref = "kotlin-serialization" }
 byte-buddy-agent = { module = "net.bytebuddy:byte-buddy-agent", version.ref = "byte-buddy-agent" }
 kavaref-core = { module = "com.highcapable.kavaref:kavaref-core", version.ref = "kavaref" }
 kavaref-extension = { module = "com.highcapable.kavaref:kavaref-extension", version.ref = "kavaref-extension" }
