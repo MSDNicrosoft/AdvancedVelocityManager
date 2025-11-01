@@ -97,9 +97,9 @@ dependencies {
 }
 
 detekt {
-    parallel = true
-    config.setFrom(file("config/detekt/detekt.yml"))
+    config.setFrom(project.rootDir.resolve("config/detekt/detekt.yml"))
     buildUponDefaultConfig = true
+    parallel = true
     autoCorrect = true
 }
 
@@ -109,7 +109,7 @@ yamlang {
 }
 
 tasks {
-    val runDir: File = file("run")
+    val runDir: File = project.rootDir.resolve("run")
 
     build {
         dependsOn(shadowJar)
