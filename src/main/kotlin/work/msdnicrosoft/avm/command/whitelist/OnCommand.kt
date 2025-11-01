@@ -20,6 +20,7 @@ object OnCommand {
             config.enabled = true
             if (!ConfigManager.save()) {
                 sendTranslatable("avm.general.config.save.failed")
+                return@executes Command.SINGLE_SUCCESS
             }
             sendTranslatable("avm.command.avmwl.status.state") {
                 args { component("state", tr("avm.general.on")) }
