@@ -3,7 +3,7 @@ package work.msdnicrosoft.avm.util.server
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.ServerPing
 import net.kyori.adventure.text.Component
-import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
+import work.msdnicrosoft.avm.util.component.builder.minimessage.miniMessage
 
 object ProxyServerUtil {
     /**
@@ -26,7 +26,7 @@ object ProxyServerUtil {
      */
     fun kickPlayers(reason: String, players: Iterable<Player>) {
         players.forEach { player ->
-            player.disconnect(MINI_MESSAGE.deserialize(reason))
+            player.disconnect(miniMessage(reason))
         }
     }
 }

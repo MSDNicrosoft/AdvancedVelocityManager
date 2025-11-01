@@ -14,7 +14,7 @@ import work.msdnicrosoft.avm.util.command.context.name
 import work.msdnicrosoft.avm.util.command.context.toPlayer
 import work.msdnicrosoft.avm.util.command.register
 import work.msdnicrosoft.avm.util.command.unregister
-import work.msdnicrosoft.avm.util.component.ComponentSerializer.STYLE_ONLY_MINI_MESSAGE
+import work.msdnicrosoft.avm.util.component.ComponentSerializer
 import work.msdnicrosoft.avm.util.component.Format
 import work.msdnicrosoft.avm.util.component.builder.minimessage.miniMessage
 import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.placeholders
@@ -76,7 +76,7 @@ object MsgCommand {
         return Component.join(
             JoinConfiguration.noSeparators(),
             this.map { format ->
-                miniMessage(format.text, provider = STYLE_ONLY_MINI_MESSAGE) {
+                miniMessage(format.text, provider = ComponentSerializer.STYLE_ONLY_MINI_MESSAGE) {
                     placeholders { tagResolvers(tagResolvers) }
                 } styled {
                     hoverText {

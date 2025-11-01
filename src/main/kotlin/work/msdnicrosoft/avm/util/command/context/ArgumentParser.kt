@@ -8,7 +8,7 @@ import work.msdnicrosoft.avm.util.command.data.PlayerByUUID
 import work.msdnicrosoft.avm.util.command.data.component.MiniMessage
 import work.msdnicrosoft.avm.util.command.data.server.Server
 import work.msdnicrosoft.avm.util.command.data.server.ServerGroup
-import work.msdnicrosoft.avm.util.component.ComponentSerializer
+import work.msdnicrosoft.avm.util.component.builder.minimessage.miniMessage
 import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.tr
 import work.msdnicrosoft.avm.util.string.isUuid
 import work.msdnicrosoft.avm.util.string.toUuid
@@ -69,7 +69,7 @@ fun interface ArgumentParser<T> {
         }
 
         private val MiniMessageParser = ArgumentParser<MiniMessage> { argument ->
-            MiniMessage(ComponentSerializer.MINI_MESSAGE.deserialize(argument))
+            MiniMessage(miniMessage(argument))
         }
 
         val parsers: Map<KClass<*>, ArgumentParser<*>> = mapOf(

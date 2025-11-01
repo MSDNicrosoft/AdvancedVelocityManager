@@ -19,6 +19,6 @@ enum class PluginName {
     companion object {
         val PLUGINS: List<String> by lazy { entries.map { it.name.replace("_", "-").lowercase() } }
 
-        fun of(name: String): PluginName = valueOf(name.replace("-", "_").uppercase())
+        fun from(name: String): PluginName = valueOf(name.replace("-", "_").uppercase())
     }
 }

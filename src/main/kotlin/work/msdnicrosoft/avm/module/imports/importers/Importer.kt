@@ -4,7 +4,7 @@ import work.msdnicrosoft.avm.util.command.context.CommandContext
 
 interface Importer {
 
-    val pluginName: String
+    val displayName: String
 
     /**
      * Import data from other plugins

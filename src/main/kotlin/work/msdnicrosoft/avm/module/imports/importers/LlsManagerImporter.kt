@@ -36,14 +36,14 @@ object LlsManagerImporter : Importer {
     private val CONFIG_PATH: Path = PATH / "config.json"
     private val PLAYER_DATA_PATH: Path = PATH / "player"
 
-    override val pluginName: String = "lls-manager"
+    override val displayName: String = "lls-manager"
 
     override fun import(context: CommandContext, defaultServer: String): Boolean {
         val configSuccess: Boolean = if (this.CONFIG_PATH.exists()) {
             context.importConfig()
         } else {
             context.sendTranslatable("avm.command.avm.import.config.not_exist") {
-                args { string("plugin_name", pluginName) }
+                args { string("plugin_name", displayName) }
             }
             true
         }
@@ -52,7 +52,7 @@ object LlsManagerImporter : Importer {
             context.importPlayerData(defaultServer)
         } else {
             context.sendTranslatable("avm.command.avm.import.player.not_exist") {
-                args { string("plugin_name", pluginName) }
+                args { string("plugin_name", displayName) }
             }
             true
         }
@@ -76,7 +76,7 @@ object LlsManagerImporter : Importer {
         } catch (e: Exception) {
             sendTranslatable("avm.command.avm.import.config.failed") {
                 args {
-                    string("plugin_name", pluginName)
+                    string("plugin_name", displayName)
                     string("reason", e.message.orEmpty())
                 }
             }
@@ -100,7 +100,7 @@ object LlsManagerImporter : Importer {
                     sendTranslatable("avm.command.avm.import.player.failed") {
                         args {
                             string("player", username)
-                            string("plugin_name", pluginName)
+                            string("plugin_name", displayName)
                             string("reason", e.message.orEmpty())
                         }
                     }

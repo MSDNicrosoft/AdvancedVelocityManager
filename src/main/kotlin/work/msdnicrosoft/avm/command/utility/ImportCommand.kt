@@ -37,7 +37,7 @@ object ImportCommand {
 
                     CommandSessionManager.add(sessionId) {
                         val (success: Boolean, elapsed: Duration) = measureTimedValue {
-                            PluginName.of(pluginName).import(this, defaultServer.name)
+                            PluginName.from(pluginName).import(this, defaultServer.name)
                         }
 
                         if (success) {

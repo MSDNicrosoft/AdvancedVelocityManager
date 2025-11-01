@@ -96,7 +96,7 @@ object RemoveCommand {
                     server.getPlayer(playerName)
                 }
                 player.ifPresent {
-                    if (!WhitelistManager.isInServerWhitelist(it.uniqueId, it.currentServer.get().serverInfo.name)) {
+                    if (!WhitelistManager.isListed(it.uniqueId, it.currentServer.get().serverInfo.name)) {
                         kickPlayers(config.message, it)
                     }
                 }

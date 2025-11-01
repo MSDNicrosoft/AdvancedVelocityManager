@@ -1,8 +1,3 @@
-/**
- * Portions of this code are modified from lls-manager
- * https://github.com/plusls/lls-manager/blob/master/src/main/java/com/plusls/llsmanager/whitelist/WhitelistHandler.java
- */
-
 package work.msdnicrosoft.avm.module.whitelist
 
 import com.highcapable.kavaref.KavaRef.Companion.resolve
@@ -19,10 +14,14 @@ import io.netty.channel.Channel
 import io.netty.util.AttributeKey
 import net.kyori.adventure.text.Component
 import org.geysermc.floodgate.api.player.FloodgatePlayer
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
+import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.util.component.ComponentSerializer.MINI_MESSAGE
+import work.msdnicrosoft.avm.util.component.builder.minimessage.miniMessage
 
+/**
+ * Portions of this code are modified from lls-manager
+ * https://github.com/plusls/lls-manager/blob/master/src/main/java/com/plusls/llsmanager/whitelist/WhitelistHandler.java
+ */
 object WhitelistHandler {
     private inline val config get() = ConfigManager.config.whitelist
 
@@ -30,17 +29,17 @@ object WhitelistHandler {
         classOf<InboundConnection>().resolve().firstField { name = "delegate" }
     }
 
-    private val hasFloodgate: Boolean by lazy { plugin.server.pluginManager.getPlugin("floodgate").isPresent }
+    private val hasFloodgate: Boolean by lazy { server.pluginManager.getPlugin("floodgate").isPresent }
 
     @Subscribe(order = PostOrder.EARLY)
     fun onPreLogin(event: PreLoginEvent) {
         // Blocked by other plugins or whitelist is off
-        if (!event.result.isAllowed || !WhitelistManager.enabled) return
+        if (!event.result.isAllowed || !config.enabled) return
 
         val username: String = event.connection.getJavaUsernameOrDefault(event.username)
         val player = WhitelistManager.getPlayer(username)
         if (player == null) {
-            event.result = PreLoginEvent.PreLoginComponentResult.denied(MINI_MESSAGE.deserialize(config.message))
+            event.result = PreLoginEvent.PreLoginComponentResult.denied(miniMessage(config.message))
             PlayerCache.add(username)
         } else {
             event.result = if (player.onlineMode) {
@@ -59,14 +58,14 @@ object WhitelistHandler {
     @Subscribe(order = PostOrder.EARLY)
     fun onServerPreConnect(event: ServerPreConnectEvent) {
         // Blocked by other plugins or whitelist is off
-        if (event.result.server.isEmpty || !WhitelistManager.enabled) return
+        if (event.result.server.isEmpty || !config.enabled) return
 
         val serverName: String = event.originalServer.serverInfo.name
         val player = event.player
 
-        if (!WhitelistManager.isInServerWhitelist(player.uniqueId, serverName)) {
+        if (!WhitelistManager.isListed(player.uniqueId, serverName)) {
             event.result = ServerPreConnectEvent.ServerResult.denied()
-            val message: Component = MINI_MESSAGE.deserialize(config.message)
+            val message: Component = miniMessage(config.message)
             player.sendMessage(message)
             if (event.previousServer == null) {
                 player.disconnect(message)

@@ -10,6 +10,7 @@ import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.command.data.server.Server
 import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.tr
+import work.msdnicrosoft.avm.util.net.http.YggdrasilApiUtil
 import work.msdnicrosoft.avm.util.server.task
 import work.msdnicrosoft.avm.util.string.isUuid
 import work.msdnicrosoft.avm.util.string.toUuid
@@ -63,7 +64,7 @@ object AddCommand {
 
     private fun CommandContext.addPlayer(player: String, serverName: String, onlineMode: Boolean? = null) {
         val isUuid: Boolean = player.isUuid()
-        if (isUuid && !WhitelistManager.serverIsOnlineMode) {
+        if (isUuid && !YggdrasilApiUtil.serverIsOnlineMode) {
             sendTranslatable("avm.command.avmwl.add.uuid_unsupported")
             return
         }

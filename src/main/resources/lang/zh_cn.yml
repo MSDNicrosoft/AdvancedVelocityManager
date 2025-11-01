@@ -23,6 +23,9 @@ avm:
         "2":
           text: "  <gray>输入: <white>/<root_command> <dark_gray>..."
         subcommands: "  <gray>子命令:"
+    config:
+      save:
+        failed: "<red>保存配置文件失败，请查看控制台日志！"
 
   whitelist:
     player:
@@ -34,7 +37,7 @@ avm:
         hover: "<gold>▶ <yellow>点击从白名单中移除此玩家"
       uuid:
         hover: "<gold>▶ <yellow>点击复制"
-    save.failed: "<red>无法保存白名单文件，请查看控制台日志！"
+    save.failed: "<red>保存白名单文件失败，请查看控制台日志！"
 
   command:
     avm:
@@ -47,7 +50,7 @@ avm:
       confirm:
         description: "<gray>确认操作"
         expired: "<light_purple>该会话命令已过期"
-        failed: "<red>无法执行此会话命令"
+        failed: "<red>执行此会话命令失败"
         not_found: "<light_purple>未知会话命令"
       import:
         description: "<gray>从其它插件导入数据"
@@ -61,18 +64,18 @@ avm:
             hover: "<gray>确认操作"
         config:
           not_exist: "<dark_gray><plugin_name> 的配置文件不存在，跳过..."
-          failed: "<red>无法从 <plugin_name> 导入配置: <reason>"
+          failed: "<red>从 <plugin_name> 导入配置失败: <reason>"
         whitelist:
           not_exist: "<dark_gray><plugin_name> 的白名单文件不存在，跳过..."
-          failed: "<red>无法从 <plugin_name> 导入白名单: <reason>"
+          failed: "<red>从 <plugin_name> 导入白名单失败: <reason>"
         player:
           not_exist: "<dark_gray> 的玩家数据文件夹不存在，跳过..."
-          failed: "<red>无法从 <plugin_name> 导入玩家 <player> : <reason>"
+          failed: "<red>从 <plugin_name> 导入玩家 <player> 失败: <reason>"
       send:
         description: "<gray>将单个玩家从一个服务器发送到另一个服务器"
         executor:
           success: "<dark_green>已将玩家 <player> 发送到服务器 <server>"
-          failed: "<red>无法将玩家 <player> 发送到服务器 <server>"
+          failed: "<red>将玩家 <player> 发送到服务器 <server> 失败"
         target: "<gray><executor> 将你发送到服务器 <server>"
       sendall:
         description: "<gray>将指定服务器的所有玩家发送到另一个服务器"
@@ -120,7 +123,7 @@ avm:
             text: "<gray>点击此消息或执行命令 <white><command> <gray>以确认操作!"
             hover: "<gray>确认操作"
         success: "<dark_green>白名单已清空!"
-        failed: "<red>无法清空白名单，请查看控制台日志"
+        failed: "<red>清空白名单失败，请查看控制台日志"
       list:
         description: "<gray>查看白名单"
         empty: "<gray>白名单中没有玩家"

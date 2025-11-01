@@ -15,14 +15,14 @@ object StatusCommand {
     val command = literalCommand("status") {
         requires { hasPermission("avm.command.whitelist.status") }
         executes {
-            val state = if (WhitelistManager.enabled) "on" else "off"
+            val state = if (config.enabled) "on" else "off"
             sendTranslatable("avm.command.avmwl.list.header") {
                 args { numeric("player", WhitelistManager.size) }
             }
             sendTranslatable("avm.command.avmwl.status.state") {
                 args { component("state", tr("avm.general.$state")) }
             }
-            sendTranslatable("avm.command.avmwl.status.cache",) {
+            sendTranslatable("avm.command.avmwl.status.cache") {
                 args {
                     numeric("current", PlayerCache.readOnly.size)
                     numeric("total", config.cachePlayers.maxSize)

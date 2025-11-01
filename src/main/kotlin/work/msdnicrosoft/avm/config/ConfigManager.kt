@@ -61,11 +61,8 @@ object ConfigManager {
      * @return True if the configuration is saved successfully, false otherwise.
      */
     fun save(initialize: Boolean = false): Boolean {
-        if (!this.file.exists()) {
-            logger.info(
-                "Configuration file does not exist{}",
-                if (initialize) ", generating default configuration..." else ""
-            )
+        if (!this.file.exists() && initialize) {
+            logger.info("Configuration file does not exist, generating default configuration...")
         }
 
         return try {

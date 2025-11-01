@@ -1,6 +1,6 @@
 package work.msdnicrosoft.avm.util.net.http
 
-@Suppress("MagicNumber", "unused")
+@Suppress("MagicNumber")
 enum class HttpStatus(val value: Int, val description: String) {
     CONTINUE(100, "Continue"),
     SWITCHING_PROTOCOLS(101, "Switching Protocols"),

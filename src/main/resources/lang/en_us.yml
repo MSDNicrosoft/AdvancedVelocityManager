@@ -23,6 +23,9 @@ avm:
         "2":
           text: "  <gray>Type: <white>/<root_command> <dark_gray>..."
         subcommands: "  <gray>Subcommands:"
+    config:
+      save:
+        failed: "<red>Failed to save config, please check console log"
 
   whitelist:
     player:

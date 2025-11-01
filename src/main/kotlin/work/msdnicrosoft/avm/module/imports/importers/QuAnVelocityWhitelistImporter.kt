@@ -10,6 +10,7 @@ import work.msdnicrosoft.avm.util.data.UUIDSerializer
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.FileUtil.TOML
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
+import work.msdnicrosoft.avm.util.net.http.YggdrasilApiUtil
 import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.div
@@ -26,20 +27,20 @@ object QuAnVelocityWhitelistImporter : Importer {
     private val PATH: Path = dataDirectory.parent / "VelocityWhitelist"
     private val CONFIG_PATH: Path = this.PATH / "config.toml"
     private val WHITELIST_PATH: Path =
-        if (WhitelistManager.serverIsOnlineMode) {
+        if (YggdrasilApiUtil.serverIsOnlineMode) {
             this.PATH / "whitelist.json"
         } else {
             this.PATH / "whitelist_offline.json"
         }
 
-    override val pluginName: String = "(qu-an) VelocityWhitelist"
+    override val displayName: String = "(qu-an) VelocityWhitelist"
 
     override fun import(context: CommandContext, defaultServer: String): Boolean {
         val configSuccess: Boolean = if (this.CONFIG_PATH.exists()) {
             importConfig(context)
         } else {
             context.sendTranslatable("avm.command.avm.import.config.not_exist") {
-                args { string("plugin_name", pluginName) }
+                args { string("plugin_name", displayName) }
             }
             true
         }
@@ -48,7 +49,7 @@ object QuAnVelocityWhitelistImporter : Importer {
             importWhitelist(defaultServer, context)
         } else {
             context.sendTranslatable("avm.command.avm.import.whitelist.not_exist") {
-                args { string("plugin_name", pluginName) }
+                args { string("plugin_name", displayName) }
             }
             true
         }
@@ -68,7 +69,7 @@ object QuAnVelocityWhitelistImporter : Importer {
         } catch (e: Exception) {
             context.sendTranslatable("avm.command.avm.import.config.failed") {
                 args {
-                    string("plugin_name", pluginName)
+                    string("plugin_name", displayName)
                     string("reason", e.message.orEmpty())
                 }
             }
@@ -78,7 +79,7 @@ object QuAnVelocityWhitelistImporter : Importer {
     private fun importWhitelist(defaultServer: String, context: CommandContext): Boolean =
         try {
             val whitelist: List<Player> = JSON.decodeFromString(this.WHITELIST_PATH.readTextWithBuffer())
-            val onlineMode: Boolean = WhitelistManager.serverIsOnlineMode
+            val onlineMode: Boolean = YggdrasilApiUtil.serverIsOnlineMode
 
             whitelist.forEach { player ->
                 WhitelistManager.add(player.name, player.uuid, defaultServer, onlineMode)
@@ -87,7 +88,7 @@ object QuAnVelocityWhitelistImporter : Importer {
         } catch (e: Exception) {
             context.sendTranslatable("avm.command.avm.import.whitelist.failed") {
                 args {
-                    string("plugin_name", pluginName)
+                    string("plugin_name", displayName)
                     string("reason", e.message.orEmpty())
                 }
             }

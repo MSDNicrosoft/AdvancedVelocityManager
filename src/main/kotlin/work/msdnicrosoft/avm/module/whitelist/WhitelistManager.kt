@@ -1,15 +1,12 @@
 package work.msdnicrosoft.avm.module.whitelist
 
 import com.velocitypowered.api.scheduler.ScheduledTask
-import com.velocitypowered.api.util.UuidUtils
 import kotlinx.serialization.SerializationException
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.module.whitelist.data.ApiResponse
 import work.msdnicrosoft.avm.module.whitelist.data.Player
 import work.msdnicrosoft.avm.module.whitelist.result.AddResult
 import work.msdnicrosoft.avm.module.whitelist.result.RemoveResult
@@ -18,25 +15,18 @@ import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import work.msdnicrosoft.avm.util.file.writeTextWithBuffer
 import work.msdnicrosoft.avm.util.net.http.HttpStatus
-import work.msdnicrosoft.avm.util.net.http.HttpUtil
+import work.msdnicrosoft.avm.util.net.http.YggdrasilApiUtil
 import work.msdnicrosoft.avm.util.server.task
 import work.msdnicrosoft.avm.util.string.toUuid
 import java.io.File
 import java.io.IOException
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 import java.util.*
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.io.path.div
 
-@Suppress("TooManyFunctions")
 object WhitelistManager {
-    private inline val config get() = ConfigManager.config.whitelist
-
     private val file: File = (dataDirectory / "whitelist.json").toFile()
 
     private val whitelist: MutableList<Player> = mutableListOf()
@@ -46,17 +36,8 @@ object WhitelistManager {
     val size: Int get() = this.whitelist.size
     val isEmpty: Boolean get() = this.whitelist.isEmpty()
     val maxPage: Int get() = Paginator.getMaxPage(this.whitelist.size)
-    inline val serverIsOnlineMode: Boolean get() = server.configuration.isOnlineMode
 
     private val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
-    private val httpClient: HttpClient = HttpClient.newHttpClient()
-
-    var enabled: Boolean
-        get() = config.enabled
-        set(value) {
-            config.enabled = value
-            ConfigManager.save()
-        }
 
     fun init(reload: Boolean = false) {
         this.load(reload)
@@ -83,7 +64,7 @@ object WhitelistManager {
         return if (player != null) {
             this.add(player.name, uuid, server, onlineMode)
         } else {
-            when (val username: String? = this.getUsername(uuid)) {
+            when (val username: String? = YggdrasilApiUtil.getUsername(uuid)) {
                 null -> AddResult.API_LOOKUP_REQUEST_FAILED
                 HttpStatus.NOT_FOUND.description -> AddResult.API_LOOKUP_NOT_FOUND
                 else -> this.add(username, uuid, server, onlineMode)
@@ -101,7 +82,7 @@ object WhitelistManager {
         return if (player != null) {
             this.add(username, player.uuid, server, onlineMode)
         } else {
-            when (val uuid: String? = this.getUuid(username, onlineMode)) {
+            when (val uuid: String? = YggdrasilApiUtil.getUuid(username, onlineMode)) {
                 null -> AddResult.API_LOOKUP_REQUEST_FAILED
                 HttpStatus.NOT_FOUND.description -> AddResult.API_LOOKUP_NOT_FOUND
                 else -> this.add(username, uuid.toUuid(), server, onlineMode)
@@ -118,17 +99,21 @@ object WhitelistManager {
         val player: Player? = this.getPlayer(uuid)
         this.lock.write {
             if (player == null) {
-                this.whitelist.add(Player(username, uuid, onlineMode ?: this.serverIsOnlineMode, mutableListOf(server)))
+                this.whitelist.add(
+                    Player(username, uuid, onlineMode ?: YggdrasilApiUtil.serverIsOnlineMode, mutableListOf(server))
+                )
                 this.uuids.add(uuid)
                 this.usernames.add(username)
             } else {
-                // Check if the player is already in the server whitelist
+                if (server in player.serverList && onlineMode == player.onlineMode) {
+                    return AddResult.ALREADY_EXISTS
+                }
                 if (server !in player.serverList) {
                     player.serverList += server
-                } else {
-                    if (onlineMode == player.onlineMode) return AddResult.ALREADY_EXISTS
                 }
-                if (onlineMode != null) player.onlineMode = onlineMode
+                if (onlineMode != null) {
+                    player.onlineMode = onlineMode
+                }
             }
         }
         return if (this.save(false)) AddResult.SUCCESS else AddResult.SAVE_FILE_FAILED
@@ -171,11 +156,10 @@ object WhitelistManager {
                 player.serverList -= server
 
                 // If the server list is now empty, remove the player from the global whitelist
-                if (player.serverList.isEmpty()) this.whitelist.remove(player)
-            } else {
-                // Remove the player from the global whitelist
-                this.whitelist.remove(player)
+                if (player.serverList.isNotEmpty()) return@write
             }
+            // Remove the player from the global whitelist
+            this.whitelist.remove(player)
             this.uuids.remove(player.uuid)
             this.usernames.remove(player.name)
         }
@@ -218,24 +202,29 @@ object WhitelistManager {
     /**
      * Checks if a player with the given [uuid] is allowed to connect to a specific [server].
      */
-    fun isInServerWhitelist(uuid: UUID, server: String): Boolean = lock.read {
+    fun isListed(uuid: UUID, server: String? = null): Boolean = lock.read {
         // Check if the player is in the whitelist
         val player: Player = this.whitelist.find { it.uuid == uuid } ?: return false
+
+        if (server == null) return true
 
         // Check if the player is in the server whitelist
         val serverList: List<String> = player.serverList
         if (server in serverList) return true
 
-        return config.serverGroups.any { (group: String, servers: List<String>) ->
+        return ConfigManager.config.whitelist.serverGroups.any { (group: String, servers: List<String>) ->
             group in serverList && server in servers
         }
     }
 
     fun updatePlayer(username: String, uuid: UUID): ScheduledTask = task {
         val player: Player = this.lock.read { this.whitelist.find { it.uuid == uuid } } ?: return@task
-        this.lock.write { player.name = username }
+        this.lock.write {
+            usernames.remove(player.name)
+            player.name = username
+            usernames.add(username)
+        }
         this.save(false)
-        this.updateCache()
     }
 
     /**
@@ -252,14 +241,15 @@ object WhitelistManager {
      * @return True if the save was successful, false otherwise.
      */
     private fun save(initialize: Boolean): Boolean {
-        if (!this.file.exists()) {
-            logger.info("Whitelist file does not exist{}", if (initialize) ", creating..." else "")
+        if (!this.file.exists() && initialize) {
+            logger.info("Whitelist file does not exist, creating...")
         }
 
         return try {
             this.file.parentFile.mkdirs()
             this.lock.read {
-                this.file.writeTextWithBuffer(JSON.encodeToString(if (initialize) listOf() else this.whitelist))
+                val content: String = if (initialize) "[]" else JSON.encodeToString(this.whitelist)
+                this.file.writeTextWithBuffer(content)
             }
             true
         } catch (e: IOException) {
@@ -274,7 +264,7 @@ object WhitelistManager {
      * @param reload If true, the whitelist will be reloaded from the disk.
      */
     private fun load(reload: Boolean = false): Boolean {
-        if (!this.file.exists()) return save(initialize = true)
+        if (!this.file.exists()) return this.save(initialize = true)
 
         logger.info("{} whitelist...", if (reload) "Reloading" else "Loading")
 
@@ -293,9 +283,6 @@ object WhitelistManager {
         }
     }
 
-    /**
-     * Updates the cache of usernames and UUIDs.
-     */
     private fun updateCache() {
         this.lock.write {
             this.uuids.clear()
@@ -304,69 +291,5 @@ object WhitelistManager {
             this.usernames.clear()
             this.usernames.addAll(this.whitelist.map { it.name })
         }
-    }
-
-    /**
-     * Retrieves the username associated with the given [uuid].
-     * If the server is in offline mode, it returns null.
-     * If the server is online, a query is made to the API to retrieve the username.
-     */
-    private fun getUsername(uuid: UUID): String? {
-        if (!this.serverIsOnlineMode) return null
-
-        val request: HttpRequest = HttpRequest.newBuilder()
-            .setHeader("User-Agent", HttpUtil.USER_AGENT)
-            .uri(URI.create("${config.queryApi.profile.trimEnd('/')}/${UuidUtils.toUndashed(uuid)}"))
-            .build()
-
-        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-            .thenApply { response: HttpResponse<String> ->
-                when (val status: HttpStatus = HttpStatus.fromValue(response.statusCode())) {
-                    HttpStatus.OK -> JSON.decodeFromString<ApiResponse>(response.body()).name
-                    HttpStatus.NOT_FOUND, HttpStatus.NO_CONTENT -> HttpStatus.NOT_FOUND.description
-                    HttpStatus.TOO_MANY_REQUESTS -> {
-                        logger.warn("Exceeded to the rate limit of Profile API, please retry UUID {}", uuid)
-                        null
-                    }
-
-                    else -> {
-                        logger.warn("Failed to query UUID {}, status code: {}", uuid, status)
-                        null
-                    }
-                }
-            }.get()
-    }
-
-    /**
-     * Retrieves the UUID associated with the given [username].
-     *
-     * @param onlineMode Optional parameter to specify whether to use online mode or not. Defaults to null.
-     */
-    private fun getUuid(username: String, onlineMode: Boolean? = null): String? {
-        if (onlineMode == false && !this.serverIsOnlineMode) {
-            return UuidUtils.toUndashed(UuidUtils.generateOfflinePlayerUuid(username))
-        }
-
-        val request: HttpRequest = HttpRequest.newBuilder()
-            .setHeader("User-Agent", HttpUtil.USER_AGENT)
-            .uri(URI.create("${config.queryApi.uuid.trimEnd('/')}/$username"))
-            .build()
-
-        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-            .thenApply { response: HttpResponse<String> ->
-                when (val status: HttpStatus = HttpStatus.fromValue(response.statusCode())) {
-                    HttpStatus.OK -> JSON.decodeFromString<ApiResponse>(response.body()).id
-                    HttpStatus.NOT_FOUND -> HttpStatus.NOT_FOUND.description
-                    HttpStatus.TOO_MANY_REQUESTS -> {
-                        logger.warn("Exceeded to the rate limit of UUID API, please retry username {}", username)
-                        null
-                    }
-
-                    else -> {
-                        logger.warn("Failed to query username {}, status code: {}", username, status)
-                        null
-                    }
-                }
-            }.get()
     }
 }
