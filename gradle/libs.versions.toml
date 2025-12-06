@@ -4,7 +4,7 @@ kotlin = "2.2.21"
 detekt = "1.23.8"
 grgit = "5.3.3"
 yamlang = "1.5.0"
-shadow = "9.2.2"
+shadow = "9.3.0"
 
 # CompileOnly Dependencies
 velocity = "3.4.0-SNAPSHOT"
