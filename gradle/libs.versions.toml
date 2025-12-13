@@ -18,7 +18,7 @@ kaml = "0.104.0"
 kotlin-serialization = "1.9.0"
 byte-buddy-agent = "1.18.2"
 kavaref = "1.0.2"
-kavaref-extension = "1.0.1"
+kavaref-extension = "1.0.2"
 
 
 [plugins]
