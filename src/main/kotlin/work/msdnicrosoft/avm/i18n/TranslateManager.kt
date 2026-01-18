@@ -46,10 +46,10 @@ object TranslateManager : MiniMessageTranslator() {
         val currentLocale = this.translations[locale]
             ?: this.translations[Locale.forLanguageTag(locale.language)]
             ?: this.translations[this.DEFAULT_LOCALE]
+            ?: this.translations[Locale.getDefault()]
         return currentLocale?.get(key)
     }
 
-    @Suppress("NestedBlockDepth")
     private fun checkAndUpdateTranslations() {
         val jarUrl = classOf<TranslateManager>().protectionDomain.codeSource?.location ?: return
         JarFile(jarUrl.path).use { jarFile ->

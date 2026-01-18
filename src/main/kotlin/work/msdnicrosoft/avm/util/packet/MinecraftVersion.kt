@@ -53,7 +53,8 @@ enum class MinecraftVersion {
     MINECRAFT_1_21_5,
     MINECRAFT_1_21_6,
     MINECRAFT_1_21_7,
-    MINECRAFT_1_21_9;
+    MINECRAFT_1_21_9,
+    MINECRAFT_1_21_11;
 
     companion object {
         fun MinecraftVersion.toProtocolVersion(): ProtocolVersion? = try {
