@@ -60,6 +60,7 @@ object LlsManagerImporter : Importer {
         return configSuccess && playerDataSuccess
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun CommandContext.importConfig(): Boolean =
         try {
             val config = JSON.decodeFromString<Config>(CONFIG_PATH.readTextWithBuffer())
@@ -83,6 +84,7 @@ object LlsManagerImporter : Importer {
             false
         }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun CommandContext.importPlayerData(defaultServer: String): Boolean {
         var success = true
 

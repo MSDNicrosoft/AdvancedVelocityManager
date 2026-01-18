@@ -32,7 +32,9 @@ class SetDefaultSpawnPositionPacket : MinecraftPacket {
 
     @Suppress("UnsafeCallOnNullableType")
     override fun handle(sessionHandler: MinecraftSessionHandler): Boolean {
-        if (!config.world && !config.mini) return true
+        if (!config.world && !config.mini) {
+            return true
+        }
 
         val connection: VelocityServerConnection = SERVER_CONN_RESOLVER.copy()
             .of(sessionHandler as BackendPlaySessionHandler)
@@ -41,9 +43,7 @@ class SetDefaultSpawnPositionPacket : MinecraftPacket {
         connection.player.connection.write(this)
 
         val serverNameBytes: ByteArray = connection.serverInfo.name.toByteArray(StandardCharsets.UTF_8)
-        val worldId: Int = CRC32().apply {
-            update(serverNameBytes)
-        }.value.toInt()
+        val worldId: Int = CRC32().apply { update(serverNameBytes) }.value.toInt()
         val array: ByteArray = Unpooled.buffer().useApply {
             writeByte(0x00) // Packet ID
             writeInt(worldId) // World ID

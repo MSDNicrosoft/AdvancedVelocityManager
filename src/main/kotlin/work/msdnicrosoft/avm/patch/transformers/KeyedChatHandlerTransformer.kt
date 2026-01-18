@@ -57,7 +57,9 @@ object KeyedChatHandlerTransformer : ClassTransformer {
         protectionDomain: ProtectionDomain,
         classfileBuffer: ByteArray
     ): ByteArray? {
-        if (className != this.TARGET_CLASS_NAME) return null
+        if (className != this.TARGET_CLASS_NAME) {
+            return null
+        }
 
         val node: ClassNode = ClassNode().apply {
             ClassReader(classfileBuffer).accept(this@apply, 0)

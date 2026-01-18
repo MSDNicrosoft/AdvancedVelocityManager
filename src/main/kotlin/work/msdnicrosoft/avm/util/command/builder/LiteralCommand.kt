@@ -6,6 +6,7 @@ import com.velocitypowered.api.command.CommandSource
 
 class LiteralCommand(root: String) : Command {
     override val node: LiteralArgumentBuilder<CommandSource> = LiteralArgumentBuilder.literal(root)
+
     override fun build(): LiteralCommandNode<CommandSource> = this.node.build()
 }
 

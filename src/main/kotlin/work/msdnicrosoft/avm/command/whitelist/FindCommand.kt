@@ -3,7 +3,7 @@ package work.msdnicrosoft.avm.command.whitelist
 import work.msdnicrosoft.avm.command.WhitelistCommand.sendWhitelistPlayers
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.module.whitelist.data.Player
+import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.Player
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.component.widget.Paginator

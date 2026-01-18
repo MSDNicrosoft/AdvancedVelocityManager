@@ -27,7 +27,9 @@ object YggdrasilApiUtil {
      * If the server is online, a query is made to the API to retrieve the username.
      */
     fun getUsername(uuid: UUID): String? {
-        if (!this.serverIsOnlineMode) return null
+        if (!this.serverIsOnlineMode) {
+            return null
+        }
 
         val request: HttpRequest = HttpRequest.newBuilder()
             .setHeader("User-Agent", HttpUtil.USER_AGENT)

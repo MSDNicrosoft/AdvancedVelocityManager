@@ -14,27 +14,37 @@ class ClickEventBuilder {
     }
 
     fun openUrl(url: String?) {
-        if (url == null) return
+        if (url == null) {
+            return
+        }
         this.clickEvent = ClickEvent.openUrl(url)
     }
 
     fun openUrl(url: URL?) {
-        if (url == null) return
+        if (url == null) {
+            return
+        }
         this.clickEvent = ClickEvent.openUrl(url)
     }
 
     fun runCommand(command: String?) {
-        if (command == null) return
+        if (command == null) {
+            return
+        }
         this.clickEvent = ClickEvent.runCommand(command)
     }
 
     fun suggestCommand(command: String?) {
-        if (command == null) return
+        if (command == null) {
+            return
+        }
         this.clickEvent = ClickEvent.suggestCommand(command)
     }
 
     fun copyToClipboard(text: String?) {
-        if (text == null) return
+        if (text == null) {
+            return
+        }
         this.clickEvent = ClickEvent.copyToClipboard(text)
     }
 

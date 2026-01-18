@@ -17,11 +17,13 @@ import work.msdnicrosoft.avm.util.component.Format
 class StyleBuilder {
     private var style: Style = Style.empty()
 
-    fun color(color: TextColor) {
+    fun color(color: TextColor?) {
+        if (color == null) return
         this.style = this.style.color(color)
     }
 
-    fun shadowColor(shadowColor: ShadowColor) {
+    fun shadowColor(shadowColor: ShadowColor?) {
+        if (shadowColor == null) return
         this.style = this.style.shadowColor(shadowColor)
     }
 
@@ -41,7 +43,8 @@ class StyleBuilder {
         this.style = this.style.decoration(TextDecoration.OBFUSCATED, obfuscated)
     }
 
-    fun font(key: Key) {
+    fun font(key: Key?) {
+        if (key == null) return
         this.style = this.style.font(key)
     }
 

@@ -70,8 +70,10 @@ enum class ComponentSerializer {
     }
 
     open fun deserialize(text: String): Component = this.serializer.deserialize(text)
+
     open fun deserializeOrNull(text: String?): Component? = this.serializer.deserializeOrNull(text)
 
     open fun serialize(component: Component): String = this.serializer.serialize(component)
+
     open fun serializeOrNull(component: Component?): String? = this.serializer.serializeOrNull(component)
 }

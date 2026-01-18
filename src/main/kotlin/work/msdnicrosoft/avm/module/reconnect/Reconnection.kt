@@ -65,7 +65,9 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
     }
 
     private fun connect() {
-        if (this.state == State.CONNECTED) return
+        if (this.state == State.CONNECTED) {
+            return
+        }
         this.event.server.ping(this.pingOptions).whenComplete { _, throwable ->
             if (throwable != null) {
                 this.scheduleConnect()
@@ -84,7 +86,9 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
     }
 
     private fun sendMessage() {
-        if (this.state == State.CONNECTED) return
+        if (this.state == State.CONNECTED) {
+            return
+        }
 
         this.player.showTitle(if (this.state == State.CONNECTING) this.connectingTitle else this.waitingTitle)
         scheduleSendMessage()

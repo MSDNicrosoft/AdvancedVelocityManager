@@ -10,7 +10,7 @@ import work.msdnicrosoft.avm.util.component.builder.style.clickEvent
 import work.msdnicrosoft.avm.util.component.builder.style.styled
 import work.msdnicrosoft.avm.util.component.builder.text.component
 
-class Button(
+class Button private constructor(
     private val text: String,
     private val borderType: BorderType,
     private val color: Builder.Color,
@@ -18,14 +18,16 @@ class Button(
     private val hover: Builder.Hover,
     private val click: Builder.Click,
 ) {
-
-    fun toComponent(): Component = component {
-        text(borderType.left) styled { color(color.border) }
-        text(text) styled { color(if (enableWhen()) color.enabled else color.disabled) }
-        text(borderType.right) styled { color(color.border) }
-    } styled {
-        click { fromEvent(if (enableWhen()) click.whenEnabled else click.whenDisabled) }
-        hoverText(if (enableWhen()) hover.whenEnabled else hover.whenDisabled)
+    fun toComponent(): Component {
+        val isEnabled: Boolean = enableWhen()
+        return component {
+            text(borderType.left) styled { color(color.border) }
+            text(text) styled { color(if (isEnabled) color.enabled else color.disabled) }
+            text(borderType.right) styled { color(color.border) }
+        } styled {
+            click { fromEvent(if (isEnabled) click.whenEnabled else click.whenDisabled) }
+            hoverText(if (isEnabled) hover.whenEnabled else hover.whenDisabled)
+        }
     }
 
     @Suppress("unused")
@@ -75,7 +77,7 @@ class Button(
             click = this.click,
         )
 
-        class Color {
+        class Color internal constructor() {
             var border: TextColor = NamedTextColor.DARK_GRAY
                 private set
 
@@ -98,7 +100,7 @@ class Button(
             }
         }
 
-        class Click {
+        class Click internal constructor() {
             var whenDisabled: ClickEvent? = null
                 private set
 
@@ -114,7 +116,7 @@ class Button(
             }
         }
 
-        class Hover {
+        class Hover internal constructor() {
             var whenEnabled: ComponentLike = Component.empty()
                 private set
 

@@ -17,7 +17,9 @@ object PlayerCache {
     }
 
     fun add(player: String) {
-        if (!config.enabled) return
+        if (!config.enabled) {
+            return
+        }
 
         if (this.players.size >= config.maxSize) {
             this.players.remove(this.players.last())

@@ -41,7 +41,7 @@ object CommandSessionManager {
      * Adds a command session with [sessionId] and [block] to be executed to the manager.
      */
     fun <T> add(sessionId: String, block: () -> T) {
-        sessions[sessionId] = Action(block = block, expirationTime = System.currentTimeMillis() + 60_000L)
+        this.sessions[sessionId] = Action(block = block, expirationTime = System.currentTimeMillis() + 60_000L)
     }
 
     /**
@@ -49,8 +49,9 @@ object CommandSessionManager {
      *
      * @return The result of executing the command session.
      */
+    @Suppress("TooGenericExceptionCaught")
     fun executeAction(sessionId: String): ExecuteResult {
-        val action = sessions.remove(sessionId) ?: return ExecuteResult.NOT_FOUND
+        val action = this.sessions.remove(sessionId) ?: return ExecuteResult.NOT_FOUND
         return try {
             if (action.isExpired()) {
                 ExecuteResult.EXPIRED

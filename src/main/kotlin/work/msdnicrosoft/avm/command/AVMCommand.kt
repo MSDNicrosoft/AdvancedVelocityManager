@@ -18,7 +18,6 @@ import kotlin.time.measureTimedValue
 
 @RootCommand("avm")
 object AVMCommand {
-
     @CommandNode("reload")
     val reload = literalCommand("reload") {
         requires { hasPermission("avm.command.reload") }

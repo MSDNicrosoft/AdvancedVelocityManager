@@ -28,7 +28,9 @@ object TabSyncHandler {
 
     @Subscribe
     fun onPlayerDisconnect(event: DisconnectEvent) {
-        if (!config.enabled) return
+        if (!config.enabled) {
+            return
+        }
 
         task {
             server.allPlayers.forEach { player ->
@@ -39,7 +41,9 @@ object TabSyncHandler {
 
     @Subscribe
     fun onPostPlayerConnected(event: ServerPostConnectEvent) {
-        if (!config.enabled) return
+        if (!config.enabled) {
+            return
+        }
 
         task {
             val player = event.player

@@ -30,7 +30,9 @@ object ConfigManager {
      * @return True if the configuration is loaded successfully, false otherwise.
      */
     fun load(reload: Boolean = false): Boolean {
-        if (!this.file.exists() && !this.save(initialize = true)) return false
+        if (!this.file.exists() && !this.save(initialize = true)) {
+            return false
+        }
 
         logger.info("{} configuration...", if (reload) "Reloading" else "Loading")
 
@@ -114,7 +116,9 @@ object ConfigManager {
 
     private fun migrate() {
         val currentVersion: Int = YAML.decodeFromString<Version>(this.file.readTextWithBuffer()).version
-        if (currentVersion == this.DEFAULT_CONFIG.version) return
+        if (currentVersion == this.DEFAULT_CONFIG.version) {
+            return
+        }
         when (currentVersion) {
             1 if this.DEFAULT_CONFIG.version == 2 -> {
                 logger.warn("Detected old config version, please migrate config:")

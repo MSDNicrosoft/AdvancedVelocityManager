@@ -116,7 +116,6 @@ data class ChatBridge(
         )
         val pattern: Pattern = Pattern()
     ) {
-
         @Serializable
         data class Pattern(
             @YamlComment("Contains any of the item in the following list")

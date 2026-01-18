@@ -70,8 +70,9 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @param to inclusive protocol version this entry ends at
      * @param encodeOnly if true, this mapping is used only for encoding
      */
-    fun mapping(id: Int, from: MinecraftVersion, to: MinecraftVersion, encodeOnly: Boolean): Packet<P> =
-        this.apply { this.mappings.add(Companion.mapping(id, from, to, encodeOnly)) }
+    fun mapping(id: Int, from: MinecraftVersion, to: MinecraftVersion, encodeOnly: Boolean): Packet<P> = this.apply {
+        this.mappings.add(Companion.mapping(id, from, to, encodeOnly))
+    }
 
     /**
      * Adds a version–id mapping that applies from the given protocol version onward (no upper bound).
@@ -80,8 +81,9 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
      * @param from inclusive protocol version this entry starts from
      * @param encodeOnly if true, this mapping is used only for encoding
      */
-    fun mapping(id: Int, from: MinecraftVersion, encodeOnly: Boolean): Packet<P> =
-        this.apply { this.mappings.add(Companion.mapping(id, from, encodeOnly)) }
+    fun mapping(id: Int, from: MinecraftVersion, encodeOnly: Boolean): Packet<P> = this.apply {
+        this.mappings.add(Companion.mapping(id, from, encodeOnly))
+    }
 
     /**
      * Adds a collection of [PacketMapping] in bulk.

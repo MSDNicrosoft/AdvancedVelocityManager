@@ -11,11 +11,15 @@ import work.msdnicrosoft.avm.util.component.builder.text.ComponentBuilder
 import work.msdnicrosoft.avm.util.component.builder.text.component
 
 inline val CommandSource.isConsole: Boolean get() = this is ConsoleCommandSource
+
 inline val CommandSource.isPlayer: Boolean get() = this is Player
+
 inline val CommandSource.name: String get() = if (this is Player) this.username else "Console"
 
 fun CommandSource.toPlayer(): Player = this as Player
+
 fun CommandSource.toConsole(): ConsoleCommandSource = this as ConsoleCommandSource
+
 fun CommandSource.toConnectedPlayer(): ConnectedPlayer = this as ConnectedPlayer
 
 inline fun CommandSource.sendMessage(

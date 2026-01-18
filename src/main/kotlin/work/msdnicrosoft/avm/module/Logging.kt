@@ -31,6 +31,7 @@ object Logging {
         this.write()
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun write() {
         if (this.messages.isEmpty()) return
 

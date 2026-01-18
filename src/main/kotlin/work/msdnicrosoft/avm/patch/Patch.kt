@@ -43,6 +43,7 @@ object Patch {
 
     private lateinit var instrumentation: Instrumentation
 
+    @Suppress("TooGenericExceptionCaught")
     fun init() {
         try {
             val toTransform: List<ClassTransformer> = this.transformers.filter { it.shouldTransform() }

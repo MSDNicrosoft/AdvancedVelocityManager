@@ -7,7 +7,7 @@ import work.msdnicrosoft.avm.annotations.command.CommandNode
 import work.msdnicrosoft.avm.annotations.command.RootCommand
 import work.msdnicrosoft.avm.command.whitelist.*
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.module.whitelist.data.Player
+import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.Player
 import work.msdnicrosoft.avm.util.command.builder.executes
 import work.msdnicrosoft.avm.util.command.builder.literalCommand
 import work.msdnicrosoft.avm.util.command.builder.then
@@ -23,7 +23,6 @@ import work.msdnicrosoft.avm.util.component.widget.button
 
 @RootCommand("avmwl")
 object WhitelistCommand {
-
     @CommandNode("add", "<player>", "<server>", "[onlineMode]")
     val add = AddCommand.command
 
@@ -77,7 +76,9 @@ object WhitelistCommand {
      * @param players the list of players to send
      */
     fun CommandSource.sendWhitelistPlayers(players: List<Player>) {
-        if (players.isEmpty()) return
+        if (players.isEmpty()) {
+            return
+        }
         players.forEach { player ->
             sendMessage(JoinConfiguration.noSeparators()) {
                 text(player.name) styled {

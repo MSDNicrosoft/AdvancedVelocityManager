@@ -57,6 +57,7 @@ object QuAnVelocityWhitelistImporter : Importer {
         return configSuccess && whitelistSuccess
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun importConfig(context: CommandContext): Boolean =
         try {
             val config: Toml = TOML.read(this.CONFIG_PATH.readTextWithBuffer())
@@ -76,6 +77,7 @@ object QuAnVelocityWhitelistImporter : Importer {
             false
         }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun importWhitelist(defaultServer: String, context: CommandContext): Boolean =
         try {
             val whitelist: List<Player> = JSON.decodeFromString(this.WHITELIST_PATH.readTextWithBuffer())

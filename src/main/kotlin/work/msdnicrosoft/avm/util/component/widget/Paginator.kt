@@ -8,7 +8,6 @@ import work.msdnicrosoft.avm.util.component.builder.text.component
 import kotlin.math.ceil
 
 class Paginator(private val command: String) {
-
     fun toComponent(currentPage: Int, maxPage: Int): Component = component(JoinConfiguration.spaces()) {
         componentLike(
             button("<-") {

@@ -1,16 +1,15 @@
 package work.msdnicrosoft.avm.module.whitelist
 
 import com.velocitypowered.api.scheduler.ScheduledTask
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.module.whitelist.data.Player
-import work.msdnicrosoft.avm.module.whitelist.result.AddResult
-import work.msdnicrosoft.avm.module.whitelist.result.RemoveResult
 import work.msdnicrosoft.avm.util.component.widget.Paginator
+import work.msdnicrosoft.avm.util.data.UUIDSerializer
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
 import work.msdnicrosoft.avm.util.file.readTextWithBuffer
 import work.msdnicrosoft.avm.util.file.writeTextWithBuffer
@@ -27,6 +26,37 @@ import kotlin.concurrent.write
 import kotlin.io.path.div
 
 object WhitelistManager {
+    /**
+     * A player in the whitelist.
+     *
+     * @property name The name of the player.
+     * @property uuid The UUID of the player.
+     * @property onlineMode Whether the player is online mode
+     * @property serverList The list of servers the player is allowed to connect to.
+     */
+    @Serializable
+    data class Player(
+        var name: String,
+        @Serializable(with = UUIDSerializer::class)
+        val uuid: UUID,
+        var onlineMode: Boolean,
+        var serverList: List<String>
+    )
+
+    enum class AddResult {
+        SUCCESS,
+        API_LOOKUP_NOT_FOUND,
+        API_LOOKUP_REQUEST_FAILED,
+        ALREADY_EXISTS,
+        SAVE_FILE_FAILED,
+    }
+
+    enum class RemoveResult {
+        SUCCESS,
+        FAIL_NOT_FOUND,
+        SAVE_FILE_FAILED
+    }
+
     private val file: File = (dataDirectory / "whitelist.json").toFile()
 
     private val whitelist: MutableList<Player> = mutableListOf()
@@ -150,13 +180,17 @@ object WhitelistManager {
     fun remove(player: Player, server: String?): RemoveResult {
         this.lock.write {
             if (server != null) {
-                if (server !in player.serverList) return RemoveResult.FAIL_NOT_FOUND
+                if (server !in player.serverList) {
+                    return RemoveResult.FAIL_NOT_FOUND
+                }
 
                 // Remove the server from the player's server list
                 player.serverList -= server
 
                 // If the server list is now empty, remove the player from the global whitelist
-                if (player.serverList.isNotEmpty()) return@write
+                if (player.serverList.isNotEmpty()) {
+                    return@write
+                }
             }
             // Remove the player from the global whitelist
             this.whitelist.remove(player)
@@ -206,11 +240,15 @@ object WhitelistManager {
         // Check if the player is in the whitelist
         val player: Player = this.whitelist.find { it.uuid == uuid } ?: return false
 
-        if (server == null) return true
+        if (server == null) {
+            return true
+        }
 
         // Check if the player is in the server whitelist
         val serverList: List<String> = player.serverList
-        if (server in serverList) return true
+        if (server in serverList) {
+            return true
+        }
 
         return ConfigManager.config.whitelist.serverGroups.any { (group: String, servers: List<String>) ->
             group in serverList && server in servers
@@ -264,7 +302,9 @@ object WhitelistManager {
      * @param reload If true, the whitelist will be reloaded from the disk.
      */
     private fun load(reload: Boolean = false): Boolean {
-        if (!this.file.exists()) return this.save(initialize = true)
+        if (!this.file.exists()) {
+            return this.save(initialize = true)
+        }
 
         logger.info("{} whitelist...", if (reload) "Reloading" else "Loading")
 

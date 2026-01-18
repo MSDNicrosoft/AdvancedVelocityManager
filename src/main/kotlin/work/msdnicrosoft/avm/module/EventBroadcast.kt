@@ -52,9 +52,13 @@ object EventBroadcast {
 
         event.previousServer.ifPresentOrElse(
             { previousServer: RegisteredServer ->
-                if (!config.switch.enabled) return@ifPresentOrElse
+                if (!config.switch.enabled) {
+                    return@ifPresentOrElse
+                }
 
-                if (previousServer == event.server) return@ifPresentOrElse
+                if (previousServer == event.server) {
+                    return@ifPresentOrElse
+                }
 
                 val previousServerName: String = previousServer.serverInfo.name
                 val previousServerNickname: String = previousServer.serverInfo.nickname
@@ -75,7 +79,9 @@ object EventBroadcast {
                 }
             },
             {
-                if (!config.join.enabled) return@ifPresentOrElse
+                if (!config.join.enabled) {
+                    return@ifPresentOrElse
+                }
 
                 this.sendMessage(
                     miniMessage(config.join.message) {

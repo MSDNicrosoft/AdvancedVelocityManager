@@ -30,7 +30,9 @@ object ChatBridge {
     @Suppress("Deprecation")
     @Subscribe(order = PostOrder.FIRST)
     fun onPlayerChatChat(event: PlayerChatEvent) {
-        if (!config.enabled) return
+        if (!config.enabled) {
+            return
+        }
 
         val message: Component = ChatMessage(event.player, event.message).toComponent()
         val serverName: String = event.player.currentServer.get().serverInfo.name
@@ -70,8 +72,9 @@ object ChatBridge {
             .replace("/", "")
 
         // Check if the executed command is related to private chat
-        val isPrivateChat: Boolean = MsgCommand.aliases.any { eventCommand.startsWith(it) }
-        if (!isPrivateChat) return
+        if (!MsgCommand.aliases.any { eventCommand.startsWith(it) }) {
+            return
+        }
 
         if (!config.takeOverPrivateChat) {
             event.result = CommandExecuteEvent.CommandResult.forwardToServer()

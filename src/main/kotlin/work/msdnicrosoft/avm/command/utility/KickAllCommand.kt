@@ -17,9 +17,9 @@ object KickAllCommand {
         requires { hasPermission("avm.command.kickall") }
         executes {
             server.allPlayers
-                .filterNot { player -> player.hasPermission("avm.kickall.bypass") }
-                .forEach { player ->
-                    player.disconnect(
+                .filterNot { it.hasPermission("avm.kickall.bypass") }
+                .forEach {
+                    it.disconnect(
                         tr("avm.command.avm.kick.target") {
                             args { string("executor", context.source.name) }
                         }
@@ -61,20 +61,17 @@ object KickAllCommand {
 
         task {
             val allPlayers: Collection<Player> = registeredServer.playersConnected
-            val toKick: List<Player> = allPlayers.filterNot { player ->
-                player.hasPermission("avm.kickall.bypass")
-            }
+            val playersToKick: List<Player> = allPlayers.filterNot { it.hasPermission("avm.kickall.bypass") }
 
-            toKick.forEach { player ->
-                player.disconnect(reason)
-            }
+            playersToKick.forEach { it.disconnect(reason) }
+
             sendTranslatable("avm.command.avm.kickall.executor.text") {
                 args {
-                    numeric("player_total", toKick.size)
+                    numeric("player_total", playersToKick.size)
                     component(
                         "bypass",
                         tr("avm.command.avm.kickall.executor.bypass.text") {
-                            args { numeric("player_bypass", allPlayers.size - toKick.size) }
+                            args { numeric("player_bypass", allPlayers.size - playersToKick.size) }
                         } styled { hoverText { tr("avm.command.avm.kickall.executor.bypass.hover") } }
                     )
                 }

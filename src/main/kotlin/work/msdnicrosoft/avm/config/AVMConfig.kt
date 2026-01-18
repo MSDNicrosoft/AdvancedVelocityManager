@@ -64,7 +64,6 @@ data class AVMConfig(
     @YamlComment("The Reconnection configuration")
     val reconnect: Reconnect = Reconnect(),
 ) {
-
     /**
      * Retrieves the server nickname from the serverMapping configuration.
      * If no mapping is found for the server, return the original server name.

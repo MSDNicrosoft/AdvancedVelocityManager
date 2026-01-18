@@ -6,7 +6,7 @@ import net.kyori.adventure.text.Component
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.module.whitelist.result.RemoveResult
+import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.RemoveResult
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.data.server.Server
 import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.tr

@@ -37,8 +37,12 @@ object WorldInfoHandler {
 
     @Subscribe
     fun onPluginMessage(event: PluginMessageEvent) {
-        if (!config.modern && !config.legacy) return
-        if (event.identifier != this.WORLD_INFO_CHANNEL) return
+        if (!config.modern && !config.legacy) {
+            return
+        }
+        if (event.identifier != this.WORLD_INFO_CHANNEL) {
+            return
+        }
 
         val player = event.source as? Player ?: return
 

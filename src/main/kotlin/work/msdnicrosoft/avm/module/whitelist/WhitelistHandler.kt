@@ -34,7 +34,9 @@ object WhitelistHandler {
     @Subscribe(order = PostOrder.EARLY)
     fun onPreLogin(event: PreLoginEvent) {
         // Blocked by other plugins or whitelist is off
-        if (!event.result.isAllowed || !config.enabled) return
+        if (!event.result.isAllowed || !config.enabled) {
+            return
+        }
 
         val username: String = event.connection.getJavaUsernameOrDefault(event.username)
         val player = WhitelistManager.getPlayer(username)
@@ -58,7 +60,9 @@ object WhitelistHandler {
     @Subscribe(order = PostOrder.EARLY)
     fun onServerPreConnect(event: ServerPreConnectEvent) {
         // Blocked by other plugins or whitelist is off
-        if (event.result.server.isEmpty || !config.enabled) return
+        if (event.result.server.isEmpty || !config.enabled) {
+            return
+        }
 
         val serverName: String = event.originalServer.serverInfo.name
         val player = event.player
