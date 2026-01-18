@@ -53,27 +53,27 @@ object SendAllCommand {
         }
 
         task {
-            val allPlayers: List<Player> = server.allPlayers.filterNot { player ->
-                player.currentServer.get() == registeredServer
+            val allPlayers: List<Player> = server.allPlayers.filterNot {
+                it.currentServer.get().server.serverInfo == registeredServer.serverInfo
             }
-            val toSend: List<Player> = allPlayers.filterNot { player ->
-                player.hasPermission("avm.sendall.bypass")
-            }
+            val playersToSend: List<Player> = allPlayers.filterNot { it.hasPermission("avm.sendall.bypass") }
 
-            toSend.forEach { player ->
+            playersToSend.forEach { player ->
                 player.sendToServer(registeredServer).thenAcceptAsync { success: Boolean ->
-                    if (success) player.sendMessage(reason)
+                    if (success) {
+                        player.sendMessage(reason)
+                    }
                 }
             }
 
             this.sendTranslatable("avm.command.avm.sendall.executor.text") {
                 args {
-                    numeric("player_total", toSend.size)
+                    numeric("player_total", playersToSend.size)
                     string("server", registeredServer.serverInfo.nickname)
                     component(
                         "bypass",
                         tr("avm.command.avm.sendall.executor.bypass.text") {
-                            args { numeric("player_bypass", allPlayers.size - toSend.size) }
+                            args { numeric("player_bypass", allPlayers.size - playersToSend.size) }
                         } styled { hoverText { tr("avm.command.avm.sendall.executor.bypass.hover") } }
                     )
                 }
