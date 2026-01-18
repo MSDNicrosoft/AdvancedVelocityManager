@@ -73,7 +73,7 @@ repositories {
             includeGroupByRegex("org.geysermc.*")
         }
     }
-    maven("https://repo.william278.net/velocity/") {
+    maven("https://maven.msdnicrosoft.work/velocity/") {
         content {
             includeGroup("com.velocitypowered")
         }
@@ -81,7 +81,7 @@ repositories {
 }
 
 dependencies {
-    detektPlugins(libs.detekt.formatting) { isTransitive = false }
+    detektPlugins(libs.detekt.formatting)
 
     compileOnly(libs.bundles.velocity)
     compileOnly(libs.bundles.asm)

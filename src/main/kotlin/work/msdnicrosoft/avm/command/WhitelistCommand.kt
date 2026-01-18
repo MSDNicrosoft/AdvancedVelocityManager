@@ -75,6 +75,7 @@ object WhitelistCommand {
      *
      * @param players the list of players to send
      */
+    @Suppress("LongMethod")
     fun CommandSource.sendWhitelistPlayers(players: List<Player>) {
         if (players.isEmpty()) {
             return

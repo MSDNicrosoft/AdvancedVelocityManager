@@ -51,7 +51,7 @@ class AdvancedVelocityManagerPlugin {
 
         logger.debug("Nya~!")
 
-        require(ConfigManager.load()) { "Failed to load configuration, aborting initialization" }
+        require(ConfigManager.load()) { "Failed to load configuration, aborting initialization..." }
 
         TranslateManager.init()
         this.initializeModules()
@@ -106,6 +106,7 @@ class AdvancedVelocityManagerPlugin {
         WhitelistCommand.disable()
     }
 
+    @Suppress("TooGenericExceptionCaught")
     fun reload(): Boolean {
         try {
             if (!ConfigManager.reload()) {
