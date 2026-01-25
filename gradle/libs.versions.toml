@@ -7,7 +7,7 @@ yamlang = "1.5.0"
 shadow = "9.3.1"
 
 # CompileOnly Dependencies
-velocity = "3.4.0-SNAPSHOT"
+velocity = "3.4.0"
 asm = "9.9.1"
 floodgate = "2.2.5-SNAPSHOT"
 netty = "4.2.9.Final"
