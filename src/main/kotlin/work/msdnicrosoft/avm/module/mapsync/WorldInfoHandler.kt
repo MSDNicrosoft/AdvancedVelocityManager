@@ -16,7 +16,7 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManage
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.net.netty.toByteArray
-import work.msdnicrosoft.avm.util.net.netty.useApply
+import work.msdnicrosoft.avm.util.net.netty.useThenApply
 import java.nio.charset.StandardCharsets
 
 object WorldInfoHandler {
@@ -63,10 +63,11 @@ object WorldInfoHandler {
 
     @Suppress("MagicNumber")
     private fun createArray(serverNameBytes: ByteArray, modern: Boolean): ByteArray =
-        Unpooled.buffer().useApply {
+        Unpooled.buffer().useThenApply {
             writeByte(0x00) // Packet ID
             if (modern) writeByte(0x2A) // New packet
             writeByte(serverNameBytes.size)
             writeBytes(serverNameBytes)
-        }.toByteArray()
+            toByteArray()
+        }
 }
