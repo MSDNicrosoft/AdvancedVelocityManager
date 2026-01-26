@@ -43,7 +43,7 @@ object ReconnectHandler {
         .mapping(0x38, MinecraftVersion.MINECRAFT_1_20_5, true)
         .mapping(0x3A, MinecraftVersion.MINECRAFT_1_21_2, true)
         .mapping(0x39, MinecraftVersion.MINECRAFT_1_21_5, true)
-        .mapping(0x3E, MinecraftVersion.MINECRAFT_1_21_11, true)
+        .mapping(0x3E, MinecraftVersion.MINECRAFT_1_21_9, true)
 
     fun init() {
         this.packet.register()
