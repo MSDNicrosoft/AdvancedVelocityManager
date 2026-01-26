@@ -39,7 +39,7 @@ object YggdrasilApiUtil {
         return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
             .thenApply { resp: HttpResponse<String> ->
                 when (val status: HttpStatus = HttpStatus.fromValue(resp.statusCode())) {
-                    HttpStatus.OK -> JSON.parseToJsonElement(resp.body()).jsonObject["name"]?.jsonPrimitive.toString()
+                    HttpStatus.OK -> JSON.parseToJsonElement(resp.body()).jsonObject["name"]?.jsonPrimitive?.content
                     HttpStatus.NOT_FOUND, HttpStatus.NO_CONTENT -> HttpStatus.NOT_FOUND.description
                     HttpStatus.TOO_MANY_REQUESTS -> {
                         logger.warn("Exceeded to the rate limit of Profile API, please retry UUID {}", uuid)
@@ -72,7 +72,7 @@ object YggdrasilApiUtil {
         return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
             .thenApply { resp: HttpResponse<String> ->
                 when (val status: HttpStatus = HttpStatus.fromValue(resp.statusCode())) {
-                    HttpStatus.OK -> JSON.parseToJsonElement(resp.body()).jsonObject["id"]?.jsonPrimitive.toString()
+                    HttpStatus.OK -> JSON.parseToJsonElement(resp.body()).jsonObject["id"]?.jsonPrimitive?.content
                     HttpStatus.NOT_FOUND -> HttpStatus.NOT_FOUND.description
                     HttpStatus.TOO_MANY_REQUESTS -> {
                         logger.warn("Exceeded to the rate limit of UUID API, please retry username {}", username)
