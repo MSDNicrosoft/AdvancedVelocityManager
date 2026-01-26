@@ -24,6 +24,7 @@ import work.msdnicrosoft.avm.module.chatbridge.ChatBridge
 import work.msdnicrosoft.avm.module.command.session.CommandSessionManager
 import work.msdnicrosoft.avm.module.mapsync.WorldInfoHandler
 import work.msdnicrosoft.avm.module.mapsync.XaeroMapHandler
+import work.msdnicrosoft.avm.module.packet.PacketHandler
 import work.msdnicrosoft.avm.module.reconnect.ReconnectHandler
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
@@ -71,6 +72,7 @@ class AdvancedVelocityManagerPlugin {
     }
 
     private fun initializeModules() {
+        PacketHandler.init()
         CommandSessionManager.init()
         WhitelistManager.init()
         ChatBridge.init()
@@ -83,6 +85,7 @@ class AdvancedVelocityManagerPlugin {
     }
 
     private fun disableModules() {
+        PacketHandler.disable()
         WhitelistManager.disable()
         ChatBridge.disable()
         TabSyncHandler.disable()
