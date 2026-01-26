@@ -15,7 +15,7 @@ import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.mapsync.XaeroMapHandler
 import work.msdnicrosoft.avm.util.net.netty.toByteArray
 import work.msdnicrosoft.avm.util.net.netty.use
-import work.msdnicrosoft.avm.util.net.netty.useApply
+import work.msdnicrosoft.avm.util.net.netty.useThenApply
 import java.nio.charset.StandardCharsets
 import java.util.zip.CRC32
 
@@ -44,10 +44,12 @@ class SetDefaultSpawnPositionPacket : MinecraftPacket {
 
         val serverNameBytes: ByteArray = connection.serverInfo.name.toByteArray(StandardCharsets.UTF_8)
         val worldId: Int = CRC32().apply { update(serverNameBytes) }.value.toInt()
-        val array: ByteArray = Unpooled.buffer().useApply {
+
+        val array: ByteArray = Unpooled.buffer().useThenApply {
             writeByte(0x00) // Packet ID
             writeInt(worldId) // World ID
-        }.toByteArray()
+            toByteArray()
+        }
 
         if (config.world) {
             connection.player.sendPluginMessage(XaeroMapHandler.XAERO_WORLD_MAP_CHANNEL, array)
