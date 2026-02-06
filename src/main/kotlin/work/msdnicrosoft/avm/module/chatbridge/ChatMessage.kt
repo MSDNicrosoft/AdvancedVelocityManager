@@ -32,7 +32,7 @@ class ChatMessage(private val player: Player, private val message: String) {
         unparsed("player_uuid", player.uniqueId.toString())
         numeric("player_ping", player.ping)
         unparsed("server_name", serverConnection.serverInfo.name)
-        unparsed("server_nickname", serverConnection.serverInfo.nickname)
+        component("server_nickname", serverConnection.serverInfo.nickname)
         numeric("server_online_players", serverConnection.server.playersConnected.size)
         unparsed("player_message_sent_time", getDateTime())
         if (config.allowFormatCode) {
@@ -70,7 +70,10 @@ class ChatMessage(private val player: Player, private val message: String) {
         .replace("<player_ping>", player.ping.toString())
         .replace("<player_message>", message)
         .replace("<server_name>", serverConnection.serverInfo.name)
-        .replace("<server_nickname>", serverConnection.serverInfo.nickname)
+        .replace(
+            "<server_nickname>",
+            ComponentSerializer.BASIC_PLAIN_TEXT.serialize(serverConnection.serverInfo.nickname)
+        )
         .replace("<server_online_players>", serverConnection.server.playersConnected.size.toString())
         .let { if ("<server_version>" in this) it.replace("<server_version>", serverVersion) else it }
 

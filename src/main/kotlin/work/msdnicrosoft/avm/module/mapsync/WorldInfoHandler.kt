@@ -8,7 +8,6 @@ package work.msdnicrosoft.avm.module.mapsync
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.PluginMessageEvent
 import com.velocitypowered.api.proxy.Player
-import com.velocitypowered.api.proxy.ServerConnection
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import io.netty.buffer.Unpooled
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.channelRegistrar
@@ -46,7 +45,7 @@ object WorldInfoHandler {
 
         val player = event.source as? Player ?: return
 
-        player.currentServer.ifPresent { connection: ServerConnection ->
+        player.currentServer.ifPresent { connection ->
             val serverNameBytes: ByteArray = connection.serverInfo.name.toByteArray(StandardCharsets.UTF_8)
             if (config.modern) {
                 player.sendPluginMessage(this.WORLD_INFO_CHANNEL, createArray(serverNameBytes, true))

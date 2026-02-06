@@ -34,7 +34,7 @@ object SendCommand {
                         tr("avm.command.avm.send.target") {
                             args {
                                 string("executor", context.source.name)
-                                string("server", server.serverInfo.nickname)
+                                component("server", server.serverInfo.nickname)
                             }
                         }
                     )
@@ -54,14 +54,14 @@ object SendCommand {
     }
 
     private fun CommandContext.sendPlayer(player: Player, registeredServer: RegisteredServer, reason: Component) {
-        val serverNickname: String = registeredServer.serverInfo.nickname
+        val serverNickname: Component = registeredServer.serverInfo.nickname
 
         player.sendToServer(registeredServer).thenAcceptAsync { success: Boolean ->
             if (success) {
                 this.sendTranslatable("avm.command.avm.send.executor.success") {
                     args {
                         string("player", player.name)
-                        string("server", serverNickname)
+                        component("server", serverNickname)
                     }
                 }
                 player.sendMessage(reason)
@@ -69,7 +69,7 @@ object SendCommand {
                 this.sendTranslatable("avm.command.avm.send.executor.failed") {
                     args {
                         string("player", player.name)
-                        string("server", serverNickname)
+                        component("server", serverNickname)
                     }
                 }
             }

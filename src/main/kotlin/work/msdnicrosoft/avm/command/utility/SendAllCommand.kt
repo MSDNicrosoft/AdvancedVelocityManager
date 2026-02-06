@@ -29,7 +29,7 @@ object SendAllCommand {
                     tr("avm.command.avm.send.target") {
                         args {
                             string("executor", context.source.name)
-                            string("server", server.serverInfo.nickname)
+                            component("server", server.serverInfo.nickname)
                         }
                     }
                 )
@@ -69,7 +69,7 @@ object SendAllCommand {
             this.sendTranslatable("avm.command.avm.sendall.executor.text") {
                 args {
                     numeric("player_total", playersToSend.size)
-                    string("server", registeredServer.serverInfo.nickname)
+                    component("server", registeredServer.serverInfo.nickname)
                     component(
                         "bypass",
                         tr("avm.command.avm.sendall.executor.bypass.text") {

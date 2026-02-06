@@ -82,7 +82,7 @@ object TabSyncHandler {
             return miniMessage(config.format) {
                 placeholders {
                     unparsed("server_name", serverInfo.name)
-                    parsed("server_nickname", serverInfo.nickname)
+                    component("server_nickname", serverInfo.nickname)
                     unparsed("player_name", username)
                 }
             }

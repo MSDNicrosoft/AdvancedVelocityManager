@@ -4,14 +4,16 @@ import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import com.velocitypowered.api.proxy.server.ServerInfo
 import com.velocitypowered.api.scheduler.ScheduledTask
+import net.kyori.adventure.text.Component
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.scheduler
 import work.msdnicrosoft.avm.config.ConfigManager
+import work.msdnicrosoft.avm.util.component.builder.minimessage.miniMessage
 import java.util.concurrent.CompletableFuture
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
-inline val ServerInfo.nickname: String get() = ConfigManager.config.getServerNickName(this.name)
+inline val ServerInfo.nickname: Component get() = miniMessage(ConfigManager.config.getServerNickName(this.name))
 
 /**
  * Creates a scheduled [task][runnable] with optional [delay] and [repeat] intervals.

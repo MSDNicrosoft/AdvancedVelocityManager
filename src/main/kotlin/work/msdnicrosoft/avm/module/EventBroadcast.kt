@@ -48,7 +48,7 @@ object EventBroadcast {
     fun onPlayerConnected(event: ServerConnectedEvent) {
         val username: String = event.player.username
         val targetServerName: String = event.server.serverInfo.name
-        val targetServerNickname: String = event.server.serverInfo.nickname
+        val targetServerNickname: Component = event.server.serverInfo.nickname
 
         event.previousServer.ifPresentOrElse(
             { previousServer: RegisteredServer ->
@@ -61,15 +61,15 @@ object EventBroadcast {
                 }
 
                 val previousServerName: String = previousServer.serverInfo.name
-                val previousServerNickname: String = previousServer.serverInfo.nickname
+                val previousServerNickname: Component = previousServer.serverInfo.nickname
 
                 this.sendMessage(
                     miniMessage(config.switch.message) {
                         placeholders {
                             unparsed("player_name", username)
                             unparsed("previous_server_name", previousServerName)
-                            unparsed("previous_server_nickname", previousServerNickname)
-                            unparsed("target_server_nickname", targetServerNickname)
+                            component("previous_server_nickname", previousServerNickname)
+                            component("target_server_nickname", targetServerNickname)
                         }
                     }
                 )
@@ -88,7 +88,7 @@ object EventBroadcast {
                         placeholders {
                             unparsed("player_name", username)
                             unparsed("server_name", targetServerName)
-                            unparsed("server_nickname", targetServerNickname)
+                            component("server_nickname", targetServerNickname)
                         }
                     }
                 )

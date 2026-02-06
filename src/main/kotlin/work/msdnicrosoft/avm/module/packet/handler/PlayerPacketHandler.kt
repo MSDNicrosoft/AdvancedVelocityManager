@@ -37,7 +37,7 @@ class PlayerPacketHandler(private val player: ConnectedPlayer) : ChannelDuplexHa
             return
         }
 
-        val allowed = eventManager
+        val allowed: Boolean = eventManager
             .fire(SendPacketEvent(packet, this.player))
             .handle { event, throwable ->
                 if (throwable != null) {
