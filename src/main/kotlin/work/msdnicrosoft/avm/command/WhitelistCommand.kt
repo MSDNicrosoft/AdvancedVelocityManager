@@ -81,7 +81,7 @@ object WhitelistCommand {
             return
         }
         players.forEach { player ->
-            sendMessage(JoinConfiguration.noSeparators()) {
+            sendMessage(JoinConfiguration.spaces()) {
                 text(player.name) styled {
                     hoverText {
                         component(JoinConfiguration.newlines()) {
