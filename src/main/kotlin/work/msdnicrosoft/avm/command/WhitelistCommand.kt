@@ -81,7 +81,7 @@ object WhitelistCommand {
             return
         }
         players.forEach { player ->
-            sendMessage(JoinConfiguration.spaces()) {
+            sendMessage(JoinConfiguration.noSeparators()) {
                 text(player.name) styled {
                     hoverText {
                         component(JoinConfiguration.newlines()) {
@@ -126,14 +126,14 @@ object WhitelistCommand {
                                 }
                             }
                         }
-                        click { runCommand("/avmwl remove ${player.uuid} $server") }
+                        click { runCommand("/avmwl remove ${player.name} $server") }
                     }
                     if (this@sendWhitelistPlayers.isConsole && isServerGroup) {
                         text("(")
                         text(config.getServersInGroup(server).joinToString(" "))
                         text(")")
-                        space()
                     }
+                    space()
                 }
             }
         }
