@@ -60,18 +60,17 @@ object WhitelistManager {
     private val file: File = (dataDirectory / "whitelist.json").toFile()
 
     private val whitelist: MutableList<Player> = mutableListOf()
-    val usernames: HashSet<String> = hashSetOf()
-    val uuids: HashSet<UUID> = hashSetOf()
 
-    val size: Int get() = this.whitelist.size
-    val isEmpty: Boolean get() = this.whitelist.isEmpty()
-    val maxPage: Int get() = Paginator.getMaxPage(this.whitelist.size)
+    val usernames: List<String> get() = this.lock.read { this.whitelist.map(Player::name) }
+    val uuids: List<UUID> get() = this.lock.read { this.whitelist.map(Player::uuid) }
+    val size: Int get() = this.lock.read { this.whitelist.size }
+    val isEmpty: Boolean get() = this.lock.read { this.whitelist.isEmpty() }
+    val maxPage: Int get() = this.lock.read { Paginator.getMaxPage(this.whitelist.size) }
 
     private val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
 
     fun init(reload: Boolean = false) {
         this.load(reload)
-        this.updateCache()
         eventManager.register(plugin, WhitelistHandler)
     }
 
@@ -126,16 +125,14 @@ object WhitelistManager {
      * @return The result of the addition operation.
      */
     fun add(username: String, uuid: UUID, server: String, onlineMode: Boolean?): AddResult {
-        val player: Player? = this.getPlayer(uuid)
         this.lock.write {
+            val player: Player? = this.whitelist.find { it.uuid == uuid }
             if (player == null) {
                 this.whitelist.add(
                     Player(username, uuid, onlineMode ?: YggdrasilApiUtil.serverIsOnlineMode, mutableListOf(server))
                 )
-                this.uuids.add(uuid)
-                this.usernames.add(username)
             } else {
-                if (server in player.serverList && onlineMode == player.onlineMode) {
+                if (server in player.serverList && (onlineMode == null || onlineMode == player.onlineMode)) {
                     return AddResult.ALREADY_EXISTS
                 }
                 if (server !in player.serverList) {
@@ -156,8 +153,10 @@ object WhitelistManager {
      * @return The result of the remove operation.
      */
     fun remove(username: String, server: String?): RemoveResult {
-        val player: Player = this.getPlayer(username) ?: return RemoveResult.FAIL_NOT_FOUND
-        return this.remove(player, server)
+        return this.lock.write {
+            val player: Player = this.whitelist.find { it.name == username } ?: return RemoveResult.FAIL_NOT_FOUND
+            this.removeInternal(player, server)
+        }
     }
 
     /**
@@ -167,36 +166,31 @@ object WhitelistManager {
      * @return The result of the remove operation.
      */
     fun remove(uuid: UUID, server: String?): RemoveResult {
-        val player: Player = this.getPlayer(uuid) ?: return RemoveResult.FAIL_NOT_FOUND
-        return this.remove(player, server)
+        return this.lock.write {
+            val player: Player = this.whitelist.find { it.uuid == uuid } ?: return RemoveResult.FAIL_NOT_FOUND
+            this.removeInternal(player, server)
+        }
     }
 
     /**
-     * Removes a [player] from the whitelist
-     * for a specific [server]  (If null, the player will be removed from the global whitelist).
-     *
-     * @return The result of the remove operation.
+     * Internal remove logic. Must be called within a write lock.
      */
-    fun remove(player: Player, server: String?): RemoveResult {
-        this.lock.write {
-            if (server != null) {
-                if (server !in player.serverList) {
-                    return RemoveResult.FAIL_NOT_FOUND
-                }
-
-                // Remove the server from the player's server list
-                player.serverList -= server
-
-                // If the server list is now empty, remove the player from the global whitelist
-                if (player.serverList.isNotEmpty()) {
-                    return@write
-                }
+    private fun removeInternal(player: Player, server: String?): RemoveResult {
+        if (server != null) {
+            if (server !in player.serverList) {
+                return RemoveResult.FAIL_NOT_FOUND
             }
-            // Remove the player from the global whitelist
-            this.whitelist.remove(player)
-            this.uuids.remove(player.uuid)
-            this.usernames.remove(player.name)
+
+            // Remove the server from the player's server list
+            player.serverList -= server
+
+            // If the server list is now empty, remove the player from the global whitelist
+            if (player.serverList.isNotEmpty()) {
+                return if (this.save(false)) RemoveResult.SUCCESS else RemoveResult.SAVE_FILE_FAILED
+            }
         }
+        // Remove the player from the global whitelist
+        this.whitelist.remove(player)
         return if (this.save(false)) RemoveResult.SUCCESS else RemoveResult.SAVE_FILE_FAILED
     }
 
@@ -208,8 +202,6 @@ object WhitelistManager {
     fun clear(): Boolean {
         this.lock.write {
             this.whitelist.clear()
-            this.uuids.clear()
-            this.usernames.clear()
         }
         return this.save(false)
     }
@@ -256,11 +248,9 @@ object WhitelistManager {
     }
 
     fun updatePlayer(username: String, uuid: UUID): ScheduledTask = task {
-        val player: Player = this.lock.read { this.whitelist.find { it.uuid == uuid } } ?: return@task
         this.lock.write {
-            usernames.remove(player.name)
+            val player: Player = this.whitelist.find { it.uuid == uuid } ?: return@task
             player.name = username
-            usernames.add(username)
         }
         this.save(false)
     }
@@ -270,7 +260,7 @@ object WhitelistManager {
      */
     fun pageOf(page: Int): List<Player> {
         val pages: List<List<Player>> = this.lock.read { this.whitelist.chunked(Paginator.ITEMS_PER_PAGE) }
-        return pages[page - 1]
+        return pages.getOrNull(page - 1).orEmpty()
     }
 
     /**
@@ -320,16 +310,6 @@ object WhitelistManager {
         } catch (e: SerializationException) {
             logger.error("Failed to decode whitelist from file", e)
             false
-        }
-    }
-
-    private fun updateCache() {
-        this.lock.write {
-            this.uuids.clear()
-            this.uuids.addAll(this.whitelist.map { it.uuid })
-
-            this.usernames.clear()
-            this.usernames.addAll(this.whitelist.map { it.name })
         }
     }
 }

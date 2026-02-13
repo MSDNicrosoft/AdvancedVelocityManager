@@ -5,7 +5,7 @@ import com.highcapable.kavaref.extension.classOf
 import com.highcapable.kavaref.resolver.FieldResolver
 import com.velocitypowered.api.event.PostOrder
 import com.velocitypowered.api.event.Subscribe
-import com.velocitypowered.api.event.connection.LoginEvent
+import com.velocitypowered.api.event.connection.PostLoginEvent
 import com.velocitypowered.api.event.connection.PreLoginEvent
 import com.velocitypowered.api.event.player.ServerPreConnectEvent
 import com.velocitypowered.api.proxy.InboundConnection
@@ -39,7 +39,9 @@ object WhitelistHandler {
         }
 
         val username: String = event.connection.getJavaUsernameOrDefault(event.username)
+        val uuid = event.uniqueId
         val player = WhitelistManager.getPlayer(username)
+            ?: if (uuid != null) WhitelistManager.getPlayer(uuid) else null
         if (player == null) {
             event.result = PreLoginEvent.PreLoginComponentResult.denied(miniMessage(config.message))
             PlayerCache.add(username)
@@ -53,7 +55,7 @@ object WhitelistHandler {
     }
 
     @Subscribe
-    fun onPlayerLogin(event: LoginEvent) {
+    fun onPlayerLogin(event: PostLoginEvent) {
         WhitelistManager.updatePlayer(event.player.username, event.player.uniqueId)
     }
 
