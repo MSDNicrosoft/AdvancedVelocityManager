@@ -26,7 +26,7 @@ fun task(delay: Duration = Duration.ZERO, repeat: Duration = Duration.ZERO, runn
     }
 
     if (repeat > Duration.ZERO) {
-        taskBuilder.repeat(delay.toJavaDuration())
+        taskBuilder.repeat(repeat.toJavaDuration())
     }
 
     return taskBuilder.schedule()
