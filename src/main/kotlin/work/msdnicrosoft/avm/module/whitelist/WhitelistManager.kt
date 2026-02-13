@@ -132,11 +132,14 @@ object WhitelistManager {
                     Player(username, uuid, onlineMode ?: YggdrasilApiUtil.serverIsOnlineMode, mutableListOf(server))
                 )
             } else {
-                if (server in player.serverList && (onlineMode == null || onlineMode == player.onlineMode)) {
+                if (server in player.serverList && username == player.name && (onlineMode == null || onlineMode == player.onlineMode)) {
                     return AddResult.ALREADY_EXISTS
                 }
                 if (server !in player.serverList) {
                     player.serverList += server
+                }
+                if (username != player.name) {
+                    player.name = username
                 }
                 if (onlineMode != null) {
                     player.onlineMode = onlineMode
@@ -153,10 +156,12 @@ object WhitelistManager {
      * @return The result of the remove operation.
      */
     fun remove(username: String, server: String?): RemoveResult {
-        return this.lock.write {
+        val mutated = this.lock.write {
             val player: Player = this.whitelist.find { it.name == username } ?: return RemoveResult.FAIL_NOT_FOUND
-            this.removeInternal(player, server)
+            this.removeFromList(player, server)
         }
+        if (!mutated) return RemoveResult.FAIL_NOT_FOUND
+        return this.saveResult()
     }
 
     /**
@@ -166,33 +171,31 @@ object WhitelistManager {
      * @return The result of the remove operation.
      */
     fun remove(uuid: UUID, server: String?): RemoveResult {
-        return this.lock.write {
+        val mutated = this.lock.write {
             val player: Player = this.whitelist.find { it.uuid == uuid } ?: return RemoveResult.FAIL_NOT_FOUND
-            this.removeInternal(player, server)
+            this.removeFromList(player, server)
         }
+        if (!mutated) return RemoveResult.FAIL_NOT_FOUND
+        return this.saveResult()
     }
 
     /**
-     * Internal remove logic. Must be called within a write lock.
+     * Removes a [player] from a specific [server], or from the global whitelist if [server] is null.
+     * Must be called within a write lock.
+     *
+     * @return `true` if the whitelist was modified, `false` if the server was not found.
      */
-    private fun removeInternal(player: Player, server: String?): RemoveResult {
+    private fun removeFromList(player: Player, server: String?): Boolean {
         if (server != null) {
-            if (server !in player.serverList) {
-                return RemoveResult.FAIL_NOT_FOUND
-            }
-
-            // Remove the server from the player's server list
+            if (server !in player.serverList) return false
             player.serverList -= server
-
-            // If the server list is now empty, remove the player from the global whitelist
-            if (player.serverList.isNotEmpty()) {
-                return if (this.save(false)) RemoveResult.SUCCESS else RemoveResult.SAVE_FILE_FAILED
-            }
+            if (player.serverList.isNotEmpty()) return true
         }
-        // Remove the player from the global whitelist
         this.whitelist.remove(player)
-        return if (this.save(false)) RemoveResult.SUCCESS else RemoveResult.SAVE_FILE_FAILED
+        return true
     }
+
+    private fun saveResult(): RemoveResult = if (this.save(false)) RemoveResult.SUCCESS else RemoveResult.SAVE_FILE_FAILED
 
     /**
      * Clears the whitelist by removing all players from it.
@@ -209,11 +212,11 @@ object WhitelistManager {
     /**
      * Finds players in the whitelist by [keyword] and returns them in specified [page].
      */
-    fun find(keyword: String, page: Int): List<Player> =
-        this.lock.read { this.whitelist.filter { keyword in it.name } }
-            .chunked(Paginator.ITEMS_PER_PAGE)
-            .getOrNull(page - 1)
-            .orEmpty()
+    fun find(keyword: String, page: Int): List<Player> {
+        val filtered = this.lock.read { this.whitelist.filter { keyword in it.name } }
+        val offset = (page - 1) * Paginator.ITEMS_PER_PAGE
+        return filtered.drop(offset).take(Paginator.ITEMS_PER_PAGE)
+    }
 
     /**
      * Finds a player in the whitelist by their [username].
@@ -259,8 +262,8 @@ object WhitelistManager {
      * Returns a list of whitelist players on the specified [page].
      */
     fun pageOf(page: Int): List<Player> {
-        val pages: List<List<Player>> = this.lock.read { this.whitelist.chunked(Paginator.ITEMS_PER_PAGE) }
-        return pages.getOrNull(page - 1).orEmpty()
+        val offset = (page - 1) * Paginator.ITEMS_PER_PAGE
+        return this.lock.read { this.whitelist.drop(offset).take(Paginator.ITEMS_PER_PAGE) }
     }
 
     /**
