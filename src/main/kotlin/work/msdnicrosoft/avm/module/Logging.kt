@@ -10,13 +10,14 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.util.DateTimeUtil
 import work.msdnicrosoft.avm.util.server.task
 import java.io.File
+import java.util.Collections
 import kotlin.io.path.div
 import kotlin.time.Duration.Companion.minutes
 
 object Logging {
     private val file: File get() = (dataDirectory / "logs" / "${DateTimeUtil.getDateTime("yyyy-MM-dd")}.log").toFile()
 
-    private val messages: MutableList<String> = mutableListOf()
+    private val messages: MutableList<String> = Collections.synchronizedList(mutableListOf<String>())
 
     private lateinit var writeTask: ScheduledTask
 
@@ -35,15 +36,25 @@ object Logging {
     private fun write() {
         if (this.messages.isEmpty()) return
 
+        val snapshot: List<String>
+        synchronized(this.messages) {
+            snapshot = this.messages.toList()
+            this.messages.clear()
+        }
+
         try {
-            this.file.bufferedWriter().use { writer ->
-                this.messages.forEach { message ->
+            this.file.parentFile?.mkdirs()
+            this.file.bufferedWriter(Charsets.UTF_8).use { writer ->
+                snapshot.forEach { message ->
                     writer.appendLine(message)
                 }
             }
-            this.messages.clear()
         } catch (e: Exception) {
             logger.warn("Failed to write log file: {}", e.message)
+            // Re-add messages that failed to write
+            synchronized(this.messages) {
+                this.messages.addAll(0, snapshot)
+            }
         }
     }
 

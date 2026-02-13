@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.time.Duration.Companion.minutes
 
 object CommandSessionManager {
-    private val SHA256: MessageDigest = MessageDigest.getInstance("SHA-256")
+    private val SHA256: ThreadLocal<MessageDigest> = ThreadLocal.withInitial { MessageDigest.getInstance("SHA-256") }
     private val BASE32: BaseEncoding = BaseEncoding.base32().omitPadding()
 
     private val sessions: ConcurrentHashMap<String, Action<*>> = ConcurrentHashMap()
@@ -69,7 +69,7 @@ object CommandSessionManager {
      * Generates a session ID based on the provided [name], [time], and [command].
      */
     fun generateSessionId(name: String, time: Long, command: String): String {
-        val digest: ByteArray = SHA256.digest("$name$time$command".toByteArray())
+        val digest: ByteArray = SHA256.get().digest("$name$time$command".toByteArray())
         return BASE32.encode(digest)
     }
 }
