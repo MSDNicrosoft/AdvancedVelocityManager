@@ -57,10 +57,6 @@ object ReconnectHandler {
 
     @Subscribe
     fun onKickedFromServer(event: KickedFromServerEvent): EventTask? {
-        if (event.kickedDuringServerConnect()) {
-            return null
-        }
-
         val reason: String = ComponentSerializer.BASIC_PLAIN_TEXT.serialize(event.serverKickReason.orEmpty())
 
         if (!this.regex.matches(reason)) {

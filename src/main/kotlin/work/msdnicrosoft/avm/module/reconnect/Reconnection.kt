@@ -77,7 +77,10 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
                     this.state = State.CONNECTING
                     this.scheduledExecutor.schedule({
                         this.player.clearTitle()
-                        this.event.result = KickedFromServerEvent.RedirectPlayer.create(this.event.server, Component.empty())
+                        this.event.result = KickedFromServerEvent.RedirectPlayer.create(
+                            this.event.server,
+                            Component.empty()
+                        )
                         this.state = State.CONNECTED
                         this.continuation.resume()
                     }, config.reconnectDelay, TimeUnit.MILLISECONDS)
