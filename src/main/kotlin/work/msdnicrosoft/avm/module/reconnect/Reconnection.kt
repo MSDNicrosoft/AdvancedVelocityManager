@@ -7,6 +7,7 @@ import com.velocitypowered.proxy.connection.client.ClientPlaySessionHandler
 import com.velocitypowered.proxy.connection.client.ConnectedPlayer
 import com.velocitypowered.proxy.protocol.packet.BossBarPacket
 import io.netty.channel.EventLoop
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.packet.s2c.PlayerAbilitiesPacket
@@ -76,7 +77,7 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
                     this.state = State.CONNECTING
                     this.scheduledExecutor.schedule({
                         this.player.clearTitle()
-                        this.event.result = KickedFromServerEvent.RedirectPlayer.create(this.event.server)
+                        this.event.result = KickedFromServerEvent.RedirectPlayer.create(this.event.server, Component.empty())
                         this.state = State.CONNECTED
                         this.continuation.resume()
                     }, config.reconnectDelay, TimeUnit.MILLISECONDS)
