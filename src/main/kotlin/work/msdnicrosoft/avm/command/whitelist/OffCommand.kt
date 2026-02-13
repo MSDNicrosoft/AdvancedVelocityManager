@@ -13,8 +13,10 @@ object OffCommand {
     val command = literalCommand("off") {
         requires { hasPermission("avm.command.whitelist.off") }
         executes {
+            val previousState = config.enabled
             config.enabled = false
             if (!ConfigManager.save()) {
+                config.enabled = previousState
                 sendTranslatable("avm.general.config.save.failed")
                 return@executes Command.SINGLE_SUCCESS
             }
