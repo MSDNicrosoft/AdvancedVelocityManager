@@ -60,7 +60,7 @@ object YggdrasilApiUtil {
      * @param onlineMode Optional parameter to specify whether to use online mode or not. Defaults to null.
      */
     fun getUuid(username: String, onlineMode: Boolean? = null): String? {
-        if (onlineMode == false && !this.serverIsOnlineMode) {
+        if (onlineMode == false) {
             return UuidUtils.toUndashed(UuidUtils.generateOfflinePlayerUuid(username))
         }
 

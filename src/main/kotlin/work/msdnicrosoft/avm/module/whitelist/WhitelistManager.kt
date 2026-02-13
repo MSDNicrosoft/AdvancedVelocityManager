@@ -132,7 +132,8 @@ object WhitelistManager {
                     Player(username, uuid, onlineMode ?: YggdrasilApiUtil.serverIsOnlineMode, mutableListOf(server))
                 )
             } else {
-                if (server in player.serverList && username == player.name && (onlineMode == null || onlineMode == player.onlineMode)) {
+                val noOnlineModeChange: Boolean = onlineMode == null || onlineMode == player.onlineMode
+                if (server in player.serverList && username == player.name && noOnlineModeChange) {
                     return AddResult.ALREADY_EXISTS
                 }
                 if (server !in player.serverList) {
@@ -195,7 +196,11 @@ object WhitelistManager {
         return true
     }
 
-    private fun saveResult(): RemoveResult = if (this.save(false)) RemoveResult.SUCCESS else RemoveResult.SAVE_FILE_FAILED
+    private fun saveResult(): RemoveResult = if (this.save(false)) {
+        RemoveResult.SUCCESS
+    } else {
+        RemoveResult.SAVE_FILE_FAILED
+    }
 
     /**
      * Clears the whitelist by removing all players from it.
