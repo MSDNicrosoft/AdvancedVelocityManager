@@ -7,7 +7,7 @@ import work.msdnicrosoft.avm.annotations.command.CommandNode
 import work.msdnicrosoft.avm.annotations.command.RootCommand
 import work.msdnicrosoft.avm.command.whitelist.*
 import work.msdnicrosoft.avm.config.ConfigManager
-import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.Player
+import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.WhitelistEntry
 import work.msdnicrosoft.avm.util.command.builder.executes
 import work.msdnicrosoft.avm.util.command.builder.literalCommand
 import work.msdnicrosoft.avm.util.command.builder.then
@@ -76,7 +76,7 @@ object WhitelistCommand {
      * @param players the list of players to send
      */
     @Suppress("LongMethod")
-    fun CommandSource.sendWhitelistPlayers(players: List<Player>) {
+    fun CommandSource.sendWhitelistPlayers(players: List<WhitelistEntry>) {
         if (players.isEmpty()) {
             return
         }

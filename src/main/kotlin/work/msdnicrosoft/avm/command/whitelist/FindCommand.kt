@@ -3,7 +3,7 @@ package work.msdnicrosoft.avm.command.whitelist
 import work.msdnicrosoft.avm.command.WhitelistCommand.sendWhitelistPlayers
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
-import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.Player
+import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.WhitelistEntry
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.component.widget.Paginator
@@ -43,7 +43,7 @@ object FindCommand {
      * @param keyword The keyword to search for.
      */
     private fun CommandContext.listFind(page: Int, keyword: String) {
-        val result: List<Player> = WhitelistManager.find(keyword, page)
+        val result: List<WhitelistEntry> = WhitelistManager.find(keyword, page)
 
         if (result.isEmpty()) {
             sendTranslatable("avm.command.avmwl.find.empty")
