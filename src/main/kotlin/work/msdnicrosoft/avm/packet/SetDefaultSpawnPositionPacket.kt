@@ -37,7 +37,7 @@ class SetDefaultSpawnPositionPacket : MinecraftPacket {
         }
 
         val connection: VelocityServerConnection = SERVER_CONN_RESOLVER.copy()
-            .of(sessionHandler as BackendPlaySessionHandler)
+            .of(sessionHandler as? BackendPlaySessionHandler ?: return true)
             .get<VelocityServerConnection>()!!
 
         connection.player.connection.write(this)
