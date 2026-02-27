@@ -24,7 +24,7 @@ class PlayerAbilitiesPacket(
         buf.writeFloat(this.fieldOfViewModifier)
     }
 
-    override fun handle(sessionHandler: MinecraftSessionHandler?): Boolean = true
+    override fun handle(sessionHandler: MinecraftSessionHandler): Boolean = true
 
     companion object {
         @Suppress("MagicNumber", "unused")

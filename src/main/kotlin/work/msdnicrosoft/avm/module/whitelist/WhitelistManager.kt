@@ -129,7 +129,12 @@ object WhitelistManager {
             val player: WhitelistEntry? = this.whitelist.find { it.uuid == uuid }
             if (player == null) {
                 this.whitelist.add(
-                    WhitelistEntry(username, uuid, onlineMode ?: YggdrasilApiUtil.serverIsOnlineMode, mutableListOf(server))
+                    WhitelistEntry(
+                        username,
+                        uuid,
+                        onlineMode ?: YggdrasilApiUtil.serverIsOnlineMode,
+                        mutableListOf(server)
+                    )
                 )
             } else {
                 val noOnlineModeChange: Boolean = onlineMode == null || onlineMode == player.onlineMode
@@ -158,7 +163,8 @@ object WhitelistManager {
      */
     fun remove(username: String, server: String?): RemoveResult {
         val mutated = this.lock.write {
-            val player: WhitelistEntry = this.whitelist.find { it.name == username } ?: return RemoveResult.FAIL_NOT_FOUND
+            val player: WhitelistEntry = this.whitelist.find { it.name == username }
+                ?: return RemoveResult.FAIL_NOT_FOUND
             this.removeFromList(player, server)
         }
         if (!mutated) return RemoveResult.FAIL_NOT_FOUND
