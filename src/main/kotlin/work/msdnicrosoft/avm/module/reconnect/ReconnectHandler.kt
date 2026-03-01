@@ -57,7 +57,7 @@ object ReconnectHandler {
 
     @Subscribe
     fun onKickedFromServer(event: KickedFromServerEvent): EventTask? {
-        if (!config.enabled ||event.kickedDuringServerConnect()) {
+        if (!config.enabled || event.kickedDuringServerConnect()) {
             return null
         }
 
