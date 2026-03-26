@@ -36,7 +36,7 @@ object QuAnVelocityWhitelistImporter : Importer {
     override val displayName: String = "(qu-an) VelocityWhitelist"
 
     override fun import(context: CommandContext, defaultServer: String): Boolean {
-        val configSuccess: Boolean = if (this.CONFIG_PATH.exists()) {
+        val configSuccess: Boolean = if (CONFIG_PATH.exists()) {
             importConfig(context)
         } else {
             context.sendTranslatable("avm.command.avm.import.config.not_exist") {
@@ -45,7 +45,7 @@ object QuAnVelocityWhitelistImporter : Importer {
             true
         }
 
-        val whitelistSuccess: Boolean = if (this.WHITELIST_PATH.exists()) {
+        val whitelistSuccess: Boolean = if (WHITELIST_PATH.exists()) {
             importWhitelist(defaultServer, context)
         } else {
             context.sendTranslatable("avm.command.avm.import.whitelist.not_exist") {
@@ -60,7 +60,7 @@ object QuAnVelocityWhitelistImporter : Importer {
     @Suppress("TooGenericExceptionCaught")
     private fun importConfig(context: CommandContext): Boolean =
         try {
-            val config: Toml = TOML.read(this.CONFIG_PATH.readTextWithBuffer())
+            val config: Toml = TOML.read(CONFIG_PATH.readTextWithBuffer())
             ConfigManager.config.run {
                 whitelist.enabled = config.getBoolean("enable_whitelist")
                 whitelist.queryApi.uuid = config.getString("uuid_api")
@@ -80,7 +80,7 @@ object QuAnVelocityWhitelistImporter : Importer {
     @Suppress("TooGenericExceptionCaught")
     private fun importWhitelist(defaultServer: String, context: CommandContext): Boolean =
         try {
-            val whitelist: List<Player> = JSON.decodeFromString(this.WHITELIST_PATH.readTextWithBuffer())
+            val whitelist: List<Player> = JSON.decodeFromString(WHITELIST_PATH.readTextWithBuffer())
             val onlineMode: Boolean = YggdrasilApiUtil.serverIsOnlineMode
 
             whitelist.forEach { player ->

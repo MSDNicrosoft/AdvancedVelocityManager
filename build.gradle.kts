@@ -26,11 +26,13 @@ base {
 
     fun getLatestCommit(): Commit? = grgit?.head()
 
-    fun getLatestTagCommit(): Commit = grgit!!.tag.list().last().commit
+    fun getLatestTagCommit(): Commit? = grgit!!.tag.list().orEmpty().lastOrNull()?.commit
 
-    fun getUnreleasedCommits(): Int = grgit!!.log {
-        range(getLatestTagCommit(), getLatestCommit())
-    }.size
+    fun getUnreleasedCommits(): Int = if (getLatestTagCommit() != null) {
+        grgit!!.log {
+            range(getLatestTagCommit(), getLatestCommit())
+        }.size
+    } else 0
 
     fun getVersion(): String = buildString {
         if (grgit == null || getLatestCommit() == null) {
@@ -88,7 +90,6 @@ dependencies {
     compileOnly(libs.floodgate)
     compileOnly(libs.netty)
     compileOnly(libs.fastutil)
-    compileOnly(kotlin("stdlib"))
 
     implementation(libs.kaml)
     implementation(libs.kotlin.serialization.json) { isTransitive = false }

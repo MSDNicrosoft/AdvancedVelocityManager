@@ -200,7 +200,7 @@ class Packet<P : MinecraftPacket> private constructor(private val packet: Class<
          */
         @Suppress("UnsafeCallOnNullableType")
         fun mapping(id: Int, from: MinecraftVersion, to: MinecraftVersion?, encodeOnly: Boolean): PacketMapping? {
-            return this.STATE_REGISTRY_MAP_METHOD.invoke<PacketMapping>(
+            return STATE_REGISTRY_MAP_METHOD.invoke<PacketMapping>(
                 id,
                 from.toProtocolVersion() ?: return null,
                 to?.toProtocolVersion(),

@@ -47,6 +47,6 @@ class Paginator(private val command: String) {
         /**
          * Calculates the maximum number of pages for the given [size].
          */
-        fun getMaxPage(size: Int): Int = ceil(size.toFloat() / this.ITEMS_PER_PAGE.toFloat()).toInt()
+        fun getMaxPage(size: Int): Int = ceil(size.toFloat() / ITEMS_PER_PAGE.toFloat()).toInt()
     }
 }

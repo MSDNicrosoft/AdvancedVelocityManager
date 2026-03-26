@@ -39,7 +39,7 @@ object LlsManagerImporter : Importer {
     override val displayName: String = "lls-manager"
 
     override fun import(context: CommandContext, defaultServer: String): Boolean {
-        val configSuccess: Boolean = if (this.CONFIG_PATH.exists()) {
+        val configSuccess: Boolean = if (CONFIG_PATH.exists()) {
             context.importConfig()
         } else {
             context.sendTranslatable("avm.command.avm.import.config.not_exist") {

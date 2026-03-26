@@ -116,11 +116,11 @@ object ConfigManager {
 
     private fun migrate() {
         val currentVersion: Int = YAML.decodeFromString<Version>(this.file.readTextWithBuffer()).version
-        if (currentVersion == this.DEFAULT_CONFIG.version) {
+        if (currentVersion == DEFAULT_CONFIG.version) {
             return
         }
         when (currentVersion) {
-            1 if this.DEFAULT_CONFIG.version == 2 -> {
+            1 if DEFAULT_CONFIG.version == 2 -> {
                 logger.warn("Detected old config version, please migrate config:")
                 logger.warn("1. Move your config file to another place and execute `/avm reload` to regenerate config")
                 logger.warn("2. Manually compare and migrate configurations")
