@@ -1,6 +1,6 @@
 [versions]
 # Gradle Plugins
-kotlin = "2.3.20"
+kotlin = "2.3.21"
 detekt = "2.0.0-alpha.2"
 grgit = "5.3.3"
 yamlang = "1.5.0"
