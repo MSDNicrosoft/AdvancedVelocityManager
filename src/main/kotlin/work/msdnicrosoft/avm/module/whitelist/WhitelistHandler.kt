@@ -8,12 +8,14 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.PostLoginEvent
 import com.velocitypowered.api.event.connection.PreLoginEvent
 import com.velocitypowered.api.event.player.ServerPreConnectEvent
+import com.velocitypowered.api.network.ProtocolVersion
 import com.velocitypowered.api.proxy.InboundConnection
 import com.velocitypowered.proxy.connection.client.InitialInboundConnection
 import io.netty.channel.Channel
 import io.netty.util.AttributeKey
 import net.kyori.adventure.text.Component
 import org.geysermc.floodgate.api.player.FloodgatePlayer
+import org.geysermc.floodgate.util.LinkedPlayer
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.component.builder.minimessage.miniMessage
@@ -38,13 +40,22 @@ object WhitelistHandler {
             return
         }
 
-        val username: String = event.connection.getJavaUsernameOrDefault(event.username)
-        val uuid = event.uniqueId
-        val player = WhitelistManager.getPlayer(username)
-            ?: if (uuid != null) WhitelistManager.getPlayer(uuid) else null
+        val linkedPlayer = event.connection.getLinkedPlayer()
+
+        val player: WhitelistManager.WhitelistEntry? = if (linkedPlayer != null) {
+            WhitelistManager.getPlayer(linkedPlayer.javaUniqueId)
+        } else {
+            if (event.connection.protocolVersion >= ProtocolVersion.MINECRAFT_1_20_2) {
+                @Suppress("UnsafeCallOnNullableType")
+                WhitelistManager.getPlayer(event.uniqueId!!)
+            } else {
+                WhitelistManager.getPlayer(event.username)
+            }
+        }
+
         if (player == null) {
             event.result = PreLoginEvent.PreLoginComponentResult.denied(miniMessage(config.message))
-            PlayerCache.add(username)
+            PlayerCache.add(event.username)
         } else {
             event.result = if (player.onlineMode) {
                 PreLoginEvent.PreLoginComponentResult.forceOnlineMode()
@@ -79,12 +90,8 @@ object WhitelistHandler {
         }
     }
 
-    /**
-     * Retrieves the Java username associated with the connection when Floodgate is enabled and the user is linked.
-     * If Floodgate is not enabled or the user is not linked, returns the provided default [username].
-     */
     @Suppress("UnsafeCallOnNullableType")
-    private fun InboundConnection.getJavaUsernameOrDefault(username: String): String {
+    private fun InboundConnection.getLinkedPlayer(): LinkedPlayer? {
         // Compatible with Floodgate
         if (this@WhitelistHandler.hasFloodgate) {
             val channel: Channel = this@WhitelistHandler.delegateFieldResolver.copy()
@@ -94,9 +101,9 @@ object WhitelistHandler {
                 .attr(AttributeKey.valueOf<FloodgatePlayer>("floodgate-player"))
                 .get()
             if (player?.isLinked == true) {
-                return player.linkedPlayer.javaUsername
+                return player.linkedPlayer
             }
         }
-        return username
+        return null
     }
 }
