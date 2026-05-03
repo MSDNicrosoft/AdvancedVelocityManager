@@ -8,19 +8,17 @@ config:
 processors:
   active: true
   exclude:
-    - 'DetektProgressListener'
   # - 'KtFileCountProcessor'
   # - 'PackageCountProcessor'
   # - 'ClassCountProcessor'
   # - 'FunctionCountProcessor'
   # - 'PropertyCountProcessor'
-  # - 'ProjectComplexityProcessor'
+  # - 'ProjectCyclomaticComplexityProcessor'
   # - 'ProjectCognitiveComplexityProcessor'
   # - 'ProjectLLOCProcessor'
   # - 'ProjectCLOCProcessor'
   # - 'ProjectLOCProcessor'
   # - 'ProjectSLOCProcessor'
-  # - 'LicenseHeaderLoaderExtension'
 
 console-reports:
   active: true
@@ -481,6 +479,7 @@ potential-bugs:
     active: true
   ImplicitUnitReturnType:
     active: false
+    ignoreAnnotated: ['Test']
     allowExplicitReturnType: true
   InvalidRange:
     active: true
@@ -504,6 +503,9 @@ potential-bugs:
       - 'javax.annotation.OverridingMethodsMustInvokeSuper'
   MissingUseCall:
     active: false
+    ignoreClass:
+      - 'java.io.ByteArrayInputStream'
+      - 'java.io.ByteArrayOutputStream'
   NullCheckOnMutableProperty:
     active: false
   NullableToStringCall:
@@ -616,8 +618,6 @@ style:
         value: 'java.lang.annotation.Retention'
       - reason: 'it is a java annotation. Use `kotlin.annotation.Repeatable` instead.'
         value: 'java.lang.annotation.Repeatable'
-      - reason: 'Kotlin does not support @Inherited annotation, see https://youtrack.jetbrains.com/issue/KT-22265'
-        value: 'java.lang.annotation.Inherited'
   ForbiddenComment:
     active: true
     comments:
@@ -747,7 +747,7 @@ style:
     active: true
   SerialVersionUIDInSerializableClass:
     active: true
-  SpacingAfterPackageDeclaration:
+  SpacingAfterPackageAndImports:
     active: false
   StringShouldBeRawString:
     active: false
@@ -998,6 +998,7 @@ ktlint:
     active: true
     autoCorrect: true
     indentSize: 4
+    indentStyle: 'space'
     indentWhenArrowOnNewLine: false
   Kdoc:
     active: false
@@ -1011,7 +1012,7 @@ ktlint:
     # maxLineLength: If the 'code_style' ruleset property is set to 'android', the default is '100', otherwise '120'.
     ignoreBackTickedIdentifier: false
   MixedConditionOperators:
-    active: false
+    active: true
   ModifierListSpacing:
     active: true
     autoCorrect: true
