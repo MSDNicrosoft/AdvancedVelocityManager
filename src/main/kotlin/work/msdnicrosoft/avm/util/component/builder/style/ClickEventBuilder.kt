@@ -9,10 +9,6 @@ import java.net.URL
 class ClickEventBuilder {
     private var clickEvent: ClickEvent? = null
 
-    fun fromEvent(event: ClickEvent?) {
-        this.clickEvent = event
-    }
-
     fun openUrl(url: String?) {
         if (url == null) {
             return

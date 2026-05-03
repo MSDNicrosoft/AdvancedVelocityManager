@@ -25,7 +25,7 @@ class Button private constructor(
             text(text) styled { color(if (isEnabled) color.enabled else color.disabled) }
             text(borderType.right) styled { color(color.border) }
         } styled {
-            click { fromEvent(if (isEnabled) click.whenEnabled else click.whenDisabled) }
+            fromClickEvent(if (isEnabled) click.whenEnabled else click.whenDisabled)
             hoverText(if (isEnabled) hover.whenEnabled else hover.whenDisabled)
         }
     }
