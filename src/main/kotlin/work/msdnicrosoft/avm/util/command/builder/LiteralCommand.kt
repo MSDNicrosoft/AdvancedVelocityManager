@@ -3,7 +3,9 @@ package work.msdnicrosoft.avm.util.command.builder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.velocitypowered.api.command.CommandSource
+import work.msdnicrosoft.avm.annotations.dsl.CommandDSL
 
+@CommandDSL
 class LiteralCommand(root: String) : Command {
     override val node: LiteralArgumentBuilder<CommandSource> = LiteralArgumentBuilder.literal(root)
 

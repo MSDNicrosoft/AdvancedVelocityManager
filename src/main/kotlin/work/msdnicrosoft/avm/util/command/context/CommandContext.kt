@@ -9,10 +9,12 @@ import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.Translatable
 import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.tr
 import work.msdnicrosoft.avm.util.component.builder.text.ComponentBuilder
 import work.msdnicrosoft.avm.util.component.builder.text.component
+import work.msdnicrosoft.avm.annotations.dsl.CommandDSL
 import kotlin.reflect.KProperty
 import com.mojang.brigadier.context.CommandContext as BrigadierCommandContext
 
 @Suppress("unused")
+@CommandDSL
 class CommandContext(val context: BrigadierCommandContext<CommandSource>) {
     inline operator fun <reified T : Any> getValue(thisRef: Any?, property: KProperty<*>): T {
         val parser: ArgumentParser<T> = ArgumentParser.of<T>()

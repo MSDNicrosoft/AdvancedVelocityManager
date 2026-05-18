@@ -6,9 +6,11 @@ import com.mojang.brigadier.suggestion.Suggestions
 import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.ArgumentCommandNode
 import com.velocitypowered.api.command.CommandSource
+import work.msdnicrosoft.avm.annotations.dsl.CommandDSL
 import work.msdnicrosoft.avm.util.command.context.CommandContext
 import java.util.concurrent.CompletableFuture
 
+@CommandDSL
 class ArgumentCommand<T>(root: String, type: ArgumentType<T>) : Command {
     override val node: RequiredArgumentBuilder<CommandSource, T> = RequiredArgumentBuilder.argument(root, type)
 
