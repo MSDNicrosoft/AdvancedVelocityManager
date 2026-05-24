@@ -10,7 +10,7 @@ shadow = "9.4.1"
 velocity = "3.5.0-SNAPSHOT"
 asm = "9.10.1"
 floodgate = "2.2.5-SNAPSHOT"
-netty = "4.2.13.Final"
+netty = "4.2.14.Final"
 fastutil = "8.5.18"
 
 # Shade Dependencies
