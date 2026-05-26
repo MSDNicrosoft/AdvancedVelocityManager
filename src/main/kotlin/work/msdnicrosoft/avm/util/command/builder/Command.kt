@@ -3,8 +3,8 @@ package work.msdnicrosoft.avm.util.command.builder
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.tree.CommandNode
 import com.velocitypowered.api.command.CommandSource
-import com.mojang.brigadier.Command as MojangCommand
 import work.msdnicrosoft.avm.annotations.dsl.CommandDSL
+import com.mojang.brigadier.Command as MojangCommand
 
 @CommandDSL
 interface Command {

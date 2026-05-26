@@ -5,11 +5,11 @@ import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.ComponentLike
 import net.kyori.adventure.text.JoinConfiguration
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import work.msdnicrosoft.avm.annotations.dsl.CommandDSL
 import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.TranslatableBuilder
 import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.tr
 import work.msdnicrosoft.avm.util.component.builder.text.ComponentBuilder
 import work.msdnicrosoft.avm.util.component.builder.text.component
-import work.msdnicrosoft.avm.annotations.dsl.CommandDSL
 import kotlin.reflect.KProperty
 import com.mojang.brigadier.context.CommandContext as BrigadierCommandContext
 

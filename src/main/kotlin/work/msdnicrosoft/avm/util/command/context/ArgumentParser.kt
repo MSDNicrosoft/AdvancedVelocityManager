@@ -20,14 +20,14 @@ fun interface ArgumentParser<T> {
     fun parse(argument: String): T
 
     companion object {
-        private val UUIDParser = ArgumentParser<UUID> { argument ->
+        private val UUIDParser: ArgumentParser<UUID> = ArgumentParser { argument ->
             if (!argument.isUuid()) {
                 throwCommandException(tr("avm.general.invalid.uuid") { args { string("uuid", argument) } })
             }
             argument.toUuid()
         }
 
-        private val PlayerParser = ArgumentParser<Player> { argument ->
+        private val PlayerParser: ArgumentParser<Player> = ArgumentParser { argument ->
             val player: Optional<Player> = server.getPlayer(argument)
             if (player.isEmpty) {
                 throwCommandException(tr("avm.general.not_found.player") { args { string("player", argument) } })
@@ -35,7 +35,7 @@ fun interface ArgumentParser<T> {
             player.get()
         }
 
-        private val PlayerByUUIDParser = ArgumentParser<PlayerByUUID> { argument ->
+        private val PlayerByUUIDParser: ArgumentParser<PlayerByUUID> = ArgumentParser { argument ->
             val uuid: UUID = UUIDParser.parse(argument)
             val player: Optional<Player> = server.getPlayer(uuid)
             if (player.isEmpty) {
@@ -44,14 +44,14 @@ fun interface ArgumentParser<T> {
             PlayerByUUID(player.get())
         }
 
-        private val ServerParser = ArgumentParser<Server> { argument ->
+        private val ServerParser: ArgumentParser<Server> = ArgumentParser { argument ->
             if (!ConfigManager.config.whitelist.isServerGroup(argument) && server.getServer(argument).isEmpty) {
                 throwCommandException(tr("avm.general.not_found.server") { args { string("server", argument) } })
             }
             Server(argument)
         }
 
-        private val RegisteredServerParser = ArgumentParser<RegisteredServer> { argument ->
+        private val RegisteredServerParser: ArgumentParser<RegisteredServer> = ArgumentParser { argument ->
             val server: Optional<RegisteredServer> = server.getServer(argument)
             if (server.isEmpty) {
                 throwCommandException(tr("avm.general.not_found.server") { args { string("server", argument) } })
@@ -59,7 +59,7 @@ fun interface ArgumentParser<T> {
             server.get()
         }
 
-        private val ServerGroupParser = ArgumentParser<ServerGroup> { argument ->
+        private val ServerGroupParser: ArgumentParser<ServerGroup> = ArgumentParser { argument ->
             if (!ConfigManager.config.whitelist.isServerGroup(argument)) {
                 throwCommandException(
                     tr("avm.general.not_found.server_group") { args { string("server_group", argument) } }
@@ -68,7 +68,7 @@ fun interface ArgumentParser<T> {
             ServerGroup(argument)
         }
 
-        private val MiniMessageParser = ArgumentParser<MiniMessage> { argument ->
+        private val MiniMessageParser: ArgumentParser<MiniMessage> = ArgumentParser { argument ->
             MiniMessage(miniMessage(argument))
         }
 
