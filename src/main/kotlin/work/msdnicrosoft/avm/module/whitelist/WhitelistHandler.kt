@@ -15,10 +15,10 @@ import io.netty.channel.Channel
 import io.netty.util.AttributeKey
 import net.kyori.adventure.text.Component
 import org.geysermc.floodgate.api.player.FloodgatePlayer
-import org.geysermc.floodgate.util.LinkedPlayer
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.component.builder.minimessage.miniMessage
+import java.util.*
 
 /**
  * Portions of this code are modified from lls-manager
@@ -40,10 +40,9 @@ object WhitelistHandler {
             return
         }
 
-        val linkedPlayer = event.connection.getLinkedPlayer()
-
-        val player: WhitelistManager.WhitelistEntry? = if (linkedPlayer != null) {
-            WhitelistManager.getPlayer(linkedPlayer.javaUniqueId)
+        val linkedJavaUuid: UUID? = event.connection.getLinkedPlayerJavaUuid()
+        val player: WhitelistManager.WhitelistEntry? = if (linkedJavaUuid != null) {
+            WhitelistManager.getPlayer(linkedJavaUuid)
         } else {
             if (event.connection.protocolVersion >= ProtocolVersion.MINECRAFT_1_20_2) {
                 @Suppress("UnsafeCallOnNullableType")
@@ -91,7 +90,7 @@ object WhitelistHandler {
     }
 
     @Suppress("UnsafeCallOnNullableType")
-    private fun InboundConnection.getLinkedPlayer(): LinkedPlayer? {
+    private fun InboundConnection.getLinkedPlayerJavaUuid(): UUID? {
         // Compatible with Floodgate
         if (this@WhitelistHandler.hasFloodgate) {
             val channel: Channel = this@WhitelistHandler.delegateFieldResolver.copy()
@@ -101,7 +100,7 @@ object WhitelistHandler {
                 .attr(AttributeKey.valueOf<FloodgatePlayer>("floodgate-player"))
                 .get()
             if (player?.isLinked == true) {
-                return player.linkedPlayer
+                return player.linkedPlayer.javaUniqueId
             }
         }
         return null
