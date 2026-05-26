@@ -15,7 +15,7 @@ object ListCommand {
         }
         intArgument("page", min = 1) {
             suggests { builder ->
-                for (page: Int in 1..WhitelistManager.maxPage) builder.suggest(page)
+                for (page in 1..WhitelistManager.maxPage) builder.suggest(page)
                 builder.buildFuture()
             }
             executes {

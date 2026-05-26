@@ -3,7 +3,6 @@ package work.msdnicrosoft.avm.util.command.builder
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import com.mojang.brigadier.suggestion.Suggestions
-import com.mojang.brigadier.suggestion.SuggestionsBuilder
 import com.mojang.brigadier.tree.ArgumentCommandNode
 import com.velocitypowered.api.command.CommandSource
 import work.msdnicrosoft.avm.annotations.dsl.CommandDSL
@@ -16,9 +15,9 @@ class ArgumentCommand<T>(root: String, type: ArgumentType<T>) : Command {
 
     override fun build(): ArgumentCommandNode<CommandSource, T> = this.node.build()
 
-    fun suggests(block: CommandContext.(builder: SuggestionsBuilder) -> CompletableFuture<Suggestions>) {
+    fun suggests(block: CommandContext.(builder: SuggestionsScope) -> CompletableFuture<Suggestions>) {
         this.node.suggests { context, builder ->
-            CommandContext(context).block(builder)
+            CommandContext(context).block(SuggestionsScope(builder))
         }
     }
 }
