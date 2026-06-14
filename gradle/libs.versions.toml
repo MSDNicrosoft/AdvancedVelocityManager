@@ -49,10 +49,11 @@ kaml = { module = "com.charleskorn.kaml:kaml-jvm", version.ref = "kaml" }
 kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm", version.ref = "kotlin-serialization" }
 byte-buddy-agent = { module = "net.bytebuddy:byte-buddy-agent", version.ref = "byte-buddy-agent" }
 kavaref-core = { module = "com.highcapable.kavaref:kavaref-core", version.ref = "kavaref" }
+kavaref-jvm = { module = "com.highcapable.kavaref:kavaref-jvm", version.ref = "kavaref" }
 kavaref-extension = { module = "com.highcapable.kavaref:kavaref-extension", version.ref = "kavaref-extension" }
 
 
 [bundles]
 asm = ["asm", "asm-util"]
 velocity = ["velocity-api", "velocity-proxy"]
-kavaref = ["kavaref-core", "kavaref-extension"]
+kavaref = ["kavaref-core", "kavaref-jvm", "kavaref-extension"]
