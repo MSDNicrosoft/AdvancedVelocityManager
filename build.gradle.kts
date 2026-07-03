@@ -155,7 +155,7 @@ tasks {
     }
 
     @Suppress("UNCHECKED_CAST")
-    val downloadVelocity by registering {
+    val downloadVelocity = register("downloadVelocity") {
         description = "Downloads the latest Velocity server JAR"
         group = "velocity"
 
@@ -194,7 +194,7 @@ tasks {
         }
     }
 
-    val runVelocity by registering(JavaExec::class) {
+    val runVelocity = register<JavaExec>("runVelocity") {
         dependsOn(shadowJar, downloadVelocity)
         description = "Runs the velocity server."
         group = "velocity"
