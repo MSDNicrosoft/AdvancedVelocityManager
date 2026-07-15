@@ -121,6 +121,8 @@ tasks {
     shadowJar {
         minimizeJar = true
         archiveClassifier = null
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        mergeServiceFiles()
 
         doFirst {
             exclude("META-INF/maven/**")
