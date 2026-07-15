@@ -231,15 +231,6 @@ tasks {
         systemProperty("file.encoding", "UTF-8")
         systemProperty("stdout.encoding", "UTF-8")
 
-        jvmArgs(
-            "-XX:+UseG1GC",
-            "-XX:G1HeapRegionSize=4M",
-            "-XX:+UnlockExperimentalVMOptions",
-            "-XX:+ParallelRefProcEnabled",
-            "-XX:+AlwaysPreTouch",
-            "-XX:MaxInlineLevel=15"
-        )
-
         classpath = files(velocityJar)
     }
 }
