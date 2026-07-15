@@ -25,6 +25,7 @@ import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.io.path.div
 
+@Suppress("TooManyFunctions")
 object WhitelistManager {
     /**
      * A player in the whitelist.
@@ -40,7 +41,8 @@ object WhitelistManager {
         @Serializable(with = UUIDSerializer::class)
         val uuid: UUID,
         var onlineMode: Boolean,
-        var serverList: List<String>
+        var serverList: List<String>,
+        var extra: Map<String, String> = mapOf()
     )
 
     enum class AddResult {
@@ -224,7 +226,13 @@ object WhitelistManager {
      * Finds players in the whitelist by [keyword] and returns them in specified [page].
      */
     fun find(keyword: String, page: Int): List<WhitelistEntry> {
-        val filtered = this.lock.read { this.whitelist.filter { keyword in it.name } }
+        val filtered = this.lock.read {
+            this.whitelist.filter {
+                keyword in it.name.lowercase() ||
+                    it.extra.keys.any { k -> keyword in k.lowercase() } ||
+                    it.extra.values.any { v -> keyword in v.lowercase() }
+            }
+        }
         val offset = (page - 1) * Paginator.ITEMS_PER_PAGE
         return filtered.drop(offset).take(Paginator.ITEMS_PER_PAGE)
     }
@@ -267,6 +275,40 @@ object WhitelistManager {
             player.name = username
         }
         this.save(false)
+    }
+
+    fun setNote(username: String, key: String, value: String): Boolean {
+        this.lock.write {
+            val player: WhitelistEntry = this.whitelist.find { it.name == username } ?: return false
+            player.extra = player.extra + (key to value)
+        }
+        return this.save(false)
+    }
+
+    fun setNote(uuid: UUID, key: String, value: String): Boolean {
+        this.lock.write {
+            val player: WhitelistEntry = this.whitelist.find { it.uuid == uuid } ?: return false
+            player.extra = player.extra + (key to value)
+        }
+        return this.save(false)
+    }
+
+    fun removeNote(username: String, key: String): Boolean {
+        this.lock.write {
+            val player: WhitelistEntry = this.whitelist.find { it.name == username } ?: return false
+            if (key !in player.extra) return false
+            player.extra = player.extra - key
+        }
+        return this.save(false)
+    }
+
+    fun removeNote(uuid: UUID, key: String): Boolean {
+        this.lock.write {
+            val player: WhitelistEntry = this.whitelist.find { it.uuid == uuid } ?: return false
+            if (key !in player.extra) return false
+            player.extra = player.extra - key
+        }
+        return this.save(false)
     }
 
     /**

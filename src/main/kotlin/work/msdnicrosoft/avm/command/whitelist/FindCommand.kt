@@ -43,7 +43,7 @@ object FindCommand {
      * @param keyword The keyword to search for.
      */
     private fun CommandContext.listFind(page: Int, keyword: String) {
-        val result: List<WhitelistEntry> = WhitelistManager.find(keyword, page)
+        val result: List<WhitelistEntry> = WhitelistManager.find(keyword.lowercase(), page)
 
         if (result.isEmpty()) {
             sendTranslatable("avm.command.avmwl.find.empty")

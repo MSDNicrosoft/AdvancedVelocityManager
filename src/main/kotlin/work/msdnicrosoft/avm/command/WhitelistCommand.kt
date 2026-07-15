@@ -35,6 +35,9 @@ object WhitelistCommand {
     @CommandNode("list", "[page]")
     val list = ListCommand.command
 
+    @CommandNode("note", "<set|remove|view>", "<player>", "<key>", "[value]")
+    val note = NoteCommand.command
+
     @CommandNode("off")
     val off = OffCommand.command
 
@@ -55,6 +58,7 @@ object WhitelistCommand {
         then(clear)
         then(find)
         then(list)
+        then(note)
         then(off)
         then(on)
         then(remove)
@@ -75,7 +79,7 @@ object WhitelistCommand {
      *
      * @param players the list of players to send
      */
-    @Suppress("LongMethod")
+    @Suppress("LongMethod", "CognitiveComplexMethod")
     fun CommandSource.sendWhitelistPlayers(players: List<WhitelistEntry>) {
         if (players.isEmpty()) {
             return
@@ -88,6 +92,13 @@ object WhitelistCommand {
                             text("UUID: ${player.uuid}") styled { color(NamedTextColor.GRAY) }
                             empty()
                             translatable("avm.whitelist.player.uuid.hover")
+                            if (player.extra.isNotEmpty()) {
+                                empty()
+                                translatable("avm.whitelist.player.extra.hover")
+                                player.extra.forEach { (k, v) ->
+                                    text("  $k: $v") styled { color(NamedTextColor.GRAY) }
+                                }
+                            }
                         }
                     }
                     click { suggestCommand(player.uuid.toString()) }

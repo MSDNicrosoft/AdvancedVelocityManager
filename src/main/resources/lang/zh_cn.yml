@@ -37,6 +37,8 @@ avm:
         hover: "<gold>▶ <yellow>点击从白名单中移除此玩家"
       uuid:
         hover: "<gold>▶ <yellow>点击复制"
+      extra:
+        hover: "<dark_aqua>额外备注:"
     save.failed: "<red>保存白名单文件失败，请查看控制台日志！"
 
   command:
@@ -138,3 +140,16 @@ avm:
         cache: "<gray>当前补全缓存: <white><current>/<total>"
       on.description: "<gray>开启白名单"
       off.description: "<gray>关闭白名单"
+      note:
+        description: "<gray>管理白名单条目的额外备注"
+        set:
+          success: "<dark_green>已为 <player> 设置备注 '<key>' = '<value>'"
+        remove:
+          success: "<dark_green>已从 <player> 移除备注 '<key>'"
+          not_found: "<light_purple>未找到 <player> 的备注 '<key>'"
+        view:
+          description: "<gray>查看白名单条目的额外备注"
+          header: "<gray><player> 的额外备注:"
+          empty: "<gray>暂无额外备注"
+          entry: "<gray>  <key>: <value>"
+        player_not_found: "<light_purple>此玩家不在白名单中"
