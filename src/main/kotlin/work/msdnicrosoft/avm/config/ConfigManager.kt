@@ -18,6 +18,7 @@ import java.io.IOException
 import kotlin.io.path.div
 
 object ConfigManager {
+    @Volatile
     lateinit var config: AVMConfig
 
     private val file: File = (dataDirectory / "config.yml").toFile()
