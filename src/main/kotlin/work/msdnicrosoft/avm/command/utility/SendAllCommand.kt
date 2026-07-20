@@ -53,8 +53,8 @@ object SendAllCommand {
         }
 
         task {
-            val allPlayers: List<Player> = server.allPlayers.filterNot {
-                it.currentServer.get().server.serverInfo == registeredServer.serverInfo
+            val allPlayers: List<Player> = server.allPlayers.filterNot { player ->
+                player.currentServer.map { it.serverInfo }.orElse(null) == registeredServer.serverInfo
             }
             val playersToSend: List<Player> = allPlayers.filterNot { it.hasPermission("avm.sendall.bypass") }
 

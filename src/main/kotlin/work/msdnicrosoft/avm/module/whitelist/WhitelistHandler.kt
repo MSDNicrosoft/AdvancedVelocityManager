@@ -8,7 +8,6 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.PostLoginEvent
 import com.velocitypowered.api.event.connection.PreLoginEvent
 import com.velocitypowered.api.event.player.ServerPreConnectEvent
-import com.velocitypowered.api.network.ProtocolVersion
 import com.velocitypowered.api.proxy.InboundConnection
 import com.velocitypowered.proxy.connection.client.InitialInboundConnection
 import io.netty.channel.Channel
@@ -44,9 +43,9 @@ object WhitelistHandler {
         val player: WhitelistManager.WhitelistEntry? = if (linkedJavaUuid != null) {
             WhitelistManager.getPlayer(linkedJavaUuid)
         } else {
-            if (event.connection.protocolVersion >= ProtocolVersion.MINECRAFT_1_20_2) {
-                @Suppress("UnsafeCallOnNullableType")
-                WhitelistManager.getPlayer(event.uniqueId!!)
+            val uuid = event.uniqueId
+            if (uuid != null) {
+                WhitelistManager.getPlayer(uuid)
             } else {
                 WhitelistManager.getPlayer(event.username)
             }

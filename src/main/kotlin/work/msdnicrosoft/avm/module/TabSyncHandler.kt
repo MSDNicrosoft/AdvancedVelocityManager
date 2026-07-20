@@ -78,7 +78,7 @@ object TabSyncHandler {
 
     private inline val Player.displayName: Component
         get() {
-            val serverInfo: ServerInfo = currentServer.get().serverInfo
+            val serverInfo: ServerInfo = currentServer.map { it.serverInfo }.orElse(null) ?: return Component.empty()
             return miniMessage(config.format) {
                 placeholders {
                     unparsed("server_name", serverInfo.name)
