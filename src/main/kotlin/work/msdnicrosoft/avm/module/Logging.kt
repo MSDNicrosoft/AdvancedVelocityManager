@@ -1,16 +1,12 @@
 package work.msdnicrosoft.avm.module
 
-import com.velocitypowered.api.event.Subscribe
-import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
 import com.velocitypowered.api.scheduler.ScheduledTask
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.dataDirectory
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.eventManager
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
-import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.plugin
 import work.msdnicrosoft.avm.util.DateTimeUtil
 import work.msdnicrosoft.avm.util.server.task
 import java.io.File
-import java.util.Collections
+import java.util.*
 import kotlin.io.path.div
 import kotlin.time.Duration.Companion.minutes
 
@@ -22,14 +18,12 @@ object Logging {
     private lateinit var writeTask: ScheduledTask
 
     fun init() {
-        eventManager.register(plugin, this)
         this.writeTask = task(repeat = 5.minutes, runnable = this::write)
     }
 
-    @Suppress("UnusedParameter")
-    @Subscribe
-    fun onProxyShutdown(event: ProxyShutdownEvent) {
+    fun disable() {
         this.write()
+        if (this::writeTask.isInitialized) this.writeTask.cancel()
     }
 
     @Suppress("TooGenericExceptionCaught")

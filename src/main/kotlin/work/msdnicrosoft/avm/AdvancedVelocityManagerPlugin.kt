@@ -95,6 +95,7 @@ class AdvancedVelocityManagerPlugin {
         ReconnectHandler.disable()
         CommandSessionManager.disable()
         TranslateManager.disable()
+        Logging.disable()
     }
 
     private fun registerCommands() {
