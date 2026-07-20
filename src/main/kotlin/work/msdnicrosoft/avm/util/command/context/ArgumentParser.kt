@@ -2,6 +2,7 @@ package work.msdnicrosoft.avm.util.command.context
 
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.RegisteredServer
+import net.kyori.adventure.text.Component
 import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.util.command.data.PlayerByUUID
@@ -69,7 +70,11 @@ fun interface ArgumentParser<T> {
         }
 
         private val MiniMessageParser: ArgumentParser<MiniMessage> = ArgumentParser { argument ->
-            MiniMessage(miniMessage(argument))
+            try {
+                MiniMessage(miniMessage(argument))
+            } catch (_: Exception) {
+                MiniMessage(Component.empty())
+            }
         }
 
         val parsers: Map<KClass<*>, ArgumentParser<*>> = mapOf(

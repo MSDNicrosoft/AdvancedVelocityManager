@@ -1,6 +1,7 @@
 package work.msdnicrosoft.avm.module.whitelist
 
 import work.msdnicrosoft.avm.config.ConfigManager
+import java.util.concurrent.ConcurrentLinkedDeque
 
 /**
  * This object is used to provide a completion source for the `/avmwl add` command by caching player information.
@@ -8,7 +9,7 @@ import work.msdnicrosoft.avm.config.ConfigManager
 object PlayerCache {
     private inline val config get() = ConfigManager.config.whitelist.cachePlayers
 
-    private val players: MutableSet<String> = mutableSetOf()
+    private val players: ConcurrentLinkedDeque<String> = ConcurrentLinkedDeque()
 
     val readOnly: List<String> get() = this.players.toList()
 
@@ -22,8 +23,8 @@ object PlayerCache {
         }
 
         if (this.players.size >= config.maxSize) {
-            this.players.remove(this.players.last())
+            this.players.pollFirst()
         }
-        this.players.add(player)
+        this.players.addLast(player)
     }
 }

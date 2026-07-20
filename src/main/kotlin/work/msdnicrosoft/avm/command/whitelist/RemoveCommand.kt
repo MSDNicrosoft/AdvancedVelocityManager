@@ -34,12 +34,7 @@ object RemoveCommand {
             wordArgument("server") {
                 suggests { builder ->
                     val player: String by this
-                    val serverList = if (player.isUuid()) {
-                        WhitelistManager.getPlayer(player.toUuid())
-                    } else {
-                        WhitelistManager.getPlayer(player)
-                    }?.serverList
-                    serverList?.forEach(builder::suggest)
+                    WhitelistManager.resolveEntry(player)?.serverList?.forEach(builder::suggest)
                     builder.buildFuture()
                 }
                 executes {

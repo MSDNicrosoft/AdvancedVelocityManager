@@ -71,13 +71,15 @@ enum class HttpStatus(val value: Int, val description: String) {
     INSUFFICIENT_STORAGE(507, "Insufficient Storage"),
     LOOP_DETECTED(508, "Loop Detected"),
     NOT_EXTENDED(510, "Not Extended"),
-    NETWORK_AUTHENTICATION_REQUIRED(511, "Network Authentication Required");
+    NETWORK_AUTHENTICATION_REQUIRED(511, "Network Authentication Required"),
+
+    UNKNOWN(-1, "Unknown");
 
     fun isSuccess(): Boolean = this.value in 200..299
 
     companion object {
         private val statusCodesMap: Map<Int, HttpStatus> = entries.associateBy { it.value }
 
-        fun fromValue(value: Int): HttpStatus = statusCodesMap[value] ?: error("Unknown HTTP status code: $value")
+        fun fromValue(value: Int): HttpStatus = statusCodesMap[value] ?: UNKNOWN
     }
 }

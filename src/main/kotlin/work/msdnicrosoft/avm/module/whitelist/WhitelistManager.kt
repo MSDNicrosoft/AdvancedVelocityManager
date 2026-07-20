@@ -16,6 +16,7 @@ import work.msdnicrosoft.avm.util.file.writeTextWithBuffer
 import work.msdnicrosoft.avm.util.net.http.HttpStatus
 import work.msdnicrosoft.avm.util.net.http.YggdrasilApiUtil
 import work.msdnicrosoft.avm.util.server.task
+import work.msdnicrosoft.avm.util.string.isUuid
 import work.msdnicrosoft.avm.util.string.toUuid
 import java.io.File
 import java.io.IOException
@@ -247,6 +248,9 @@ object WhitelistManager {
      */
     fun getPlayer(uuid: UUID): WhitelistEntry? = this.lock.read { this.whitelist.find { it.uuid == uuid } }
 
+    fun resolveEntry(identifier: String): WhitelistEntry? =
+        if (identifier.isUuid()) getPlayer(identifier.toUuid()) else getPlayer(identifier)
+
     /**
      * Checks if a player with the given [uuid] is allowed to connect to a specific [server].
      */
@@ -260,11 +264,7 @@ object WhitelistManager {
 
         // Check if the player is in the server whitelist
         val serverList: List<String> = player.serverList
-        if (server in serverList) {
-            return true
-        }
-
-        return ConfigManager.config.whitelist.serverGroups.any { (group: String, servers: List<String>) ->
+        return server in serverList || ConfigManager.config.whitelist.serverGroups.any { (group, servers) ->
             group in serverList && server in servers
         }
     }
@@ -280,7 +280,7 @@ object WhitelistManager {
     fun setNote(username: String, key: String, value: String): Boolean {
         this.lock.write {
             val player: WhitelistEntry = this.whitelist.find { it.name == username } ?: return false
-            player.extra = player.extra + (key to value)
+            player.extra += key to value
         }
         return this.save(false)
     }
@@ -288,7 +288,7 @@ object WhitelistManager {
     fun setNote(uuid: UUID, key: String, value: String): Boolean {
         this.lock.write {
             val player: WhitelistEntry = this.whitelist.find { it.uuid == uuid } ?: return false
-            player.extra = player.extra + (key to value)
+            player.extra += key to value
         }
         return this.save(false)
     }
@@ -297,7 +297,7 @@ object WhitelistManager {
         this.lock.write {
             val player: WhitelistEntry = this.whitelist.find { it.name == username } ?: return false
             if (key !in player.extra) return false
-            player.extra = player.extra - key
+            player.extra -= key
         }
         return this.save(false)
     }
@@ -306,7 +306,7 @@ object WhitelistManager {
         this.lock.write {
             val player: WhitelistEntry = this.whitelist.find { it.uuid == uuid } ?: return false
             if (key !in player.extra) return false
-            player.extra = player.extra - key
+            player.extra -= key
         }
         return this.save(false)
     }

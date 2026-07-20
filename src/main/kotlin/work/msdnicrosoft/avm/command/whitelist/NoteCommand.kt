@@ -20,11 +20,7 @@ object NoteCommand {
                 wordArgument("key") {
                     suggests { builder ->
                         val player: String by this
-                        val entry = if (player.isUuid()) {
-                            WhitelistManager.getPlayer(player.toUuid())
-                        } else {
-                            WhitelistManager.getPlayer(player)
-                        }
+                        val entry = WhitelistManager.resolveEntry(player)
                         entry?.extra?.keys?.forEach(builder::suggest)
                         builder.buildFuture()
                     }
@@ -62,11 +58,7 @@ object NoteCommand {
                 wordArgument("key") {
                     suggests { builder ->
                         val player: String by this
-                        val entry = if (player.isUuid()) {
-                            WhitelistManager.getPlayer(player.toUuid())
-                        } else {
-                            WhitelistManager.getPlayer(player)
-                        }
+                        val entry = WhitelistManager.resolveEntry(player)
                         entry?.extra?.keys?.forEach(builder::suggest)
                         builder.buildFuture()
                     }
@@ -127,12 +119,7 @@ object NoteCommand {
     }
 
     private fun CommandContext.viewNote(player: String) {
-        val isUuid: Boolean = player.isUuid()
-        val entry = if (isUuid) {
-            WhitelistManager.getPlayer(player.toUuid())
-        } else {
-            WhitelistManager.getPlayer(player)
-        }
+        val entry = WhitelistManager.resolveEntry(player)
 
         if (entry == null) {
             sendTranslatable("avm.command.avmwl.note.player_not_found")

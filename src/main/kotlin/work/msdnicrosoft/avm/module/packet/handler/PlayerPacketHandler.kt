@@ -18,13 +18,8 @@ class PlayerPacketHandler(private val player: ConnectedPlayer) : ChannelDuplexHa
 
         val allowed: Boolean = eventManager
             .fire(ReceivePacketEvent(packet, this.player))
-            .handle { event, throwable ->
-                if (throwable != null) {
-                    false
-                } else {
-                    event.result.isAllowed
-                }
-            }.join()
+            .handle { event, throwable -> throwable == null && event.result.isAllowed }
+            .join()
 
         if (allowed) {
             super.channelRead(ctx, packet)
@@ -39,13 +34,8 @@ class PlayerPacketHandler(private val player: ConnectedPlayer) : ChannelDuplexHa
 
         val allowed: Boolean = eventManager
             .fire(SendPacketEvent(packet, this.player))
-            .handle { event, throwable ->
-                if (throwable != null) {
-                    false
-                } else {
-                    event.result.isAllowed
-                }
-            }.join()
+            .handle { event, throwable -> throwable == null && event.result.isAllowed }
+            .join()
 
         if (allowed) {
             super.write(ctx, packet, promise)

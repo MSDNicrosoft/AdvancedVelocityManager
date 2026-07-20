@@ -30,11 +30,7 @@ object AddCommand {
             wordArgument("server") {
                 suggests { builder ->
                     val player: String by this
-                    val whitelistedServers = if (player.isUuid()) {
-                        WhitelistManager.getPlayer(player.toUuid())
-                    } else {
-                        WhitelistManager.getPlayer(player)
-                    }?.serverList
+                    val whitelistedServers = WhitelistManager.resolveEntry(player)?.serverList
                     buildSet {
                         addAll(config.serverGroups.keys)
                         addAll(server.allServers.map { it.serverInfo.name })

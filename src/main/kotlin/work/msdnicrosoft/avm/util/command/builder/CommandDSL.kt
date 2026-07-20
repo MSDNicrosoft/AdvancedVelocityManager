@@ -6,57 +6,45 @@ import com.mojang.brigadier.arguments.*
 import com.velocitypowered.api.command.CommandSource
 import work.msdnicrosoft.avm.util.command.context.CommandContext
 
-fun Command.stringArgument(name: String, block: ArgumentCommand<String>.() -> Unit) {
-    this.node.then(ArgumentCommand(name, StringArgumentType.string()).apply(block).node)
-}
+fun Command.stringArgument(name: String, block: ArgumentCommand<String>.() -> Unit) =
+    argument(name, StringArgumentType.string(), block)
 
-fun Command.wordArgument(name: String, block: ArgumentCommand<String>.() -> Unit) {
-    this.node.then(ArgumentCommand(name, StringArgumentType.word()).apply(block).node)
-}
+fun Command.wordArgument(name: String, block: ArgumentCommand<String>.() -> Unit) =
+    argument(name, StringArgumentType.word(), block)
 
-fun Command.greedyStringArgument(name: String, block: ArgumentCommand<String>.() -> Unit) {
-    this.node.then(ArgumentCommand(name, StringArgumentType.greedyString()).apply(block).node)
-}
+fun Command.greedyStringArgument(name: String, block: ArgumentCommand<String>.() -> Unit) =
+    argument(name, StringArgumentType.greedyString(), block)
 
-fun Command.boolArgument(name: String, block: ArgumentCommand<Boolean>.() -> Unit) {
-    this.node.then(ArgumentCommand(name, BoolArgumentType.bool()).apply(block).node)
-}
+fun Command.boolArgument(name: String, block: ArgumentCommand<Boolean>.() -> Unit) =
+    argument(name, BoolArgumentType.bool(), block)
 
 fun Command.intArgument(
     name: String,
     min: Int = Int.MIN_VALUE,
     max: Int = Int.MAX_VALUE,
     block: ArgumentCommand<Int>.() -> Unit
-) {
-    this.node.then(ArgumentCommand(name, IntegerArgumentType.integer(min, max)).apply(block).node)
-}
+) = argument(name, IntegerArgumentType.integer(min, max), block)
 
 fun Command.longArgument(
     name: String,
     min: Long = Long.MIN_VALUE,
     max: Long = Long.MAX_VALUE,
     block: ArgumentCommand<Long>.() -> Unit
-) {
-    this.node.then(ArgumentCommand(name, LongArgumentType.longArg(min, max)).apply(block).node)
-}
+) = argument(name, LongArgumentType.longArg(min, max), block)
 
 fun Command.floatArgument(
     name: String,
     min: Float = -Float.MAX_VALUE,
     max: Float = Float.MAX_VALUE,
     block: ArgumentCommand<Float>.() -> Unit
-) {
-    this.node.then(ArgumentCommand(name, FloatArgumentType.floatArg(min, max)).apply(block).node)
-}
+) = argument(name, FloatArgumentType.floatArg(min, max), block)
 
 fun Command.doubleArgument(
     name: String,
     min: Double = -Double.MAX_VALUE,
     max: Double = Double.MAX_VALUE,
     block: ArgumentCommand<Double>.() -> Unit
-) {
-    this.node.then(ArgumentCommand(name, DoubleArgumentType.doubleArg(min, max)).apply(block).node)
-}
+) = argument(name, DoubleArgumentType.doubleArg(min, max), block)
 
 fun Command.requires(requirement: CommandSource.() -> Boolean) {
     this.node.requires(requirement)
