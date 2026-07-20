@@ -6,6 +6,8 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.logger
 import work.msdnicrosoft.avm.util.DateTimeUtil
 import work.msdnicrosoft.avm.util.server.task
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardOpenOption
 import java.util.*
 import kotlin.io.path.div
 import kotlin.time.Duration.Companion.minutes
@@ -38,17 +40,18 @@ object Logging {
 
         try {
             this.file.parentFile?.mkdirs()
-            this.file.bufferedWriter(Charsets.UTF_8).use { writer ->
+            Files.newBufferedWriter(
+                this.file.toPath(),
+                Charsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.APPEND
+            ).use { writer ->
                 snapshot.forEach { message ->
                     writer.appendLine(message)
                 }
             }
         } catch (e: Exception) {
             logger.warn("Failed to write log file: {}", e.message)
-            // Re-add messages that failed to write
-            synchronized(this.messages) {
-                this.messages.addAll(0, snapshot)
-            }
         }
     }
 
