@@ -32,19 +32,6 @@ object NoteCommand {
                             task { setNote(player, key, value) }
                             Command.SINGLE_SUCCESS
                         }
-                        literal("view") {
-                            wordArgument("player") {
-                                suggests { builder ->
-                                    WhitelistManager.usernames.forEach(builder::suggest)
-                                    builder.buildFuture()
-                                }
-                                executes {
-                                    val player: String by this
-                                    task { viewNote(player) }
-                                    Command.SINGLE_SUCCESS
-                                }
-                            }
-                        }
                     }
                 }
             }
@@ -68,6 +55,19 @@ object NoteCommand {
                         task { removeNote(player, key) }
                         Command.SINGLE_SUCCESS
                     }
+                }
+            }
+        }
+        literal("view") {
+            wordArgument("player") {
+                suggests { builder ->
+                    WhitelistManager.usernames.forEach(builder::suggest)
+                    builder.buildFuture()
+                }
+                executes {
+                    val player: String by this
+                    task { viewNote(player) }
+                    Command.SINGLE_SUCCESS
                 }
             }
         }
