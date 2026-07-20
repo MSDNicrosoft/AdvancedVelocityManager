@@ -13,8 +13,10 @@ import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.packet.s2c.PlayerAbilitiesPacket
 import work.msdnicrosoft.avm.util.component.builder.title
 import java.time.Duration
-import java.util.UUID
+import java.util.*
+import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import kotlin.math.min
 import kotlin.time.Duration.Companion.seconds
 
 @Suppress("MagicNumber")
@@ -43,59 +45,88 @@ class Reconnection(private val event: KickedFromServerEvent, private val continu
     }
 
     private var state: State = State.WAITING
+    private var pendingPing: Boolean = false
+    private var redirectDeadline: Long = 0L
+    private var tickFuture: ScheduledFuture<*>? = null
+
+    @Volatile
+    private var cancelled: Boolean = false
+    private var resumed: Boolean = false
 
     init {
-        // Prevent player to be kicked by no-flight
         this.player.connection.write(PlayerAbilitiesPacket(PlayerAbilitiesPacket.NO_FALLING))
-
         this.player.tabList.clearAll()
         clearBossBars()
     }
 
     fun reconnect() {
-        scheduleConnect()
-        scheduleSendMessage()
+        val interval = min(config.pingInterval, config.messageInterval)
+        this.tickFuture = this.scheduledExecutor.scheduleAtFixedRate(
+            this::tick,
+            0,
+            interval,
+            TimeUnit.MILLISECONDS
+        )
     }
 
-    private fun scheduleConnect() {
-        this.scheduledExecutor.schedule(this::connect, config.pingInterval, TimeUnit.MILLISECONDS)
+    fun cancel() {
+        this.cancelled = true
+        this.scheduledExecutor.execute {
+            this.tickFuture?.cancel(false)
+            if (!this.resumed) {
+                this.resumed = true
+                this.continuation.resume()
+            }
+        }
     }
 
-    private fun scheduleSendMessage() {
-        this.scheduledExecutor.schedule(this::sendMessage, config.messageInterval, TimeUnit.MILLISECONDS)
-    }
-
-    private fun connect() {
-        if (this.state == State.CONNECTED) {
+    private fun tick() {
+        if (this.cancelled || this.state == State.CONNECTED) {
+            this.tickFuture?.cancel(false)
+            if (this.cancelled && !this.resumed) {
+                this.resumed = true
+                this.continuation.resume()
+            }
             return
         }
+
+        when (this.state) {
+            State.WAITING -> tickWaiting()
+            State.CONNECTING -> tickConnecting()
+            State.CONNECTED -> return
+        }
+
+        this.player.showTitle(
+            if (this.state == State.CONNECTING) this.connectingTitle else this.waitingTitle
+        )
+    }
+
+    private fun tickWaiting() {
+        if (this.pendingPing) return
+        this.pendingPing = true
         this.event.server.ping(this.pingOptions).whenComplete { _, throwable ->
-            if (throwable != null) {
-                this.scheduleConnect()
-            } else {
-                this.scheduledExecutor.execute {
+            this.scheduledExecutor.execute {
+                this.pendingPing = false
+                if (this.cancelled || this.state != State.WAITING) return@execute
+                if (throwable == null) {
                     this.state = State.CONNECTING
-                    this.scheduledExecutor.schedule({
-                        this.player.clearTitle()
-                        this.event.result = KickedFromServerEvent.RedirectPlayer.create(
-                            this.event.server,
-                            Component.empty()
-                        )
-                        this.state = State.CONNECTED
-                        this.continuation.resume()
-                    }, config.reconnectDelay, TimeUnit.MILLISECONDS)
+                    this.redirectDeadline = System.currentTimeMillis() + config.reconnectDelay
                 }
             }
         }
     }
 
-    private fun sendMessage() {
-        if (this.state == State.CONNECTED) {
-            return
+    private fun tickConnecting() {
+        if (System.currentTimeMillis() >= this.redirectDeadline) {
+            this.player.clearTitle()
+            this.event.result = KickedFromServerEvent.RedirectPlayer.create(this.event.server, Component.empty())
+            this.state = State.CONNECTED
+            this.tickFuture?.cancel(false)
+            if (!this.resumed) {
+                this.resumed = true
+                this.continuation.resume()
+            }
         }
-
-        this.player.showTitle(if (this.state == State.CONNECTING) this.connectingTitle else this.waitingTitle)
-        scheduleSendMessage()
     }
 
     private fun clearBossBars() {

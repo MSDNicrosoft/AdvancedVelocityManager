@@ -2,6 +2,7 @@ package work.msdnicrosoft.avm.module.reconnect
 
 import com.velocitypowered.api.event.EventTask
 import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.KickedFromServerEvent
 import com.velocitypowered.proxy.protocol.ProtocolUtils.Direction
 import com.velocitypowered.proxy.protocol.StateRegistry
@@ -13,11 +14,29 @@ import work.msdnicrosoft.avm.util.component.ComponentSerializer
 import work.msdnicrosoft.avm.util.component.orEmpty
 import work.msdnicrosoft.avm.util.packet.MinecraftVersion
 import work.msdnicrosoft.avm.util.packet.Packet
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicReference
 
 object ReconnectHandler {
     private inline val config get() = ConfigManager.config.reconnect
 
-    private inline val regex: Regex get() = Regex(config.pattern)
+    private val activeReconnections = ConcurrentHashMap<UUID, Reconnection>()
+
+    private data class RegexCache(val pattern: String, val regex: Regex)
+
+    private val regexCache = AtomicReference(RegexCache(config.pattern, Regex(config.pattern)))
+
+    private inline val regex: Regex
+        get() {
+            val current = config.pattern
+            val cached = regexCache.get()
+            if (current != cached.pattern) {
+                regexCache.set(RegexCache(current, Regex(current)))
+                return regexCache.get().regex
+            }
+            return cached.regex
+        }
 
     // https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Protocol_version_numbers
     // https://minecraft.wiki/w/Java_Edition_protocol/Packets#Player_Abilities_(clientbound)
@@ -68,8 +87,17 @@ object ReconnectHandler {
             return null
         }
 
+        activeReconnections.remove(event.player.uniqueId)?.cancel()
+
         return EventTask.withContinuation { continuation ->
-            Reconnection(event, continuation).reconnect()
+            Reconnection(event, continuation).also {
+                activeReconnections[event.player.uniqueId] = it
+            }.reconnect()
         }
+    }
+
+    @Subscribe
+    fun onPlayerDisconnect(event: DisconnectEvent) {
+        activeReconnections.remove(event.player.uniqueId)?.cancel()
     }
 }
