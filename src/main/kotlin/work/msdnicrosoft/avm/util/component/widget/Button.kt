@@ -101,10 +101,10 @@ class Button private constructor(
         }
 
         class Click internal constructor() {
-            var whenDisabled: ClickEvent? = null
+            var whenDisabled: ClickEvent<*>? = null
                 private set
 
-            var whenEnabled: ClickEvent? = null
+            var whenEnabled: ClickEvent<*>? = null
                 private set
 
             fun whenDisabled(builder: ClickEventBuilder.() -> Unit) {

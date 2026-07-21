@@ -76,7 +76,7 @@ class StyleBuilder {
         }
     }
 
-    fun fromClickEvent(event: ClickEvent?) {
+    fun fromClickEvent(event: ClickEvent<*>?) {
         this.style = this.style.clickEvent(event)
     }
 

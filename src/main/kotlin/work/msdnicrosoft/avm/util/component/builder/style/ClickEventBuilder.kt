@@ -7,7 +7,7 @@ import java.net.URL
 @Suppress("unused")
 @ComponentDSL
 class ClickEventBuilder {
-    private var clickEvent: ClickEvent? = null
+    private var clickEvent: ClickEvent<*>? = null
 
     fun openUrl(url: String?) {
         if (url == null) {
@@ -44,7 +44,8 @@ class ClickEventBuilder {
         this.clickEvent = ClickEvent.copyToClipboard(text)
     }
 
-    fun build(): ClickEvent? = this.clickEvent
+    fun build(): ClickEvent<*>? = this.clickEvent
 }
 
-inline fun clickEvent(builder: ClickEventBuilder.() -> Unit): ClickEvent? = ClickEventBuilder().apply(builder).build()
+inline fun clickEvent(builder: ClickEventBuilder.() -> Unit): ClickEvent<*>? =
+    ClickEventBuilder().apply(builder).build()
