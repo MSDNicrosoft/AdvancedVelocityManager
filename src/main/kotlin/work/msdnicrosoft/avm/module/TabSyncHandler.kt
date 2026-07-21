@@ -56,6 +56,18 @@ object TabSyncHandler {
         }
     }
 
+    private inline val Player.displayName: Component
+        get() {
+            val serverInfo: ServerInfo = currentServer.map { it.serverInfo }.orElse(null) ?: return Component.empty()
+            return miniMessage(config.format) {
+                placeholders {
+                    unparsed("server_name", serverInfo.name)
+                    component("server_nickname", serverInfo.nickname)
+                    unparsed("player_name", username)
+                }
+            }
+        }
+
     /**
      * Updates the tab list entry of the [target] player with the display name of the [entry] player.
      */
@@ -75,16 +87,4 @@ object TabSyncHandler {
             }
         )
     }
-
-    private inline val Player.displayName: Component
-        get() {
-            val serverInfo: ServerInfo = currentServer.map { it.serverInfo }.orElse(null) ?: return Component.empty()
-            return miniMessage(config.format) {
-                placeholders {
-                    unparsed("server_name", serverInfo.name)
-                    component("server_nickname", serverInfo.nickname)
-                    unparsed("player_name", username)
-                }
-            }
-        }
 }

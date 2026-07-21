@@ -43,7 +43,7 @@ object WhitelistManager {
         val uuid: UUID,
         var onlineMode: Boolean,
         var serverList: List<String>,
-        var extra: Map<String, String> = mapOf()
+        var extra: Map<String, String> = emptyMap()
     )
 
     enum class AddResult {
@@ -62,15 +62,16 @@ object WhitelistManager {
 
     private val file: File = (dataDirectory / "whitelist.json").toFile()
 
+    private val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
+
     private val whitelist: MutableList<WhitelistEntry> = mutableListOf()
 
     val usernames: List<String> get() = this.lock.read { this.whitelist.map(WhitelistEntry::name) }
     val uuids: List<UUID> get() = this.lock.read { this.whitelist.map(WhitelistEntry::uuid) }
     val size: Int get() = this.lock.read { this.whitelist.size }
     val isEmpty: Boolean get() = this.lock.read { this.whitelist.isEmpty() }
-    val maxPage: Int get() = this.lock.read { Paginator.getMaxPage(this.whitelist.size) }
 
-    private val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
+    val maxPage: Int get() = this.lock.read { Paginator.getMaxPage(this.whitelist.size) }
 
     fun init(reload: Boolean = false) {
         this.load(reload)

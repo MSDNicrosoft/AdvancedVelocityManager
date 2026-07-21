@@ -119,13 +119,13 @@ data class ChatBridge(
         @Serializable
         data class Pattern(
             @YamlComment("Contains any of the item in the following list")
-            val contains: List<String> = listOf(),
+            val contains: List<String> = emptyList(),
 
             @YamlComment("Starts with any of the item in the following list")
             val startswith: List<String> = listOf("!!", "==", "="),
 
             @YamlComment("Ends with any of the item in the following list")
-            val endswith: List<String> = listOf()
+            val endswith: List<String> = emptyList()
         )
     }
 

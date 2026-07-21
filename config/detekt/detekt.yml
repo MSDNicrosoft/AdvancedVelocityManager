@@ -90,8 +90,8 @@ complexity:
   CyclomaticComplexMethod:
     active: true
     allowedComplexity: 14
-    ignoreSingleWhenExpression: false
-    ignoreSimpleWhenEntries: false
+    ignoreSingleWhenExpression: true
+    ignoreSimpleWhenEntries: true
     ignoreNestingFunctions: false
     ignoreLocalFunctions: false
     nestingFunctions:
@@ -132,8 +132,8 @@ complexity:
     active: true
     allowedDepth: 4
   NestedScopeFunctions:
-    active: false
-    allowedDepth: 1
+    active: true
+    allowedDepth: 2
     functions:
       - 'kotlin.apply'
       - 'kotlin.run'
@@ -152,7 +152,7 @@ complexity:
   TooManyFunctions:
     active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/androidUnitTest/**', '**/androidInstrumentedTest/**', '**/jsTest/**', '**/iosTest/**']
-    allowedFunctionsPerFile: 50
+    allowedFunctionsPerFile: 30
     allowedFunctionsPerClass: 20
     allowedFunctionsPerInterface: 20
     allowedFunctionsPerObject: 20
@@ -227,7 +227,7 @@ empty-blocks:
 exceptions:
   active: true
   ErrorUsageWithThrowable:
-    active: false
+    active: true
   ExceptionRaisedInUnexpectedLocation:
     active: true
     methodNames:
@@ -241,7 +241,7 @@ exceptions:
   NotImplementedDeclaration:
     active: false
   ObjectExtendsThrowable:
-    active: false
+    active: true
   PrintStackTrace:
     active: true
   RethrowCaughtException:
@@ -423,12 +423,12 @@ potential-bugs:
     forbiddenTypePatterns:
       - 'kotlin.String'
   CastNullableToNonNullableType:
-    active: false
+    active: true
     ignorePlatformTypes: true
   CastToNullableType:
-    active: false
+    active: true
   CharArrayToStringCall:
-    active: false
+    active: true
   Deprecation:
     active: false
     aliases: ['DEPRECATION']
@@ -508,13 +508,13 @@ potential-bugs:
       - 'java.io.ByteArrayInputStream'
       - 'java.io.ByteArrayOutputStream'
   NullCheckOnMutableProperty:
-    active: false
+    active: true
   NullableToStringCall:
-    active: false
+    active: true
   PropertyUsedBeforeDeclaration:
-    active: false
+    active: true
   UnconditionalJumpStatementInLoop:
-    active: false
+    active: true
   UnnamedParameterUse:
     active: false
     allowAdjacentDifferentTypeParams: true
@@ -522,7 +522,7 @@ potential-bugs:
     ignoreArgumentsMatchingNames: true
     ignoreFunctionCall: []
   UnnecessaryNotNullCheck:
-    active: false
+    active: true
   UnnecessaryNotNullOperator:
     active: true
   UnnecessarySafeCall:
@@ -580,7 +580,7 @@ style:
     active: true
     maxDestructuringEntries: 3
   DoubleNegativeExpression:
-    active: false
+    active: true
   DoubleNegativeLambda:
     active: true
     negativeFunctions:
@@ -677,13 +677,13 @@ style:
       - '2'
       - '20'
     ignoreHashCodeFunction: true
-    ignorePropertyDeclaration: false
+    ignorePropertyDeclaration: true
     ignoreLocalVariableDeclaration: false
     ignoreConstantDeclaration: true
     ignoreCompanionObjectPropertyDeclaration: true
     ignoreAnnotation: false
     ignoreNamedArgument: true
-    ignoreEnums: false
+    ignoreEnums: true
     ignoreRanges: false
     ignoreExtensionFunctions: true
   MandatoryBracesLoops:
@@ -715,9 +715,9 @@ style:
   NewLineAtEndOfFile:
     active: true
   NoTabs:
-    active: false
+    active: true
   NullableBooleanCheck:
-    active: false
+    active: true
   ObjectLiteralToLambda:
     active: true
   OptionalAbstractKeyword:
@@ -751,7 +751,7 @@ style:
   SpacingAfterPackageAndImports:
     active: false
   StringShouldBeRawString:
-    active: false
+    active: true
     maxEscapedCharacterCount: 2
     ignoredCharacters: []
   ThrowsCount:
@@ -761,7 +761,7 @@ style:
   TrailingWhitespace:
     active: true
   TrimMultilineRawString:
-    active: false
+    active: true
     trimmingMethods:
       - 'trimIndent'
       - 'trimMargin'
@@ -823,12 +823,12 @@ style:
   UseCheckOrError:
     active: true
   UseDataClass:
-    active: false
+    active: true
     allowVars: false
   UseEmptyCounterpart:
-    active: false
+    active: true
   UseIfEmptyOrIfBlank:
-    active: false
+    active: true
   UseIfInsteadOfWhen:
     active: false
     ignoreWhenContainingVariableDeclaration: false
@@ -843,7 +843,7 @@ style:
   UseRequireNotNull:
     active: true
   UseSumOfInsteadOfFlatMapSize:
-    active: false
+    active: true
   UselessCallOnNotNull:
     active: true
   UtilityClassWithPublicConstructor:
@@ -1147,7 +1147,7 @@ ktlint:
     active: true
     autoCorrect: true
   SpacingAroundSquareBrackets:
-    active: false
+    active: true
     autoCorrect: true
   SpacingAroundUnaryOperator:
     active: true
@@ -1169,7 +1169,7 @@ ktlint:
     active: true
     autoCorrect: true
   StringTemplateIndent:
-    active: false
+    active: true
     autoCorrect: true
     indentSize: 4
   ThenSpacing:
