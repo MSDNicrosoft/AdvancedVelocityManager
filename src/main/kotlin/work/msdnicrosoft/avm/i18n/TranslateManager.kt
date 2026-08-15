@@ -22,7 +22,7 @@ object TranslateManager : MiniMessageTranslator() {
     private val globalTranslator: GlobalTranslator = GlobalTranslator.translator()
     private val languageFileDirectory: Path = dataDirectory / "lang"
 
-    private val translations: MutableMap<Locale, ConcurrentHashMap<String, String>> = mutableMapOf()
+    private val translations: MutableMap<Locale, ConcurrentHashMap<String, String>> = ConcurrentHashMap()
 
     fun init() {
         logger.info("Loading language...")
@@ -50,53 +50,43 @@ object TranslateManager : MiniMessageTranslator() {
         return currentLocale?.get(key)
     }
 
-    private fun checkAndUpdateTranslations() {
-        val jarUrl = classOf<TranslateManager>().protectionDomain.codeSource?.location ?: return
-        JarFile(jarUrl.path).use { jarFile ->
-            jarFile.entries().asSequence()
-                .filter { entry -> entry.name.startsWith("lang/") && !entry.isDirectory }
-                .forEach { entry ->
-                    val outPath = (this.languageFileDirectory / entry.name.removePrefix("lang/")).toFile()
-                    outPath.parentFile.mkdirs()
-
-                    val fileExists = outPath.exists()
-                    val fileContentChanged = if (fileExists) {
-                        val localContent = outPath.readTextWithBuffer()
-                        val jarContent = jarFile.getInputStream(entry).bufferedReader().use { it.readText() }
-                        localContent != jarContent
-                    } else {
-                        true
-                    }
-
-                    if (fileExists && !fileContentChanged) {
-                        return@forEach
-                    }
-
-                    jarFile.getInputStream(entry).use { input ->
-                        FileOutputStream(outPath).use { output ->
-                            input.copyTo(output)
-                        }
-                    }
-                }
+    private fun registerTranslations() {
+        if (getLanguageFiles().isEmpty()) {
+            extractBuiltinLanguageFiles()
         }
+
+        getLanguageFiles().forEach { file ->
+            val locale = Locale.forLanguageTag(file.nameWithoutExtension)
+            val currentTranslations = JSON.decodeFromString<Map<String, String>>(file.readTextWithBuffer())
+            this.translations.computeIfAbsent(locale) { ConcurrentHashMap() }.putAll(currentTranslations)
+        }
+    }
+
+    private fun extractBuiltinLanguageFiles() {
+        val jarUrl = classOf<TranslateManager>().protectionDomain.codeSource?.location ?: return
+        try {
+            JarFile(jarUrl.path).use { jarFile -> extractFromJar(jarFile) }
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun extractFromJar(jarFile: JarFile) {
+        jarFile.entries().asSequence()
+            .filter { entry -> entry.name.startsWith("lang/") && !entry.isDirectory }
+            .forEach { entry ->
+                val outPath = (this.languageFileDirectory / entry.name.removePrefix("lang/")).toFile()
+                if (outPath.exists()) return@forEach
+                outPath.parentFile.mkdirs()
+                jarFile.getInputStream(entry).use { input ->
+                    FileOutputStream(outPath).use { output -> input.copyTo(output) }
+                }
+            }
     }
 
     private fun getLanguageFiles(): List<Path> {
         this.languageFileDirectory.toFile().mkdirs()
         return this.languageFileDirectory.listDirectoryEntries().filter { entry ->
             entry.extension.equals("json", ignoreCase = true) && entry.isRegularFile()
-        }
-    }
-
-    private fun registerTranslations() {
-        if (this.getLanguageFiles().isEmpty()) {
-            this.checkAndUpdateTranslations()
-        }
-
-        this.getLanguageFiles().forEach { file ->
-            val locale = Locale.forLanguageTag(file.nameWithoutExtension)
-            val currentTranslations = JSON.decodeFromString<Map<String, String>>(file.readTextWithBuffer())
-            this.translations.computeIfAbsent(locale) { ConcurrentHashMap() }.putAll(currentTranslations)
         }
     }
 }
