@@ -29,30 +29,6 @@ inline fun <T : ByteBuf, R> T.use(block: (T) -> R): R =
  * Executes the given [block] as a receiver-style lambda on [this][ByteBuf]
  * and **always** releases it afterward, even on exception.
  *
- * Example usage:
- * ```
- * buffer.useApply {
- *     skipBytes(4)
- *     writeByte(0xFF)
- * }.also { released ->
- *     println("Buffer released? ${released.refCnt() == 0}") // true
- * }
- * ```
- *
- * @return the same [ByteBuf] instance, now with `refCnt == 0`
- */
-inline fun <T : ByteBuf, R> T.useApply(block: T.() -> R): T =
-    try {
-        this.block()
-        this
-    } finally {
-        this.release()
-    }
-
-/**
- * Executes the given [block] as a receiver-style lambda on [this][ByteBuf]
- * and **always** releases it afterward, even on exception.
- *
  *
  * Example usage:
  * ```

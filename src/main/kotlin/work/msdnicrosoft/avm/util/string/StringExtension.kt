@@ -4,11 +4,6 @@ import com.velocitypowered.api.util.UuidUtils
 import java.util.*
 
 /**
- * Repeats a string [n] times.
- */
-operator fun String.times(n: Int): String = this.repeat(n)
-
-/**
  * Checks if a string is a valid UUID.
  */
 fun String.isUuid(): Boolean = runCatching { this.toUuid() }.isSuccess

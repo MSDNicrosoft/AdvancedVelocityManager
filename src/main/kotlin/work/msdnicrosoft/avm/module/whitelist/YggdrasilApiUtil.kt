@@ -1,4 +1,4 @@
-package work.msdnicrosoft.avm.util.net.http
+package work.msdnicrosoft.avm.module.whitelist
 
 import com.velocitypowered.api.util.UuidUtils
 import kotlinx.serialization.json.jsonObject
@@ -8,6 +8,8 @@ import work.msdnicrosoft.avm.AdvancedVelocityManagerPlugin.Companion.server
 import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.config.data.Whitelist
 import work.msdnicrosoft.avm.util.file.FileUtil.JSON
+import work.msdnicrosoft.avm.util.net.http.HttpStatus
+import work.msdnicrosoft.avm.util.net.http.HttpUtil
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest

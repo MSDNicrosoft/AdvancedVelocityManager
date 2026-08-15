@@ -85,8 +85,6 @@ data class ChatBridge(
     @SerialName("takeover-private-chat")
     val takeOverPrivateChat: Boolean = true,
 
-//        val functions: Functions = Functions(),
-
     @YamlComment("The behavior how plugin send chat messages to backend server")
     @SerialName("chat-passthrough")
     val chatPassthrough: ChatPassthrough = ChatPassthrough()
@@ -162,99 +160,4 @@ data class ChatBridge(
             )
         )
     )
-
-//        @Serializable
-//        data class Functions(
-//            @SerialName("builtin")
-//            val builtin: List<Function> = listOf(),
-//            @SerialName("custom")
-//            val custom: List<Function> = listOf()
-//        ) {
-//            @Serializable
-//            data class Function(
-//                val enabled: Boolean,
-//                val priority: Int,
-//                val permission: String? = null,
-//
-//            )
-//        }
-
-//        @Serializable
-//        data class Functions(
-//            val mention: Mention = Mention(),
-//
-//            @SerialName("process-url")
-//            val processUrl: ProcessUrl = ProcessUrl()
-//        ) {
-//            @Serializable
-//            data class Mention(
-//                val enabled: Boolean = true,
-//                val permission: String = "avm.chat.function.mention",
-//
-//                @SerialName("allow-self-mention")
-//                val allowSelfMention: Boolean = false,
-//
-//                @SerialName("cooldown-seconds")
-//                val cooldownSeconds: Long = 5L,
-//
-//                @SerialName("mention-all")
-//                val mentionAll: MentionAll = MentionAll()
-//            ) {
-//                @Serializable
-//                data class MentionAll(
-//                    val enabled: Boolean = true,
-//                    val permission: String = "avm.chat.function.mention.all"
-//                )
-//            }
-//
-//            @Serializable
-//            data class ProcessUrl(
-//                val enabled: Boolean = true,
-//                val pattern: String = "((https|http|ftp|rtsp|mms)?:\\/\\/)[^\\s]+",
-//                val format: Format = Format(
-//                    prefix = "<dark_gray>[",
-//                    text = "<white><bold>网站",
-//                    suffix = "<dark_gray>]",
-//                    hover = """
-//                    <reset>
-//                    <dark_aqua>网站: >matched_text>
-//                    <reset>
-//                    <gray>点击进入!
-//                    <reset>
-//                    <dark_gray>[<red>!<dark_gray>] <gray>谨防任何诈骗
-//                    """.trimIndent(),
-//                    url = ">matched_text>"
-//                )
-//            )
-//
-//            @Serializable
-//            data class ProcessQQNumber(
-//                val enabled: Boolean = true,
-//                val pattern: String = "QQ( )?[1-9]([0-9]{5,11})",
-//
-//                @SerialName("matched-pattern")
-//                val matchedPattern: String = "[1-9]([0-9]{5,11})",
-//                val format: Format = Format(
-//                    prefix = "<dark_gray>[",
-//                    text = "<dark_aqua><bold>QQ: >matched_text>",
-//                    suffix = "<dark_gray>]",
-//                    hover = """
-//
-//                    <dark_aqua>QQ: <aqua>>matched_text>
-//
-//                    <gray>这是一个 QQ 账号,
-//                    <gray>你可以点击此项快速打开聊天
-//
-//                    <dark_gray>[<red>!<dark_gray>] <gray>请勿进行任何金钱交易
-//                    <dark_gray>[<red>!<dark_gray>] <gray>交友需谨慎
-//                    """.trimIndent(),
-//                    url = "https://wpa.qq.com/msgrd?v=3&uin=>matched_text>&site=qq&menu=yes"
-//                )
-//            )
-//
-//            @Serializable
-//            data class ProcessBilibiliBv(
-//
-//            )
-//        }
 }

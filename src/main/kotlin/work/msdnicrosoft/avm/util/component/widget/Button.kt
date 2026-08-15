@@ -39,7 +39,6 @@ class Button private constructor(
         ANGLE("<", ">")
     }
 
-    @Suppress("unused")
     class Builder(private val text: String) {
         private var borderType: BorderType = BorderType.SQUARE
         private var enableWhen: () -> Boolean = { true }
