@@ -142,12 +142,12 @@ tasks {
         }
     }
     compileJava {
-        targetCompatibility = "21"
+        targetCompatibility = "25"
     }
     compileKotlin {
         dependsOn(detekt)
         compilerOptions {
-            jvmTarget = JvmTarget.JVM_21
+            jvmTarget = JvmTarget.JVM_25
         }
     }
     clean {
