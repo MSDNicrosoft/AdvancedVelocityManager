@@ -47,6 +47,7 @@ object XaeroMapHandler {
         .mapping(0x5A, MinecraftVersion.MINECRAFT_1_21_5, false)
         .mapping(0x5F, MinecraftVersion.MINECRAFT_1_21_9, false)
         .mapping(0x61, MinecraftVersion.MINECRAFT_26_2, false)
+        .mapping(0x63, MinecraftVersion.MINECRAFT_26_3, false)
 
     fun init() {
         this.packet.register()

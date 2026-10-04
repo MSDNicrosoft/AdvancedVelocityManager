@@ -57,6 +57,7 @@ enum class MinecraftVersion {
     MINECRAFT_1_21_11,
     MINECRAFT_26_1,
     MINECRAFT_26_2,
+    MINECRAFT_26_3,
     ;
 
     companion object {
