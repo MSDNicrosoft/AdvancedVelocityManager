@@ -6,11 +6,11 @@ import work.msdnicrosoft.avm.config.ConfigManager
 import work.msdnicrosoft.avm.module.whitelist.PlayerCache
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager
 import work.msdnicrosoft.avm.module.whitelist.WhitelistManager.AddResult
+import work.msdnicrosoft.avm.module.whitelist.YggdrasilApiUtil
 import work.msdnicrosoft.avm.util.command.builder.*
 import work.msdnicrosoft.avm.util.command.context.CommandContext
 import work.msdnicrosoft.avm.util.command.data.server.Server
 import work.msdnicrosoft.avm.util.component.builder.minimessage.tag.tr
-import work.msdnicrosoft.avm.util.net.http.YggdrasilApiUtil
 import work.msdnicrosoft.avm.util.server.task
 import work.msdnicrosoft.avm.util.string.isUuid
 import work.msdnicrosoft.avm.util.string.toUuid
