@@ -8,7 +8,7 @@ shadow = "9.6.1"
 
 # CompileOnly Dependencies
 velocity = "4.2.1-SNAPSHOT"
-asm = "9.10.1"
+asm = "9.11"
 floodgate = "2.2.5-SNAPSHOT"
 netty = "4.2.18.Final"
 fastutil = "8.5.19"
