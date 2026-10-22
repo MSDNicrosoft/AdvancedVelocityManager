@@ -142,7 +142,7 @@ tasks {
         }
     }
     compileJava {
-        targetCompatibility = "25"
+        options.release = 25
     }
     compileKotlin {
         dependsOn(detekt)
