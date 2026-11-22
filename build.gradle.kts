@@ -19,26 +19,26 @@ plugins {
 val releaseVersion = version.toString()
 
 @Suppress("UNCHECKED_CAST")
-val versionDetails = runCatching { (extra["versionDetails"] as Closure<VersionDetails>).invoke() }.getOrNull()
+val versionDetails: VersionDetails? = runCatching { (extra["versionDetails"] as Closure<VersionDetails>).invoke() }.getOrNull()
 
-version = buildString {
-    append(releaseVersion)
-    if (versionDetails == null) {
-        append("-nogit")
-        return@buildString
-    }
-    if (versionDetails.version.endsWith(".dirty")) {
-        append("-DEV")
-        return@buildString
-    }
+version = if (versionDetails == null) {
+    "$releaseVersion-nogit"
+} else {
     val distance = versionDetails.commitDistance
-    if (versionDetails.branchName != "master" || distance > 0) {
-        append("-SNAPSHOT")
-        if (distance > 0) {
-            append("+$distance")
+    buildString {
+        append(releaseVersion)
+        if (versionDetails.isCleanTag) {
+            append("-DEV")
+        } else {
+            if (versionDetails.branchName != "master" || distance > 0) {
+                append("-SNAPSHOT")
+                if (distance > 0) {
+                    append("+$distance")
+                }
+            }
+            append("-${versionDetails.gitHash}")
         }
     }
-    append("-${versionDetails.gitHash}")
 }
 
 repositories {
