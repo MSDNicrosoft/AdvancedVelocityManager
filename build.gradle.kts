@@ -1,6 +1,6 @@
 import com.google.gson.Gson
-import org.ajoberstar.grgit.Commit
-import org.ajoberstar.grgit.Grgit
+import com.palantir.gradle.gitversion.VersionDetails
+import groovy.lang.Closure
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.net.URI
 import java.net.URL
@@ -10,59 +10,41 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 
     alias(libs.plugins.detekt)
-//    alias(libs.plugins.detekt.compiler)
 
-    alias(libs.plugins.grgit)
+    alias(libs.plugins.git.version)
     alias(libs.plugins.yamlang)
     alias(libs.plugins.shadow)
 }
 
-base {
-    val grgit: Grgit? by lazy(LazyThreadSafetyMode.NONE) {
-        runCatching {
-            grgitService.service.get().grgit
-        }.getOrNull()
+val releaseVersion = version.toString()
+
+@Suppress("UNCHECKED_CAST")
+val versionDetails = runCatching { (extra["versionDetails"] as Closure<VersionDetails>).invoke() }.getOrNull()
+
+version = buildString {
+    append(releaseVersion)
+    if (versionDetails == null) {
+        append("-nogit")
+        return@buildString
     }
-
-    fun getLatestCommit(): Commit? = grgit?.head()
-
-    fun getLatestTagCommit(): Commit? = grgit!!.tag.list().orEmpty().lastOrNull()?.commit
-
-    fun getUnreleasedCommits(): Int = if (getLatestTagCommit() != null) {
-        grgit!!.log {
-            range(getLatestTagCommit(), getLatestCommit())
-        }.size
-    } else 0
-
-    fun getVersion(): String = buildString {
-        if (grgit == null || getLatestCommit() == null) {
-            append("-nogit")
-            return@buildString
-        }
-
-        if (!grgit!!.status().isClean) {
-            append("-DEV")
-            return@buildString
-        }
-
-        val unreleasedCommits = getUnreleasedCommits()
-        if (grgit!!.branch.current().name != "master" || unreleasedCommits > 0) {
-            append("-SNAPSHOT")
-
-            if (unreleasedCommits > 0) {
-                append("+$unreleasedCommits")
-            }
-        }
-
-        append("-${getLatestCommit()!!.abbreviatedId}")
+    if (versionDetails.version.endsWith(".dirty")) {
+        append("-DEV")
+        return@buildString
     }
-    version = "$version${getVersion()}"
+    val distance = versionDetails.commitDistance
+    if (versionDetails.branchName != "master" || distance > 0) {
+        append("-SNAPSHOT")
+        if (distance > 0) {
+            append("+$distance")
+        }
+    }
+    append("-${versionDetails.gitHash}")
 }
 
 repositories {
     mavenCentral()
-    if (System.getenv("CI")?.toBoolean() != true) {
-        maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库
+    if (!providers.environmentVariable("CI").getOrElse("false").toBoolean()) {
+        maven("https://maven.aliyun.com/repository/public")
     }
     maven("https://repo.papermc.io/repository/maven-public/") {
         name = "PaperMC"
@@ -116,7 +98,7 @@ tasks {
         dependsOn(shadowJar)
     }
     jar {
-        archiveFileName = "${rootProject.name}-${rootProject.version}-unshaded.jar"
+        archiveFileName.set("${rootProject.name}-${rootProject.version}-unshaded.jar")
     }
     shadowJar {
         minimizeJar = true
@@ -124,12 +106,12 @@ tasks {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
         mergeServiceFiles()
 
-        doFirst {
-            exclude("META-INF/maven/**")
-            exclude("META-INF/versions/**")
-            exclude("META-INF/proguard/**")
-            exclude("META-INF/com.android.tools/**")
-        }
+        exclude(
+            "META-INF/maven/**",
+            "META-INF/versions/**",
+            "META-INF/proguard/**",
+            "META-INF/com.android.tools/**",
+        )
 
         relocate("kotlin", "avm.kotlin")
         relocate("kotlinx.serialization", "avm.kotlinx.serialization")
@@ -137,17 +119,21 @@ tasks {
         relocate("com.highcapable.kavaref", "avm.com.highcapable.kavaref")
     }
     processResources {
+        val tokens: Map<String, String> = mapOf("version" to version.toString())
+        inputs.properties(tokens)
+        filteringCharset = "UTF-8"
         filesMatching("velocity-plugin.json") {
-            expand("version" to version)
+            expand(tokens)
         }
     }
     compileJava {
-        options.release = 25
+        options.encoding = "UTF-8"
+        options.release.set(25)
     }
     compileKotlin {
         dependsOn(detekt)
         compilerOptions {
-            jvmTarget = JvmTarget.JVM_25
+            jvmTarget.set(JvmTarget.JVM_25)
         }
     }
     clean {

@@ -2,7 +2,7 @@
 # Gradle Plugins
 kotlin = "2.4.21"
 detekt = "2.0.0-alpha.6"
-grgit = "5.3.3"
+git-version = "5.2.0"
 yamlang = "1.5.0"
 shadow = "9.6.1"
 
@@ -25,8 +25,7 @@ kavaref-extension = "1.1.1"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 detekt = { id = "dev.detekt", version.ref = "detekt" }
-detekt-compiler = { id = "io.github.detekt.gradle.compiler-plugin", version.ref = "detekt" }
-grgit = { id = "org.ajoberstar.grgit", version.ref = "grgit" }
+git-version = { id = "com.palantir.git-version", version.ref = "git-version" }
 yamlang = { id = "me.fallenbreath.yamlang", version.ref = "yamlang" }
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 
